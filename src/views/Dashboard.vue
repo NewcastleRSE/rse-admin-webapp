@@ -1,6 +1,7 @@
 <template>
   <h1>Dashboard</h1>
   <button class="btn" @click="getMembers">Get Members</button>
+  <button @click="clearLS">Remove local storage</button>
   <br />
   <a href="http://localhost:1337/connect/microsoft">login</a>
   <p>{{ members }}</p>
@@ -15,33 +16,11 @@ export default {
     return {
       token: "No Token",
       members: "No memebers",
-      jwt: "",
+      jwt: localStorage.getItem("jwt") || null,
     };
   },
-  created() {
-    let url = window.location;
-    this.token = new URLSearchParams(url.search).get("access_token");
-    console.log(this.token);
-    if (this.token) {
-      this.getToken();
-    }
-  },
   methods: {
-    getToken() {
-      const url =
-        "http://localhost:1337/auth/microsoft/callback/?access_token=" +
-        this.token;
-      axios
-        .get(url)
-        .then((res) => {
-          this.jwt = res.data.jwt;
-          console.log(this.jwt);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    async getMembers() {
+    getMembers() {
       console.log("click");
 
       axios
@@ -58,6 +37,10 @@ export default {
           console.log(error);
           this.members = error;
         });
+    },
+
+    clearLS() {
+      localStorage.removeItem("jwt");
     },
   },
 };
