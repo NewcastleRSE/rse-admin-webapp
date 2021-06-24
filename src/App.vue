@@ -1,5 +1,4 @@
 <template>
-  <a href="http://localhost:1337/connect/microsoft">login</a>
   <router-view></router-view>
 </template>
 
