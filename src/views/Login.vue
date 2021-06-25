@@ -7,6 +7,7 @@
 
 <script>
 import axios from "axios";
+import router from "../router/index";
 
 export default {
   name: "login",
@@ -34,6 +35,7 @@ export default {
           //this.jwt = res.data.jwt;
           localStorage.setItem("jwt", res.data.jwt);
           console.log(res.data.jwt);
+          router.push({ name: "Dashboard" });
         })
         .catch((err) => {
           console.log(err);
