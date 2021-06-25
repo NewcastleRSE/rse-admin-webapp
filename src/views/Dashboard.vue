@@ -13,6 +13,7 @@ import axios from "axios";
 export default {
   name: "dashboard",
   data() {
+    console.log(jwt);
     return {
       token: "No Token",
       members: "No memebers",
@@ -21,8 +22,6 @@ export default {
   },
   methods: {
     getMembers() {
-      console.log("click");
-
       axios
         .get("http://localhost:1337/members", {
           headers: {
