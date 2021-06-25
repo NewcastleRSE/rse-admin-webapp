@@ -1,9 +1,7 @@
 <template>
   <h1>Dashboard</h1>
   <button class="btn" @click="getMembers">Get Members</button>
-  <button @click="clearLS">Remove local storage</button>
   <br />
-  <a href="http://localhost:1337/connect/microsoft">login</a>
   <p>{{ members }}</p>
 </template>
 

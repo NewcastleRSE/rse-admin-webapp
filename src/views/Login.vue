@@ -1,8 +1,5 @@
 <template>
   <a href="http://localhost:1337/connect/microsoft">login</a>
-  <br />
-  <router-link :to="{ name: 'Dashboard' }">go to dashboard</router-link>
-  <br />
 </template>
 
 <script>
@@ -33,9 +30,11 @@ export default {
         .get(url)
         .then((res) => {
           //this.jwt = res.data.jwt;
+          //this.$store.commit("setAuth", true);
           localStorage.setItem("jwt", res.data.jwt);
           console.log(res.data.jwt);
           router.push({ name: "Dashboard" });
+          // this.$router.replace({name: "Dashboard"})
         })
         .catch((err) => {
           console.log(err);
