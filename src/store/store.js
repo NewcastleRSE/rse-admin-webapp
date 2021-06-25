@@ -1,38 +1,28 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import auth from "./auth";
-import axios from "axios";
+//import axios from "axios";
+import router from "../router/index";
 
-Vue.use(Vuex);
+Vue.use(Vuex).use(router);
 
 export const store = new Vuex.Store({
   state: {
-    token: null,
+    auth: false,
+    jwt: null,
   },
 
   getters: {},
 
   mutations: {
     //sync, updates state
+    setAuth(state, status) {
+      state.auth = status;
+    },
   },
 
   actions: {
     //async, commits mutations
-    login(_, credentials) {
-      console.log(cresentials.accessToken);
-      const url =
-        "http://localhost:1337/auth/microsoft/callback/?access_token=" +
-        credentials.accessToken;
-
-      axios
-        .get(url)
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
   },
 
   modules: {
