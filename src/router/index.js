@@ -34,6 +34,13 @@ const routes = [
     path: "/login",
     name: "Login",
     component: Login,
+    beforeEnter: (to, from, next) => {
+      if (isTokenValid()) {
+        next("/dashboard");
+      } else {
+        next();
+      }
+    },
   },
   {
     path: "/dashboard",

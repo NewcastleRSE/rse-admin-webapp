@@ -23,7 +23,7 @@ export default {
     return {};
   },
   created() {
-    this.$store.dispatch("getters/getMembers");
+    this.$store.dispatch("getters/getMembers", "1");
     this.$store.dispatch("getters/getAssignments");
     this.$store.dispatch("getters/getProjects");
   },

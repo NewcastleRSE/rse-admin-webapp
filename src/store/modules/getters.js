@@ -26,9 +26,9 @@ export default {
 
   actions: {
     //async, commits mutations
-    getMembers({ commit, rootState }) {
+    getMembers({ commit, rootState }, id = "") {
       axios
-        .get("http://localhost:1337/members", {
+        .get(`http://localhost:1337/members/${id}`, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },
@@ -41,9 +41,9 @@ export default {
           console.log(error);
         });
     },
-    getProjects({ commit, rootState }) {
+    getProjects({ commit, rootState }, id = "") {
       axios
-        .get("http://localhost:1337/projects", {
+        .get(`http://localhost:1337/projects/${id}`, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },
@@ -56,9 +56,9 @@ export default {
           console.log(error);
         });
     },
-    getAssignments({ commit, rootState }) {
+    getAssignments({ commit, rootState }, id = "") {
       axios
-        .get("http://localhost:1337/assignments", {
+        .get(`http://localhost:1337/assignments/${id}`, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },
