@@ -1,12 +1,17 @@
 <template>
   <h1>Dashboard</h1>
-  <button class="btn" @click="$store.dispatch('getters/getMembers')">
-    Get Members
-  </button>
-  <br />
-  <p>{{ $store.state.auth.jwt }}</p>
-  <br />
-  <p>{{ $store.state.getters.members }}</p>
+  <div class="container">
+    <h2>Members</h2>
+    <p>{{ $store.state.getters.members }}</p>
+  </div>
+  <div class="container">
+    <h2>Assignments</h2>
+    <p>{{ $store.state.getters.assignments }}</p>
+  </div>
+  <div class="container">
+    <h2>Projects</h2>
+    <p>{{ $store.state.getters.projects }}</p>
+  </div>
 </template>
 
 <script>
@@ -16,6 +21,11 @@ export default {
   name: "dashboard",
   data() {
     return {};
+  },
+  created() {
+    this.$store.dispatch("getters/getMembers");
+    this.$store.dispatch("getters/getAssignments");
+    this.$store.dispatch("getters/getProjects");
   },
   methods: {},
 };
