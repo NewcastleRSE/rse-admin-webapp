@@ -10,11 +10,11 @@
   </div>
   <div class="container">
     <h2>Members</h2>
-    <p>{{ $store.state.getters.members }}</p>
+    <p>{{ $store.state.get.members }}</p>
   </div>
   <div class="container">
     <h2>Assignments</h2>
-    <p>{{ $store.state.getters.assignments }}</p>
+    <p>{{ $store.state.get.assignments }}</p>
   </div>
 </template>
 
@@ -78,8 +78,9 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("getters/getMembers", "1");
-    this.$store.dispatch("getters/getAssignments");
+    this.$store.dispatch("get/getMembers", "1");
+    this.$store.dispatch("get/getAssignments");
+    this.$store.dispatch("get/getProjects");
   },
   methods: {},
 };
