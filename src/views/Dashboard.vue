@@ -31,7 +31,7 @@ export default {
         },
         xAxis: {
           min: Date.UTC(2014, 10, 17),
-          max: Date.UTC(2014, 10, 30),
+          max: Date.UTC(2015, 10, 30),
         },
 
         plotOptions: {
@@ -40,6 +40,29 @@ export default {
               draggableX: true,
             },
           },
+        },
+
+        navigator: {
+          enabled: true,
+          liveRedraw: true,
+          series: {
+            type: "gantt",
+            pointPlacement: 0.5,
+            pointPadding: 0.25,
+          },
+          yAxis: {
+            min: 0,
+            max: 3,
+            reversed: true,
+            categories: [],
+          },
+        },
+        scrollbar: {
+          enabled: true,
+        },
+        rangeSelector: {
+          enabled: true,
+          selected: 0,
         },
 
         series: [

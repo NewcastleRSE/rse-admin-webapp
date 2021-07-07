@@ -19,12 +19,22 @@ export default {
   data() {
     return {
       chartOptions: {
+        // add categories for projects in different stages
         title: {
           text: "Gantt Chart of Projects",
         },
         xAxis: {
           min: Date.UTC(2020, 0, 0),
           max: Date.UTC(2022, 12, 30),
+        },
+        yAxis: {
+          labels: {
+            style: {
+              width: "250px",
+              fontSize: "12px",
+              textOverflow: "none",
+            },
+          },
         },
 
         chart: {
@@ -33,6 +43,29 @@ export default {
               this.showLoading();
             },
           },
+        },
+
+        navigator: {
+          enabled: true,
+          liveRedraw: true,
+          series: {
+            type: "gantt",
+            pointPlacement: 0.5,
+            pointPadding: 0.25,
+          },
+          yAxis: {
+            min: 0,
+            max: 3,
+            reversed: true,
+            categories: [],
+          },
+        },
+        scrollbar: {
+          enabled: true,
+        },
+        rangeSelector: {
+          enabled: true,
+          selected: 0,
         },
 
         series: [
