@@ -34,6 +34,12 @@ export default {
 
   actions: {
     //async, commits mutations
+
+    /*
+    Gets member or members from DB
+    Call with this.$store.dispatch("getters/getMembers", "{id}");
+    Can leave parameter empty and will call all members
+    */
     getMembers({ commit, rootState }, id = "") {
       axios
         .get(`http://localhost:1337/members/${id}`, {
@@ -49,6 +55,11 @@ export default {
         });
     },
 
+    /*
+    Gets projects from HubSpot
+    Call with this.$store.dispatch("getters/getProjects", [stages]);
+    Can leave parameter empty and will call all projects
+    */
     getProjects({ commit, rootState }, stages) {
       commit("resetProjects"); // clears projects because response adds to state
 
@@ -79,6 +90,11 @@ export default {
           });
       });
     },
+
+    /*
+    Gets project by ID from HubSpot
+    Call with this.$store.dispatch("getters/getProject", "{id}}");
+    */
     getProject({ commit, rootState }, id = "") {
       axios
         .get(`http://localhost:1337/projects/${id}`, {
@@ -95,6 +111,11 @@ export default {
         });
     },
 
+    /*
+    Gets assignment or assignments from DB
+    Call with this.$store.dispatch("getters/getAssignments", "{id}");
+    Can leave parameter empty and will call all assignments
+    */
     getAssignments({ commit, rootState }, id = "") {
       axios
         .get(`http://localhost:1337/assignments/${id}`, {

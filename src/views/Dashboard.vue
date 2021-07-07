@@ -1,6 +1,5 @@
 <template>
   <h1>Dashboard</h1>
-  <button @click="showLength">Length</button>
   <div>
     <highcharts
       :constructorType="'ganttChart'"
@@ -16,14 +15,6 @@
   <div class="container">
     <h2>Assignments</h2>
     <p>{{ $store.state.getters.assignments }}</p>
-  </div>
-  <div class="container">
-    <h2>Project</h2>
-    <p>{{ $store.state.getters.project }}</p>
-  </div>
-  <div class="container">
-    <h2>Projects</h2>
-    <p>{{ $store.state.getters.projects }}</p>
   </div>
 </template>
 
@@ -41,6 +32,14 @@ export default {
         xAxis: {
           min: Date.UTC(2014, 10, 17),
           max: Date.UTC(2014, 10, 30),
+        },
+
+        plotOptions: {
+          series: {
+            dragDrop: {
+              draggableX: true,
+            },
+          },
         },
 
         series: [
@@ -81,14 +80,7 @@ export default {
   created() {
     this.$store.dispatch("getters/getMembers", "1");
     this.$store.dispatch("getters/getAssignments");
-    // array passed to getProjects must be max len 3
-    this.$store.dispatch("getters/getProjects");
-    this.$store.dispatch("getters/getProject", "503089324");
   },
-  methods: {
-    showLength() {
-      console.log(this.$store.state.getters.projects.length);
-    },
-  },
+  methods: {},
 };
 </script>
