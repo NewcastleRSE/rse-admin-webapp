@@ -26,6 +26,7 @@ export default {
         xAxis: {
           //   min: Date.UTC(2021, 0, 0),
           //   max: Date.UTC(2022, 0, 0),
+          currentDateIndicator: true,
         },
         yAxis: {
           scrollbar: {
@@ -44,11 +45,19 @@ export default {
           },
           events: {
             load() {
-              //   //this.showLoading();
-              //   this.xAxis[0].setExtremes(
-              //     Date.UTC(2021, 7, 1),
-              //     Date.UTC(2021, 8, 1)
-              //   );
+              //this.showLoading();
+              this.xAxis[0].setExtremes(
+                Date.UTC(
+                  new Date().getFullYear(),
+                  new Date().getMonth() - 3,
+                  new Date().getDate()
+                ),
+                Date.UTC(
+                  new Date().getFullYear(),
+                  new Date().getMonth() + 3,
+                  new Date().getDate()
+                )
+              );
             },
           },
         },
@@ -63,7 +72,7 @@ export default {
           },
           yAxis: {
             min: 0,
-            max: 3,
+            max: 30,
             reversed: true,
             categories: [],
           },

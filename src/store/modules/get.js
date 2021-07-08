@@ -18,10 +18,10 @@ export default {
         ganttItem.name = project.properties.dealname;
         ganttItem.start = Date.parse(project.properties.start_date)
           ? project.properties.start_date
-          : Date.parse("2021-05-04T15:02:42.704Z");
+          : Date.parse("2021-01-01T15:02:42.704Z");
         ganttItem.end = Date.parse(project.properties.end_date)
           ? project.properties.end_date
-          : Date.parse("2021-08-04T15:02:42.704Z");
+          : Date.parse("2021-12-31T15:02:42.704Z");
 
         return ganttItem;
       });
