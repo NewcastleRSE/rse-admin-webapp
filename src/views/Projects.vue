@@ -1,13 +1,13 @@
 <template>
-  <h1>Projects</h1>
-
   <div>
     <highcharts
+      v-if="chartOptions.series[0].data"
       :constructorType="'ganttChart'"
       class="hc"
       :options="chartOptions"
       ref="chart"
     ></highcharts>
+    <h1 v-else>loading icon to be added</h1>
   </div>
 
   <p>{{ $store.getters["get/getProjects"] }}</p>
@@ -21,26 +21,34 @@ export default {
       chartOptions: {
         // add categories for projects in different stages
         title: {
-          text: "Gantt Chart of Projects",
+          text: "Projects",
         },
         xAxis: {
-          min: Date.UTC(2020, 0, 0),
-          max: Date.UTC(2022, 12, 30),
+          //   min: Date.UTC(2021, 0, 0),
+          //   max: Date.UTC(2022, 0, 0),
         },
         yAxis: {
-          labels: {
-            style: {
-              width: "250px",
-              fontSize: "12px",
-              textOverflow: "none",
-            },
+          scrollbar: {
+            //enabled: true,
           },
+          tickLength: 0,
+          //max: 8,
         },
 
         chart: {
+          marginLeft: 250,
+          height: 500,
+          scrollablePlotArea: {
+            minHeight: 3400, // have to make this dynamic
+            opacity: 1,
+          },
           events: {
             load() {
-              this.showLoading();
+              //   //this.showLoading();
+              //   this.xAxis[0].setExtremes(
+              //     Date.UTC(2021, 7, 1),
+              //     Date.UTC(2021, 8, 1)
+              //   );
             },
           },
         },
@@ -60,27 +68,31 @@ export default {
             categories: [],
           },
         },
-        scrollbar: {
-          enabled: true,
-        },
+        // scrollbar: {
+        //   enabled: true,
+        // },
         rangeSelector: {
-          enabled: true,
-          selected: 0,
+          //enabled: true,
+          //   y: -30,
+          //   floating: true,
+          selected: 1,
         },
 
         series: [
           {
-            name: "Projects",
-            data: [],
+            name: "Project",
+            data: null,
           },
         ],
       },
     };
   },
-  created() {
+  async created() {
+    // dual date is broken when data is added after a delay
     this.$store.dispatch("get/getProjects").then(() => {
+      //console.log(this.$store.getters["get/getProjects"][0]);
       this.chartOptions.series[0].data = this.$store.getters["get/getProjects"];
-      this.$refs.chart.chart.hideLoading();
+      //this.$refs.chart.chart.hideLoading();
     });
   },
   methods: {},
