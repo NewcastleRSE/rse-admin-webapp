@@ -1,7 +1,19 @@
 <template>
-  <h1>Projects</h1>
+  <ProjectsGantt />
+
+  <p>{{ $store.getters["get/getProjects"] }}</p>
 </template>
 
 <script>
-export default {};
+import ProjectsGantt from "../components/ProjectsGantt.vue";
+
+export default {
+  name: "projects",
+  components: { ProjectsGantt },
+  data() {
+    return {};
+  },
+
+  methods: {},
+};
 </script>

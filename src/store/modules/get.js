@@ -10,7 +10,26 @@ export default {
     assignments: [],
   },
 
-  getters: {},
+  getters: {
+    getProjects: (state) => {
+      const projects = state.projects.map((project) => {
+        const ganttItem = {};
+
+        ganttItem.name = project.properties.dealname;
+        ganttItem.start = Date.parse(project.properties.start_date)
+          ? project.properties.start_date
+          : Date.parse("2021-01-01T15:02:42.704Z");
+        ganttItem.end = Date.parse(project.properties.end_date)
+          ? project.properties.end_date
+          : Date.parse("2021-12-31T15:02:42.704Z");
+
+        return ganttItem;
+      });
+
+      //console.log(projects);
+      return projects;
+    },
+  },
 
   mutations: {
     //sync, updates state
@@ -22,7 +41,8 @@ export default {
     },
     getProjects(state, projects) {
       //state.projects.push(projects);
-      state.projects = [...state.projects, ...projects];
+      //state.projects = [...state.projects, ...projects];
+      state.projects = projects;
     },
     getProject(state, project) {
       state.project = project;
@@ -59,6 +79,7 @@ export default {
     Gets projects from HubSpot
     Call with this.$store.dispatch("getters/getProjects", [stages]);
     Can leave parameter empty and will call all projects
+    Returns promise so can be used as async function
     */
     getProjects({ commit, rootState }, stages) {
       commit("resetProjects"); // clears projects because response adds to state
@@ -71,23 +92,33 @@ export default {
           "submittedToFunder",
         ];
       }
-      stages.forEach((stage) => {
-        axios
-          .get(`http://localhost:1337/projects/`, {
-            headers: {
-              Authorization: `Bearer ${rootState.auth.jwt}`,
-            },
-            params: {
-              stage: stage,
-            },
-          })
-          .then((response) => {
-            commit("getProjects", response.data);
-            console.log(response.data);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+      let projects = [];
+      let index = 0;
+
+      return new Promise((resolve) => {
+        stages.forEach((stage) => {
+          axios
+            .get(`http://localhost:1337/projects/`, {
+              headers: {
+                Authorization: `Bearer ${rootState.auth.jwt}`,
+              },
+              params: {
+                stage: stage,
+              },
+            })
+            .then((response) => {
+              projects = [...projects, ...response.data]; // adds response to projects variable
+              if (index === stages.length - 1) {
+                // checks if the last stage has been itterated
+                commit("getProjects", projects);
+                //console.log(projects);
+                resolve();
+              } else index++;
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        });
       });
     },
 

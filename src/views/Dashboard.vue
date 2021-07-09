@@ -10,11 +10,11 @@
   </div>
   <div class="container">
     <h2>Members</h2>
-    <p>{{ $store.state.getters.members }}</p>
+    <p>{{ $store.state.get.members }}</p>
   </div>
   <div class="container">
     <h2>Assignments</h2>
-    <p>{{ $store.state.getters.assignments }}</p>
+    <p>{{ $store.state.get.assignments }}</p>
   </div>
 </template>
 
@@ -31,7 +31,7 @@ export default {
         },
         xAxis: {
           min: Date.UTC(2014, 10, 17),
-          max: Date.UTC(2014, 10, 30),
+          max: Date.UTC(2015, 10, 30),
         },
 
         plotOptions: {
@@ -42,35 +42,58 @@ export default {
           },
         },
 
+        navigator: {
+          enabled: true,
+          liveRedraw: true,
+          series: {
+            type: "gantt",
+            pointPlacement: 0.5,
+            pointPadding: 0.25,
+          },
+          yAxis: {
+            min: 0,
+            max: 3,
+            reversed: true,
+            categories: [],
+          },
+        },
+        scrollbar: {
+          enabled: true,
+        },
+        rangeSelector: {
+          enabled: true,
+          selected: 0,
+        },
+
         series: [
           {
             name: "Project 1",
             data: [
-              {
-                name: "Start prototype",
-                start: Date.UTC(2014, 10, 18),
-                end: Date.UTC(2014, 10, 25),
-                completed: 0.25,
-              },
-              {
-                name: "Test prototype",
-                start: Date.UTC(2014, 10, 27),
-                end: Date.UTC(2014, 10, 29),
-              },
-              {
-                name: "Develop",
-                start: Date.UTC(2014, 10, 20),
-                end: Date.UTC(2014, 10, 25),
-                completed: {
-                  amount: 0.12,
-                  fill: "#fa0",
-                },
-              },
-              {
-                name: "Run acceptance tests",
-                start: Date.UTC(2014, 10, 23),
-                end: Date.UTC(2014, 10, 26),
-              },
+              //   {
+              //     name: "Start prototype",
+              //     start: Date.UTC(2014, 10, 18),
+              //     end: Date.UTC(2014, 10, 25),
+              //     completed: 0.25,
+              //   },
+              //   {
+              //     name: "Test prototype",
+              //     start: Date.UTC(2014, 10, 27),
+              //     end: Date.UTC(2014, 10, 29),
+              //   },
+              //   {
+              //     name: "Develop",
+              //     start: Date.UTC(2014, 10, 20),
+              //     end: Date.UTC(2014, 10, 25),
+              //     completed: {
+              //       amount: 0.12,
+              //       fill: "#fa0",
+              //     },
+              //   },
+              //   {
+              //     name: "Run acceptance tests",
+              //     start: Date.UTC(2014, 10, 23),
+              //     end: Date.UTC(2014, 10, 26),
+              //   },
             ],
           },
         ],
@@ -78,8 +101,37 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("getters/getMembers", "1");
-    this.$store.dispatch("getters/getAssignments");
+    this.$store.dispatch("get/getMembers", "1");
+    this.$store.dispatch("get/getAssignments");
+    this.$store.dispatch("get/getProjects");
+
+    this.chartOptions.series[0].data = [
+      {
+        name: "Start prototype",
+        start: Date.UTC(2014, 10, 18),
+        end: Date.UTC(2014, 10, 25),
+        completed: 0.25,
+      },
+      {
+        name: "Test prototype",
+        start: Date.UTC(2014, 10, 27),
+        end: Date.UTC(2014, 10, 29),
+      },
+      {
+        name: "Develop",
+        start: Date.UTC(2014, 10, 20),
+        end: Date.UTC(2014, 10, 25),
+        completed: {
+          amount: 0.12,
+          fill: "#fa0",
+        },
+      },
+      {
+        name: "Run acceptance tests",
+        start: Date.UTC(2014, 10, 23),
+        end: Date.UTC(2014, 10, 26),
+      },
+    ];
   },
   methods: {},
 };
