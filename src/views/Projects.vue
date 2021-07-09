@@ -1,7 +1,7 @@
 <template>
+  <br />
+  <h1>Projects</h1>
   <ProjectsGantt />
-
-  <p>{{ $store.getters["get/getProjects"] }}</p>
 </template>
 
 <script>

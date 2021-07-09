@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="chart">
     <highcharts
       v-if="chartOptions.series[0].data"
       :constructorType="'ganttChart'"
@@ -7,7 +7,7 @@
       :options="chartOptions"
       ref="chart"
     ></highcharts>
-    <h1 v-else>loading icon to be added</h1>
+    <progress v-else class="progress is-small is-primary" max="100"></progress>
   </div>
 </template>
 
@@ -18,9 +18,6 @@ export default {
     return {
       chartOptions: {
         // add categories for projects in different stages
-        title: {
-          text: "Projects",
-        },
         xAxis: {
           //   min: Date.UTC(2021, 0, 0),
           //   max: Date.UTC(2022, 0, 0),
@@ -105,3 +102,10 @@ export default {
   methods: {},
 };
 </script>
+
+<style scoped>
+.chart {
+  width: 80%;
+  border: 3px solid green;
+}
+</style>

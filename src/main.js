@@ -7,6 +7,8 @@ import Draggable from "highcharts/modules/draggable-points";
 import Gantt from "highcharts/modules/gantt";
 //import Stock from "highcharts/modules/stock";
 import HighchartsVue from "highcharts-vue";
+import "./assets/main.scss";
+//require("./assets/main.scss");
 
 Gantt(Highcharts);
 Draggable(Highcharts);
