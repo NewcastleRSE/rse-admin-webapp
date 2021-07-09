@@ -33,7 +33,7 @@ export default {
 
         chart: {
           marginLeft: 250,
-          height: 500,
+          height: "50%", // chart overflows div when trying to change div height
           scrollablePlotArea: {
             minHeight: 3400, // have to make this dynamic
             opacity: 1,
@@ -102,10 +102,3 @@ export default {
   methods: {},
 };
 </script>
-
-<style scoped>
-.chart {
-  width: 80%;
-  border: 3px solid green;
-}
-</style>

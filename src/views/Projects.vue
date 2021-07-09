@@ -1,7 +1,7 @@
 <template>
   <br />
   <h1>Projects</h1>
-  <ProjectsGantt />
+  <ProjectsGantt class="chart" />
 </template>
 
 <script>
@@ -17,3 +17,10 @@ export default {
   methods: {},
 };
 </script>
+
+<style scoped>
+.chart {
+  width: 75%;
+  border: 3px solid green;
+}
+</style>
