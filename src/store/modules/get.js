@@ -3,6 +3,11 @@ import axios from "axios";
 
 export default {
   namespaced: true,
+
+  /*
+  Global Variables
+  Call state with $store.state.{module}.{stateName}
+  */
   state: {
     members: [],
     projects: [],
@@ -16,6 +21,7 @@ export default {
         const ganttItem = {};
 
         ganttItem.name = project.properties.dealname;
+
         ganttItem.start = Date.parse(project.properties.start_date)
           ? project.properties.start_date
           : Date.parse("2021-01-01T15:02:42.704Z");
