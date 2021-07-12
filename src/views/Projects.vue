@@ -1,6 +1,4 @@
 <template>
-  <br />
-  <h1>Projects</h1>
   <ProjectsGantt class="chart" />
 </template>
 
@@ -21,6 +19,5 @@ export default {
 <style scoped>
 .chart {
   width: 75%;
-  border: 3px solid green;
 }
 </style>

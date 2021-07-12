@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="box">
     <highcharts
       v-if="chartOptions.series[0].data"
       :constructorType="'ganttChart'"
@@ -30,9 +30,17 @@ export default {
 
       chartOptions: {
         // add categories for projects in different stages
-        xAxis: {
-          currentDateIndicator: true,
+        title: {
+          text: "Projects",
+          floating: true,
+          align: "left",
         },
+        xAxis: [
+          {
+            currentDateIndicator: true,
+          },
+          {},
+        ],
         yAxis: {},
 
         chart: {

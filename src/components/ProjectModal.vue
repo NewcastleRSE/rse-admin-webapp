@@ -7,20 +7,39 @@
         <button class="delete" aria-label="close" @click="toggleModal"></button>
       </header>
       <section class="modal-card-body">
-        <h2>Will make look better later</h2>
-        <p>Amount: {{ project.amount }}</p>
-        <p>Stage: {{ project.stage }}</p>
-        <p>Faculty: {{ project.faulty }}</p>
-        <p>Finance Contact: {{ project.financeContact }}</p>
-        <p>Funding Body: {{ project.fundingBody }}</p>
-        <p>Project Lead: {{ project.projectLead }}</p>
-        <p>Project Value: {{ project.projectValue }}</p>
-        <p>School: {{ project.school }}</p>
+        <div class="tile is-ancestor is-vertical">
+          <div class="tile is-parent">
+            <div class="tile is-child is-vertical box">
+              <h2 class="subtitle">Finance</h2>
+              <p v-if="project.amount">Amount: £{{ project.amount }}</p>
+              <p v-if="project.financeContact">
+                Finance Contact: {{ project.financeContact }}
+              </p>
+              <p v-if="project.fundingBody">
+                Funding Body: {{ project.fundingBody }}
+              </p>
+              <p v-if="project.projectValue">
+                Project Value: £{{ project.projectValue }}
+              </p>
+              <p></p>
+            </div>
+
+            <div class="tile is-child is-vertical box">
+              <p v-if="project.stage" class="block">
+                Stage: {{ project.stage }}
+              </p>
+              <p v-if="project.faulty">Faculty: {{ project.faulty }}</p>
+              <p v-if="project.projectLead">
+                Project Lead: {{ project.projectLead }}
+              </p>
+              <p v-if="project.school">School: {{ project.school }}</p>
+            </div>
+          </div>
+          <div class="tile is-child">
+            Gantt goes here
+          </div>
+        </div>
       </section>
-      <footer class="modal-card-foot">
-        <button class="button is-success">Save changes</button>
-        <button class="button">Cancel</button>
-      </footer>
     </div>
   </div>
 </template>

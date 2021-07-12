@@ -10,14 +10,24 @@ export default {
   */
   state: {
     members: [],
-    projects: [],
+    projects: [], //check whether loading the projects once when laoding the app is enough or every page switch
     project: {},
     assignments: [],
   },
 
   getters: {
+    /*
+    Maps properties sent from HubSpot
+    */
     getProjects: (state) => {
       const projects = state.projects.map((project) => {
+        const stages = {
+          "Funded Awaiting Allocation": "closedwon",
+          "Not Funded": "closedlost",
+          Allocated: "0fd81f66-7cda-4db7-b2e8-b0114be90ef9",
+          Completed: "09b510b5-6871-4771-ad09-1438ce8e6f11",
+        };
+
         const ganttItem = {};
 
         ganttItem.id = project.properties.hs_object_id;
@@ -31,14 +41,18 @@ export default {
           ? project.properties.end_date
           : Date.parse("2021-12-31T15:02:42.704Z");
 
+        // converts hubspot stage names to english
+        for (const [key, value] of Object.entries(stages)) {
+          if (project.properties.dealstage === value) ganttItem.stage = key;
+        }
+
         ganttItem.amount = project.properties.amount;
-        ganttItem.stage = project.properties.dealstage;
         ganttItem.faculty = project.properties.faculty;
         ganttItem.financeContact = project.properties.finance_contact;
         ganttItem.fundingBody = project.properties.funding_body;
         ganttItem.projectLead = project.properties.project_lead;
         ganttItem.projectValue = project.properties.project_value;
-        ganttItem.school = project.properties.school; // use a loop and use their keys as new key
+        ganttItem.school = project.properties.school;
 
         return ganttItem;
       });
@@ -102,7 +116,7 @@ export default {
     Returns promise so can be used as async function
     */
     getProjects({ commit, rootState }, stages) {
-      commit("resetProjects");
+      //commit("resetProjects");
 
       if (!stages) {
         stages = [
