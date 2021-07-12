@@ -1,5 +1,5 @@
 <template>
-  <div class="chart">
+  <div>
     <highcharts
       v-if="chartOptions.series[0].data"
       :constructorType="'ganttChart'"
@@ -8,28 +8,32 @@
       ref="chart"
     ></highcharts>
     <progress v-else class="progress is-small is-primary" max="100"></progress>
+
+    <ProjectModal
+      v-if="showModal"
+      :project="project"
+      @toggleModal="toggleModal"
+    />
   </div>
 </template>
 
 <script>
+import ProjectModal from "./ProjectModal.vue";
+
 export default {
   name: "ProjectGantt",
+  components: { ProjectModal },
   data() {
     return {
+      showModal: false,
+      project: null,
+
       chartOptions: {
         // add categories for projects in different stages
         xAxis: {
-          //   min: Date.UTC(2021, 0, 0),
-          //   max: Date.UTC(2022, 0, 0),
           currentDateIndicator: true,
         },
-        yAxis: {
-          scrollbar: {
-            //enabled: true,
-          },
-          tickLength: 0,
-          //max: 8,
-        },
+        yAxis: {},
 
         chart: {
           marginLeft: 250,
@@ -40,7 +44,6 @@ export default {
           },
           events: {
             load() {
-              //this.showLoading();
               this.xAxis[0].setExtremes(
                 Date.UTC(
                   new Date().getFullYear(),
@@ -72,19 +75,17 @@ export default {
             categories: [],
           },
         },
-        // scrollbar: {
-        //   enabled: true,
-        // },
-        rangeSelector: {
-          //enabled: true,
-          //   y: -30,
-          //   floating: true,
-          selected: 1,
-        },
 
         series: [
           {
             name: "Project",
+            point: {
+              events: {
+                click: (event) => {
+                  this.toggleModal(event);
+                },
+              },
+            },
             data: null,
           },
         ],
@@ -92,13 +93,18 @@ export default {
     };
   },
   async created() {
-    // dual date is broken when data is added after a delay
     this.$store.dispatch("get/getProjects").then(() => {
-      //console.log(this.$store.getters["get/getProjects"][0]);
       this.chartOptions.series[0].data = this.$store.getters["get/getProjects"];
-      //this.$refs.chart.chart.hideLoading();
     });
   },
-  methods: {},
+  methods: {
+    toggleModal(event) {
+      if (event) {
+        // passes clicked on project to modal
+        this.project = event.point.options;
+      }
+      this.showModal = !this.showModal;
+    },
+  },
 };
 </script>
