@@ -14,6 +14,7 @@ import Assignments from "../views/Assignments";
  * @return true : if the token is not expired
  */
 function isTokenValid() {
+  // move to auth getter so can be used on components (navbar)
   var token = store.state.auth.jwt;
   if (token) {
     var decoded = jwt_decode(token);

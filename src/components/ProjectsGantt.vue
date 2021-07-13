@@ -1,7 +1,7 @@
 <template>
   <div class="box">
     <highcharts
-      v-if="chartOptions.series[0].data"
+      v-if="chartOptions.series[0].data.length > 0"
       :constructorType="'ganttChart'"
       class="hc"
       :options="chartOptions"
@@ -101,9 +101,13 @@ export default {
     };
   },
   async created() {
-    this.$store.dispatch("get/getProjects").then(() => {
-      this.chartOptions.series[0].data = this.$store.getters["get/getProjects"];
-    });
+    // this.$store.dispatch("get/getProjects").then(() => {
+    //   this.chartOptions.series[0].data = this.$store.getters["get/getProjects"];
+    // });
+
+    // loads data to chart if its ready before loading this component,
+    // 'watch' wont load the data if it isnt updated while component is loaded
+    this.chartOptions.series[0].data = this.$store.getters["get/getProjects"];
   },
   methods: {
     toggleModal(event) {
@@ -112,6 +116,18 @@ export default {
         this.project = event.point.options;
       }
       this.showModal = !this.showModal;
+    },
+  },
+  watch: {
+    getProjects(update) {
+      // watches 'getProjects()' to update data in chart
+      this.chartOptions.series[0].data = update;
+    },
+  },
+  computed: {
+    getProjects() {
+      // gets updated value from store
+      return this.$store.getters["get/getProjects"];
     },
   },
 };
