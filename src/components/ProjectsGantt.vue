@@ -38,6 +38,17 @@ export default {
         xAxis: [
           {
             currentDateIndicator: true,
+            plotLines: [
+              {
+                label: "testline",
+                value: Date.UTC(
+                  new Date().getFullYear(),
+                  new Date().getMonth(),
+                  new Date().getDate() + 7
+                ),
+                dashStyle: "ShortDash",
+              },
+            ],
           },
           {},
         ],
@@ -82,6 +93,10 @@ export default {
             reversed: true,
             categories: [],
           },
+        },
+        scrollbar: {
+          enabled: true,
+          trackBackgroundColor: "rgba(230, 230, 230, 0.2)",
         },
 
         series: [
