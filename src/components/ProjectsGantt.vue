@@ -26,10 +26,8 @@ export default {
   data() {
     return {
       showModal: false,
-      project: null,
 
       chartOptions: {
-        // add categories for projects in different stages
         title: {
           text: "Projects",
           floating: true,
@@ -122,7 +120,7 @@ export default {
                 },
               },
             },
-            data: null,
+            data: [],
           },
         ],
       },

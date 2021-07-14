@@ -13,6 +13,7 @@ export default {
   components: { NavBar },
   created() {
     this.$store.dispatch("get/getProjects");
+    this.$store.dispatch("assignments/getAssignments");
   },
 };
 </script>

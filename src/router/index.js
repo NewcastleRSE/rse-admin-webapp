@@ -6,6 +6,7 @@ import Login from "../views/Login";
 import Dashboard from "../views/Dashboard";
 import Projects from "../views/Projects";
 import Assignments from "../views/Assignments";
+import Max from "../views/Max";
 
 /**
  * isTokenValid:
@@ -73,6 +74,18 @@ const routes = [
     path: "/assignments",
     name: "Assignments",
     component: Assignments,
+    beforeEnter: (to, from, next) => {
+      if (!isTokenValid()) {
+        next("/login");
+      } else {
+        next();
+      }
+    },
+  },
+  {
+    path: "/max",
+    name: "Max",
+    component: Max,
     beforeEnter: (to, from, next) => {
       if (!isTokenValid()) {
         next("/login");

@@ -16,6 +16,9 @@
           >Assignments</router-link
         >
       </li>
+      <li :class="currentRouteName === 'Max' ? 'is-active' : ''">
+        <router-link :to="{ name: 'Max' }" tag="button">Max</router-link>
+      </li>
     </ul>
   </div>
 </template>
