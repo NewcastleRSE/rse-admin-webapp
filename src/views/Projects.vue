@@ -1,7 +1,5 @@
 <template>
-  <ProjectsGantt />
-
-  <p>{{ $store.getters["get/getProjects"] }}</p>
+  <ProjectsGantt class="chart" />
 </template>
 
 <script>
@@ -17,3 +15,9 @@ export default {
   methods: {},
 };
 </script>
+
+<style scoped>
+.chart {
+  width: 75%;
+}
+</style>

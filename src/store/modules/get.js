@@ -3,25 +3,56 @@ import axios from "axios";
 
 export default {
   namespaced: true,
+
+  /*
+  Global Variables
+  Call state with $store.state.{module}.{stateName}
+  */
   state: {
     members: [],
-    projects: [],
+    projects: [], //check whether loading the projects once when laoding the app is enough or every page switch
     project: {},
     assignments: [],
   },
 
   getters: {
+    /*
+    Maps properties sent from HubSpot
+    */
     getProjects: (state) => {
       const projects = state.projects.map((project) => {
+        const stages = {
+          "Funded Awaiting Allocation": "closedwon",
+          "Not Funded": "closedlost",
+          Allocated: "0fd81f66-7cda-4db7-b2e8-b0114be90ef9",
+          Completed: "09b510b5-6871-4771-ad09-1438ce8e6f11",
+        };
+
         const ganttItem = {};
 
+        ganttItem.id = project.properties.hs_object_id;
+
         ganttItem.name = project.properties.dealname;
+
         ganttItem.start = Date.parse(project.properties.start_date)
           ? project.properties.start_date
           : Date.parse("2021-01-01T15:02:42.704Z");
         ganttItem.end = Date.parse(project.properties.end_date)
           ? project.properties.end_date
           : Date.parse("2021-12-31T15:02:42.704Z");
+
+        // converts hubspot stage names to english
+        for (const [key, value] of Object.entries(stages)) {
+          if (project.properties.dealstage === value) ganttItem.stage = key;
+        }
+
+        ganttItem.amount = project.properties.amount;
+        ganttItem.faculty = project.properties.faculty;
+        ganttItem.financeContact = project.properties.finance_contact;
+        ganttItem.fundingBody = project.properties.funding_body;
+        ganttItem.projectLead = project.properties.project_lead;
+        ganttItem.projectValue = project.properties.project_value;
+        ganttItem.school = project.properties.school;
 
         return ganttItem;
       });
@@ -38,6 +69,9 @@ export default {
     },
     resetProjects(state) {
       state.projects = [];
+    },
+    resetProject(state) {
+      state.project = [];
     },
     getProjects(state, projects) {
       //state.projects.push(projects);
@@ -57,7 +91,7 @@ export default {
 
     /*
     Gets member or members from DB
-    Call with this.$store.dispatch("getters/getMembers", "{id}");
+    Call with this.$store.dispatch("get/getMembers", "{id}");
     Can leave parameter empty and will call all members
     */
     getMembers({ commit, rootState }, id = "") {
@@ -77,12 +111,12 @@ export default {
 
     /*
     Gets projects from HubSpot
-    Call with this.$store.dispatch("getters/getProjects", [stages]);
+    Call with this.$store.dispatch("get/getProjects", [stages]);
     Can leave parameter empty and will call all projects
     Returns promise so can be used as async function
     */
     getProjects({ commit, rootState }, stages) {
-      commit("resetProjects"); // clears projects because response adds to state
+      //commit("resetProjects");
 
       if (!stages) {
         stages = [
@@ -111,7 +145,7 @@ export default {
               if (index === stages.length - 1) {
                 // checks if the last stage has been itterated
                 commit("getProjects", projects);
-                //console.log(projects);
+                console.log(projects);
                 resolve();
               } else index++;
             })
@@ -124,9 +158,11 @@ export default {
 
     /*
     Gets project by ID from HubSpot
-    Call with this.$store.dispatch("getters/getProject", "{id}}");
+    Call with this.$store.dispatch("get/getProject", "{id}}");
     */
     getProject({ commit, rootState }, id = "") {
+      commit("resetProject");
+
       axios
         .get(`http://localhost:1337/projects/${id}`, {
           headers: {
@@ -144,7 +180,7 @@ export default {
 
     /*
     Gets assignment or assignments from DB
-    Call with this.$store.dispatch("getters/getAssignments", "{id}");
+    Call with this.$store.dispatch("get/getAssignments", "{id}");
     Can leave parameter empty and will call all assignments
     */
     getAssignments({ commit, rootState }, id = "") {
