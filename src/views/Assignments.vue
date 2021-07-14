@@ -14,9 +14,7 @@
     </div>
     <div>
       <form v-on:submit.prevent="onSubmit" id = "dialogue" class = "openDialogue">
-        <label for="prjName">name </label><br>
-        <input type="text" id="prjName" name="prjName" v-model="prjName" disabled><br>
-
+        <p ref="prjName" id="prjName">{{prjName}}</p>
         <label for="start">Start date</label><br>
         <input type="date" id="start" name="start" v-model="start"><br>
 
@@ -58,7 +56,6 @@ export default {
       projects.forEach( (project) => {
         btns  += `<button id='${project.name}' class='btn'> ${project.name} </button>`;
       })
-      console.log(btns);
       this.unallocationPrjs =  `<div> ${btns} </div>`;
       return this.unallocationPrjs;
     })
@@ -80,9 +77,13 @@ export default {
         {name: this.user,
         start: Date.UTC(start[0], start[1], start[2]),
         end: Date.UTC(end[0], end[1], end[2]),
+        project: document.getElementById('prjName').innerHTML
         })
       document.getElementById("dialogue").style.visibility = "hidden";
       alert("Added!");
+      this.start = "";
+      this.end = "";
+      this.user = "";
     },
 
     /*
@@ -103,6 +104,33 @@ export default {
       })
       alert("Removed!")
     },
+
+    save() {
+      if (this.isArrayEqual(this.tempSeries, this.chartOptions.series[0].data)) {
+        alert("No changes were made");
+      } else {
+        this.updateHubspot();
+        this.updateStrapi();
+      }
+    },
+
+    /**
+     * updateHubspot(): This will update the 
+     */
+    updateHubspot() {
+      console.log("TODO")
+    },
+
+    isArrayEqual(a, b) {
+      if (a === b) return true; // checks type
+      if (a == null || b == null) return false;
+      if (a.length !== b.length) return false;
+
+      for (var i = 0; i < a.length; ++i) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    },
   },
 
   data() {
@@ -120,6 +148,8 @@ export default {
       end: null,
 
       members: [],
+
+      tempSeries: [],
 
       user: null,
 
@@ -140,14 +170,14 @@ export default {
                 draggableY: true,
             
             },
-            /*dataLabels: {
+            dataLabels: {
                 enabled: true,
-                format: '{point.name}',
+                format: '{point.project}',
                 style: {
                     cursor: 'default',
                     pointerEvents: 'none'
                 }
-            },*/
+            },
             allowPointSelect: true,
            
             }
@@ -189,6 +219,7 @@ export default {
     var assignments = this.$store.state.get.assignments;
     var members = [];
     var dictAssignments = [];
+    console.log(assignments);
     assignments.forEach( (assign) => {
       var startDate = new Date(assign.startDate);
       var endDate = new Date(assign.endDate);
@@ -196,21 +227,24 @@ export default {
           start: Date.UTC(startDate.getUTCFullYear(), startDate.getUTCMonth(), startDate.getUTCDate()),
           end: Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth(), endDate.getUTCDate()),
           name: assign.member.firstname + " " + assign.member.surname,
+          project: assign.project.name,
         
       });
       members.push(assign.member.firstname + " " + assign.member.surname);
       })
-      this.chartOptions.series[0].data = dictAssignments
+      this.chartOptions.series[0].data = dictAssignments;
+      this.tempSeries = dictAssignments;
       this.members = members;    
   },
 
   updated() {
     var dialogue  = document.getElementById("dialogue");
     var btns = document.getElementsByClassName('btn');
-    console.log(btns.length)
     btns.forEach( (btn) => {
       btn.addEventListener("click", function() {
         dialogue.style.visibility = "visible";
+        this.prjName = btn.id;
+        document.getElementById('prjName').innerHTML = btn.id;
       })
     })
  
