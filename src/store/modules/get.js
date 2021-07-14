@@ -20,14 +20,14 @@ export default {
     Maps properties sent from HubSpot
     */
     getProjects: (state) => {
-      const projects = state.projects.map((project) => {
-        const stages = {
-          "Funded Awaiting Allocation": "closedwon",
-          "Not Funded": "closedlost",
-          Allocated: "0fd81f66-7cda-4db7-b2e8-b0114be90ef9",
-          Completed: "09b510b5-6871-4771-ad09-1438ce8e6f11",
-        };
+      const stages = [
+        ["Funded Awaiting Allocation", "closedwon"],
+        ["Not Funded", "closedlost"],
+        ["Allocated", "0fd81f66-7cda-4db7-b2e8-b0114be90ef9"],
+        ["Completed", "09b510b5-6871-4771-ad09-1438ce8e6f11"],
+      ];
 
+      const projects = state.projects.map((project) => {
         const ganttItem = {};
 
         ganttItem.id = project.properties.hs_object_id;
@@ -36,15 +36,16 @@ export default {
 
         ganttItem.start = Date.parse(project.properties.start_date)
           ? project.properties.start_date
-          : Date.parse("2020-01-01T15:02:42.704Z");
+          : Date.parse("2020-01-01");
         ganttItem.end = Date.parse(project.properties.end_date)
           ? project.properties.end_date
-          : Date.parse("2022-12-31T15:02:42.704Z");
+          : Date.parse("2022-12-31");
 
         // converts hubspot stage names to english
-        for (const [key, value] of Object.entries(stages)) {
-          if (project.properties.dealstage === value) ganttItem.stage = key;
-        }
+        stages.forEach((stage) => {
+          if (project.properties.dealstage === stage[1])
+            ganttItem.stage = stage[0];
+        });
 
         ganttItem.amount = project.properties.amount;
         ganttItem.faculty = project.properties.faculty;

@@ -54,6 +54,26 @@ export default {
         ],
         yAxis: {},
 
+        tooltip: {
+          followPointer: true,
+          formatter: function() {
+            return (
+              "<b>" +
+              this.point.name +
+              "</b>" +
+              "<br/>Stage: " +
+              this.point.stage +
+              "<br/>Amount: £" +
+              this.point.amount +
+              "<br/>" +
+              "<br/>Start: " +
+              Date(this.point.start) +
+              "<br/>End: " +
+              this.point.end
+            );
+          },
+        },
+
         chart: {
           marginLeft: 250,
           height: "50%", // chart overflows div when trying to change div height
@@ -82,16 +102,9 @@ export default {
         navigator: {
           enabled: true,
           liveRedraw: true,
-          series: {
-            type: "gantt",
-            pointPlacement: 0.5,
-            pointPadding: 0.25,
-          },
           yAxis: {
             min: 0,
             max: 30,
-            reversed: true,
-            categories: [],
           },
         },
         scrollbar: {
@@ -122,7 +135,7 @@ export default {
 
     // loads data to chart if its ready before loading this component,
     // 'watch' wont load the data if it isnt updated while component is loaded
-    this.chartOptions.series[0].data = this.$store.getters["get/getProjects"];
+    this.chartOptions.series[0].data = this.getProjects;
   },
   methods: {
     toggleModal(event) {
@@ -133,16 +146,17 @@ export default {
       this.showModal = !this.showModal;
     },
   },
-  watch: {
-    getProjects(update) {
-      // watches 'getProjects()' to update data in chart
-      this.chartOptions.series[0].data = update;
-    },
-  },
   computed: {
     getProjects() {
       // gets updated value from store
       return this.$store.getters["get/getProjects"];
+    },
+  },
+  watch: {
+    getProjects(update) {
+      // watches 'getProjects()' to update data in chart
+      this.chartOptions.series[0].data = update;
+      console.log(this.chartOptions.xAxis[0].min);
     },
   },
 };

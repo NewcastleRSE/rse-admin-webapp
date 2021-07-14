@@ -101,9 +101,9 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("get/getMembers", "1");
-    this.$store.dispatch("get/getAssignments");
-    this.$store.dispatch("get/getProjects");
+    // this.$store.dispatch("get/getMembers", "1");
+    // this.$store.dispatch("get/getAssignments");
+    // this.$store.dispatch("get/getProjects");
 
     this.chartOptions.series[0].data = [
       {
