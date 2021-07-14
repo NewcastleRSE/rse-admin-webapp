@@ -55,6 +55,8 @@ export default {
         tooltip: {
           followPointer: true,
           formatter: function() {
+            var start = new Date(this.point.start);
+            var end  = new Date(this.point.end);
             return (
               "<b>" +
               this.point.name +
@@ -65,9 +67,9 @@ export default {
               this.point.amount +
               "<br/>" +
               "<br/>Start: " +
-              Date(this.point.start) +
+              start.toDateString() +
               "<br/>End: " +
-              this.point.end
+              end.toDateString()
             );
           },
         },
