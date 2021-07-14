@@ -14,18 +14,18 @@
         max="100"
       ></progress>
     </div>
-    <div class="box column ">
-      <AssignmentsCard />
+    <div class="column ">
+      <ProjectsCard />
     </div>
   </div>
 </template>
 
 <script>
-import AssignmentsCard from "./AssignmentsCard.vue";
+import ProjectsCard from "./ProjectsCard.vue";
 
 export default {
   name: "AssignmentGantt",
-  components: { AssignmentsCard },
+  components: { ProjectsCard },
   data() {
     return {
       chartOptions: {

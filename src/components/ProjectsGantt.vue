@@ -130,7 +130,6 @@ export default {
     // this.$store.dispatch("get/getProjects").then(() => {
     //   this.chartOptions.series[0].data = this.$store.getters["get/getProjects"];
     // });
-
     // loads data to chart if its ready before loading this component,
     // 'watch' wont load the data if it isnt updated while component is loaded
     this.chartOptions.series[0].data = this.getProjects;
@@ -154,7 +153,6 @@ export default {
     getProjects(update) {
       // watches 'getProjects()' to update data in chart
       this.chartOptions.series[0].data = update;
-      console.log(this.chartOptions.xAxis[0].min);
     },
   },
 };
