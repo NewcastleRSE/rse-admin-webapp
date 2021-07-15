@@ -13,21 +13,33 @@
         class="progress is-small is-primary"
         max="100"
       ></progress>
+      <button @click="deleteAssignments" class="button is-primary">
+        Delete Selected
+      </button>
     </div>
     <div class="column ">
-      <ProjectsCard />
+      <ProjectsCard @toggleModal="toggleModal" />
     </div>
   </div>
+  <Modal
+    v-if="showModal"
+    :project="projectForModal"
+    @toggleModal="toggleModal"
+  />
 </template>
 
 <script>
 import ProjectsCard from "./ProjectsCard.vue";
+import Modal from "./AssignmentsFormModal.vue";
 
 export default {
   name: "AssignmentGantt",
-  components: { ProjectsCard },
+  components: { ProjectsCard, Modal },
   data() {
     return {
+      showModal: false,
+      projectForModal: null,
+
       chartOptions: {
         title: {
           text: "Assignments",
@@ -38,6 +50,7 @@ export default {
         xAxis: {
           currentDateIndicator: true,
         },
+        yAxis: {},
 
         plotOptions: {
           series: {
@@ -61,19 +74,20 @@ export default {
         navigator: {
           enabled: true,
           liveRedraw: true,
+          adaptToUpdatedData: false,
           yAxis: {
             min: 0,
-            max: 30,
+            max: 10,
           },
         },
         scrollbar: {
           enabled: true,
           trackBackgroundColor: "rgba(230, 230, 230, 0.2)",
         },
-        rangeSelector: {
-          enabled: true,
-          selected: 0,
-        },
+        // rangeSelector: {
+        //   enabled: true,
+        //   selected: 0,
+        // },
 
         series: [
           {
@@ -87,6 +101,25 @@ export default {
   created() {
     this.chartOptions.series[0].data = this.getAssignments;
   },
+
+  methods: {
+    toggleModal(project) {
+      if (project) {
+        this.projectForModal = project;
+      }
+      this.showModal = !this.showModal;
+    },
+
+    addAssignment(assignment) {
+      this.chartOptions.series[0].data.push(assignment);
+      // need to add createAssignment call to DB
+    },
+
+    deleteAssignments() {
+      console.log("delete");
+    },
+  },
+
   computed: {
     getAssignments() {
       // gets updated value from store
@@ -95,7 +128,7 @@ export default {
   },
   watch: {
     getAssignments(update) {
-      // watches 'getProjects()' to update data in chart
+      // watches 'getAssignments()' to update data in chart
       this.chartOptions.series[0].data = update;
     },
   },
