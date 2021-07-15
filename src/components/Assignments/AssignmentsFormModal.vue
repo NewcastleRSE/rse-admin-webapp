@@ -31,9 +31,10 @@
             <div class="select">
               <select class="select is-info" id="select" v-model="user">
                 <option disabled value="">Please select one</option>
-                <option v-for="member in members" v-bind:key="member">{{
+                <option v-for="member in members" :id=member.id v-bind:key="member">{{
                   member.firstname + " " + member.surname
-                }}</option>
+                }}
+                </option>
               </select>
             </div>
           </div>
@@ -72,8 +73,10 @@ export default {
     },
 
     addAssignment() {
+      var drop = document.getElementById("select");
+      var id  = drop.options[drop.selectedIndex].id;
       const assignment = {
-        member: this.user.id,
+        member: id,
         startDate: new Date(this.start), // convert UTC time to Date // might have to use new Date in variable before obj
         endDate: this.end,
         project: this.project.id,
