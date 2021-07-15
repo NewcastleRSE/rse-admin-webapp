@@ -92,6 +92,7 @@ export default {
         series: [
           {
             name: "Assignment",
+            allowPointSelect: true,
             data: [],
           },
         ],
@@ -111,12 +112,17 @@ export default {
     },
 
     addAssignment(assignment) {
-      this.chartOptions.series[0].data.push(assignment);
+      this.chartOptions.series[0].data.push(assignment); // should push only after added to db
       // need to add createAssignment call to DB
     },
 
     deleteAssignments() {
       console.log("delete");
+
+      var points = this.$refs.chart.chart.getSelectedPoints();
+      points.forEach((point) => {
+        point.remove();
+      });
     },
   },
 
