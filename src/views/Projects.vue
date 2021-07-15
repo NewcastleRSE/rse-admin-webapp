@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import ProjectsGantt from "../components/ProjectsGantt.vue";
+import ProjectsGantt from "../components/Projects/ProjectsGantt.vue";
 
 export default {
   name: "projects",

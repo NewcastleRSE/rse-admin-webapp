@@ -79,7 +79,7 @@ export default {
 
     /*
     Gets projects from HubSpot
-    Call with this.$store.dispatch("get/getProjects", [stages]);
+    Call with this.$store.dispatch("projects/getProjects", [stages]);
     Can leave parameter empty and will call all projects
     Returns promise so can be used as async function
     */
@@ -129,7 +129,7 @@ export default {
     Call with this.$store.dispatch("get/getProject", "{id}}");
     */
     getProject({ commit, rootState }, id = "") {
-      commit("resetProject");
+      //commit("resetProject");
 
       axios
         .get(`http://localhost:1337/projects/${id}`, {

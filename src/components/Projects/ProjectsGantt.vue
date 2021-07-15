@@ -130,9 +130,6 @@ export default {
     };
   },
   async created() {
-    // this.$store.dispatch("get/getProjects").then(() => {
-    //   this.chartOptions.series[0].data = this.$store.getters["get/getProjects"];
-    // });
     // loads data to chart if its ready before loading this component,
     // 'watch' wont load the data if it isnt updated while component is loaded
     this.chartOptions.series[0].data = this.getProjects;
@@ -149,7 +146,7 @@ export default {
   computed: {
     getProjects() {
       // gets updated value from store
-      return this.$store.getters["get/getProjects"];
+      return this.$store.getters["get/getProjects"]; // even when projects is identical to get, dont work
     },
   },
   watch: {

@@ -68,10 +68,10 @@ export default {
     },
     /*
     Creates an assignment and adds it to the DB
-    Call with this.$store.dispatch("assignments/getAssignments", "{id}");
+    Call with this.$store.dispatch("assignments/createAssignment", assignment);
     Can leave parameter empty and will call all assignments
     */
-    createAssignment({ commit, rootState }, assignment) {
+    createAssignment({ rootState }, assignment) {
       axios
         .post(`http://localhost:1337/assignments/`, assignment, {
           headers: {
@@ -79,8 +79,8 @@ export default {
           },
         })
         .then((response) => {
-          commit("getAssignments", response.data);
           console.log(response.data);
+          // add assignment to store or call all assignment again
         })
         .catch((error) => {
           console.log(error);

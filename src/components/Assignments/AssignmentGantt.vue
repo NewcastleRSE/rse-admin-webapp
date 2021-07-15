@@ -108,8 +108,8 @@ export default {
     },
 
     addAssignment(assignment) {
-      let chart = this.chartOptions.series[0].data;
-      chart.push(assignment);
+      this.chartOptions.series[0].data.push(assignment);
+      // need to add createAssignment call to DB
     },
   },
 
@@ -121,7 +121,7 @@ export default {
   },
   watch: {
     getAssignments(update) {
-      // watches 'getProjects()' to update data in chart
+      // watches 'getAssignments()' to update data in chart
       this.chartOptions.series[0].data = update;
     },
   },
