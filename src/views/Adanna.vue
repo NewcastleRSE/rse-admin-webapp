@@ -119,12 +119,14 @@ export default {
       var start = this.start.split("-");
       var end = this.end.split("-");
       var chart = this.chartOptions.series[0].data;
-      chart.push(
-        {name: this.user,
+      var prj = {name: this.user,
         start: Date.UTC(start[0], start[1], start[2]),
         end: Date.UTC(end[0], end[1], end[2]),
         project: document.getElementById('prjName').innerHTML
-        })
+        }
+      chart.push(prj)
+      this.newAssignments.push(prj);
+      console.log(this.newAssignments);
       document.getElementById("dialogue").style.visibility = "hidden";
       alert("Added!");
       this.start = "";
@@ -147,6 +149,8 @@ export default {
       var points = this.$refs.chart.chart.getSelectedPoints();
       points.forEach((point) => {
         point.remove();
+        console.log(this.oldAssignments);
+        this.oldAssignments.push(point);
       })
       alert("Removed!")
     },
@@ -185,6 +189,10 @@ export default {
   
     return {
       
+      oldAssignments: [],
+
+      newAssignments: [],
+
       unallocationPrjs: this.unassignedPrjBtns(),
 
       prjName: "",
