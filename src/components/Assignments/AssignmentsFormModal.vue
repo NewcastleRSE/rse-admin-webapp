@@ -61,10 +61,10 @@ export default {
 
     addAssignment() {
       const assignment = {
-        member: this.user,
-        start: new Date(this.start), // convert UTC time to Date // might have to use new Date in variable before obj
-        end: this.end,
-        project: this.project,
+        member: this.user.id,
+        startDate: new Date(this.start), // convert UTC time to Date // might have to use new Date in variable before obj
+        endDate: this.end,
+        project: this.project.id,
       };
 
       console.log(assignment);
