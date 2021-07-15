@@ -48,12 +48,32 @@ export default {
   actions: {
     /*
     Gets assignment or assignments from DB
-    Call with this.$store.dispatch("get/getAssignments", "{id}");
+    Call with this.$store.dispatch("assignments/getAssignments", "{id}");
     Can leave parameter empty and will call all assignments
     */
     getAssignments({ commit, rootState }, id = "") {
       axios
         .get(`http://localhost:1337/assignments/${id}`, {
+          headers: {
+            Authorization: `Bearer ${rootState.auth.jwt}`,
+          },
+        })
+        .then((response) => {
+          commit("getAssignments", response.data);
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    /*
+    Creates an assignment and adds it to the DB
+    Call with this.$store.dispatch("assignments/getAssignments", "{id}");
+    Can leave parameter empty and will call all assignments
+    */
+    createAssignment({ commit, rootState }, assignment) {
+      axios
+        .post(`http://localhost:1337/assignments/`, assignment, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },

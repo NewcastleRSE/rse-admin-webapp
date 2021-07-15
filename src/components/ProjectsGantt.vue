@@ -11,7 +11,7 @@
 
     <ProjectModal
       v-if="showModal"
-      :project="project"
+      :project="projectForModal"
       @toggleModal="toggleModal"
     />
   </div>
@@ -26,6 +26,7 @@ export default {
   data() {
     return {
       showModal: false,
+      projectForModal: null,
 
       chartOptions: {
         title: {
@@ -56,7 +57,7 @@ export default {
           followPointer: true,
           formatter: function() {
             var start = new Date(this.point.start);
-            var end  = new Date(this.point.end);
+            var end = new Date(this.point.end);
             return (
               "<b>" +
               this.point.name +
@@ -140,7 +141,7 @@ export default {
     toggleModal(event) {
       if (event) {
         // passes clicked on project to modal
-        this.project = event.point.options;
+        this.projectForModal = event.point.options;
       }
       this.showModal = !this.showModal;
     },

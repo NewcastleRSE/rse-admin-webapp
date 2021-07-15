@@ -14,6 +14,7 @@ export default {
   created() {
     this.$store.dispatch("get/getProjects");
     this.$store.dispatch("assignments/getAssignments");
+    this.$store.dispatch("members/getMembers");
   },
 };
 </script>

@@ -10,7 +10,7 @@
         <!-- Inside of modal starts here -->
         <div class="tile is-ancestor is-vertical">
           <div class="tile is-parent top-of-modal">
-            <div class="tile is-child is-3 box">
+            <div class="tile is-child is-5 box">
               <h2 class="subtitle">Finance</h2>
               <p v-if="project.amount">Amount: £{{ project.amount }}</p>
               <p v-if="project.financeContact">
@@ -25,7 +25,7 @@
               <p></p>
             </div>
 
-            <div class="tile is-child is-3 box">
+            <div class="tile is-child is-5 box">
               <p v-if="project.stage" class="block">
                 Stage: {{ project.stage }}
               </p>

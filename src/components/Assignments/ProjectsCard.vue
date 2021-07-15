@@ -3,7 +3,14 @@
     <h3 class="panel-heading">Projects Card</h3>
     <ul>
       <li v-if="projects">
-        <p v-for="project in projects" v-bind:key="project">{{project.name}}</p>
+        <a
+          v-for="project in projects"
+          v-bind:key="project"
+          @click="toggleModal(project)"
+          class="panel-block"
+        >
+          {{ project.name }}
+        </a>
       </li>
       <li v-else>else</li>
     </ul>
@@ -18,6 +25,12 @@ export default {
       projects: null,
       members: [],
     };
+  },
+
+  methods: {
+    toggleModal(project) {
+      this.$emit("toggleModal", project);
+    },
   },
 
   created() {
