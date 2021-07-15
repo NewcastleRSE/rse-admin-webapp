@@ -19,6 +19,9 @@
       <li :class="currentRouteName === 'Max' ? 'is-active' : ''">
         <router-link :to="{ name: 'Max' }" tag="button">Max</router-link>
       </li>
+      <li :class="currentRouteName === 'Adanna' ? 'is-active' : ''">
+        <router-link :to="{ name: 'Adanna' }" tag="button">Adanna</router-link>
+      </li>
     </ul>
   </div>
 </template>
