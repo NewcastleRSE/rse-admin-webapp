@@ -13,6 +13,9 @@
         class="progress is-small is-primary"
         max="100"
       ></progress>
+      <button @click="deleteAssignments" class="button is-primary">
+        Delete Selected
+      </button>
     </div>
     <div class="column ">
       <ProjectsCard @toggleModal="toggleModal" />
@@ -110,6 +113,10 @@ export default {
     addAssignment(assignment) {
       this.chartOptions.series[0].data.push(assignment);
       // need to add createAssignment call to DB
+    },
+
+    deleteAssignments() {
+      console.log("delete");
     },
   },
 
