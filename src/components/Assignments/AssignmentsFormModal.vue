@@ -2,44 +2,55 @@
   <div class="modal is-active">
     <div class="modal-background"></div>
     <div class="modal-card">
+
+      <form v-on:submit.prevent="onSubmit"> 
       <header class="modal-card-head">
         <p class="modal-card-title">Create Assignment For {{ project.name }}</p>
         <button class="delete" aria-label="close" @click="toggleModal"></button>
       </header>
-
-      <section class="modal-card-body">
         <!-- Inside of modal starts here -->
-        <div>
-          <form
-            v-on:submit.prevent="onSubmit"
-            id="dialogue"
-            class="openDialogue"
-          >
-            <!-- Example of using project properties -->
-            <p ref="prjName" id="prjName">{{ project.name }}</p>
-            <!-- Example of using project properties -->
-            <label for="start">Start date</label><br />
-            <input type="date" id="start" name="start" v-model="start" /><br />
+        
+          <section class="modal-card-body">
+          <div classclass="field">
+            <label class="label" for="start">Start date</label>
+            <div class="control">
+              <input class="input is-info" type="date" id="start" name="start" v-model="start"/>
+            </div>
+          </div>
+            
+          <div class="field">
+            <label class="label" for="end">End date</label>
+            <div class="control">
+              <input class="input is-info" type="date" id="end" name="end" v-model="end"/>
+            </div>
+          </div>
 
-            <label for="end">End date</label><br />
-            <input type="date" id="end" name="end" v-model="end" /><br />
+          <div class="field">
+          <label class="label">User</label>
+          <div class="control">
+            <div class="select">
+              <select class="select is-info" id="select" v-model="user">
+                <option disabled value="">Please select one</option>
+                <option v-for="member in members" v-bind:key="member">{{
+                  member.firstname + " " + member.surname
+                }}</option>
+              </select>
+            </div>
+          </div>
+          </div>
+          </section>
 
-            <br />
-            <select id="select" v-model="user">
-              <option disabled value="">Please select one</option>
-              <option v-for="member in members" v-bind:key="member">{{
-                member
-              }}</option>
-            </select>
-
-            <br />
-
-            <input type="submit" value="Add" @click="addAssignment" />
-            <input type="button" value="Cancel" @click="cancel()" />
-          </form>
-        </div>
-        <!-- Inside of modal ends here -->
-      </section>
+        <footer class="modal-card-foot">
+            <div class="field is-grouped">
+            <div class="control">
+              <button class="button is-link" @click="addAssignment">Submit</button>
+            </div>
+            <div class="control">
+              <button class="button is-link is-light" >Cancel</button>
+            </div>
+            </div>
+        </footer>
+        </form>
     </div>
   </div>
 </template>
@@ -48,10 +59,11 @@
 export default {
   name: "AssignmentsFormModal",
   props: ["project"],
+
   data() {
     return { members: null, start: null, end: null, user: null };
   },
-  create() {
+  created() {
     this.members = this.$store.state.members.members;
   },
   methods: {
