@@ -159,9 +159,9 @@ export default {
     addAssignment(assignment) {
       //console.log(assignment);
 
-      //this.chartOptions.series[0].data.push(assignment);
+      this.chartOptions.series[0].data.push(assignment);
 
-      this.$store.commit("assignments/addAssignment", assignment);
+      //this.$store.commit("assignments/addAssignment", assignment);
 
       this.edited = true;
     },
