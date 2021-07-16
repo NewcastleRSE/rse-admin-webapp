@@ -52,6 +52,7 @@
                     v-for="member in members"
                     :id="member.id"
                     v-bind:key="member"
+                    v-bind:value="member.id"
                     >{{ member.firstname + " " + member.surname }}
                   </option>
                 </select>
@@ -68,7 +69,9 @@
               </button>
             </div>
             <div class="control">
-              <button class="button is-link is-light">Cancel</button>
+              <button class="button is-link is-light" @click="test">
+                Cancel
+              </button>
             </div>
           </div>
         </footer>
@@ -94,17 +97,18 @@ export default {
     },
 
     addAssignment() {
-      var drop = document.getElementById("select");
-      var id = drop.options[drop.selectedIndex].id;
-      console.log("key: " + this.user.key);
       const assignment = {
-        member: id,
+        member: this.user,
         startDate: new Date(this.start), // convert UTC time to Date // might have to use new Date in variable before obj
         endDate: this.end,
         project: this.project.id,
       };
+      //console.log(assignment);
+      this.$emit("addAssignment", assignment);
+    },
 
-      console.log(assignment);
+    test() {
+      this.$emit("test");
     },
   },
 };

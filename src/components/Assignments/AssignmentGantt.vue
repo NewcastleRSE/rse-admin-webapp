@@ -18,7 +18,11 @@
       </button>
     </div>
     <div class="column ">
-      <ProjectsCard @toggleModal="toggleModal" />
+      <ProjectsCard
+        @toggleModal="toggleModal"
+        @addAssignment="addAssignment"
+        @test="test"
+      />
     </div>
   </div>
   <Modal
@@ -112,8 +116,14 @@ export default {
     },
 
     addAssignment(assignment) {
-      this.chartOptions.series[0].data.push(assignment); // should push only after added to db
+      console.log(assignment);
+      //this.chartOptions.series[0].data.push(assignment); // should push only after added to db
       // need to add createAssignment call to DB
+      //this.$store.dispatch("assignments/createAssignment", assignment);
+    },
+
+    test() {
+      console.log("test");
     },
 
     deleteAssignments() {

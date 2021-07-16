@@ -43,6 +43,9 @@ export default {
     getAssignments(state, assignments) {
       state.assignments = assignments;
     },
+    addAssignment: (state, assignment) => {
+      state.assignments = [...state.assignments, ...assignment];
+    },
   },
 
   actions: {
@@ -71,8 +74,8 @@ export default {
     Call with this.$store.dispatch("assignments/createAssignment", assignment);
     Can leave parameter empty and will call all assignments
     */
-    createAssignment({ rootState }, assignment) {
-      axios
+    addAssignment({ commit, rootState }, assignment) {
+      return axios
         .post(`http://localhost:1337/assignments/`, assignment, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
@@ -80,7 +83,7 @@ export default {
         })
         .then((response) => {
           console.log(response.data);
-          // add assignment to store or call all assignment again
+          commit("addAssignment", response.data);
         })
         .catch((error) => {
           console.log(error);
