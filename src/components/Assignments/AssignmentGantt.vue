@@ -16,19 +16,20 @@
       <button @click="deleteAssignments" class="button is-primary">
         Delete Selected
       </button>
+      <button @click="save" class="button is-primary">
+        Save
+      </button>
     </div>
     <div class="column ">
-      <ProjectsCard
-        @toggleModal="toggleModal"
-        @addAssignment="addAssignment"
-        @test="test"
-      />
+      <ProjectsCard @toggle-modal="toggleModal" />
     </div>
   </div>
   <Modal
     v-if="showModal"
     :project="projectForModal"
     @toggleModal="toggleModal"
+    @add-assignment="addAssignment"
+    @test="test"
   />
 </template>
 
@@ -39,10 +40,17 @@ import Modal from "./AssignmentsFormModal.vue";
 export default {
   name: "AssignmentGantt",
   components: { ProjectsCard, Modal },
+
   data() {
     return {
       showModal: false,
       projectForModal: null,
+      edited: false,
+      savedAssignments: [],
+      members: [
+        { id: 1, name: "Mark" },
+        { id: 4, name: "Max" },
+      ],
 
       chartOptions: {
         title: {
@@ -51,10 +59,41 @@ export default {
           align: "left",
         },
 
-        xAxis: {
-          currentDateIndicator: true,
+        xAxis: [
+          {
+            currentDateIndicator: true,
+          },
+          {},
+        ],
+        yAxis: {
+          //   categories: [
+          //     { id: 1, name: "Mark", y: 1 },
+          //     { id: 2, name: "Max", y: 2 },
+          //     { id: 3, name: "Three", y: 3 },
+          //     { id: 4, name: "Four", y: 4 },
+          //   ],
+          //categories: [],
+          //type: "category",
+          labels: {
+            // formatter: () => {
+            //   return this.members.find((member) => member.id === 4).name;
+            // },
+            // formatter: function() {
+            //   let members = [
+            //     { id: 1, name: "One" },
+            //     { id: 2, name: "Two" },
+            //     { id: 3, name: "Three" },
+            //     { id: 4, name: "four" },
+            //   ];
+            //   console.log(members);
+            //   console.log(this.value);
+            //   //return members.find((member) => member.id === this.value).name;
+            //   return members.find(function(member) {
+            //     member.id === this.value;
+            //   }).name;
+            // },
+          },
         },
-        yAxis: {},
 
         plotOptions: {
           series: {
@@ -105,10 +144,12 @@ export default {
   },
   created() {
     this.chartOptions.series[0].data = this.getAssignments;
+    this.savedAssignments = this.getAssignments;
   },
 
   methods: {
     toggleModal(project) {
+      console.log("i am here");
       if (project) {
         this.projectForModal = project;
       }
@@ -116,14 +157,21 @@ export default {
     },
 
     addAssignment(assignment) {
-      console.log(assignment);
-      //this.chartOptions.series[0].data.push(assignment); // should push only after added to db
-      // need to add createAssignment call to DB
-      //this.$store.dispatch("assignments/createAssignment", assignment);
+      //console.log(assignment);
+
+      //this.chartOptions.series[0].data.push(assignment);
+
+      this.$store.commit("assignments/addAssignment", assignment);
+
+      this.edited = true;
     },
 
     test() {
-      console.log("test");
+      console.log("after emit");
+    },
+
+    save() {
+      console.log("save");
     },
 
     deleteAssignments() {
@@ -141,11 +189,21 @@ export default {
       // gets updated value from store
       return this.$store.getters["assignments/getAssignments"];
     },
+    getMembers() {
+      return this.$store.state.members.members;
+    },
   },
   watch: {
     getAssignments(update) {
       // watches 'getAssignments()' to update data in chart
       this.chartOptions.series[0].data = update;
+    },
+    getMembers(update) {
+      console.log(update);
+      //   update.forEach((member) => {
+      //     this.chartOptions.yAxis.categories.push(member.id);
+      //   });
+      //this.chartOptions.yAxis.categories = update;
     },
   },
 };

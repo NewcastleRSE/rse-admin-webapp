@@ -84,6 +84,7 @@
 export default {
   name: "AssignmentsFormModal",
   props: ["project"],
+  emits: ["toggleModal", "addAssignment", "test"],
 
   data() {
     return { members: null, start: null, end: null, user: null };
@@ -108,6 +109,7 @@ export default {
     },
 
     test() {
+      console.log("before emit");
       this.$emit("test");
     },
   },

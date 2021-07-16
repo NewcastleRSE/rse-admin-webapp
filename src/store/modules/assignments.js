@@ -24,6 +24,9 @@ export default {
 
         ganttItem.name =
           assignment.member.firstname + assignment.member.surname;
+        //ganttItem.y = assignment.member.id;
+
+        //ganttItem.name = assignment.member.id;
 
         ganttItem.start = Date.parse(assignment.startDate);
 
@@ -44,7 +47,8 @@ export default {
       state.assignments = assignments;
     },
     addAssignment: (state, assignment) => {
-      state.assignments = [...state.assignments, ...assignment];
+      console.log(assignment);
+      state.assignments = [...state.assignments, assignment];
     },
   },
 
