@@ -20,13 +20,9 @@ export default {
       const assignments = state.assignments.map((assignment) => {
         const ganttItem = {};
 
-        ganttItem.id = assignment.id;
+        //ganttItem.id = assignment.id;
 
-        ganttItem.name =
-          assignment.member.firstname + assignment.member.surname;
-        //ganttItem.y = assignment.member.id;
-
-        //ganttItem.name = assignment.member.id;
+        ganttItem.name = assignment.member.id.toString();
 
         ganttItem.start = Date.parse(assignment.startDate);
 
@@ -37,7 +33,6 @@ export default {
         return ganttItem;
       });
 
-      //console.log(projects);
       return assignments;
     },
   },

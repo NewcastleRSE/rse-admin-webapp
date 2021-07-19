@@ -69,7 +69,7 @@
               </button>
             </div>
             <div class="control">
-              <button class="button is-link is-light" @click="test">
+              <button class="button is-link is-light">
                 Cancel
               </button>
             </div>
@@ -84,7 +84,7 @@
 export default {
   name: "AssignmentsFormModal",
   props: ["project"],
-  emits: ["toggleModal", "addAssignment", "test"],
+  emits: ["toggleModal", "addAssignment"],
 
   data() {
     return { members: null, start: null, end: null, user: null };
@@ -104,13 +104,9 @@ export default {
         endDate: this.end,
         project: this.project.id,
       };
-      //console.log(assignment);
+      console.log(assignment);
       this.$emit("addAssignment", assignment);
-    },
-
-    test() {
-      console.log("before emit");
-      this.$emit("test");
+      this.toggleModal();
     },
   },
 };
