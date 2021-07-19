@@ -74,7 +74,10 @@ export default {
     },
 
     deleteAssignments() {
-      console.log("delete");
+      if (!this.edited) {
+        this.savedAssignments = this.assignments;
+        this.edited = true;
+      }
 
       var points = this.$refs.chart.chart.getSelectedPoints();
       points.forEach((point) => {
@@ -86,6 +89,8 @@ export default {
       console.log(this.savedAssignments);
       console.log(this.assignments);
       console.log(this.getNewItems(this.savedAssignments, this.assignments));
+
+      this.edited = false;
     },
 
     /**
