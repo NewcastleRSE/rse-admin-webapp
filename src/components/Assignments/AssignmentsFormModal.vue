@@ -98,13 +98,18 @@ export default {
     },
 
     addAssignment() {
+      // var start = this.start.split("-");
+      // var end = this.end.split("-");
+      // startDate: Date.UTC(start[0], start[1], start[2]),
+      //   endDate: Date.UTC(end[0], end[1], end[2])
+
       const assignment = {
-        member: this.user,
-        startDate: new Date(this.start), // convert UTC time to Date // might have to use new Date in variable before obj
+        member: { id: this.user },
+        startDate: this.start,
         endDate: this.end,
-        project: this.project.id,
+        project: { id: this.project.id },
       };
-      console.log(assignment);
+      //console.log(assignment);
       this.$emit("addAssignment", assignment);
       this.toggleModal();
     },

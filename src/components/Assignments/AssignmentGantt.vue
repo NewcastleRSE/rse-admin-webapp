@@ -16,7 +16,7 @@
       <button @click="deleteAssignments" class="button is-primary">
         Delete Selected
       </button>
-      <button @click="save" class="button is-primary">
+      <button :disabled="!edited" @click="save" class="button is-primary">
         Save
       </button>
     </div>
@@ -47,18 +47,17 @@ export default {
       edited: false,
       savedAssignments: [],
       members: [],
-      data: [],
+      assignments: [],
     };
   },
   created() {
-    this.data = this.getAssignments;
-    this.members = this.getMembers;
+    this.assignments = this.getAssignments;
     this.savedAssignments = this.getAssignments;
+    this.members = this.getMembers;
   },
 
   methods: {
     toggleModal(project) {
-      console.log("i am here");
       if (project) {
         this.projectForModal = project;
       }
@@ -66,17 +65,12 @@ export default {
     },
 
     addAssignment(assignment) {
-      //console.log(assignment);
+      if (!this.edited) {
+        this.savedAssignments = this.assignments;
+        this.edited = true;
+      }
 
-      this.chartOptions.series[0].data.push(assignment);
-
-      //this.$store.commit("assignments/addAssignment", assignment);
-
-      this.edited = true;
-    },
-
-    save() {
-      console.log("save");
+      this.$store.commit("assignments/addAssignment", assignment);
     },
 
     deleteAssignments() {
@@ -86,6 +80,76 @@ export default {
       points.forEach((point) => {
         point.remove();
       });
+    },
+
+    save() {
+      console.log(this.savedAssignments);
+      console.log(this.assignments);
+      console.log(this.getNewItems(this.savedAssignments, this.assignments));
+    },
+
+    /**
+     * getNewItems():
+     * All assignments dictionaries which are in currentAssignments
+     * however not in tempAssignements
+     * @returns dictionary
+     */
+    getNewItems(savedAssignments, notSavedAssignments) {
+      return this.difference(notSavedAssignments, savedAssignments);
+    },
+
+    /**
+     * getDeletedItems():
+     * All assignments dictionaries which are in tempAssignments
+     * however not in currentAssignements
+     * @returns dictionary
+     */
+    getDeletedItems(savedAssignments, notSavedAssignments) {
+      return this.difference(savedAssignments, notSavedAssignments);
+    },
+
+    /**
+     * compareDictionary(): This will compare two dictionaries
+     * @param {dictionary} a
+     * @param {dictionary} b
+     * @returns boolean
+     */
+    compareDictionary(a, b) {
+      if (JSON.stringify(a) === JSON.stringify(b)) {
+        return true;
+      }
+      return false;
+    },
+
+    /**
+     * difference(): This would returns the difference of two dictionaries
+     * @param {dictionary} a
+     * @param {dictionary} b
+     * @returns dictionary
+     */
+    difference(a, b) {
+      var items = [];
+      for (var idx in a) {
+        var temp = a[idx];
+        var notFound = true;
+        for (var idx1 in b) {
+          var current = b[idx1];
+          if (temp.name === current.name) {
+            // if they have the same name
+            notFound = false;
+            if (!this.compareDictionary(current, temp)) {
+              // compare dictionary
+              items.push(temp);
+            }
+            break;
+          }
+        }
+        if (notFound) {
+          // if temp not found in currentAssignments delete
+          items.push(temp);
+        }
+      }
+      return items;
     },
   },
 
@@ -99,7 +163,7 @@ export default {
     },
 
     chartOptions() {
-      let data = this.data;
+      let assignments = this.assignments;
       let members = this.members;
 
       return {
@@ -176,7 +240,7 @@ export default {
           {
             name: "Assignment",
             allowPointSelect: true,
-            data: data,
+            data: assignments,
           },
         ],
       };
@@ -185,7 +249,7 @@ export default {
   watch: {
     getAssignments(update) {
       // watches 'getAssignments()' to update data in chart
-      this.data = update;
+      this.assignments = update;
     },
     getMembers(update) {
       this.members = update;
