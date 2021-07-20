@@ -142,12 +142,10 @@ export default {
           if (temp.name === current.name)  { // checking does not have an assignie
             // if they have the same name
             notFound = false;
-            if (temp.projectId == current.projectId && !temp.mutlipleFlag, !current.multipleFlag) {
+            // checks for flags
+            let multipleFlags = (temp.projectId == current.projectId && Boolean(temp.multipleFlag && current.multipleFlag) != true);
+            if (multipleFlags || temp.projectId != current.projectId ) {
               if (!this.compareDictionary(current, temp)) {
-                // compare dictionary
-                console.log("here")
-                console.log(temp)
-                console.log(current)
                 items.push(temp);
               }
             }
