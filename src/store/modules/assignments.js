@@ -28,7 +28,7 @@ export default {
 
         ganttItem.end = Date.parse(assignment.endDate);
 
-        ganttItem.projectId = assignment.project.id;
+        ganttItem.projectId = assignment.projectId;
 
         return ganttItem;
       });
@@ -42,7 +42,6 @@ export default {
       state.assignments = assignments;
     },
     addAssignment: (state, assignment) => {
-      console.log(assignment);
       state.assignments = [...state.assignments, assignment];
     },
   },
@@ -70,7 +69,7 @@ export default {
     },
     /*
     Creates an assignment and adds it to the DB
-    Call with this.$store.dispatch("assignments/createAssignment", assignment);
+    Call with this.$store.dispatch("assignments/addAssignment", assignment);
     Can leave parameter empty and will call all assignments
     */
     addAssignment({ commit, rootState }, assignment) {

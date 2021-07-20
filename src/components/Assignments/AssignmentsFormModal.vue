@@ -107,8 +107,10 @@ export default {
         member: { id: this.user },
         startDate: this.start,
         endDate: this.end,
-        project: { id: this.project.id },
+        projectId: this.project.id,
       };
+
+      this.$store.dispatch("assignments/addAssignment", assignment);
       //console.log(assignment);
       this.$emit("addAssignment", assignment);
       this.toggleModal();
