@@ -35,7 +35,6 @@ export default {
       this.$emit("toggleModal", project);
     },
     filter(name = null) {
-      this.$store.dispatch("projects/getProjects");
       this.filterProjects = [];
       let projects = this.$store.getters["projects/getProjects"];
       if (name) {

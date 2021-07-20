@@ -139,12 +139,17 @@ export default {
         var notFound = true;
         for (var idx1 in b) {
           var current = b[idx1];
-          if (temp.name === current.name) {
+          if (temp.name === current.name)  { // checking does not have an assignie
             // if they have the same name
             notFound = false;
-            if (!this.compareDictionary(current, temp)) {
-              // compare dictionary
-              items.push(temp);
+            if (temp.projectId == current.projectId && !temp.mutlipleFlag, !current.multipleFlag) {
+              if (!this.compareDictionary(current, temp)) {
+                // compare dictionary
+                console.log("here")
+                console.log(temp)
+                console.log(current)
+                items.push(temp);
+              }
             }
             break;
           }
@@ -161,7 +166,20 @@ export default {
   computed: {
     getAssignments() {
       // gets updated value from store
-      return this.$store.getters["assignments/getAssignments"];
+      let assignments = this.$store.getters["assignments/getAssignments"];
+      for (var idx in assignments) {
+        let assignment = assignments[idx];
+        for (var idx1 in assignments) {
+          let assignment1 = assignments[idx1];
+          //console.log(assignment.projectId == assignment1.projectId)
+          if (idx != idx1 && assignment.name === assignment1.name && assignment.projectId == assignment1.projectId) {
+            console.log(assignment.projectId, assignment1.projectId)
+            assignment1.multipleFlag = true;
+          }
+        }
+      }
+      console.log(assignments)
+      return assignments;
     },
     getMembers() {
       return this.$store.state.members.members;
