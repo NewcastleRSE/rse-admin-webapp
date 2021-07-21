@@ -1,6 +1,6 @@
 <template>
-  <div class="panel" style="overflow: scroll">
-    <h3 class="panel-heading">Projects Card</h3>
+  <div class="panel has-background-primary-light" style="overflow: scroll">
+    <h3 class="panel-heading has-background-primary-light">Projects Card</h3>
     <p class="panel-tabs">
       <a class="is-active" @click="filter()">All</a>
       <a @click="filter('Funded Awaiting Allocation')">Unallocated</a>
@@ -8,13 +8,17 @@
     </p>
     <ul>
       <li v-if="filterProjects">
-        <a
+        <p
           v-for="project in filterProjects"
           v-bind:key="project"
           @click="toggleModal(project)"
-          class="panel-block">
-          {{ project.name }}
-        </a>
+          class="box m-2" style="font-size: 0.8em">
+          <a class="has-text-link">{{ project.name }}</a>
+          <br>
+          <small v-if="project.amount"><span style="font-weight: bold;"> Amount: </span>{{ project.amount}}</small>
+          <br>
+          <small v-if="project.amount"><span style="font-weight: bold;"> Faculty: </span>{{ project.faculty}}</small>
+        </p>
       </li>
       <li v-else>else</li>
     </ul>
