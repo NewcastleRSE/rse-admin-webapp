@@ -20,7 +20,7 @@
         Save
       </button>
     </div>
-    <div class="column ">
+    <div class="column">
       <ProjectsCard @toggle-modal="toggleModal" />
     </div>
   </div>
@@ -325,4 +325,3 @@ export default {
 };
 </script>
 
-<style scoped></style>

@@ -1,7 +1,10 @@
 <template>
-  <div class="has-background-primary-light">
+  <div class="columns">
+   
     <NavBar />
+    <div class = "column">
     <router-view></router-view>
+    </div>
   </div>
 </template>
 
@@ -25,5 +28,6 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  background: linear-gradient(180deg, #65C392 40%, #5ac8fa 40%);
 }
 </style>

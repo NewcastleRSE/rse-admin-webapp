@@ -1,6 +1,10 @@
 <template>
-  <div class="routes tabs is-centered">
-    <ul>
+    
+    <aside class="menu column is-2 has-background-white">
+    <p class="menu-label ">
+      General
+    </p>
+    <ul class="menu-list">
       <li :class="currentRouteName === 'Dashboard' ? 'is-active' : ''">
         <router-link :to="{ name: 'Dashboard' }" tag="button"
           >Dashboard</router-link
@@ -11,6 +15,11 @@
           >Projects</router-link
         >
       </li>
+    </ul>
+    <p class="menu-label">
+      Administration
+    </p>
+    <ul class="menu-list">
       <li :class="currentRouteName === 'Assignmets' ? 'is-active' : ''">
         <router-link :to="{ name: 'Assignments' }" tag="button"
           >Assignments</router-link
@@ -19,11 +28,8 @@
       <li :class="currentRouteName === 'Max' ? 'is-active' : ''">
         <router-link :to="{ name: 'Max' }" tag="button">Max</router-link>
       </li>
-      <li :class="currentRouteName === 'Adanna' ? 'is-active' : ''">
-        <router-link :to="{ name: 'Adanna' }" tag="button">Adanna</router-link>
-      </li>
     </ul>
-  </div>
+  </aside>
 </template>
 
 <script>
