@@ -36,7 +36,7 @@ export default {
     },
     filter(name = null) {
       this.filterProjects = [];
-      let projects = this.$store.getters["projects/getProjects"];
+      let projects = this.projects;
       if (name) {
         for (let idx in projects) {
           let project = projects[idx];
