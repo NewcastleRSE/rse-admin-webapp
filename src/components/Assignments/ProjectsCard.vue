@@ -1,5 +1,5 @@
 <template>
-  <div class="panel has-background-primary-light" style="overflow: scroll">
+  <div class="panel has-background-primary-light">
     <h3 class="panel-heading has-background-primary-light">Projects Card</h3>
     <p class="panel-tabs">
       <a class="is-active" @click="filter()">All</a>
@@ -7,7 +7,7 @@
       <a @click="filter('Allocated')">Allocated</a>
     </p>
     <ul>
-      <li v-if="filterProjects">
+      <li style="height: 340px; overflow: scroll"  v-if="filterProjects">
         <p
           v-for="project in filterProjects"
           v-bind:key="project"

@@ -215,11 +215,7 @@ export default {
         overlapMembers[Number(assignment.name)] = {"series" : seriesKey, 
                                                   "data": dataKey };
       }
-      
-      //console.log(series)
-      //console.log(overlapMembers);
-      //console.log(assignments);
-      
+
       return series;
     },
     getMembers() {

@@ -17,6 +17,11 @@
           >Assignments</router-link
         >
       </li>
+      <li :class="currentRouteName === 'User' ? 'is-active' : ''">
+        <router-link :to="{ name: 'User' }" tag="button">
+           User 
+        </router-link>
+      </li>
     </ul>
   </div>
  
