@@ -17,7 +17,7 @@
             <p class="title">Middle tile</p>
             <p class="subtitle">With an image</p>
             <figure class="image is-4by3">
-              <img src="https://bulma.io/images/placeholders/640x480.png">
+              <img alt="bulma" src="https://bulma.io/images/placeholders/640x480.png">
             </figure>
           </article>
         </div>
@@ -44,17 +44,7 @@
       </article>
     </div>
   </div>
-  <!--<h1>Dashboard</h1>
-  <br />
-  <div class="container">
-    <h2>Members</h2>
-    <p>{{ $store.state.members.members }}</p>
-  </div>
-  <br />
-  <div class="container">
-    <h2>Assignments</h2>
-    <p>{{ $store.state.assignments.assignments }}</p>
-  </div>-->
+
 </template>
 
 <script>
@@ -63,7 +53,7 @@ export default {
   data() {
     return {};
   },
-  created() {},
+  //created() {},
 
   methods: {},
 };
