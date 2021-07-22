@@ -20,7 +20,7 @@
         Save
       </button>
     </div>
-    <div class="column ">
+    <div class="column">
       <ProjectsCard @toggle-modal="toggleModal" />
     </div>
   </div>
@@ -86,11 +86,19 @@ export default {
     },
 
     save() {
-      console.log(this.savedAssignments);
-      console.log(this.assignments);
-      console.log(this.getNewItems(this.savedAssignments, this.assignments));
+      let savedAssignments = this.convertToSingleDictionary(this.savedAssignments);
+      let assignments = this.convertToSingleDictionary(this.assignments);
+      console.log(this.getNewItems(savedAssignments, assignments));
 
       this.edited = false;
+    },
+
+    convertToSingleDictionary(dict) {
+      let data = [];
+      dict.forEach((el) => {
+        data = data.concat(el.data);
+      })
+      return data;
     },
 
     /**
@@ -139,12 +147,15 @@ export default {
         var notFound = true;
         for (var idx1 in b) {
           var current = b[idx1];
-          if (temp.name === current.name) {
+          if (temp.name === current.name)  { // checking does not have an assignie
             // if they have the same name
             notFound = false;
-            if (!this.compareDictionary(current, temp)) {
-              // compare dictionary
-              items.push(temp);
+            // checks for flags
+            let multipleFlags = (temp.projectId == current.projectId && Boolean(temp.multipleFlag && current.multipleFlag) != true);
+            if (multipleFlags || temp.projectId != current.projectId ) {
+              if (!this.compareDictionary(current, temp)) {
+                items.push(temp);
+              }
             }
             break;
           }
@@ -161,7 +172,51 @@ export default {
   computed: {
     getAssignments() {
       // gets updated value from store
-      return this.$store.getters["assignments/getAssignments"];
+      let assignments = this.$store.getters["assignments/getAssignments"];
+      let series = [
+         {name: "",
+         type: "gantt",
+         allowPointSelect: true,
+         data: []}
+      ]
+      let overlapMembers = [] // keeps tracks of the last overlap for each member
+      for (var idx in assignments) {
+        let assignment = assignments[idx];
+        for (var idx1 in assignments) {
+          let assignment1 = assignments[idx1];
+         
+          if (idx != idx1) {
+            if (assignment.name === assignment1.name && assignment.projectId == assignment1.projectId) {
+              assignment1.multipleFlag = true;
+            } 
+            }
+        }
+        
+        // This section is focusing on overlaping members
+        if (!overlapMembers[Number(assignment.name)]) {
+          overlapMembers[Number(assignment.name)] = {"series" : 0, "data": 0 };
+        }
+        let key = overlapMembers[Number(assignment.name)];
+        let seriesKey = key.series;
+        let dataKey = key.data;
+        let dataLength = null;
+        let temp = series[seriesKey].data[dataKey];
+        if (temp) {
+          if (temp.name === assignment.name && (assignment.start <= temp.end) && (temp.start <= assignment.end)) { // overlap
+            seriesKey++ // add too another assignment
+          }
+          if (!series[seriesKey]) { // if series is null
+            series[seriesKey] = {name: "", type: "gantt", allowPointSelect: true, data: []};
+          }
+          
+        }
+        dataLength = series[seriesKey].data.push(assignment);
+        dataKey = dataLength - 1;
+        overlapMembers[Number(assignment.name)] = {"series" : seriesKey, 
+                                                  "data": dataKey };
+      }
+
+      return series;
     },
     getMembers() {
       return this.$store.state.members.members;
@@ -172,6 +227,12 @@ export default {
       let members = this.members;
 
       return {
+
+        chart : {
+          type: "grantt",
+          height: 375,
+        },
+        
         title: {
           text: "Assignments",
           floating: true,
@@ -181,11 +242,13 @@ export default {
         xAxis: [
           {
             currentDateIndicator: true,
+            
           },
           {},
         ],
         yAxis: {
           uniqueNames: true,
+          //max: 7,
 
           labels: {
             formatter: (label) => {
@@ -206,6 +269,7 @@ export default {
 
         plotOptions: {
           series: {
+            pointWidth: 18,
             animation: false, // Do not animate dependency connectors
             dragDrop: {
               draggableX: true,
@@ -241,13 +305,7 @@ export default {
         //   selected: 0,
         // },
 
-        series: [
-          {
-            name: "Assignment",
-            allowPointSelect: true,
-            data: assignments,
-          },
-        ],
+        series: assignments,
       };
     },
   },
@@ -263,4 +321,3 @@ export default {
 };
 </script>
 
-<style scoped></style>

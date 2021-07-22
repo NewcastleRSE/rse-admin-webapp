@@ -1,16 +1,20 @@
 <template>
-  <div class="has-background-primary-light">
+  
+  <MenuBar />
+  <div class="columns">
     <NavBar />
+    <div class = "container column is-9">
     <router-view></router-view>
+    </div>
   </div>
 </template>
 
 <script>
 import NavBar from "./components/NavBar.vue";
-
+import MenuBar from "./components/MenuBar.vue";
 export default {
   name: "App",
-  components: { NavBar },
+  components: { NavBar, MenuBar },
   created() {
     this.$store.dispatch("get/getProjects");
     this.$store.dispatch("assignments/getAssignments");
@@ -26,4 +30,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
+
+
 </style>

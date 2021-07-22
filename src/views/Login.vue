@@ -1,5 +1,5 @@
 <template>
-  <a href="http://localhost:1337/connect/microsoft">login</a>
+  <a  href="http://localhost:1337/connect/microsoft">login</a>
 </template>
 
 <script>
@@ -21,3 +21,9 @@ export default {
   methods: {},
 };
 </script>
+
+<style scoped>
+body {
+  background: rgb(0, 148, 126);
+}
+</style>

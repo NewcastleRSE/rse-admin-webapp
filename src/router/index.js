@@ -6,8 +6,8 @@ import Login from "../views/Login";
 import Dashboard from "../views/Dashboard";
 import Projects from "../views/Projects";
 import Assignments from "../views/Assignments";
+import User from "../views/User";
 import Max from "../views/Max";
-import Adanna from "../views/Adanna";
 
 /**
  * isTokenValid:
@@ -95,9 +95,9 @@ const routes = [{
         },
     },
     {
-        path: "/adanna",
-        name: "Adanna",
-        component: Adanna,
+        path: "/user",
+        name: "User",
+        component: User,
         beforeEnter: (to, from, next) => {
             if (!isTokenValid()) {
                 next("/login");
@@ -105,7 +105,7 @@ const routes = [{
                 next();
             }
         },
-    },
+    }
 ];
 
 const router = createRouter({
