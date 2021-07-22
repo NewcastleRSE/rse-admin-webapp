@@ -2,7 +2,7 @@
   <div class="columns">
     <div class="box column is-four-fifths">
       <highcharts
-        v-if="chartOptions.series[0].data.length > 0"
+        v-if="assignments.length > 0"
         :constructorType="'ganttChart'"
         class="hc"
         :options="chartOptions"
@@ -16,7 +16,7 @@
       <button @click="deleteAssignments" class="button is-primary">
         Delete Selected
       </button>
-      <button :disabled="!edited" @click="save" class="button is-primary">
+      <button @click="save" class="button is-primary">
         Save
       </button>
     </div>
@@ -33,8 +33,12 @@
 </template>
 
 <script>
+//:disabled="!edited"
 import ProjectsCard from "./ProjectsCard.vue";
 import Modal from "./AssignmentsFormModal.vue";
+
+import differenceWith from "lodash.differencewith";
+import isEqual from "lodash.isequal";
 
 export default {
   name: "AssignmentGantt",
@@ -67,7 +71,6 @@ export default {
 
     addAssignment(assignment) {
       if (!this.edited) {
-        this.savedAssignments = this.assignments;
         this.edited = true;
       }
 
@@ -76,32 +79,31 @@ export default {
 
     deleteAssignments() {
       if (!this.edited) {
-        this.savedAssignments = this.assignments;
         this.edited = true;
       }
 
       var points = this.$refs.chart.chart.getSelectedPoints();
       points.forEach((point) => {
-        point.remove();
+        //point.remove();
+        console.log(point.id);
+        this.$store.commit("assignments/deleteAssignment", point.id);
       });
     },
 
     save() {
-      let savedAssignments = this.convertToSingleDictionary(
-        this.savedAssignments
-      );
-      let assignments = this.convertToSingleDictionary(this.assignments);
-      console.log(this.getNewItems(savedAssignments, assignments));
+      let savedAssignments = this.$store.getters[
+        "assignments/getSavedAssignments"
+      ];
+      let notSavedAssignments = this.$store.getters[
+        "assignments/getAssignments"
+      ];
 
+      console.log(this.getNewItems(savedAssignments, notSavedAssignments));
+      console.log(this.getDeletedItems(savedAssignments, notSavedAssignments));
+
+      // save current assignments to savedAssignments
+      this.$store.commit("assignments/saveAssignments"); // other logic needs to be added for axios
       this.edited = false;
-    },
-
-    convertToSingleDictionary(dict) {
-      let data = [];
-      dict.forEach((el) => {
-        data = data.concat(el.data);
-      });
-      return data;
     },
 
     /**
@@ -111,7 +113,7 @@ export default {
      * @returns dictionary
      */
     getNewItems(savedAssignments, notSavedAssignments) {
-      return this.difference(notSavedAssignments, savedAssignments);
+      return differenceWith(notSavedAssignments, savedAssignments, isEqual);
     },
 
     /**
@@ -121,57 +123,7 @@ export default {
      * @returns dictionary
      */
     getDeletedItems(savedAssignments, notSavedAssignments) {
-      return this.difference(savedAssignments, notSavedAssignments);
-    },
-
-    /**
-     * compareDictionary(): This will compare two dictionaries
-     * @param {dictionary} a
-     * @param {dictionary} b
-     * @returns boolean
-     */
-    compareDictionary(a, b) {
-      if (JSON.stringify(a) === JSON.stringify(b)) {
-        return true;
-      }
-      return false;
-    },
-
-    /**
-     * difference(): This would returns the difference of two dictionaries
-     * @param {dictionary} a
-     * @param {dictionary} b
-     * @returns dictionary
-     */
-    difference(a, b) {
-      var items = [];
-      for (var idx in a) {
-        var temp = a[idx];
-        var notFound = true;
-        for (var idx1 in b) {
-          var current = b[idx1];
-          if (temp.name === current.name) {
-            // checking does not have an assignie
-            // if they have the same name
-            notFound = false;
-            // checks for flags
-            let multipleFlags =
-              temp.projectId == current.projectId &&
-              Boolean(temp.multipleFlag && current.multipleFlag) != true;
-            if (multipleFlags || temp.projectId != current.projectId) {
-              if (!this.compareDictionary(current, temp)) {
-                items.push(temp);
-              }
-            }
-            break;
-          }
-        }
-        if (notFound) {
-          // if temp not found in currentAssignments delete
-          items.push(temp);
-        }
-      }
-      return items;
+      return differenceWith(savedAssignments, notSavedAssignments, isEqual);
     },
   },
 
@@ -235,6 +187,8 @@ export default {
       }
 
       return series;
+
+      //return this.$store.getters["assignments/getAssignments"];
     },
     getMembers() {
       return this.$store.state.members.members;
@@ -247,8 +201,8 @@ export default {
 
       return {
         chart: {
-          type: "grantt",
-          height: 375,
+          type: "gantt",
+          //height: 375,
         },
 
         title: {
@@ -353,6 +307,14 @@ export default {
         //   enabled: true,
         //   selected: 0,
         // },
+
+        // series: [
+        //   {
+        //     name: "Assignment",
+        //     allowPointSelect: true,
+        //     data: assignments,
+        //   },
+        // ],
 
         series: assignments,
       };

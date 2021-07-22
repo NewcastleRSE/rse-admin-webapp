@@ -10,6 +10,7 @@ export default {
   */
   state: {
     assignments: [],
+    savedAssignments: [],
   },
 
   getters: {
@@ -20,7 +21,26 @@ export default {
       const assignments = state.assignments.map((assignment) => {
         const ganttItem = {};
 
-        //ganttItem.id = assignment.id;
+        ganttItem.id = assignment.id;
+
+        ganttItem.name = assignment.member.id.toString();
+
+        ganttItem.start = Date.parse(assignment.startDate);
+
+        ganttItem.end = Date.parse(assignment.endDate);
+
+        ganttItem.projectID = assignment.projectID;
+
+        return ganttItem;
+      });
+
+      return assignments;
+    },
+    getSavedAssignments: (state) => {
+      const assignments = state.savedAssignments.map((assignment) => {
+        const ganttItem = {};
+
+        ganttItem.id = assignment.id;
 
         ganttItem.name = assignment.member.id.toString();
 
@@ -40,9 +60,18 @@ export default {
   mutations: {
     getAssignments(state, assignments) {
       state.assignments = assignments;
+      state.savedAssignments = assignments;
+    },
+    saveAssignments(state) {
+      state.savedAssignments = state.assignments;
     },
     addAssignment: (state, assignment) => {
       state.assignments = [...state.assignments, assignment];
+    },
+    deleteAssignment: (state, assignmentID) => {
+      state.assignments = state.assignments.filter(
+        (item) => item.id !== assignmentID
+      );
     },
   },
 
