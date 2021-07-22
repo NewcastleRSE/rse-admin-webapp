@@ -28,7 +28,7 @@ export default {
 
         ganttItem.end = Date.parse(assignment.endDate);
 
-        ganttItem.projectId = assignment.projectID;
+        ganttItem.projectID = assignment.projectID;
 
         return ganttItem;
       });

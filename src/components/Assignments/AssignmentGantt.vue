@@ -48,6 +48,7 @@ export default {
       savedAssignments: [],
       members: [],
       assignments: [],
+      projects: [],
     };
   },
   created() {
@@ -86,7 +87,9 @@ export default {
     },
 
     save() {
-      let savedAssignments = this.convertToSingleDictionary(this.savedAssignments);
+      let savedAssignments = this.convertToSingleDictionary(
+        this.savedAssignments
+      );
       let assignments = this.convertToSingleDictionary(this.assignments);
       console.log(this.getNewItems(savedAssignments, assignments));
 
@@ -97,7 +100,7 @@ export default {
       let data = [];
       dict.forEach((el) => {
         data = data.concat(el.data);
-      })
+      });
       return data;
     },
 
@@ -147,12 +150,15 @@ export default {
         var notFound = true;
         for (var idx1 in b) {
           var current = b[idx1];
-          if (temp.name === current.name)  { // checking does not have an assignie
+          if (temp.name === current.name) {
+            // checking does not have an assignie
             // if they have the same name
             notFound = false;
             // checks for flags
-            let multipleFlags = (temp.projectId == current.projectId && Boolean(temp.multipleFlag && current.multipleFlag) != true);
-            if (multipleFlags || temp.projectId != current.projectId ) {
+            let multipleFlags =
+              temp.projectId == current.projectId &&
+              Boolean(temp.multipleFlag && current.multipleFlag) != true;
+            if (multipleFlags || temp.projectId != current.projectId) {
               if (!this.compareDictionary(current, temp)) {
                 items.push(temp);
               }
@@ -174,27 +180,27 @@ export default {
       // gets updated value from store
       let assignments = this.$store.getters["assignments/getAssignments"];
       let series = [
-         {name: "",
-         type: "gantt",
-         allowPointSelect: true,
-         data: []}
-      ]
-      let overlapMembers = [] // keeps tracks of the last overlap for each member
+        { name: "", type: "gantt", allowPointSelect: true, data: [] },
+      ];
+      let overlapMembers = []; // keeps tracks of the last overlap for each member
       for (var idx in assignments) {
         let assignment = assignments[idx];
         for (var idx1 in assignments) {
           let assignment1 = assignments[idx1];
-         
+
           if (idx != idx1) {
-            if (assignment.name === assignment1.name && assignment.projectId == assignment1.projectId) {
+            if (
+              assignment.name === assignment1.name &&
+              assignment.projectId == assignment1.projectId
+            ) {
               assignment1.multipleFlag = true;
-            } 
             }
+          }
         }
-        
+
         // This section is focusing on overlaping members
         if (!overlapMembers[Number(assignment.name)]) {
-          overlapMembers[Number(assignment.name)] = {"series" : 0, "data": 0 };
+          overlapMembers[Number(assignment.name)] = { series: 0, data: 0 };
         }
         let key = overlapMembers[Number(assignment.name)];
         let seriesKey = key.series;
@@ -202,18 +208,30 @@ export default {
         let dataLength = null;
         let temp = series[seriesKey].data[dataKey];
         if (temp) {
-          if (temp.name === assignment.name && (assignment.start <= temp.end) && (temp.start <= assignment.end)) { // overlap
-            seriesKey++ // add too another assignment
+          if (
+            temp.name === assignment.name &&
+            assignment.start <= temp.end &&
+            temp.start <= assignment.end
+          ) {
+            // overlap
+            seriesKey++; // add too another assignment
           }
-          if (!series[seriesKey]) { // if series is null
-            series[seriesKey] = {name: "", type: "gantt", allowPointSelect: true, data: []};
+          if (!series[seriesKey]) {
+            // if series is null
+            series[seriesKey] = {
+              name: "",
+              type: "gantt",
+              allowPointSelect: true,
+              data: [],
+            };
           }
-          
         }
         dataLength = series[seriesKey].data.push(assignment);
         dataKey = dataLength - 1;
-        overlapMembers[Number(assignment.name)] = {"series" : seriesKey, 
-                                                  "data": dataKey };
+        overlapMembers[Number(assignment.name)] = {
+          series: seriesKey,
+          data: dataKey,
+        };
       }
 
       return series;
@@ -225,14 +243,14 @@ export default {
     chartOptions() {
       let assignments = this.assignments;
       let members = this.members;
+      //let projects = this.projects;
 
       return {
-
-        chart : {
+        chart: {
           type: "grantt",
           height: 375,
         },
-        
+
         title: {
           text: "Assignments",
           floating: true,
@@ -242,7 +260,6 @@ export default {
         xAxis: [
           {
             currentDateIndicator: true,
-            
           },
           {},
         ],
@@ -264,6 +281,38 @@ export default {
                 return label.value;
               }
             },
+          },
+        },
+
+        tooltip: {
+          followPointer: true,
+          formatter: (p) => {
+            let point = p.chart.hoverPoint;
+
+            let start = new Date(point.start);
+            let end = new Date(point.end);
+
+            // let projectName = projects.find((project) => {
+            //   if (project.id === point.projectID) {
+            //     console.log(project.id);
+            //     console.log(point.projectID.toString);
+            //     return project.name;
+            //   }
+            // });
+            try {
+              return (
+                "<b>" +
+                point.projectID +
+                "</b>" +
+                "<br/>" +
+                "<br/>Start: " +
+                start.toDateString() +
+                "<br/>End: " +
+                end.toDateString()
+              );
+            } catch {
+              return "<b>Loading</b>";
+            }
           },
         },
 
@@ -308,6 +357,11 @@ export default {
         series: assignments,
       };
     },
+
+    getProjects() {
+      // gets updated value from store
+      return this.$store.getters["get/getProjects"]; // even when projects is identical to get, dont work
+    },
   },
   watch: {
     getAssignments(update) {
@@ -317,7 +371,10 @@ export default {
     getMembers(update) {
       this.members = update;
     },
+    getProjects(update) {
+      // watches 'getProjects()' to update data in chart
+      this.projects = update;
+    },
   },
 };
 </script>
-
