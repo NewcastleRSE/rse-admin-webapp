@@ -248,7 +248,7 @@ export default {
         ],
         yAxis: {
           uniqueNames: true,
-          max: 7,
+          //max: 7,
 
           labels: {
             formatter: (label) => {
