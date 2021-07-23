@@ -131,64 +131,33 @@ export default {
     getAssignments() {
       // gets updated value from store
       let assignments = this.$store.getters["assignments/getAssignments"];
-      let series = [
-        { name: "", type: "gantt", allowPointSelect: true, data: [] },
-      ];
-      let overlapMembers = []; // keeps tracks of the last overlap for each member
-      for (var idx in assignments) {
-        let assignment = assignments[idx];
-        for (var idx1 in assignments) {
-          let assignment1 = assignments[idx1];
+      let series = [{ data: [] }];
 
-          if (idx != idx1) {
-            if (
-              assignment.name === assignment1.name &&
-              assignment.projectId == assignment1.projectId
-            ) {
-              assignment1.multipleFlag = true;
+      assignments.forEach((assignment) => {
+        // loop thorugh each assignment
+
+        for (let i = 0; i < series.length; i++) {
+          // loop through each series
+
+          let overlapped = false;
+          series[i].data.forEach((point) => {
+            // loop through each assignment in a series
+
+            if (assignment.start < point.end && assignment.end > point.start) {
+              // if assignments overlap
+              overlapped = true;
             }
-          }
-        }
+          });
 
-        // This section is focusing on overlaping members
-        if (!overlapMembers[Number(assignment.name)]) {
-          overlapMembers[Number(assignment.name)] = { series: 0, data: 0 };
-        }
-        let key = overlapMembers[Number(assignment.name)];
-        let seriesKey = key.series;
-        let dataKey = key.data;
-        let dataLength = null;
-        let temp = series[seriesKey].data[dataKey];
-        if (temp) {
-          if (
-            temp.name === assignment.name &&
-            assignment.start <= temp.end &&
-            temp.start <= assignment.end
-          ) {
-            // overlap
-            seriesKey++; // add too another assignment
-          }
-          if (!series[seriesKey]) {
-            // if series is null
-            series[seriesKey] = {
-              name: "",
-              type: "gantt",
-              allowPointSelect: true,
-              data: [],
-            };
+          if (!overlapped) {
+            series[i].data.push(assignment); // add assignment to data if doesnt overlap
+          } else if (!series[i + 1]) {
+            series.push({ data: [] }); // adds new seriese if next doesnt exist
           }
         }
-        dataLength = series[seriesKey].data.push(assignment);
-        dataKey = dataLength - 1;
-        overlapMembers[Number(assignment.name)] = {
-          series: seriesKey,
-          data: dataKey,
-        };
-      }
+      });
 
       return series;
-
-      //return this.$store.getters["assignments/getAssignments"];
     },
     getMembers() {
       return this.$store.state.members.members;
