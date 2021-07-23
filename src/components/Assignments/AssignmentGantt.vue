@@ -19,6 +19,9 @@
       <button @click="save" class="button is-primary">
         Save
       </button>
+      <button @click="cancel" class="button is-secondary">
+        Cancel
+      </button>
     </div>
     <div class="column">
       <ProjectsCard @toggle-modal="toggleModal" />
@@ -113,6 +116,10 @@ export default {
       });
 
       this.edited = false;
+    },
+
+    cancel() {
+      this.$store.commit("assignments/resetAssignments");
     },
 
     /**
