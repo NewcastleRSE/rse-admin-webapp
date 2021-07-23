@@ -85,24 +85,33 @@ export default {
       var points = this.$refs.chart.chart.getSelectedPoints();
       points.forEach((point) => {
         //point.remove();
-        console.log(point.id);
-        this.$store.commit("assignments/deleteAssignment", point.id);
+        console.log(point);
+        this.$store.commit("assignments/removeAssignment", point);
       });
     },
 
     save() {
-      let savedAssignments = this.$store.getters[
-        "assignments/getSavedAssignments"
-      ];
-      let notSavedAssignments = this.$store.getters[
-        "assignments/getAssignments"
-      ];
+      let savedAssignments = this.$store.state.assignments.savedAssignments;
+      let notSavedAssignments = this.$store.state.assignments.assignments;
 
-      console.log(this.getNewItems(savedAssignments, notSavedAssignments));
-      console.log(this.getDeletedItems(savedAssignments, notSavedAssignments));
+      let newItems = this.getNewItems(savedAssignments, notSavedAssignments);
+      let deletedItems = this.getDeletedItems(
+        savedAssignments,
+        notSavedAssignments
+      );
+      console.log(newItems);
+      console.log(deletedItems);
 
-      // save current assignments to savedAssignments
-      this.$store.commit("assignments/saveAssignments"); // other logic needs to be added for axios
+      this.$store.commit("assignments/resetAssignments");
+
+      newItems.forEach((item) => {
+        this.$store.dispatch("assignments/saveAssignment", item);
+      });
+
+      deletedItems.forEach((item) => {
+        this.$store.dispatch("assignments/deleteAssignment", item.id);
+      });
+
       this.edited = false;
     },
 

@@ -60,17 +60,27 @@ export default {
   mutations: {
     getAssignments(state, assignments) {
       state.assignments = assignments;
-      state.savedAssignments = assignments;
+      state.savedAssignments = assignments; // should only be called once when loading app
     },
-    saveAssignments(state) {
-      state.savedAssignments = state.assignments;
+    resetAssignments(state) {
+      state.assignments = state.savedAssignments;
+    },
+
+    saveAssignment(state, assignment) {
+      state.savedAssignments = [...state.savedAssignments, assignment];
+    },
+    deleteAssignment(state, assignment) {
+      state.savedAssignments = state.savedAssignments.filter(
+        (item) => item.id !== assignment.id
+      );
     },
     addAssignment: (state, assignment) => {
       state.assignments = [...state.assignments, assignment];
     },
-    deleteAssignment: (state, assignmentID) => {
+    removeAssignment: (state, assignment) => {
+      console.log(assignment.id);
       state.assignments = state.assignments.filter(
-        (item) => item.id !== assignmentID
+        (item) => item.id !== assignment.id
       );
     },
   },
@@ -101,7 +111,7 @@ export default {
     Call with this.$store.dispatch("assignments/addAssignment", assignment);
     Can leave parameter empty and will call all assignments
     */
-    addAssignment({ commit, rootState }, assignment) {
+    saveAssignment({ commit, rootState }, assignment) {
       return axios
         .post(`http://localhost:1337/assignments/`, assignment, {
           headers: {
@@ -111,6 +121,23 @@ export default {
         .then((response) => {
           console.log(response.data);
           commit("addAssignment", response.data);
+          commit("saveAssignment", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    deleteAssignment({ commit, rootState }, assignmentID) {
+      return axios
+        .delete(`http://localhost:1337/assignments/${assignmentID}`, {
+          headers: {
+            Authorization: `Bearer ${rootState.auth.jwt}`,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          commit("removeAssignment", response.data);
+          commit("deleteAssignment", response.data);
         })
         .catch((error) => {
           console.log(error);
