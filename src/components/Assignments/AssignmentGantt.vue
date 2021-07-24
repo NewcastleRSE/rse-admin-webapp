@@ -159,7 +159,11 @@ export default {
           series[i].data.forEach((point) => {
             // loop through each assignment in a series
 
-            if (assignment.start < point.end && assignment.end > point.start) {
+            if (
+              assignment.start < point.end &&
+              assignment.end > point.start &&
+              assignment.name === point.name
+            ) {
               // if assignments overlap
               overlapped = true;
             }
@@ -167,6 +171,7 @@ export default {
 
           if (!overlapped) {
             series[i].data.push(assignment); // add assignment to data if doesnt overlap
+            break;
           } else if (!series[i + 1]) {
             series.push({ data: [] }); // adds new seriese if next doesnt exist
           }
@@ -271,7 +276,7 @@ export default {
             //maybe put in gantt
             dataLabels: {
               enabled: true,
-              format: "{point.projectID}",
+              //format: "{point.projectID}",
               style: {
                 cursor: "default",
                 pointerEvents: "none",
@@ -281,31 +286,31 @@ export default {
             point: {
               events: {
                 drop: (data) => {
-                  console.log(data);
+                  //console.log(data);
                   //   console.log("id: ", data.target.id);
                   //   console.log("start: ", data.target.start);
                   //   console.log("end: ", data.target.end);
 
                   //could try deleting and creating assignment
 
-                  //   let start = new Date(data.target.start).toISOString();
-                  //   let end = new Date(data.target.end).toISOString();
+                  let start = new Date(data.target.start).toISOString();
+                  let end = new Date(data.target.end).toISOString();
 
-                  //   //create new object
-                  //   const assignment = {
-                  //     id: data.target.id,
-                  //     member: { id: parseInt(data.target.name) },
-                  //     startDate: start,
-                  //     endDate: end,
-                  //     projectID: data.target.projectID,
-                  //   };
+                  //create new object
+                  const assignment = {
+                    id: data.target.id,
+                    member: { id: parseInt(data.target.name) },
+                    startDate: start,
+                    endDate: end,
+                    projectID: data.target.projectID,
+                  };
 
-                  this.$store.commit("assignments/updateAssignment", data);
-                  //   this.$store.commit(
-                  //     "assignments/removeAssignment",
-                  //     data.target
-                  //   );
-                  //   this.$store.commit("assignments/addAssignment", assignment);
+                  //this.$store.commit("assignments/updateAssignment", data);
+                  this.$store.commit(
+                    "assignments/removeAssignment",
+                    data.target
+                  );
+                  this.$store.commit("assignments/addAssignment", assignment);
                 },
                 click: (event) => {
                   console.log(event);

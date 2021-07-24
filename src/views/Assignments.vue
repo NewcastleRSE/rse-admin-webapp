@@ -1,5 +1,7 @@
 <template>
-  <AssignmentGantt />
+  <div class="gantt">
+    <AssignmentGantt />
+  </div>
 </template>
 
 <script>
@@ -10,3 +12,9 @@ export default {
   components: { AssignmentGantt },
 };
 </script>
+
+<style scoped>
+.gantt {
+  height: 100%;
+}
+</style>
