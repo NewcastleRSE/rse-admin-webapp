@@ -61,6 +61,7 @@ export default {
     getAssignments(state, assignments) {
       state.assignments = assignments;
       state.savedAssignments = assignments; // should only be called once when loading app
+      console.log("got got");
     },
     resetAssignments(state) {
       state.assignments = state.savedAssignments;
@@ -78,10 +79,27 @@ export default {
       state.assignments = [...state.assignments, assignment];
     },
     removeAssignment: (state, assignment) => {
-      console.log(assignment.id);
       state.assignments = state.assignments.filter(
         (item) => item.id !== assignment.id
       );
+    },
+    updateAssignment: (state, assignment) => {
+      let objIndex = state.assignments.findIndex(
+        (obj) => obj.id == assignment.target.id
+      ); // added error handling
+      let objIndex2 = state.savedAssignments.findIndex(
+        (obj) => obj.id == assignment.target.id
+      ); // added error handling
+
+      let start = new Date(assignment.target.start).toISOString();
+      let end = new Date(assignment.target.end).toISOString();
+
+      console.log("before: ", state.savedAssignments[objIndex2]);
+
+      state.assignments[objIndex].startDate = start;
+      state.assignments[objIndex].endDate = end;
+
+      console.log("after: ", state.assignments[objIndex]);
     },
   },
 

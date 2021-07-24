@@ -182,7 +182,9 @@ export default {
     chartOptions() {
       let assignments = this.assignments;
       let members = this.members;
-      //let projects = this.projects;
+      let projects = this.projects;
+
+      let day = 24 * 3600 * 1000;
 
       return {
         chart: {
@@ -231,17 +233,19 @@ export default {
             let start = new Date(point.start);
             let end = new Date(point.end);
 
-            // let projectName = projects.find((project) => {
-            //   if (project.id === point.projectID) {
-            //     console.log(project.id);
-            //     console.log(point.projectID.toString);
-            //     return project.name;
-            //   }
-            // });
+            let projectName = projects.find((project) => {
+              if (project.id === point.projectID) {
+                // console.log(project.id);
+                // console.log(point.projectID.toString);
+                return project.name;
+              }
+            });
+
+            //console.log(projectName);
             try {
               return (
                 "<b>" +
-                point.projectID +
+                projectName.name +
                 "</b>" +
                 "<br/>" +
                 "<br/>Start: " +
@@ -261,17 +265,53 @@ export default {
             animation: false, // Do not animate dependency connectors
             dragDrop: {
               draggableX: true,
-              draggableY: true,
+              draggableY: false,
+              dragPrecisionX: day,
             },
+            //maybe put in gantt
             dataLabels: {
               enabled: true,
-              //format: "{point.project}",
+              format: "{point.projectID}",
               style: {
                 cursor: "default",
                 pointerEvents: "none",
               },
             },
             allowPointSelect: true,
+            point: {
+              events: {
+                drop: (data) => {
+                  console.log(data);
+                  //   console.log("id: ", data.target.id);
+                  //   console.log("start: ", data.target.start);
+                  //   console.log("end: ", data.target.end);
+
+                  //could try deleting and creating assignment
+
+                  //   let start = new Date(data.target.start).toISOString();
+                  //   let end = new Date(data.target.end).toISOString();
+
+                  //   //create new object
+                  //   const assignment = {
+                  //     id: data.target.id,
+                  //     member: { id: parseInt(data.target.name) },
+                  //     startDate: start,
+                  //     endDate: end,
+                  //     projectID: data.target.projectID,
+                  //   };
+
+                  this.$store.commit("assignments/updateAssignment", data);
+                  //   this.$store.commit(
+                  //     "assignments/removeAssignment",
+                  //     data.target
+                  //   );
+                  //   this.$store.commit("assignments/addAssignment", assignment);
+                },
+                click: (event) => {
+                  console.log(event);
+                },
+              },
+            },
           },
         },
 

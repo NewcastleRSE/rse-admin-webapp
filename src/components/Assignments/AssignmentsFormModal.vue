@@ -104,6 +104,7 @@ export default {
       //   endDate: Date.UTC(end[0], end[1], end[2])
 
       const assignment = {
+        //id: 20, // need to create unique id
         member: { id: this.user },
         startDate: this.start,
         endDate: this.end,
