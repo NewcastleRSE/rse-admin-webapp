@@ -5,6 +5,7 @@
       class="hc"
       :options="chartOptions"
       ref="chart"
+
     ></highcharts>
   </div>
 </template>
@@ -14,6 +15,7 @@ export default {
   name: "timeline",
   data() {
     return {
+
       chartOptions: {
         chart: {
           type: "timeline",
@@ -36,49 +38,17 @@ export default {
           {
             dataLabels: {
               allowOverlap: false,
-              format:
-                '<span style="color:{point.color}">● </span><span style="font-weight: bold;" > ' +
-                "{point.label}</span><br/>{point.x:%d %b %Y}",
             },
             marker: {
               symbol: "circle",
             },
-            data: [
-              {
-                x: Date.UTC(1951, 5, 22),
-                name: "First dogs",
-                label: "1951: First dogs in space",
-                description:
-                  "22 July 1951 First dogs in space (Dezik and Tsygan) ",
-              },
-              {
-                x: Date.UTC(1957, 9, 4),
-                name: "Sputnik 1",
-                label: "1957: First artificial satellite",
-                description:
-                  "4 October 1957 First artificial satellite. First signals from space.",
-              },
-              {
-                x: Date.UTC(1959, 0, 4),
-                name: "First human spaceflight",
-                label: "1961: First human spaceflight (Yuri Gagarin)",
-                description:
-                  "First human spaceflight (Yuri Gagarin), and the first human-crewed orbital flight",
-              },
-              {
-                x: Date.UTC(1961, 3, 12),
-                name: "First human on the Moon",
-                label: "1969: First human on the Moon",
-                description:
-                  "First human on the Moon, and first space launch from a celestial body other than the Earth. First sample return from the Moon",
-              },
-            ],
+            data: null,
           },
         ],
       },
     };
   },
-  created() {
+  async created() {
     this.chartOptions.series[0].data = this.getAssignments;
   },
   methods: {},
@@ -86,27 +56,23 @@ export default {
     getAssignments() {
       let assignments = this.$store.getters["assignments/getAssignments"];
       assignments.forEach( (assign) => {
-        let projects = this.$store.getters["get/getProjects"]
-        let project = projects.filter(function(id) {
-          return projects[id]
-        });
-        project = project[0];
-        assign.name = project;
-        console.log(project)
+        let project = this.$store.getters["get/getProjects"].filter(prj => prj.id == assign.projectId
+        );
+        if (project.length  > 0) {assign.name = project[0].name}
         assign.x = assign.start;
       });
-      console.log(assignments)
       return assignments;      
-    }
-
-
+    },
     
   },
   watch: {
     getAssignments(update) {
         this.chartOptions.series[0].data = update;
 
-    }
+    },
+
+
+   
   },
 };
 </script>
