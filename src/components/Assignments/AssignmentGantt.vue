@@ -52,7 +52,7 @@ export default {
       showModal: false,
       projectForModal: null,
       edited: false,
-      savedAssignments: [],
+      //savedAssignments: [],
       members: [],
       assignments: [],
       projects: [],
@@ -195,6 +195,10 @@ export default {
         chart: {
           type: "gantt",
           //height: 375,
+          scrollablePlotArea: {
+            minHeight: 3000, // have to make this dynamic
+            opacity: 1,
+          },
         },
 
         title: {
@@ -240,9 +244,9 @@ export default {
 
             let projectName = projects.find((project) => {
               if (project.id === point.projectID) {
-                // console.log(project.id);
-                // console.log(point.projectID.toString);
-                return project.name;
+                //console.log(project.id);
+                //console.log(point.projectID.toString);
+                return project;
               }
             });
 
@@ -287,9 +291,6 @@ export default {
               events: {
                 drop: (data) => {
                   //console.log(data);
-                  //   console.log("id: ", data.target.id);
-                  //   console.log("start: ", data.target.start);
-                  //   console.log("end: ", data.target.end);
 
                   //could try deleting and creating assignment
 
@@ -305,16 +306,17 @@ export default {
                     projectID: data.target.projectID,
                   };
 
-                  //this.$store.commit("assignments/updateAssignment", data);
                   this.$store.commit(
                     "assignments/removeAssignment",
                     data.target
                   );
                   this.$store.commit("assignments/addAssignment", assignment);
+
+                  //this.$store.commit("assignments/updateAssignment", data);
                 },
-                click: (event) => {
-                  console.log(event);
-                },
+                // click: (event) => {
+                //   console.log(event);
+                // },
               },
             },
           },
