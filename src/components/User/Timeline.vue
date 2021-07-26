@@ -86,8 +86,14 @@ export default {
     getAssignments() {
       let assignments = this.$store.getters["assignments/getAssignments"];
       assignments.forEach( (assign) => {
-        this.$store.dispatch("get/getProject", assign.projectId); // how to handlet this
-        this.$store.getters["get/getProject"] ;
+        let projects = this.$store.getters["get/getProjects"]
+        let project = projects.filter(function(id) {
+          return projects[id]
+        });
+        project = project[0];
+        assign.name = project;
+        console.log(project)
+        assign.x = assign.start;
       });
       console.log(assignments)
       return assignments;      
