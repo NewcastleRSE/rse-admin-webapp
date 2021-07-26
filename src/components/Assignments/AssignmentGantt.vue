@@ -1,6 +1,6 @@
 <template>
   <div class="columns">
-    <div class="box column is-four-fifths">
+    <div class="box column is-9">
       <highcharts
         v-if="assignments.length > 0"
         :constructorType="'ganttChart'"
@@ -23,7 +23,7 @@
         Cancel
       </button>
     </div>
-    <div class="column">
+    <div class="column is-3">
       <ProjectsCard @toggle-modal="toggleModal" />
     </div>
   </div>
@@ -71,13 +71,14 @@ export default {
       if (!this.edited) {
         this.edited = true;
       }
+      console.log("assignment: ", assignment);
       this.$store.commit("assignments/addAssignment", assignment);
     },
     deleteAssignments() {
       if (!this.edited) {
         this.edited = true;
       }
-      var points = this.$refs.chart.chart.getSelectedPoints();
+      let points = this.$refs.chart.chart.getSelectedPoints();
       points.forEach((point) => {
         //point.remove();
         console.log(point);
@@ -126,39 +127,6 @@ export default {
     },
   },
   computed: {
-    getAssignments() {
-      // gets updated value from store
-      let assignments = this.$store.getters["assignments/getAssignments"];
-      let series = [{ data: [] }];
-      assignments.forEach((assignment) => {
-        // loop thorugh each assignment
-        for (let i = 0; i < series.length; i++) {
-          // loop through each series
-          let overlapped = false;
-          series[i].data.forEach((point) => {
-            // loop through each assignment in a series
-            if (
-              assignment.start < point.end &&
-              assignment.end > point.start &&
-              assignment.name === point.name
-            ) {
-              // if assignments overlap
-              overlapped = true;
-            }
-          });
-          if (!overlapped) {
-            series[i].data.push(assignment); // add assignment to data if doesnt overlap
-            break;
-          } else if (!series[i + 1]) {
-            series.push({ data: [] }); // adds new seriese if next doesnt exist
-          }
-        }
-      });
-      return series;
-    },
-    getMembers() {
-      return this.$store.state.members.members;
-    },
     chartOptions() {
       let assignments = this.assignments;
       let members = this.members;
@@ -167,7 +135,7 @@ export default {
       return {
         chart: {
           type: "gantt",
-          //height: 375,
+          height: "60%", // % for aspect ratio
           scrollablePlotArea: {
             minHeight: 3000, // have to make this dynamic
             opacity: 1,
@@ -235,7 +203,7 @@ export default {
         plotOptions: {
           series: {
             pointWidth: 18,
-            animation: false, // Do not animate dependency connectors
+            animation: true,
             dragDrop: {
               draggableX: true,
               draggableY: false,
@@ -254,10 +222,9 @@ export default {
             point: {
               events: {
                 drop: (data) => {
-                  //console.log(data);
-                  //could try deleting and creating assignment
                   let start = new Date(data.target.start).toISOString();
                   let end = new Date(data.target.end).toISOString();
+
                   //create new object
                   const assignment = {
                     id: data.target.id,
@@ -273,9 +240,6 @@ export default {
                   this.$store.commit("assignments/addAssignment", assignment);
                   //this.$store.commit("assignments/updateAssignment", data);
                 },
-                // click: (event) => {
-                //   console.log(event);
-                // },
               },
             },
           },
@@ -293,23 +257,46 @@ export default {
           enabled: true,
           trackBackgroundColor: "rgba(230, 230, 230, 0.2)",
         },
-        // rangeSelector: {
-        //   enabled: true,
-        //   selected: 0,
-        // },
-        // series: [
-        //   {
-        //     name: "Assignment",
-        //     allowPointSelect: true,
-        //     data: assignments,
-        //   },
-        // ],
         series: assignments,
       };
     },
+
+    getAssignments() {
+      // gets updated value from store
+      let assignments = this.$store.getters["assignments/getAssignments"];
+      let series = [{ data: [] }];
+      assignments.forEach((assignment) => {
+        // loop thorugh each assignment
+        for (let i = 0; i < series.length; i++) {
+          // loop through each series
+          let overlapped = false;
+          series[i].data.forEach((point) => {
+            // loop through each assignment in a series
+            if (
+              assignment.start < point.end &&
+              assignment.end > point.start &&
+              assignment.name === point.name
+            ) {
+              // if assignments overlap
+              overlapped = true;
+            }
+          });
+          if (!overlapped) {
+            series[i].data.push(assignment); // add assignment to data if doesnt overlap
+            break;
+          } else if (!series[i + 1]) {
+            series.push({ data: [] }); // adds new seriese if next doesnt exist
+          }
+        }
+      });
+      return series;
+    },
+    getMembers() {
+      return this.$store.state.members.members;
+    },
     getProjects() {
       // gets updated value from store
-      return this.$store.getters["get/getProjects"]; // even when projects is identical to get, dont work
+      return this.$store.getters["get/getProjects"]; // even when projects is identical to get, doesnt work
     },
   },
   watch: {
@@ -318,10 +305,11 @@ export default {
       this.assignments = update;
     },
     getMembers(update) {
+      // watches 'getMembers()' to update members
       this.members = update;
     },
     getProjects(update) {
-      // watches 'getProjects()' to update data in chart
+      // watches 'getProjects()' to update projects
       this.projects = update;
     },
   },

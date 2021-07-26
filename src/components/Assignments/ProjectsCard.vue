@@ -7,17 +7,25 @@
       <a @click="filter('Allocated')">Allocated</a>
     </p>
     <ul>
-      <li style="height: 340px; overflow: scroll"  v-if="filterProjects">
+      <li style="height: 70vh; overflow: scroll" v-if="filterProjects">
         <p
           v-for="project in filterProjects"
           v-bind:key="project"
           @click="toggleModal(project)"
-          class="box m-2" style="font-size: 0.8em">
+          class="box m-2"
+          style="font-size: 0.8em"
+        >
           <a class="has-text-link">{{ project.name }}</a>
-          <br>
-          <small v-if="project.amount"><span style="font-weight: bold;"> Amount: </span>{{ project.amount}}</small>
-          <br>
-          <small v-if="project.amount"><span style="font-weight: bold;"> Faculty: </span>{{ project.faculty}}</small>
+          <br />
+          <small v-if="project.amount"
+            ><span style="font-weight: bold;"> Amount: </span
+            >{{ project.amount }}</small
+          >
+          <br />
+          <small v-if="project.amount"
+            ><span style="font-weight: bold;"> Faculty: </span
+            >{{ project.faculty }}</small
+          >
         </p>
       </li>
       <li v-else>else</li>
@@ -49,7 +57,7 @@ export default {
           }
         }
       } else {
-        this.filterProjects = projects
+        this.filterProjects = projects;
       }
       console.log(this.filterProjects);
       console.log(projects);

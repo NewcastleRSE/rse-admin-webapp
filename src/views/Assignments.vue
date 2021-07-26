@@ -15,6 +15,6 @@ export default {
 
 <style scoped>
 .gantt {
-  height: 100%;
+  width: 90%;
 }
 </style>
