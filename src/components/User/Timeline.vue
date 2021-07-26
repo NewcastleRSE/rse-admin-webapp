@@ -17,7 +17,7 @@ export default {
       chartOptions: {
         chart: {
           type: "timeline",
-          //inverted: true,
+          inverted: true,
         },
         xAxis: {
           type: "datetime",
@@ -78,10 +78,29 @@ export default {
       },
     };
   },
-
-  //created() {},
+  created() {
+    this.chartOptions.series[0].data = this.getAssignments;
+  },
   methods: {},
-  computed: {},
-  watch: {},
+  computed: {
+    getAssignments() {
+      let assignments = this.$store.getters["assignments/getAssignments"];
+      assignments.forEach( (assign) => {
+        //this.$store.dispatch("get/getProject", assign.projectId); // how to handlet this
+        this.$store.getters["get/getProject"] ;
+      });
+      console.log(assignments)
+      return assignments;      
+    }
+
+
+    
+  },
+  watch: {
+    getAssignments(update) {
+        this.chartOptions.series[0].data = update;
+
+    }
+  },
 };
 </script>

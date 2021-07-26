@@ -1,10 +1,10 @@
 <template>
   
   <div class="has-background-primary-dark is-centered is-boxed routes tabs is-centered ">
-    <ul>
+    <ul v-if="currentRouteName !== 'Login'">
       <li :class="currentRouteName === 'Dashboard' ? 'is-active' : ''">
-        <router-link :to="{ name: 'Dashboard' }" tag="button"
-          >Dashboard</router-link
+        <router-link :to="{ name: 'Dashboard' }" tag="button">
+          Dashboard</router-link
         >
       </li>
       <li :class="currentRouteName === 'Projects' ? 'is-active' : ''">

@@ -4,11 +4,20 @@
       <div class="tile">
         <div class="tile is-parent is-vertical">
           <article class="tile is-child notification is-primary">
-            <p class="title">Vertical...</p>
+            
+            <p class="title"><font-awesome-icon icon="user"/> Next available person</p>
             <p class="subtitle">Top tile</p>
           </article>
           <article class="tile is-child notification is-warning">
-            <p class="title">...tiles</p>
+            <p class="title"><font-awesome-icon icon="user"/> Next available web dev</p>
+            <p class="subtitle">Bottom tile</p>
+          </article>
+           <article class="tile is-child notification is-warning">
+            <p class="title"><font-awesome-icon icon="user"/> Next available data science</p>
+            <p class="subtitle">Bottom tile</p>
+          </article>
+           <article class="tile is-child notification is-warning">
+            <p class="title"><font-awesome-icon icon="user"/> Next available integrations</p>
             <p class="subtitle">Bottom tile</p>
           </article>
         </div>

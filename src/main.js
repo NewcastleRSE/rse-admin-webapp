@@ -8,11 +8,11 @@ import HC_timeLine from "highcharts/modules/timeline";
 import Gantt from "highcharts/modules/gantt";
 import HighchartsVue from "highcharts-vue";
 import "./assets/main.scss";
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTasks, faProjectDiagram, faTachometerAlt } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faTasks, faProjectDiagram, faTachometerAlt, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-library.add(faTasks, faProjectDiagram, faTachometerAlt)
+library.add(faTasks, faProjectDiagram, faTachometerAlt, faUser)
 Gantt(Highcharts);
 Draggable(Highcharts);
 HC_timeLine(Highcharts)

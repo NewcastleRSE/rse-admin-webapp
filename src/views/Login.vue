@@ -1,5 +1,12 @@
 <template>
-  <a  href="http://localhost:1337/connect/microsoft">login</a>
+  <div style="height: 100vh;">
+  <div class = "card has-background-primary-dark">
+  <h1 class="is-size-1 has-text-centered has-text-weight-bold has-text-white" > Welcome back! 
+    <span> <br> <a class="button is-primary is-light" href="http://localhost:1337/connect/microsoft"> Login here </a></span>
+  </h1>
+  </div>
+  <br>
+  </div>
 </template>
 
 <script>
@@ -22,7 +29,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 body {
   background: rgb(0, 148, 126);
 }

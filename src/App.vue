@@ -2,7 +2,6 @@
   
   <MenuBar />
   <div class="columns">
-    <NavBar />
     <div class = "container column is-9">
     <router-view></router-view>
     </div>
@@ -10,12 +9,12 @@
 </template>
 
 <script>
-import NavBar from "./components/NavBar.vue";
 import MenuBar from "./components/MenuBar.vue";
 export default {
   name: "App",
-  components: { NavBar, MenuBar },
+  components: { MenuBar },
   created() {
+    console.log(this.$route.path)
     this.$store.dispatch("get/getProjects");
     this.$store.dispatch("assignments/getAssignments");
     this.$store.dispatch("members/getMembers");
@@ -29,6 +28,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  background: white;
 }
 
 

@@ -11,16 +11,16 @@
       <progress
         v-else
         class="progress is-small is-primary"
-        max="100"
-      ></progress>
+        max="100">
+      </progress>
       <button @click="deleteAssignments" class="button is-primary">
         Delete Selected
       </button>
-      <button :disabled="!edited" @click="save" class="button is-primary">
+      <button @click="save" class="button is-primary">
         Save
       </button>
     </div>
-    <div class="column">
+    <div class="column ">
       <ProjectsCard @toggle-modal="toggleModal" />
     </div>
   </div>
@@ -47,17 +47,18 @@ export default {
       edited: false,
       savedAssignments: [],
       members: [],
-      assignments: [],
+      data: [],
     };
   },
   created() {
-    this.assignments = this.getAssignments;
-    this.savedAssignments = this.getAssignments;
+    this.data = this.getAssignments;
     this.members = this.getMembers;
+    this.savedAssignments = this.getAssignments;
   },
 
   methods: {
     toggleModal(project) {
+      console.log("i am here");
       if (project) {
         this.projectForModal = project;
       }
@@ -65,174 +66,43 @@ export default {
     },
 
     addAssignment(assignment) {
-      if (!this.edited) {
-        this.savedAssignments = this.assignments;
-        this.edited = true;
-      }
+      //console.log(assignment);
 
-      this.$store.commit("assignments/addAssignment", assignment);
+      this.chartOptions.series[0].data.push(assignment);
+
+      //this.$store.commit("assignments/addAssignment", assignment);
+
+      this.edited = true;
+    },
+
+    save() {
+      console.log("save");
     },
 
     deleteAssignments() {
-      if (!this.edited) {
-        this.savedAssignments = this.assignments;
-        this.edited = true;
-      }
+      console.log("delete");
 
       var points = this.$refs.chart.chart.getSelectedPoints();
       points.forEach((point) => {
         point.remove();
       });
     },
-
-    save() {
-      let savedAssignments = this.convertToSingleDictionary(this.savedAssignments);
-      let assignments = this.convertToSingleDictionary(this.assignments);
-      console.log(this.getNewItems(savedAssignments, assignments));
-
-      this.edited = false;
-    },
-
-    convertToSingleDictionary(dict) {
-      let data = [];
-      dict.forEach((el) => {
-        data = data.concat(el.data);
-      })
-      return data;
-    },
-
-    /**
-     * getNewItems():
-     * All assignments dictionaries which are in currentAssignments
-     * however not in tempAssignements
-     * @returns dictionary
-     */
-    getNewItems(savedAssignments, notSavedAssignments) {
-      return this.difference(notSavedAssignments, savedAssignments);
-    },
-
-    /**
-     * getDeletedItems():
-     * All assignments dictionaries which are in tempAssignments
-     * however not in currentAssignements
-     * @returns dictionary
-     */
-    getDeletedItems(savedAssignments, notSavedAssignments) {
-      return this.difference(savedAssignments, notSavedAssignments);
-    },
-
-    /**
-     * compareDictionary(): This will compare two dictionaries
-     * @param {dictionary} a
-     * @param {dictionary} b
-     * @returns boolean
-     */
-    compareDictionary(a, b) {
-      if (JSON.stringify(a) === JSON.stringify(b)) {
-        return true;
-      }
-      return false;
-    },
-
-    /**
-     * difference(): This would returns the difference of two dictionaries
-     * @param {dictionary} a
-     * @param {dictionary} b
-     * @returns dictionary
-     */
-    difference(a, b) {
-      var items = [];
-      for (var idx in a) {
-        var temp = a[idx];
-        var notFound = true;
-        for (var idx1 in b) {
-          var current = b[idx1];
-          if (temp.name === current.name)  { // checking does not have an assignie
-            // if they have the same name
-            notFound = false;
-            // checks for flags
-            let multipleFlags = (temp.projectId == current.projectId && Boolean(temp.multipleFlag && current.multipleFlag) != true);
-            if (multipleFlags || temp.projectId != current.projectId ) {
-              if (!this.compareDictionary(current, temp)) {
-                items.push(temp);
-              }
-            }
-            break;
-          }
-        }
-        if (notFound) {
-          // if temp not found in currentAssignments delete
-          items.push(temp);
-        }
-      }
-      return items;
-    },
   },
 
   computed: {
     getAssignments() {
       // gets updated value from store
-      let assignments = this.$store.getters["assignments/getAssignments"];
-      let series = [
-         {name: "",
-         type: "gantt",
-         allowPointSelect: true,
-         data: []}
-      ]
-      let overlapMembers = [] // keeps tracks of the last overlap for each member
-      for (var idx in assignments) {
-        let assignment = assignments[idx];
-        for (var idx1 in assignments) {
-          let assignment1 = assignments[idx1];
-         
-          if (idx != idx1) {
-            if (assignment.name === assignment1.name && assignment.projectId == assignment1.projectId) {
-              assignment1.multipleFlag = true;
-            } 
-            }
-        }
-        
-        // This section is focusing on overlaping members
-        if (!overlapMembers[Number(assignment.name)]) {
-          overlapMembers[Number(assignment.name)] = {"series" : 0, "data": 0 };
-        }
-        let key = overlapMembers[Number(assignment.name)];
-        let seriesKey = key.series;
-        let dataKey = key.data;
-        let dataLength = null;
-        let temp = series[seriesKey].data[dataKey];
-        if (temp) {
-          if (temp.name === assignment.name && (assignment.start <= temp.end) && (temp.start <= assignment.end)) { // overlap
-            seriesKey++ // add too another assignment
-          }
-          if (!series[seriesKey]) { // if series is null
-            series[seriesKey] = {name: "", type: "gantt", allowPointSelect: true, data: []};
-          }
-          
-        }
-        dataLength = series[seriesKey].data.push(assignment);
-        dataKey = dataLength - 1;
-        overlapMembers[Number(assignment.name)] = {"series" : seriesKey, 
-                                                  "data": dataKey };
-      }
-
-      return series;
+      return this.$store.getters["assignments/getAssignments"];
     },
     getMembers() {
       return this.$store.state.members.members;
     },
 
     chartOptions() {
-      let assignments = this.assignments;
+      let data = this.data;
       let members = this.members;
 
       return {
-
-        chart : {
-          type: "grantt",
-          height: 375,
-        },
-        
         title: {
           text: "Assignments",
           floating: true,
@@ -242,13 +112,11 @@ export default {
         xAxis: [
           {
             currentDateIndicator: true,
-            
           },
           {},
         ],
         yAxis: {
           uniqueNames: true,
-          //max: 7,
 
           labels: {
             formatter: (label) => {
@@ -269,7 +137,6 @@ export default {
 
         plotOptions: {
           series: {
-            pointWidth: 18,
             animation: false, // Do not animate dependency connectors
             dragDrop: {
               draggableX: true,
@@ -305,14 +172,20 @@ export default {
         //   selected: 0,
         // },
 
-        series: assignments,
+        series: [
+          {
+            name: "Assignment",
+            allowPointSelect: true,
+            data: data,
+          },
+        ],
       };
     },
   },
   watch: {
     getAssignments(update) {
       // watches 'getAssignments()' to update data in chart
-      this.assignments = update;
+      this.data = update;
     },
     getMembers(update) {
       this.members = update;
@@ -321,3 +194,4 @@ export default {
 };
 </script>
 
+<style scoped></style>
