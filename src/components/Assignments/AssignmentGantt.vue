@@ -57,8 +57,9 @@ export default {
   },
   created() {
     this.assignments = this.getAssignments;
-    this.savedAssignments = this.getAssignments;
+    //this.savedAssignments = this.getAssignments;
     this.members = this.getMembers;
+    this.projects = this.getProjects;
   },
   methods: {
     toggleModal(project) {
@@ -178,12 +179,10 @@ export default {
             let end = new Date(point.end);
             let projectName = projects.find((project) => {
               if (project.id === point.projectID) {
-                //console.log(project.id);
-                //console.log(point.projectID.toString);
                 return project;
               }
             });
-            //console.log(projectName);
+
             try {
               return (
                 "<b>" +
