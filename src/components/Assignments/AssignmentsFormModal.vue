@@ -104,13 +104,14 @@ export default {
       //   endDate: Date.UTC(end[0], end[1], end[2])
 
       const assignment = {
+        //id: 20, // need to create unique id
         member: { id: this.user },
         startDate: this.start,
         endDate: this.end,
-        projectId: this.project.id,
+        projectID: this.project.id,
       };
 
-      this.$store.dispatch("assignments/addAssignment", assignment);
+      //this.$store.dispatch("assignments/addAssignment", assignment);
       //console.log(assignment);
       this.$emit("addAssignment", assignment);
       this.toggleModal();
