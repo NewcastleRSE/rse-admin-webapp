@@ -289,6 +289,9 @@ export default {
           }
         }
       });
+
+      series[0].data.push({ name: "" }); // fixes last members name not getting displayed
+
       return series;
     },
     getMembers() {
