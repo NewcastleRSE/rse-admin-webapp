@@ -32,7 +32,7 @@ export default {
           text: "Timeline of Space Exploration",
         },
         subtitle: {
-          text: 'Info source: <a href="https://en.wikipedia.org/wiki/Timeline_of_space_exploration">www.wikipedia.org</a>',
+          text: 'Timeline of past projects',
         },
         series: [
           {
@@ -54,7 +54,9 @@ export default {
   methods: {},
   computed: {
     getAssignments() {
-      let assignments = this.$store.getters["assignments/getAssignments"];
+      let id = this.$route.params.id
+      let assignments = this.$store.getters["assignments/getAssignments"].filter(
+        assignment => id == assignment.name);
       assignments.forEach( (assign) => {
         let project = this.$store.getters["get/getProjects"].filter(prj => prj.id == assign.projectId
         );
@@ -70,8 +72,6 @@ export default {
         this.chartOptions.series[0].data = update;
 
     },
-
-
    
   },
 };

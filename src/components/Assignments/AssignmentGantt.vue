@@ -127,7 +127,7 @@ export default {
               });
 
               try {
-                return memberObj.firstname + " " + memberObj.surname;
+                return "<a>" + memberObj.firstname + " " + memberObj.surname + "</a>";
               } catch {
                 return label.value;
               }

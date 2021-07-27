@@ -95,7 +95,7 @@ const routes = [{
         },
     },
     {
-        path: "/user",
+        path: "/user/:id",
         name: "User",
         component: User,
         beforeEnter: (to, from, next) => {
@@ -105,7 +105,8 @@ const routes = [{
                 next();
             }
         },
-    }
+    },
+
 ];
 
 const router = createRouter({
