@@ -18,6 +18,7 @@ export default {
     this.$store.dispatch("get/getProjects");
     this.$store.dispatch("assignments/getAssignments");
     this.$store.dispatch("members/getMembers");
+
   },
 };
 </script>
