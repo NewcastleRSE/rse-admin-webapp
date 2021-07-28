@@ -33,26 +33,16 @@ export default {
         return ganttItem;
       });
 
-      return assignments;
-    },
-    getSavedAssignments: (state) => {
-      const assignments = state.savedAssignments.map((assignment) => {
-        const ganttItem = {};
-
-        ganttItem.id = assignment.id;
-
-        ganttItem.name = assignment.member.id.toString();
-
-        ganttItem.start = Date.parse(assignment.startDate);
-
-        ganttItem.end = Date.parse(assignment.endDate);
-
-        ganttItem.projectID = assignment.projectID;
-
-        return ganttItem;
+      assignments.sort(function(a, b) {
+        return a.id - b.id;
       });
 
       return assignments;
+    },
+    getUID: (state) => {
+      return (
+        Math.max(...state.assignments.map((assignment) => assignment.id)) + 1
+      );
     },
   },
   mutations: {

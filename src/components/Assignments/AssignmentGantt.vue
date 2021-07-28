@@ -72,7 +72,7 @@ export default {
       if (!this.edited) {
         this.edited = true;
       }
-      console.log("assignment: ", assignment);
+
       this.$store.commit("assignments/addAssignment", assignment);
     },
     deleteAssignments() {
@@ -81,8 +81,6 @@ export default {
       }
       let points = this.$refs.chart.chart.getSelectedPoints();
       points.forEach((point) => {
-        //point.remove();
-        console.log(point);
         this.$store.commit("assignments/removeAssignment", point);
       });
     },
@@ -94,8 +92,7 @@ export default {
         savedAssignments,
         notSavedAssignments
       );
-      console.log(newItems);
-      console.log(deletedItems);
+
       this.$store.commit("assignments/resetAssignments");
       newItems.forEach((item) => {
         this.$store.dispatch("assignments/saveAssignment", item);
@@ -149,7 +146,11 @@ export default {
         },
         xAxis: [
           {
-            currentDateIndicator: true,
+            currentDateIndicator: {
+              label: {
+                format: "%d-%m-%y",
+              },
+            },
           },
           {},
         ],
@@ -172,7 +173,7 @@ export default {
           },
         },
         tooltip: {
-          followPointer: true,
+          //followPointer: true,
           formatter: (p) => {
             let point = p.chart.hoverPoint;
             let start = new Date(point.start);
@@ -245,7 +246,7 @@ export default {
         },
         navigator: {
           enabled: true,
-          liveRedraw: true,
+          //liveRedraw: true,
           adaptToUpdatedData: false,
           yAxis: {
             min: 0,
@@ -263,6 +264,7 @@ export default {
     getAssignments() {
       // gets updated value from store
       let assignments = this.$store.getters["assignments/getAssignments"];
+
       let series = [{ data: [] }];
       assignments.forEach((assignment) => {
         // loop thorugh each assignment
@@ -292,6 +294,8 @@ export default {
       series[0].data.push({ name: "" }); // fixes last members name not getting displayed
 
       return series;
+
+      //return [{ data: assignments }];
     },
     getMembers() {
       return this.$store.state.members.members;
