@@ -21,20 +21,22 @@ export default {
       const assignments = state.assignments.map((assignment) => {
         const ganttItem = {};
 
-        ganttItem.id = assignment.id;
+        ganttItem.assignmentID = assignment.id;
 
-        ganttItem.name = assignment.member.id.toString();
+        ganttItem.name = assignment.projectID;
+
+        ganttItem.parent = assignment.member.id.toString();
 
         ganttItem.start = Date.parse(assignment.startDate);
 
         ganttItem.end = Date.parse(assignment.endDate);
-        ganttItem.projectID = assignment.projectID;
+        //ganttItem.projectID = assignment.projectID;
 
         return ganttItem;
       });
 
       assignments.sort(function(a, b) {
-        return a.id - b.id;
+        return b.end - a.end; // assignment with latest end is displayed first
       });
 
       return assignments;
@@ -57,17 +59,17 @@ export default {
     saveAssignment(state, assignment) {
       state.savedAssignments = [...state.savedAssignments, assignment];
     },
-    deleteAssignment(state, assignment) {
+    deleteAssignment(state, assignmentID) {
       state.savedAssignments = state.savedAssignments.filter(
-        (item) => item.id !== assignment.id
+        (item) => item.id !== assignmentID
       );
     },
     addAssignment: (state, assignment) => {
       state.assignments = [...state.assignments, assignment];
     },
-    removeAssignment: (state, assignment) => {
+    removeAssignment: (state, assignmentID) => {
       state.assignments = state.assignments.filter(
-        (item) => item.id !== assignment.id
+        (item) => item.id !== assignmentID
       );
     },
     updateAssignment: (state, assignment) => {
@@ -159,8 +161,8 @@ export default {
         })
         .then((response) => {
           console.log(response.data);
-          commit("removeAssignment", response.data);
-          commit("deleteAssignment", response.data);
+          commit("removeAssignment", response.data.id);
+          commit("deleteAssignment", response.data.id);
         })
         .catch((error) => {
           console.log(error);

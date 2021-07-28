@@ -12,7 +12,21 @@ export default {
     members: [],
   },
 
-  getters: {},
+  getters: {
+    getMembers: (state) => {
+      const members = state.members.map((member) => {
+        const ganttItem = {};
+
+        ganttItem.id = member.id.toString();
+
+        ganttItem.name = member.firstname + " " + member.surname;
+
+        return ganttItem;
+      });
+
+      return members;
+    },
+  },
 
   mutations: {
     //sync, updates state

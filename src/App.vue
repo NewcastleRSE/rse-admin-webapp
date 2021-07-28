@@ -10,8 +10,8 @@ export default {
   components: { MenuBar },
   created() {
     this.$store.dispatch("get/getProjects");
-    this.$store.dispatch("assignments/getAssignments");
     this.$store.dispatch("members/getMembers");
+    this.$store.dispatch("assignments/getAssignments");
   },
 };
 </script>

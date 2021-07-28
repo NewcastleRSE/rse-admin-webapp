@@ -2,7 +2,7 @@
   <div class="columns">
     <div class="box column is-9">
       <highcharts
-        v-if="assignments.length > 0"
+        v-if="members.length > 0 && assignments.length > 0"
         :constructorType="'ganttChart'"
         class="hc"
         :options="chartOptions"
@@ -80,8 +80,9 @@ export default {
         this.edited = true;
       }
       let points = this.$refs.chart.chart.getSelectedPoints();
+      console.log(points);
       points.forEach((point) => {
-        this.$store.commit("assignments/removeAssignment", point);
+        this.$store.commit("assignments/removeAssignment", point.assignmentID);
       });
     },
     save() {
@@ -127,8 +128,8 @@ export default {
   computed: {
     chartOptions() {
       let assignments = this.assignments;
-      //   let members = this.members;
-      //   let projects = this.projects;
+      let members = this.members;
+      let projects = this.projects;
       let day = 24 * 3600 * 1000;
       return {
         chart: {
@@ -157,47 +158,47 @@ export default {
         yAxis: {
           uniqueNames: true,
           //max: 7,
-          //   labels: {
-          //     formatter: (label) => {
-          //       const memberObj = members.find((member) => {
-          //         if (member.id.toString() === label.value) {
-          //           return member;
-          //         }
-          //       });
-          //       try {
-          //         return memberObj.firstname + " " + memberObj.surname;
-          //       } catch {
-          //         return label.value;
-          //       }
-          //     },
-          //   },
+          labels: {
+            formatter: (label) => {
+              const projectObj = projects.find((project) => {
+                if (project.id === label.value) {
+                  return project;
+                }
+              });
+              try {
+                return projectObj.name;
+              } catch {
+                return label.value;
+              }
+            },
+          },
         },
         tooltip: {
-          //followPointer: true,
-          //   formatter: (p) => {
-          //     let point = p.chart.hoverPoint;
-          //     let start = new Date(point.start);
-          //     let end = new Date(point.end);
-          //     let projectName = projects.find((project) => {
-          //       if (project.id === point.projectID) {
-          //         return project;
-          //       }
-          //     });
-          //     try {
-          //       return (
-          //         "<b>" +
-          //         projectName.name +
-          //         "</b>" +
-          //         "<br/>" +
-          //         "<br/>Start: " +
-          //         start.toDateString() +
-          //         "<br/>End: " +
-          //         end.toDateString()
-          //       );
-          //     } catch {
-          //       return "<b>Loading</b>";
-          //     }
-          //   },
+          followPointer: true,
+          formatter: (p) => {
+            let point = p.chart.hoverPoint;
+            let start = new Date(point.start);
+            let end = new Date(point.end);
+            let projectName = projects.find((project) => {
+              if (project.id === point.name) {
+                return project;
+              }
+            });
+            try {
+              return (
+                "<b>" +
+                projectName.name +
+                "</b>" +
+                "<br/>" +
+                "<br/>Start: " +
+                start.toDateString() +
+                "<br/>End: " +
+                end.toDateString()
+              );
+            } catch {
+              return "<b>Loading</b>";
+            }
+          },
         },
         plotOptions: {
           series: {
@@ -220,24 +221,24 @@ export default {
             allowPointSelect: true,
             point: {
               events: {
-                // drop: (data) => {
-                //   let start = new Date(data.target.start).toISOString();
-                //   let end = new Date(data.target.end).toISOString();
-                //   //create new object
-                //   const assignment = {
-                //     id: data.target.id,
-                //     member: { id: parseInt(data.target.name) },
-                //     startDate: start,
-                //     endDate: end,
-                //     projectID: data.target.projectID,
-                //   };
-                //   this.$store.commit(
-                //     "assignments/removeAssignment",
-                //     data.target
-                //   );
-                //   this.$store.commit("assignments/addAssignment", assignment);
-                //   //this.$store.commit("assignments/updateAssignment", data);
-                // },
+                drop: (data) => {
+                  let start = new Date(data.target.start).toISOString();
+                  let end = new Date(data.target.end).toISOString();
+                  //create new object
+                  const assignment = {
+                    id: data.target.assignmentID,
+                    member: { id: parseInt(data.target.parent) },
+                    startDate: start,
+                    endDate: end,
+                    projectID: data.target.name,
+                  };
+                  this.$store.commit(
+                    "assignments/removeAssignment",
+                    assignment.id
+                  );
+                  this.$store.commit("assignments/addAssignment", assignment);
+                  //this.$store.commit("assignments/updateAssignment", data);
+                },
               },
             },
           },
@@ -255,7 +256,7 @@ export default {
           enabled: true,
           trackBackgroundColor: "rgba(230, 230, 230, 0.2)",
         },
-        series: [{ data: assignments }],
+        series: [{ data: [...members, ...assignments] }],
       };
     },
 
@@ -296,7 +297,7 @@ export default {
       return assignments;
     },
     getMembers() {
-      return this.$store.state.members.members;
+      return this.$store.getters["members/getMembers"];
     },
     getProjects() {
       // gets updated value from store
@@ -310,8 +311,6 @@ export default {
     },
     getMembers(update) {
       // watches 'getMembers()' to update members
-      console.log("members: ", update);
-      this.assign;
       this.members = update;
     },
     getProjects(update) {
