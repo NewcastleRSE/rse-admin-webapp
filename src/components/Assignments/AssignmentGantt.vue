@@ -86,22 +86,24 @@ export default {
       });
     },
     save() {
-      let savedAssignments = this.$store.state.assignments.savedAssignments;
-      let notSavedAssignments = this.$store.state.assignments.assignments;
-      let newItems = this.getNewItems(savedAssignments, notSavedAssignments);
-      let deletedItems = this.getDeletedItems(
-        savedAssignments,
-        notSavedAssignments
-      );
+      console.log(this.chartOptions.series[0]);
 
-      this.$store.commit("assignments/resetAssignments");
-      newItems.forEach((item) => {
-        this.$store.dispatch("assignments/saveAssignment", item);
-      });
-      deletedItems.forEach((item) => {
-        this.$store.dispatch("assignments/deleteAssignment", item.id);
-      });
-      this.edited = false;
+      //   let savedAssignments = this.$store.state.assignments.savedAssignments;
+      //   let notSavedAssignments = this.$store.state.assignments.assignments;
+      //   let newItems = this.getNewItems(savedAssignments, notSavedAssignments);
+      //   let deletedItems = this.getDeletedItems(
+      //     savedAssignments,
+      //     notSavedAssignments
+      //   );
+
+      //   this.$store.commit("assignments/resetAssignments");
+      //   newItems.forEach((item) => {
+      //     this.$store.dispatch("assignments/saveAssignment", item);
+      //   });
+      //   deletedItems.forEach((item) => {
+      //     this.$store.dispatch("assignments/deleteAssignment", item.id);
+      //   });
+      //   this.edited = false;
     },
     cancel() {
       this.$store.commit("assignments/resetAssignments");
@@ -127,8 +129,8 @@ export default {
   },
   computed: {
     chartOptions() {
-      let assignments = this.assignments;
-      let members = this.members;
+      //let assignments = this.assignments;
+      //let members = this.members;
       let projects = this.projects;
       let day = 24 * 3600 * 1000;
       return {
@@ -256,7 +258,7 @@ export default {
           enabled: true,
           trackBackgroundColor: "rgba(230, 230, 230, 0.2)",
         },
-        series: [{ data: [...members, ...assignments] }],
+        series: [{ data: [] }],
       };
     },
 
@@ -307,11 +309,14 @@ export default {
   watch: {
     getAssignments(update) {
       // watches 'getAssignments()' to update data in chart
+      this.chartOptions.series[0].data.push(...update);
       this.assignments = update;
     },
     getMembers(update) {
       // watches 'getMembers()' to update members
+      this.chartOptions.series[0].data.push(...update);
       this.members = update;
+      console.log(update);
     },
     getProjects(update) {
       // watches 'getProjects()' to update projects

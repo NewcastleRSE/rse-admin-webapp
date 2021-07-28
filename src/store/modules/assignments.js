@@ -65,7 +65,7 @@ export default {
       );
     },
     addAssignment: (state, assignment) => {
-      state.assignments = [...state.assignments, assignment];
+      state.assignments.push(assignment);
     },
     removeAssignment: (state, assignmentID) => {
       state.assignments = state.assignments.filter(
