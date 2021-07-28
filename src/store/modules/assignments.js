@@ -49,7 +49,6 @@ export default {
     getAssignments(state, assignments) {
       state.assignments = assignments;
       state.savedAssignments = assignments; // should only be called once when loading app
-      console.log("got got");
     },
     resetAssignments(state) {
       state.assignments = state.savedAssignments;

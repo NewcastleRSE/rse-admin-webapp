@@ -9,7 +9,6 @@ export default {
   name: "App",
   components: { MenuBar },
   created() {
-    console.log(this.$route.path);
     this.$store.dispatch("get/getProjects");
     this.$store.dispatch("assignments/getAssignments");
     this.$store.dispatch("members/getMembers");
