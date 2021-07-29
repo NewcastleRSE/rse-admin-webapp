@@ -2,7 +2,7 @@
   <div class="columns">
     <div class="box column is-9">
       <highcharts
-        v-if="members.length > 0 && assignments.length > 0"
+        v-if="members.length > 0 && chart.length > 0 && projects.length > 0"
         :constructorType="'ganttChart'"
         class="hc"
         :options="chartOptions"
@@ -49,23 +49,19 @@ export default {
       showModal: false,
       projectForModal: null,
       edited: false,
-      //savedAssignments: [],
+
       members: [],
-      assignments: [],
       projects: [],
       chart: [],
-
-      itemsToSave: [], // stores assignment object
-      itemsToDelete: [], // stores assignment id
-      itemsToUpdate: [], // stores assignment id and new properties
     };
   },
+  /*
+    loads data into chart if the data was retrieved
+    while on a different page
+  */
   created() {
-    this.assignments = this.getAssignments;
-    //this.savedAssignments = this.getAssignments;
     this.members = this.getMembers;
     this.projects = this.getProjects;
-
     this.chart = this.getAssignments;
   },
   methods: {
@@ -91,15 +87,12 @@ export default {
       this.chart.push(newAssignment);
     },
     deleteAssignments() {
-      // any way an item is deleted, it slow the chart (tried splice)
       if (!this.edited) {
         this.edited = true;
       }
 
       this.$refs.chart.chart.getSelectedPoints().forEach((point) => {
         try {
-          this.itemsToDelete.push(point.assignmentID);
-
           this.chart = this.chart.filter(
             (item) => item.assignmentID !== point.assignmentID
           );
@@ -164,12 +157,12 @@ export default {
     },
   },
   computed: {
+    // chart settings
     chartOptions() {
-      //let assignments = this.assignments;
       let members = this.members;
       let projects = this.projects;
       let chart = this.chart;
-      //let itemsToUpdate = this.itemsToUpdate;
+
       let day = 24 * 3600 * 1000;
       return {
         chart: {
@@ -241,7 +234,7 @@ export default {
                 end.toDateString()
               );
             } catch {
-              return "<b>Loading</b>";
+              return point.name;
             }
           },
         },
@@ -254,7 +247,6 @@ export default {
               draggableY: false,
               dragPrecisionX: day,
             },
-            //maybe put in gantt
             dataLabels: {
               enabled: true,
               format: "{point.name}",
@@ -273,25 +265,6 @@ export default {
                   });
                   chart[assignmentIndex].start = data.target.start;
                   chart[assignmentIndex].end = data.target.end;
-
-                  //   // updates itemsToUpdate array
-                  //   let start = new Date(data.target.start).toISOString();
-                  //   let end = new Date(data.target.end).toISOString();
-                  //   let assignment = {
-                  //     id: data.target.assignmentID,
-                  //     startDate: start,
-                  //     endDate: end,
-                  //   };
-
-                  //   let itemIndex = itemsToUpdate.findIndex((item) => {
-                  //     return item.id === data.target.assignmentID;
-                  //   });
-
-                  //   if (itemIndex > -1) {
-                  //     itemsToUpdate[itemIndex] = assignment;
-                  //   } else {
-                  //     itemsToUpdate.push(assignment);
-                  //   }
                 },
               },
             },
@@ -303,7 +276,7 @@ export default {
           adaptToUpdatedData: false,
           yAxis: {
             min: 0,
-            max: 10,
+            max: 30,
           },
         },
         scrollbar: {
@@ -326,11 +299,14 @@ export default {
       return this.$store.getters["get/getProjects"]; // even when projects is identical to get, doesnt work
     },
   },
+
+  /*
+    loads data once they are retrieved if page is opened on current page
+  */
   watch: {
     getAssignments(update) {
-      // watches 'getAssignments()' to update data in chart
+      // watches 'getAssignments()' to update chart
       this.chart = update;
-      this.assignments = update; //might not be needed
     },
     getMembers(update) {
       // watches 'getMembers()' to update members
