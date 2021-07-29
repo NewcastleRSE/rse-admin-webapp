@@ -41,6 +41,30 @@ export default {
 
       return assignments;
     },
+    getSavedAssignments: (state) => {
+      const assignments = state.savedAssignments.map((assignment) => {
+        const ganttItem = {};
+
+        ganttItem.assignmentID = assignment.id;
+
+        ganttItem.name = assignment.projectID;
+
+        ganttItem.parent = assignment.member.id.toString();
+
+        ganttItem.start = Date.parse(assignment.startDate);
+
+        ganttItem.end = Date.parse(assignment.endDate);
+        //ganttItem.projectID = assignment.projectID;
+
+        return ganttItem;
+      });
+
+      assignments.sort(function(a, b) {
+        return b.end - a.end; // assignment with latest end is displayed first
+      }); // might not need sorting here
+
+      return assignments;
+    },
     getUID: (state) => {
       return (
         Math.max(...state.assignments.map((assignment) => assignment.id)) + 1
@@ -145,7 +169,7 @@ export default {
         })
         .then((response) => {
           console.log(response.data);
-          commit("addAssignment", response.data);
+          //commit("addAssignment", response.data);
           commit("saveAssignment", response.data);
         })
         .catch((error) => {
@@ -161,7 +185,7 @@ export default {
         })
         .then((response) => {
           console.log(response.data);
-          commit("removeAssignment", response.data.id);
+          //commit("removeAssignment", response.data.id);
           commit("deleteAssignment", response.data.id);
         })
         .catch((error) => {

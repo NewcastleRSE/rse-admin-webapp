@@ -53,6 +53,11 @@ export default {
       members: [],
       assignments: [],
       projects: [],
+      chart: [],
+
+      itemsToSave: [], // stores assignment object
+      itemsToDelete: [], // stores assignment id
+      itemsToUpdate: [], // stores assignment id and new properties
     };
   },
   created() {
@@ -60,6 +65,8 @@ export default {
     //this.savedAssignments = this.getAssignments;
     this.members = this.getMembers;
     this.projects = this.getProjects;
+
+    this.chart = this.getAssignments;
   },
   methods: {
     toggleModal(project) {
@@ -76,37 +83,68 @@ export default {
       this.$store.commit("assignments/addAssignment", assignment);
     },
     deleteAssignments() {
+      // any way an item is deleted, it slow the chart (tried splice)
       if (!this.edited) {
         this.edited = true;
       }
       let points = this.$refs.chart.chart.getSelectedPoints();
-      console.log(points);
+      //console.log(points);
       points.forEach((point) => {
-        this.$store.commit("assignments/removeAssignment", point.assignmentID);
+        this.chart = this.chart.filter(
+          (item) => item.assignmentID !== point.assignmentID
+        );
       });
     },
     save() {
-      console.log(this.chartOptions.series[0]);
+      let savedAssignments = this.$store.getters[
+        "assignments/getSavedAssignments"
+      ];
+      let notSavedAssignments = this.chart;
+      let newItems = this.getNewItems(savedAssignments, notSavedAssignments);
+      let deletedItems = this.getDeletedItems(
+        savedAssignments,
+        notSavedAssignments
+      );
 
-      //   let savedAssignments = this.$store.state.assignments.savedAssignments;
-      //   let notSavedAssignments = this.$store.state.assignments.assignments;
-      //   let newItems = this.getNewItems(savedAssignments, notSavedAssignments);
-      //   let deletedItems = this.getDeletedItems(
-      //     savedAssignments,
-      //     notSavedAssignments
-      //   );
+      console.log("new: ", newItems);
+      console.log("deleted: ", deletedItems);
 
-      //   this.$store.commit("assignments/resetAssignments");
-      //   newItems.forEach((item) => {
-      //     this.$store.dispatch("assignments/saveAssignment", item);
-      //   });
-      //   deletedItems.forEach((item) => {
-      //     this.$store.dispatch("assignments/deleteAssignment", item.id);
-      //   });
-      //   this.edited = false;
+      //this.chart = this.$store.getters["assignments/getSavedAssignments"];
+
+      newItems.forEach((item) => {
+        let start = new Date(item.start).toISOString();
+        let end = new Date(item.end).toISOString();
+        //create new object
+        const assignment = {
+          id: item.assignmentID,
+          member: { id: parseInt(item.parent) },
+          startDate: start,
+          endDate: end,
+          projectID: item.name,
+        };
+        this.$store
+          .dispatch("assignments/saveAssignment", assignment)
+          .then(() => {
+            this.chart = this.$store.getters["assignments/getSavedAssignments"];
+          });
+      });
+
+      deletedItems.forEach((item) => {
+        this.$store
+          .dispatch("assignments/deleteAssignment", item.assignmentID)
+          .then(() => {
+            this.chart = this.$store.getters["assignments/getSavedAssignments"];
+          });
+      });
+
+      //should update chart to display what is in savedAssignment
+      //this.$store.commit("assignments/resetAssignments");
+
+      this.edited = false;
     },
     cancel() {
-      this.$store.commit("assignments/resetAssignments");
+      //this.$store.commit("assignments/resetAssignments");
+      this.chart = this.$store.getters["assignments/getSavedAssignments"];
     },
     /**
      * getNewItems():
@@ -130,8 +168,9 @@ export default {
   computed: {
     chartOptions() {
       //let assignments = this.assignments;
-      //let members = this.members;
+      let members = this.members;
       let projects = this.projects;
+      let chart = this.chart;
       let day = 24 * 3600 * 1000;
       return {
         chart: {
@@ -140,6 +179,11 @@ export default {
           scrollablePlotArea: {
             minHeight: 3000, // have to make this dynamic
             opacity: 1,
+          },
+          events: {
+            load: () => {
+              //console.log("loaded: ", chart);
+            },
           },
         },
         title: {
@@ -159,7 +203,6 @@ export default {
         ],
         yAxis: {
           uniqueNames: true,
-          //max: 7,
           labels: {
             formatter: (label) => {
               const projectObj = projects.find((project) => {
@@ -167,6 +210,7 @@ export default {
                   return project;
                 }
               });
+
               try {
                 return projectObj.name;
               } catch {
@@ -212,34 +256,24 @@ export default {
               dragPrecisionX: day,
             },
             //maybe put in gantt
-            // dataLabels: {
-            //   enabled: true,
-            //   format: "{point.projectID}",
-            //   style: {
-            //     cursor: "default",
-            //     pointerEvents: "none",
-            //   },
-            // },
+            dataLabels: {
+              enabled: true,
+              format: "{point.name}",
+              style: {
+                cursor: "default",
+                pointerEvents: "none",
+              },
+            },
             allowPointSelect: true,
             point: {
               events: {
                 drop: (data) => {
-                  let start = new Date(data.target.start).toISOString();
-                  let end = new Date(data.target.end).toISOString();
-                  //create new object
-                  const assignment = {
-                    id: data.target.assignmentID,
-                    member: { id: parseInt(data.target.parent) },
-                    startDate: start,
-                    endDate: end,
-                    projectID: data.target.name,
-                  };
-                  this.$store.commit(
-                    "assignments/removeAssignment",
-                    assignment.id
-                  );
-                  this.$store.commit("assignments/addAssignment", assignment);
-                  //this.$store.commit("assignments/updateAssignment", data);
+                  let itemIndex = chart.findIndex((assignment) => {
+                    return assignment.assignmentID === data.target.assignmentID;
+                  });
+
+                  chart[itemIndex].start = data.target.start;
+                  chart[itemIndex].end = data.target.end;
                 },
               },
             },
@@ -258,45 +292,13 @@ export default {
           enabled: true,
           trackBackgroundColor: "rgba(230, 230, 230, 0.2)",
         },
-        series: [{ data: [] }],
+        series: [{ data: [...members, ...chart] }],
       };
     },
 
     getAssignments() {
       // gets updated value from store
-      let assignments = this.$store.getters["assignments/getAssignments"];
-
-      //   let series = [{ data: [] }];
-      //   assignments.forEach((assignment) => {
-      //     // loop thorugh each assignment
-      //     for (let i = 0; i < series.length; i++) {
-      //       // loop through each series
-      //       let overlapped = false;
-      //       series[i].data.forEach((point) => {
-      //         // loop through each assignment in a series
-      //         if (
-      //           assignment.start < point.end &&
-      //           assignment.end > point.start &&
-      //           assignment.name === point.name
-      //         ) {
-      //           // if assignments overlap
-      //           overlapped = true;
-      //         }
-      //       });
-      //       if (!overlapped) {
-      //         series[i].data.push(assignment); // add assignment to data if doesnt overlap
-      //         break;
-      //       } else if (!series[i + 1]) {
-      //         series.push({ data: [] }); // adds new seriese if next doesnt exist
-      //       }
-      //     }
-      //   });
-
-      //   series[0].data.push({ name: "" }); // fixes last members name not getting displayed
-
-      //   return series;
-
-      return assignments;
+      return this.$store.getters["assignments/getAssignments"];
     },
     getMembers() {
       return this.$store.getters["members/getMembers"];
@@ -309,14 +311,12 @@ export default {
   watch: {
     getAssignments(update) {
       // watches 'getAssignments()' to update data in chart
-      this.chartOptions.series[0].data.push(...update);
-      this.assignments = update;
+      this.chart = update;
+      this.assignments = update; //might not be needed
     },
     getMembers(update) {
       // watches 'getMembers()' to update members
-      this.chartOptions.series[0].data.push(...update);
       this.members = update;
-      console.log(update);
     },
     getProjects(update) {
       // watches 'getProjects()' to update projects
