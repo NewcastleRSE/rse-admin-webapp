@@ -81,6 +81,18 @@ export default {
       }
       console.log(assignment);
       //this.$store.commit("assignments/addAssignment", assignment);
+
+      this.itemsToSave.push(assignment);
+
+      const newAssignment = {
+        name: assignment.projectID,
+        parent: assignment.member.id.toString(),
+        assignmentID: assignment.id,
+        start: Date.parse(assignment.startDate),
+        end: Date.parse(assignment.endDate),
+      };
+
+      this.chart.push(newAssignment);
     },
     deleteAssignments() {
       // any way an item is deleted, it slow the chart (tried splice)
@@ -101,15 +113,19 @@ export default {
       });
     },
     save() {
-      //   this.itemsToUpdate.forEach((assignment) => {
-      //     this.$store.dispatch("assignments/updateAssignment", assignment);
-      //   });
+      this.itemsToSave.forEach((assignment) => {
+        this.$store.dispatch("assignments/saveAssignment", assignment);
+      });
 
-      //   this.itemsToDelete.forEach((assignmentID) => {
-      //     if (assignmentID) {
-      //       this.$store.dispatch("assignments/deleteAssignment", assignmentID);
-      //     }
-      //   });
+      this.itemsToUpdate.forEach((assignment) => {
+        this.$store.dispatch("assignments/updateAssignment", assignment);
+      });
+
+      this.itemsToDelete.forEach((assignmentID) => {
+        if (assignmentID) {
+          this.$store.dispatch("assignments/deleteAssignment", assignmentID);
+        }
+      });
 
       console.log("itemsToSave: ", this.itemsToSave);
       console.log("itemsToDelete: ", this.itemsToDelete);
@@ -167,7 +183,7 @@ export default {
           },
           events: {
             load: () => {
-              //console.log("loaded: ", chart);
+              console.log("loaded: ", chart);
             },
           },
         },
