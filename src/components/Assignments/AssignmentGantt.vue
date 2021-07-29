@@ -79,77 +79,56 @@ export default {
       if (!this.edited) {
         this.edited = true;
       }
-
-      this.$store.commit("assignments/addAssignment", assignment);
+      console.log(assignment);
+      //this.$store.commit("assignments/addAssignment", assignment);
     },
     deleteAssignments() {
       // any way an item is deleted, it slow the chart (tried splice)
       if (!this.edited) {
         this.edited = true;
       }
-      let points = this.$refs.chart.chart.getSelectedPoints();
-      //console.log(points);
-      points.forEach((point) => {
-        this.chart = this.chart.filter(
-          (item) => item.assignmentID !== point.assignmentID
-        );
+
+      this.$refs.chart.chart.getSelectedPoints().forEach((point) => {
+        try {
+          this.itemsToDelete.push(point.assignmentID);
+
+          this.chart = this.chart.filter(
+            (item) => item.assignmentID !== point.assignmentID
+          );
+        } catch {
+          console.log("Failed To Delete");
+        }
       });
     },
     save() {
-      this.itemsToUpdate.forEach((assignment) => {
-        this.$store.dispatch("assignments/updateAssignment", assignment);
-      });
-
-      //   let savedAssignments = this.$store.getters[
-      //     "assignments/getSavedAssignments"
-      //   ];
-      //   let notSavedAssignments = this.chart;
-      //   let newItems = this.getNewItems(savedAssignments, notSavedAssignments);
-      //   let deletedItems = this.getDeletedItems(
-      //     savedAssignments,
-      //     notSavedAssignments
-      //   );
-
-      //   console.log("new: ", newItems);
-      //   console.log("deleted: ", deletedItems);
-
-      //   //this.chart = this.$store.getters["assignments/getSavedAssignments"];
-
-      //   newItems.forEach((item) => {
-      //     let start = new Date(item.start).toISOString();
-      //     let end = new Date(item.end).toISOString();
-      //     //create new object
-      //     const assignment = {
-      //       id: item.assignmentID,
-      //       member: { id: parseInt(item.parent) },
-      //       startDate: start,
-      //       endDate: end,
-      //       projectID: item.name,
-      //     };
-      //     this.$store
-      //       .dispatch("assignments/saveAssignment", assignment)
-      //       .then(() => {
-      //         this.chart = this.$store.getters["assignments/getSavedAssignments"];
-      //       });
+      //   this.itemsToUpdate.forEach((assignment) => {
+      //     this.$store.dispatch("assignments/updateAssignment", assignment);
       //   });
 
-      //   deletedItems.forEach((item) => {
-      //     this.$store
-      //       .dispatch("assignments/deleteAssignment", item.assignmentID)
-      //       .then(() => {
-      //         this.chart = this.$store.getters["assignments/getSavedAssignments"];
-      //       });
+      //   this.itemsToDelete.forEach((assignmentID) => {
+      //     if (assignmentID) {
+      //       this.$store.dispatch("assignments/deleteAssignment", assignmentID);
+      //     }
       //   });
 
-      //should update chart to display what is in savedAssignment
-      //this.$store.commit("assignments/resetAssignments");
+      console.log("itemsToSave: ", this.itemsToSave);
+      console.log("itemsToDelete: ", this.itemsToDelete);
+      console.log("itemsToUpdate: ", this.itemsToUpdate);
 
-      this.edited = false;
+      this.reset();
     },
     cancel() {
       //this.$store.commit("assignments/resetAssignments");
       this.chart = this.$store.getters["assignments/getSavedAssignments"];
       //console.log(this.itemsToUpdate);
+
+      this.reset();
+    },
+    reset() {
+      this.itemsToSave = [];
+      this.itemsToDelete = [];
+      this.itemsToUpdate = [];
+      this.edited = false;
     },
     /**
      * getNewItems():
@@ -274,16 +253,16 @@ export default {
             point: {
               events: {
                 drop: (data) => {
-                  //   let itemIndex = chart.findIndex((assignment) => {
-                  //     return assignment.assignmentID === data.target.assignmentID;
-                  //   });
+                  // updates the chart array
+                  let assignmentIndex = chart.findIndex((assignment) => {
+                    return assignment.assignmentID === data.target.assignmentID;
+                  });
+                  chart[assignmentIndex].start = data.target.start;
+                  chart[assignmentIndex].end = data.target.end;
 
-                  //   chart[itemIndex].start = data.target.start;
-                  //   chart[itemIndex].end = data.target.end;
-
+                  // updates itemsToUpdate array
                   let start = new Date(data.target.start).toISOString();
                   let end = new Date(data.target.end).toISOString();
-
                   let assignment = {
                     id: data.target.assignmentID,
                     startDate: start,
