@@ -97,22 +97,13 @@ export default {
       );
     },
     updateAssignment: (state, assignment) => {
-      let objIndex = state.assignments.findIndex(
-        (obj) => obj.id == assignment.target.id
-      ); // added error handling
-      let objIndex2 = state.savedAssignments.findIndex(
-        (obj) => obj.id == assignment.target.id
-      ); // added error handling
+      let objIndex = state.savedAssignments.findIndex(
+        (obj) => obj.id == assignment.id
+      );
 
-      let start = new Date(assignment.target.start).toISOString();
-      let end = new Date(assignment.target.end).toISOString();
-
-      console.log("before: ", state.savedAssignments[objIndex2]);
-
-      state.assignments[objIndex].startDate = start;
-      state.assignments[objIndex].endDate = end;
-
-      console.log("after: ", state.assignments[objIndex]);
+      if (objIndex > -1) {
+        state.savedAssignments[objIndex] = assignment;
+      }
     },
   },
 
@@ -187,6 +178,21 @@ export default {
           console.log(response.data);
           //commit("removeAssignment", response.data.id);
           commit("deleteAssignment", response.data.id);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    updateAssignment({ commit, rootState }, assignment) {
+      return axios
+        .put(`http://localhost:1337/assignments/${assignment.id}`, assignment, {
+          headers: {
+            Authorization: `Bearer ${rootState.auth.jwt}`,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          commit("updateAssignment", response.data);
         })
         .catch((error) => {
           console.log(error);
