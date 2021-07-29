@@ -79,10 +79,6 @@ export default {
       if (!this.edited) {
         this.edited = true;
       }
-      console.log(assignment);
-      //this.$store.commit("assignments/addAssignment", assignment);
-
-      this.itemsToSave.push(assignment);
 
       const newAssignment = {
         name: assignment.projectID,
@@ -113,39 +109,41 @@ export default {
       });
     },
     save() {
-      this.itemsToSave.forEach((assignment) => {
+      let savedAssignments = this.$store.getters[
+        "assignments/getSavedAssignments"
+      ];
+      let notSavedAssignments = this.chart;
+
+      let newItems = this.getNewItems(savedAssignments, notSavedAssignments);
+      let deletedItems = this.getNewItems(
+        notSavedAssignments,
+        savedAssignments
+      );
+
+      console.log("new: ", newItems);
+      console.log("deleted: ", deletedItems);
+
+      newItems.forEach((item) => {
+        const assignment = {
+          //id: this.$store.getters["assignments/getUID"],
+          member: { id: item.parent },
+          startDate: item.start,
+          endDate: item.end,
+          projectID: item.name,
+        };
         this.$store.dispatch("assignments/saveAssignment", assignment);
       });
-
-      this.itemsToUpdate.forEach((assignment) => {
-        this.$store.dispatch("assignments/updateAssignment", assignment);
+      deletedItems.forEach((item) => {
+        this.$store.dispatch("assignments/deleteAssignment", item.assignmentID);
       });
 
-      this.itemsToDelete.forEach((assignmentID) => {
-        if (assignmentID) {
-          this.$store.dispatch("assignments/deleteAssignment", assignmentID);
-        }
-      });
-
-      console.log("itemsToSave: ", this.itemsToSave);
-      console.log("itemsToDelete: ", this.itemsToDelete);
-      console.log("itemsToUpdate: ", this.itemsToUpdate);
-
-      this.reset();
+      //     // must be done after all items are saved and deleted
+      //   this.chart = this.$store.getters["assignments/getSavedAssignments"];
     },
     cancel() {
-      //this.$store.commit("assignments/resetAssignments");
       this.chart = this.$store.getters["assignments/getSavedAssignments"];
-      //console.log(this.itemsToUpdate);
+    },
 
-      this.reset();
-    },
-    reset() {
-      this.itemsToSave = [];
-      this.itemsToDelete = [];
-      this.itemsToUpdate = [];
-      this.edited = false;
-    },
     /**
      * getNewItems():
      * All assignments dictionaries which are in currentAssignments
@@ -171,7 +169,7 @@ export default {
       let members = this.members;
       let projects = this.projects;
       let chart = this.chart;
-      let itemsToUpdate = this.itemsToUpdate;
+      //let itemsToUpdate = this.itemsToUpdate;
       let day = 24 * 3600 * 1000;
       return {
         chart: {
@@ -276,24 +274,24 @@ export default {
                   chart[assignmentIndex].start = data.target.start;
                   chart[assignmentIndex].end = data.target.end;
 
-                  // updates itemsToUpdate array
-                  let start = new Date(data.target.start).toISOString();
-                  let end = new Date(data.target.end).toISOString();
-                  let assignment = {
-                    id: data.target.assignmentID,
-                    startDate: start,
-                    endDate: end,
-                  };
+                  //   // updates itemsToUpdate array
+                  //   let start = new Date(data.target.start).toISOString();
+                  //   let end = new Date(data.target.end).toISOString();
+                  //   let assignment = {
+                  //     id: data.target.assignmentID,
+                  //     startDate: start,
+                  //     endDate: end,
+                  //   };
 
-                  let itemIndex = itemsToUpdate.findIndex((item) => {
-                    return item.id === data.target.assignmentID;
-                  });
+                  //   let itemIndex = itemsToUpdate.findIndex((item) => {
+                  //     return item.id === data.target.assignmentID;
+                  //   });
 
-                  if (itemIndex > -1) {
-                    itemsToUpdate[itemIndex] = assignment;
-                  } else {
-                    itemsToUpdate.push(assignment);
-                  }
+                  //   if (itemIndex > -1) {
+                  //     itemsToUpdate[itemIndex] = assignment;
+                  //   } else {
+                  //     itemsToUpdate.push(assignment);
+                  //   }
                 },
               },
             },
