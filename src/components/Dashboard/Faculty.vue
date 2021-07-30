@@ -25,6 +25,11 @@ export default {
                 alpha: 45
             }
         },
+
+        title: {
+            text: "",
+        },
+
         
         plotOptions: {
             pie: {

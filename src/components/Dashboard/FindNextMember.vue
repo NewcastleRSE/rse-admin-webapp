@@ -67,7 +67,7 @@ export default {
         return min;} 
     },
 
-    created() {
+    async created() {
         let assignments = this.getAssignments;
         let members = this.getMembers;
         this.webDev= this.findNext(assignments, members, "WebMobile");
