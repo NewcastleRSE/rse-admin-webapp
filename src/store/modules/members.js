@@ -18,8 +18,8 @@ export default {
         const ganttItem = {};
 
         ganttItem.id = member.id.toString();
-
         ganttItem.name = member.firstname + " " + member.surname;
+        ganttItem.collapsed = true;
 
         return ganttItem;
       });

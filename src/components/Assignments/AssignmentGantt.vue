@@ -1,6 +1,6 @@
 <template>
   <div class="columns">
-    <div class="box column is-9">
+    <div class="box column is-10">
       <highcharts
         v-if="members.length > 0 && chart.length > 0 && projects.length > 0"
         :constructorType="'ganttChart'"
@@ -116,6 +116,8 @@ export default {
       console.log("new: ", newItems);
       console.log("deleted: ", deletedItems);
 
+      let promises = [];
+
       newItems.forEach((item) => {
         const assignment = {
           //id: this.$store.getters["assignments/getUID"],
@@ -124,14 +126,22 @@ export default {
           endDate: item.end,
           projectID: item.name,
         };
-        this.$store.dispatch("assignments/saveAssignment", assignment);
+        promises.push(
+          this.$store.dispatch("assignments/saveAssignment", assignment)
+        );
       });
       deletedItems.forEach((item) => {
-        this.$store.dispatch("assignments/deleteAssignment", item.assignmentID);
+        promises.push(
+          this.$store.dispatch(
+            "assignments/deleteAssignment",
+            item.assignmentID
+          )
+        );
       });
 
-      //     // must be done after all items are saved and deleted
-      //   this.chart = this.$store.getters["assignments/getSavedAssignments"];
+      Promise.allSettled(promises).then(() => {
+        this.chart = this.$store.getters["assignments/getSavedAssignments"];
+      });
     },
     cancel() {
       this.chart = this.$store.getters["assignments/getSavedAssignments"];
@@ -164,12 +174,13 @@ export default {
       let chart = this.chart;
 
       let day = 24 * 3600 * 1000;
+      let scrollHeight = (chart.length + members.length) * 60; // increase '60' if chart cut off at bottom
       return {
         chart: {
           type: "gantt",
           height: "60%", // % for aspect ratio
           scrollablePlotArea: {
-            minHeight: 3000, // have to make this dynamic
+            minHeight: scrollHeight,
             opacity: 1,
           },
           events: {
@@ -259,12 +270,18 @@ export default {
             point: {
               events: {
                 drop: (data) => {
-                  // updates the chart array
-                  let assignmentIndex = chart.findIndex((assignment) => {
-                    return assignment.assignmentID === data.target.assignmentID;
-                  });
-                  chart[assignmentIndex].start = data.target.start;
-                  chart[assignmentIndex].end = data.target.end;
+                  try {
+                    // updates the chart array
+                    let assignmentIndex = chart.findIndex((assignment) => {
+                      return (
+                        assignment.assignmentID === data.target.assignmentID
+                      );
+                    });
+                    chart[assignmentIndex].start = data.target.start;
+                    chart[assignmentIndex].end = data.target.end;
+                  } catch {
+                    alert("Failed to drop item");
+                  }
                 },
               },
             },

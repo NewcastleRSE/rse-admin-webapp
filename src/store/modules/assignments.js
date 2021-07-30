@@ -22,15 +22,10 @@ export default {
         const ganttItem = {};
 
         ganttItem.assignmentID = assignment.id;
-
         ganttItem.name = assignment.projectID;
-
         ganttItem.parent = assignment.member.id.toString();
-
         ganttItem.start = Date.parse(assignment.startDate);
-
         ganttItem.end = Date.parse(assignment.endDate);
-        //ganttItem.projectID = assignment.projectID;
 
         return ganttItem;
       });
