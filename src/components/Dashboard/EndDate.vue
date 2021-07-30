@@ -1,6 +1,5 @@
 <template>
   <table-lite
-    :has-checkbox="true"
     :columns="table.columns"
     :rows="table.rows"
     :total="table.totalRecordCount"
@@ -13,21 +12,16 @@
 import { defineComponent, reactive } from "vue";
 import TableLite from "vue3-table-lite";
 
-
 export default defineComponent({
   name: "endDate",
   components: {
     TableLite,
   },
   setup() {
-    
-    const table = null;
-
     return {
-      table,
+      table: null,
     };
   },
-
   async created() { 
        let assignments = this.getAssignmentsEndDate
        this.table = reactive({
@@ -94,19 +88,18 @@ export default defineComponent({
         },
             });
         },
-
   computed: {
       getAssignmentsEndDate() {
         let assignments = this.$store.getters["assignments/getAssignments"];
         let members = this.$store.getters["members/getMembers"];
         let projects = this.$store.getters["get/getProjects"];
-
-        console.log(assignments)
+        console.log( projects)
         let data = []
         assignments.forEach( (assign) => { //finding the minimum
              if (Date.now() >= assign.start) {
-                let member = members.filter(memb => memb.id == assign.name);
-                let project = projects.filter(prj => prj.id == assign.projectId);
+                let member = members.filter(memb => memb.id == assign.parent);
+                let project = projects.filter(prj => prj.id == assign.name);
+                console.log(project)
                 member = member[0];
                 project = project[0];
                 let start = new Date(project.start + 10);
@@ -125,7 +118,6 @@ export default defineComponent({
         return data
       }
   },
-
   watched: {
       getAssignmentsEndDate(update) {
           this.data = update;
@@ -134,7 +126,6 @@ export default defineComponent({
 }
  
 );
-
 </script>
 
 <style>

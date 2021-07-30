@@ -55,9 +55,9 @@ export default {
         assignments.forEach((assign) => {
             let member = null;
             if (team === "") {
-                member = members.filter((memb) => memb.id == assign.name)
+                member = members.filter((memb) => memb.id == assign.parent)
             } else {
-                member = members.filter((memb) => memb.id == assign.name && memb.team === team)
+                member = members.filter((memb) => memb.id == assign.parent && memb.team === team)
             }
             if (member[0] && (min.end < assign.end || min.end == -1)) {
                 assign["username"] = member[0].name
@@ -70,6 +70,7 @@ export default {
     async created() {
         let assignments = this.getAssignments;
         let members = this.getMembers;
+        console.log(members)
         this.webDev= this.findNext(assignments, members, "WebMobile");
         this.integrations = this.findNext(assignments, members, "Integrations");
         this.dataScience = this.findNext(assignments, members, "DataScience");

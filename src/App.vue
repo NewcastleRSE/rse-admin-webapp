@@ -1,11 +1,6 @@
 <template>
-  
   <MenuBar />
-  <div class="columns">
-    <div class = "container column is-9">
-    <router-view></router-view>
-    </div>
-  </div>
+  <router-view></router-view>
 </template>
 
 <script>
@@ -14,11 +9,9 @@ export default {
   name: "App",
   components: { MenuBar },
   created() {
-    console.log(this.$route.path)
     this.$store.dispatch("get/getProjects");
-    this.$store.dispatch("assignments/getAssignments");
     this.$store.dispatch("members/getMembers");
-
+    this.$store.dispatch("assignments/getAssignments");
   },
 };
 </script>
@@ -31,6 +24,4 @@ export default {
   color: #2c3e50;
   background: white;
 }
-
-
 </style>

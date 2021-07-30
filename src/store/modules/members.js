@@ -30,7 +30,7 @@ export default {
 
                 ganttItem.team = members.Team;
 
-
+                ganttItem.collapsed = true;
 
                 return ganttItem;
             });

@@ -56,11 +56,11 @@ export default {
     getAssignments() {
       let id = this.$route.params.id
       let assignments = this.$store.getters["assignments/getAssignments"].filter(
-        assignment => id == assignment.name);
+        assignment => id == assignment.parent);
       assignments.forEach( (assign) => {
-        let project = this.$store.getters["get/getProjects"].filter(prj => prj.id == assign.projectId
+        let project = this.$store.getters["get/getProjects"].filter(prj => prj.id == assign.name
         );
-        if (project.length  > 0) {assign.name = project[0].name}
+        if (project.length  > 0) {assign.parent = project[0].name}
         assign.x = assign.start;
       });
       return assignments;      
