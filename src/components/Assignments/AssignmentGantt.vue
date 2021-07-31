@@ -181,7 +181,8 @@ export default {
       });
     },
     cancel() {
-      this.chart = this.$store.getters["assignments/getSavedAssignments"];
+      //this.chart = this.$store.getters["assignments/getSavedAssignments"];
+      this.$router.push({ name: "User", params: { id: 5 } });
     },
 
     /**
@@ -335,7 +336,7 @@ export default {
                 dblclick: (event) => {
                   try {
                     if (event.point.parent) {
-                      // if clicked on project
+                      // if clicked on assignment
                       let project = projects.find((project) => {
                         return project.id == event.point.name;
                       });
@@ -343,10 +344,13 @@ export default {
                       this.toggleProjectModal(project);
                     } else {
                       // if clicked on name
-                      console.log("name");
+                      this.$router.push({
+                        name: "User",
+                        params: { id: event.point.id },
+                      });
                     }
                   } catch {
-                    alert("Error during click");
+                    alert("Error during dblclick");
                   }
                 },
               },

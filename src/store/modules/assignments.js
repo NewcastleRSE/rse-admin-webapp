@@ -83,14 +83,14 @@ export default {
         (item) => item.id !== assignmentID
       );
     },
-    addAssignment: (state, assignment) => {
-      state.assignments.push(assignment);
-    },
-    removeAssignment: (state, assignmentID) => {
-      state.assignments = state.assignments.filter(
-        (item) => item.id !== assignmentID
-      );
-    },
+    // addAssignment: (state, assignment) => {
+    //   state.assignments.push(assignment);
+    // },
+    // removeAssignment: (state, assignmentID) => {
+    //   state.assignments = state.assignments.filter(
+    //     (item) => item.id !== assignmentID
+    //   );
+    // },
     updateAssignment: (state, assignment) => {
       let objIndex = state.savedAssignments.findIndex(
         (obj) => obj.id == assignment.id
