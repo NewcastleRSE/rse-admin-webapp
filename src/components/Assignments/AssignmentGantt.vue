@@ -1,4 +1,16 @@
 <template>
+  <div class="member-filter">
+    <h2>Members Filter</h2>
+    <div class="select is-primary">
+      <select v-model="selected">
+        <option value="All">All</option>
+        <option value="DataScience">Data Science</option>
+        <option value="Integrations">Integrations</option>
+        <option value="WebMobile">Web Mobile</option>
+      </select>
+    </div>
+    <p>{{ selected }}</p>
+  </div>
   <div class="columns">
     <div class="box column is-10">
       <highcharts
@@ -24,33 +36,45 @@
       </button>
     </div>
     <div class="column is-3">
-      <ProjectsCard @toggle-modal="toggleModal" />
+      <ProjectsCard @toggle-form-modal="toggleFormModal" />
     </div>
   </div>
-  <Modal
-    v-if="showModal"
+  <FormModal
+    v-if="showFormModal"
     :project="projectForModal"
-    @toggleModal="toggleModal"
+    @toggle-form-modal="toggleFormModal"
     @add-assignment="addAssignment"
+  />
+  <ProjectModal
+    v-if="showProjectModal"
+    :project="projectForModal"
+    @toggle-project-modal="toggleProjectModal"
   />
 </template>
 
 <script>
 //:disabled="!edited"
 import ProjectsCard from "./ProjectsCard.vue";
-import Modal from "./AssignmentsFormModal.vue";
+import FormModal from "./AssignmentsFormModal.vue";
+import ProjectModal from "../ProjectModal.vue";
+
 import differenceWith from "lodash.differencewith";
 import isEqual from "lodash.isequal";
 export default {
   name: "AssignmentGantt",
-  components: { ProjectsCard, Modal },
+  components: { ProjectsCard, FormModal, ProjectModal },
   data() {
     return {
-      showModal: false,
-      projectForModal: null,
+      showFormModal: false,
+      showProjectModal: false,
+      projectForModal: null, // used for both form and project modal
+
       edited: false,
 
       members: [],
+      membersFiltered: [],
+      selected: "All",
+
       projects: [],
       chart: [],
     };
@@ -65,11 +89,17 @@ export default {
     this.chart = this.getAssignments;
   },
   methods: {
-    toggleModal(project) {
+    toggleFormModal(project) {
       if (project) {
         this.projectForModal = project;
       }
-      this.showModal = !this.showModal;
+      this.showFormModal = !this.showFormModal;
+    },
+    toggleProjectModal(project) {
+      if (project) {
+        this.projectForModal = project;
+      }
+      this.showProjectModal = !this.showProjectModal;
     },
     addAssignment(assignment) {
       if (!this.edited) {
@@ -170,6 +200,7 @@ export default {
     // chart settings
     chartOptions() {
       let members = this.members;
+
       let projects = this.projects;
       let chart = this.chart;
 
@@ -219,6 +250,11 @@ export default {
               } catch {
                 return label.value;
               }
+            },
+            events: {
+              click: function() {
+                console.log(this);
+              },
             },
           },
         },
@@ -283,6 +319,23 @@ export default {
                     alert("Failed to drop item");
                   }
                 },
+                click: (event) => {
+                  try {
+                    if (event.point.parent) {
+                      // if clicked on project
+                      let project = projects.find((project) => {
+                        return project.id == event.point.name;
+                      });
+
+                      this.toggleProjectModal(project);
+                    } else {
+                      // if clicked on name
+                      console.log("name");
+                    }
+                  } catch {
+                    alert("Error during click");
+                  }
+                },
               },
             },
           },
@@ -310,6 +363,14 @@ export default {
     },
     getMembers() {
       return this.$store.getters["members/getMembers"];
+
+      //   if (this.selected === "All") {
+      //     return this.$store.getters["members/getMembers"];
+      //   } else {
+      //     return this.$store.getters["members/getMembers"].filter((member) => {
+      //       return member.team === this.selected;
+      //     });
+      //   }
     },
     getProjects() {
       // gets updated value from store
@@ -336,3 +397,13 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.member-filter {
+  margin: 1em;
+  display: flex;
+}
+.member-filter h2 {
+  margin-right: 0.5em;
+}
+</style>

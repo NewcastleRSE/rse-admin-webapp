@@ -14,11 +14,16 @@ export default {
 
   getters: {
     getMembers: (state) => {
+      state.members.sort(function(a, b) {
+        return a.surname.localeCompare(b.surname);
+      });
+
       const members = state.members.map((member) => {
         const ganttItem = {};
 
         ganttItem.id = member.id.toString();
         ganttItem.name = member.firstname + " " + member.surname;
+        ganttItem.team = member.Team;
         ganttItem.collapsed = true;
 
         return ganttItem;

@@ -44,9 +44,10 @@ export default {
   },
   methods: {
     toggleModal(project) {
-      this.$emit("toggleModal", project);
+      this.$emit("toggleFormModal", project);
     },
     filter(name = null) {
+      // change to ES6 filter
       this.filterProjects = [];
       let projects = this.projects;
       if (name) {
