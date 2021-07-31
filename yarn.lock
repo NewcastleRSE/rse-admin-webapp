@@ -8455,6 +8455,14 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
+vue3-table-lite@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/vue3-table-lite/-/vue3-table-lite-1.0.6.tgz#15bdd86c227b6ad8c50b2abda3fed5ebd1aad3e7"
+  integrity sha512-bam4UYnXoreR1wdptzvcH3IVVpjNgKWJVgCEuSfHhLGLIC0XBKCTLNUCARD9jmd6sxIScbL6L4eg9dbRKcx3sQ==
+  dependencies:
+    core-js "^3.6.5"
+    vue "^3.0.0"
+
 vue@^3.0.0:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.1.2.tgz#647f8e3949a3d600771dca25d50225dc3e594c64"

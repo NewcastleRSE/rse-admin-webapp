@@ -207,7 +207,6 @@ export default {
     // chart settings
     chartOptions() {
       let members = this.members;
-
       let projects = this.projects;
       let chart = this.chart;
 

@@ -44,10 +44,10 @@ export default {
     //async, commits mutations
 
     /*
-    Gets member or members from DB
-    Call with this.$store.dispatch("members/getMembers", "{id}");
-    Can leave parameter empty and will call all members
-    */
+        Gets member or members from DB
+        Call with this.$store.dispatch("members/getMembers", "{id}");
+        Can leave parameter empty and will call all members
+        */
     getMembers({ commit, rootState }, id = "") {
       axios
         .get(`http://localhost:1337/members/${id}`, {
