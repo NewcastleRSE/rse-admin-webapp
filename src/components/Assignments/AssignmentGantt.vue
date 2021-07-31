@@ -1,5 +1,5 @@
 <template>
-  <div class="member-filter">
+  <!-- <div class="member-filter">
     <h2>Members Filter</h2>
     <div class="select is-primary">
       <select v-model="selected">
@@ -10,7 +10,13 @@
       </select>
     </div>
     <p>{{ selected }}</p>
-  </div>
+    <p>Double click on assignment to open modal</p>
+    <label class="checkbox">
+      <input type="checkbox" v-model="showOldAssignments" />
+      Show assignments that ended over a year ago
+    </label>
+    <p>{{ showOldAssignments }}</p>
+  </div> -->
   <div class="columns">
     <div class="box column is-10">
       <highcharts
@@ -72,10 +78,11 @@ export default {
       edited: false,
 
       members: [],
-      membersFiltered: [],
       selected: "All",
 
       projects: [],
+      showOldAssignments: false,
+
       chart: [],
     };
   },
@@ -215,8 +222,20 @@ export default {
             opacity: 1,
           },
           events: {
-            load: () => {
-              console.log("loaded: ", chart);
+            load() {
+              //console.log("loaded: ", chart);
+              this.xAxis[0].setExtremes(
+                Date.UTC(
+                  new Date().getFullYear(),
+                  new Date().getMonth() - 3,
+                  new Date().getDate()
+                ),
+                Date.UTC(
+                  new Date().getFullYear(),
+                  new Date().getMonth() + 3,
+                  new Date().getDate()
+                )
+              );
             },
           },
         },
@@ -355,8 +374,22 @@ export default {
     getAssignments() {
       // gets updated value from store
       return this.$store.getters["assignments/getAssignments"];
+
+      //   let currentDate = new Date();
+      //   if (this.showOldAssignments) {
+      //     return this.$store.getters["assignments/getAssignments"];
+      //   } else {
+      //     return this.$store.getters["assignments/getAssignments"].filter(
+      //       (project) => {
+      //         return (
+      //           project.end + 1000 * 60 * 60 * 24 * 365 > Date.parse(currentDate) // if ended less than a year ago
+      //         );
+      //       }
+      //     );
+      //   }
     },
     getMembers() {
+      // gets updated value from store
       return this.$store.getters["members/getMembers"];
 
       //   if (this.selected === "All") {

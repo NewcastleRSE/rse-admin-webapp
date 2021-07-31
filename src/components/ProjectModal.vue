@@ -12,7 +12,9 @@
           <div class="tile is-parent top-of-modal">
             <div class="tile is-child is-5 box">
               <h2 class="subtitle">Finance</h2>
-              <p v-if="project.amount">Amount: £{{ project.amount }}</p>
+              <p v-if="project.amount">
+                Amount: {{ formatter(project.amount) }}
+              </p>
               <p v-if="project.financeContact">
                 Finance Contact: {{ project.financeContact }}
               </p>
@@ -20,7 +22,7 @@
                 Funding Body: {{ project.fundingBody }}
               </p>
               <p v-if="project.projectValue">
-                Project Value: £{{ project.projectValue }}
+                Project Value: {{ formatter(project.projectValue) }}
               </p>
               <p></p>
             </div>
@@ -58,6 +60,14 @@ export default {
   methods: {
     toggleModal() {
       this.$emit("toggleProjectModal");
+    },
+    formatter(amount) {
+      const formatter = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "GBP",
+      });
+
+      return formatter.format(amount);
     },
   },
 };

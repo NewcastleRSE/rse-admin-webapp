@@ -19,7 +19,7 @@
           <br />
           <small v-if="project.amount"
             ><span style="font-weight: bold;"> Amount: </span
-            >{{ project.amount }}</small
+            >{{ formatter(project.amount) }}</small
           >
           <br />
           <small v-if="project.amount"
@@ -62,6 +62,14 @@ export default {
       }
       console.log(this.filterProjects);
       console.log(projects);
+    },
+    formatter(amount) {
+      const formatter = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "GBP",
+      });
+
+      return formatter.format(amount);
     },
   },
   created() {
