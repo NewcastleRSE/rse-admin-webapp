@@ -251,11 +251,6 @@ export default {
                 return label.value;
               }
             },
-            events: {
-              click: function() {
-                console.log(this);
-              },
-            },
           },
         },
         tooltip: {
@@ -319,7 +314,7 @@ export default {
                     alert("Failed to drop item");
                   }
                 },
-                click: (event) => {
+                dblclick: (event) => {
                   try {
                     if (event.point.parent) {
                       // if clicked on project
