@@ -31,15 +31,25 @@
         class="progress is-small is-primary"
         max="100"
       ></progress>
-      <button @click="deleteAssignments" class="button is-primary">
-        Delete Selected
-      </button>
-      <button @click="save" class="button is-primary">
-        Save
-      </button>
-      <button @click="cancel" class="button is-secondary">
-        Cancel
-      </button>
+      <div class="btns">
+        <div class="delete">
+          <button @click="deleteAssignments" class="button is-primary">
+            Delete Selected
+          </button>
+        </div>
+        <div class="save">
+          <button :disabled="!edited" @click="save" class="button is-primary">
+            Save
+          </button>
+          <button
+            :disabled="!edited"
+            @click="cancel"
+            class="button is-secondary"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
     </div>
     <div class="column is-3">
       <ProjectsCard @toggle-form-modal="toggleFormModal" />
@@ -159,8 +169,8 @@ export default {
         const assignment = {
           //id: this.$store.getters["assignments/getUID"],
           member: { id: item.parent },
-          startDate: item.start,
-          endDate: item.end,
+          startDate: new Date(item.start).toISOString(),
+          endDate: new Date(item.end).toISOString(),
           projectID: item.name,
         };
         promises.push(
@@ -178,11 +188,12 @@ export default {
 
       Promise.allSettled(promises).then(() => {
         this.chart = this.$store.getters["assignments/getSavedAssignments"];
+        this.edited = false;
       });
     },
     cancel() {
-      //this.chart = this.$store.getters["assignments/getSavedAssignments"];
-      this.$router.push({ name: "User", params: { id: 5 } });
+      this.chart = this.$store.getters["assignments/getSavedAssignments"];
+      this.edited = false;
     },
 
     /**
@@ -210,6 +221,9 @@ export default {
       let members = this.members;
       let projects = this.projects;
       let chart = this.chart;
+
+      // eslint-disable-next-line no-unused-vars
+      //let edited = this.edited; // only used in try
 
       let day = 24 * 3600 * 1000;
       let scrollHeight = (chart.length + members.length) * 60; // increase '60' if chart cut off at bottom
@@ -329,6 +343,10 @@ export default {
                     });
                     chart[assignmentIndex].start = data.target.start;
                     chart[assignmentIndex].end = data.target.end;
+
+                    if (!this.edited) {
+                      this.edited = true;
+                    }
                   } catch {
                     alert("Failed to drop item");
                   }
@@ -436,5 +454,10 @@ export default {
 }
 .member-filter h2 {
   margin-right: 0.5em;
+}
+.btns {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 1em;
 }
 </style>
