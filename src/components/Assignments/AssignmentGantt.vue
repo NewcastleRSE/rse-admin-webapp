@@ -118,21 +118,19 @@ export default {
       }
       this.showProjectModal = !this.showProjectModal;
     },
+    /*
+    Pushes assignment from AssignmentsFormModal
+    */
     addAssignment(assignment) {
       if (!this.edited) {
         this.edited = true;
       }
 
-      const newAssignment = {
-        name: assignment.projectID,
-        parent: assignment.member.id.toString(),
-        assignmentID: assignment.id,
-        start: Date.parse(assignment.startDate),
-        end: Date.parse(assignment.endDate),
-      };
-
-      this.chart.push(newAssignment);
+      this.chart.push(assignment);
     },
+    /*
+    Gets selected points and removes them
+    */
     deleteAssignments() {
       if (!this.edited) {
         this.edited = true;
@@ -148,6 +146,11 @@ export default {
         }
       });
     },
+    /*
+    Compares saved and unsaved items to find which
+    items need to be added to the db and which
+    items need to be deleted from the db
+    */
     save() {
       let savedAssignments = this.$store.getters[
         "assignments/getSavedAssignments"
@@ -187,11 +190,13 @@ export default {
       });
 
       Promise.allSettled(promises).then(() => {
+        // updates chart to match what is stored in the db
         this.chart = this.$store.getters["assignments/getSavedAssignments"];
         this.edited = false;
       });
     },
     cancel() {
+      // reverst chart back to save assignments
       this.chart = this.$store.getters["assignments/getSavedAssignments"];
       this.edited = false;
     },
@@ -221,9 +226,6 @@ export default {
       let members = this.members;
       let projects = this.projects;
       let chart = this.chart;
-
-      // eslint-disable-next-line no-unused-vars
-      //let edited = this.edited; // only used in try
 
       let day = 24 * 3600 * 1000;
       let scrollHeight = (chart.length + members.length) * 60; // increase '60' if chart cut off at bottom
@@ -272,6 +274,7 @@ export default {
           uniqueNames: true,
           labels: {
             formatter: (label) => {
+              // formatts project ids to their names
               const projectObj = projects.find((project) => {
                 if (project.id === label.value) {
                   return project;
@@ -289,6 +292,7 @@ export default {
         tooltip: {
           followPointer: true,
           formatter: (p) => {
+            // displays project details at hover
             let point = p.chart.hoverPoint;
             let start = new Date(point.start);
             let end = new Date(point.end);
@@ -320,9 +324,10 @@ export default {
             dragDrop: {
               draggableX: true,
               draggableY: false,
-              dragPrecisionX: day,
+              dragPrecisionX: day, // incraments when dragging
             },
             dataLabels: {
+              // displays project ids for development
               enabled: true,
               format: "{point.name}",
               style: {

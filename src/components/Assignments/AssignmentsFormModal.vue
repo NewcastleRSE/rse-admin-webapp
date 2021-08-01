@@ -100,14 +100,18 @@ export default {
     /*
     id that is set here does not set the assignment id in strapi,
     id is needed for assignment to be draggable in gantt,
+    
+    Changes assignment format to match chart so save
+    can see the differences between saved items and 
+    items in the chart
     */
     addAssignment() {
       const assignment = {
-        id: this.$store.getters["assignments/getUID"],
-        member: { id: this.user },
-        startDate: this.start,
-        endDate: this.end,
-        projectID: this.project.id,
+        name: this.project.id,
+        parent: this.user.toString(),
+        assignmentID: this.$store.getters["assignments/getUID"],
+        start: Date.parse(this.start),
+        end: Date.parse(this.end),
       };
 
       this.$emit("addAssignment", assignment);
