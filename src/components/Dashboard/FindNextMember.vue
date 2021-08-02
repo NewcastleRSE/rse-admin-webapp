@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import { onUpdated } from '@vue/runtime-core';
 
 export default {
     data() {

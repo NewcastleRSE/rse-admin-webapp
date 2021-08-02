@@ -5,7 +5,7 @@
       <form v-on:submit.prevent="onSubmit">
         <header class="modal-card-head">
           <p class="modal-card-title">
-            Create Assignment For {{ project.name }}
+            Create Assignment For <b>{{ project.name }}</b>
           </p>
           <button
             class="delete"
@@ -84,7 +84,7 @@
 export default {
   name: "AssignmentsFormModal",
   props: ["project"],
-  emits: ["toggleModal", "addAssignment"],
+  // emits: ["toggleModal", "addAssignment"],
 
   data() {
     return { members: null, start: null, end: null, user: null };
@@ -94,20 +94,24 @@ export default {
   },
   methods: {
     toggleModal() {
-      this.$emit("toggleModal");
+      this.$emit("toggleFormModal");
     },
 
     /*
     id that is set here does not set the assignment id in strapi,
     id is needed for assignment to be draggable in gantt,
+    
+    Changes assignment format to match chart so save
+    can see the differences between saved items and 
+    items in the chart
     */
     addAssignment() {
       const assignment = {
-        id: this.$store.getters["assignments/getUID"],
-        member: { id: this.user },
-        startDate: this.start,
-        endDate: this.end,
-        projectID: this.project.id,
+        name: this.project.id,
+        parent: this.user.toString(),
+        assignmentID: this.$store.getters["assignments/getUID"],
+        start: Date.parse(this.start),
+        end: Date.parse(this.end),
       };
 
       this.$emit("addAssignment", assignment);

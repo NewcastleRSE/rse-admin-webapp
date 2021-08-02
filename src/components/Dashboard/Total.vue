@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import { format } from 'money-formatter';
+
 export default {
   name: "total",
   data() {
@@ -25,7 +27,7 @@ export default {
             let add = (project.amount) ? Number(project.amount) : 0;
             total += add;
         })
-        return total;
+        return format('GBP', total);
     },
     
   },

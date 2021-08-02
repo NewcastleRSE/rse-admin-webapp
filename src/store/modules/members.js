@@ -13,27 +13,23 @@ export default {
     },
 
     getters: {
-        /*
-            Maps properties from strapi to variables used in highcharts
-            */
         getMembers: (state) => {
-            const members = state.members.map((members) => {
+            state.members.sort(function(a, b) {
+                return a.surname.localeCompare(b.surname);
+            });
+
+            const members = state.members.map((member) => {
                 const ganttItem = {};
 
-                ganttItem.id = members.id.toString();
-
-                ganttItem.name = members.firstname + " " + members.surname;
-
-                ganttItem.start = Date.parse(members.startDate);
-
-                ganttItem.email = members.email;
-
-                ganttItem.team = members.Team;
-
+                ganttItem.id = member.id.toString();
+                ganttItem.name = member.firstname + " " + member.surname;
+                ganttItem.team = member.Team;
+                ganttItem.email = member.email;
                 ganttItem.collapsed = true;
 
                 return ganttItem;
             });
+
             return members;
         },
     },
@@ -49,10 +45,10 @@ export default {
         //async, commits mutations
 
         /*
-        Gets member or members from DB
-        Call with this.$store.dispatch("members/getMembers", "{id}");
-        Can leave parameter empty and will call all members
-        */
+            Gets member or members from DB
+            Call with this.$store.dispatch("members/getMembers", "{id}");
+            Can leave parameter empty and will call all members
+            */
         getMembers({ commit, rootState }, id = "") {
             axios
                 .get(`http://localhost:1337/members/${id}`, {

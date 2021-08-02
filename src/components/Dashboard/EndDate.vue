@@ -12,6 +12,7 @@
 import { defineComponent, reactive } from "vue";
 import TableLite from "vue3-table-lite";
 
+
 export default defineComponent({
   name: "endDate",
   components: {
@@ -21,7 +22,7 @@ export default defineComponent({
     return {
       endAssignments: null,
       assignments: null,
-      members: null,
+      members: {},
       projects: null,
       table: {columns: {},
               rows: {}, 
@@ -31,12 +32,47 @@ export default defineComponent({
     };
   },
 
+  methods: {
+    endDateData(members, assignments, projects) {
+      let data = []
+      if (assignments) {
+        assignments.forEach( (assign) => { //finding the minimum
+              if (Date.now() >= assign.start) {
+                let member = members.filter(memb => memb.id == assign.parent);
+                let project = projects.filter(prj => prj.id == assign.name);
+                //console.log(project)
+                member = member[0];
+                project = project[0];
+                //console.log(project);
+                //console.log(member)
+                let start = new Date();
+                let end = new Date();
+                if (project)
+                  {
+                  start = new Date(project.start + 10);
+                  end = new Date(project.end);
+                  data.push({
+                      id: assign.parent,
+                      name: member.name,
+                      email: member.email,
+                      project: project.name,
+                      start: start.toDateString(),
+                      end: end.toDateString(),
+                  })
+                  }
+              }
+        })
+      }
+      return data
+    }
+  },
+
   
   async created() { 
        this.assignments = this.getAssignments;
-       this.members = this.getMsembers;
+       this.members = this.getMembers;
+       console.log(this.members)
        this.projects = this.getProjects;
-
        this.endAssignments = this.getAssignmentsEndDate;
        console.log(this.endAssignments);
        this.table = reactive({
@@ -118,39 +154,8 @@ export default defineComponent({
     },
 
     getAssignmentsEndDate() {
-      let members = this.getMembers;
-      let assignments = this.getAssignments;
-      let projects = this.getProjects;
-      let data = []
-      if (assignments) {
-        assignments.forEach( (assign) => { //finding the minimum
-              if (Date.now() >= assign.start) {
-                let member = members.filter(memb => memb.id == assign.parent);
-                let project = projects.filter(prj => prj.id == assign.name);
-                //console.log(project)
-                member = member[0];
-                project = project[0];
-                //console.log(project);
-                //console.log(member)
-                let start = new Date();
-                let end = new Date();
-                if (project)
-                  {
-                  start = new Date(project.start + 10);
-                  end = new Date(project.end);
-                  data.push({
-                      id: assign.parent,
-                      name: member.name,
-                      email: member.email,
-                      project: project.name,
-                      start: start.toDateString(),
-                      end: end.toDateString(),
-                  })
-                  }
-              }
-        })
-      }
-      return data
+     
+      return this.endDateData(this.getMembers, this.getAssignments, this.getProjects)
     },
     
   },
