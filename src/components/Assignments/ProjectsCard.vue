@@ -17,15 +17,23 @@
         >
           <a class="has-text-link">{{ project.name }}</a>
           <br />
-          <small v-if="project.amount"
-            ><span style="font-weight: bold;"> Amount: </span
-            >{{ project.amount }}</small
-          >
+          <small v-if="project.amount">
+            <span style="font-weight: bold;"> Amount: </span>
+              {{ project.amount }}
+            </small>
+          <small v-else>
+            <span style="font-weight: bold;"> Amount: </span>
+              N/A
+          </small>
           <br />
           <small v-if="project.amount"
             ><span style="font-weight: bold;"> Faculty: </span
             >{{ project.faculty }}</small
           >
+          <small v-else>
+            <span style="font-weight: bold;"> Faculty: </span>
+              N/A
+          </small>
         </p>
       </li>
       <li v-else>else</li>

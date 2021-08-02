@@ -36,22 +36,23 @@
 </template>
 
 <script>
+import { onUpdated } from '@vue/runtime-core';
 
 export default {
     data() {
         return {
             assignments: null,
             members: null,
-            person: null,
-            webDev: null,
-            dataScience: null,
-            integrations: null,
+            person: {username: "None"},
+            webDev: {username: "None"},
+            dataScience: {username: "None"},
+            integrations: {username: "None"},
         }
     },
 
     methods: {
         findNext(assignments, members, team = "") {
-        let min = { end: "-1" };
+        let min = { end: "-1", username: "None"};
         assignments.forEach((assign) => {
             let member = null;
             if (team === "") {
@@ -68,13 +69,13 @@ export default {
     },
 
     async created() {
-        let assignments = this.getAssignments;
-        let members = this.getMembers;
-        console.log(members)
-        this.webDev= this.findNext(assignments, members, "WebMobile");
-        this.integrations = this.findNext(assignments, members, "Integrations");
-        this.dataScience = this.findNext(assignments, members, "DataScience");
-        this.person = this.findNext(assignments, members);
+        this.assignments = this.getAssignments;
+        this.members = this.getMembers;
+        //console.log(members)
+        this.webDev = this.getWebDev;
+        this.integrations = this.getIntegrations;
+        this.dataScience = this.getDataScience;
+        this.person = this.getPerson;
     },
 
     computed: {
@@ -83,8 +84,24 @@ export default {
         
         },
 
+        getWebDev() {
+            return this.findNext(this.getAssignments, this.getMembers, "WebMobile");
+        },
+
+        getIntegrations() {
+            return this.findNext(this.getAssignments, this.getMembers, "Integrations");
+        },
+
+        getDataScience() {
+            return this.findNext(this.getAssignments, this.getMembers, "DataScience");
+        },
+
         getMembers() {
             return this.$store.getters["members/getMembers"];
+        },
+
+        getPerson() {
+            return this.findNext(this.getAssignments, this.getMembers);
         }
     },
 
@@ -95,7 +112,24 @@ export default {
 
         getMembers(update) {
             this.members = update;
+        },
+
+        getWebDev(update) {
+             this.webDev = update;
+        },
+
+        getIntegrations(update) {
+            this.integrations = update;
+        },
+
+        getDataScience(update) { 
+            this.dataScience = update;
+        },
+
+        getPerson(update) {
+            this.person = update;
         }
+
     }
     
 }

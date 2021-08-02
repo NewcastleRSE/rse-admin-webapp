@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="box notification is-link">
     <p><span> Total: </span> {{ total }}</p>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <table-lite
+  <table-lite 
     :columns="table.columns"
     :rows="table.rows"
     :total="table.totalRecordCount"
@@ -19,11 +19,26 @@ export default defineComponent({
   },
   setup() {
     return {
-      table: null,
+      endAssignments: null,
+      assignments: null,
+      members: null,
+      projects: null,
+      table: {columns: {},
+              rows: {}, 
+              totalRecordCount: {},
+              sortable: {order: null, sort: null},
+              messages: {}},
     };
   },
+
+  
   async created() { 
-       let assignments = this.getAssignmentsEndDate
+       this.assignments = this.getAssignments;
+       this.members = this.getMsembers;
+       this.projects = this.getProjects;
+
+       this.endAssignments = this.getAssignmentsEndDate;
+       console.log(this.endAssignments);
        this.table = reactive({
         columns: [
             {
@@ -40,8 +55,8 @@ export default defineComponent({
             sortable: true,
             display: function (row) {
                 return (
-                '<a href="#" data-id="' +
-                row.user_id +
+                '<a href="/user/' + row.id + '" data-id="' +
+                row.id +
                 '" class="name-btn">' +
                 row.name +
                 "</a>"
@@ -71,11 +86,10 @@ export default defineComponent({
             field: "end",
             width: "5%",
             sortable: true,
-            },
-            
+            },            
         ],
-        rows: assignments,
-        totalRecordCount: assignments.length,
+        rows: this.endAssignments,
+        totalRecordCount: this.endAssignments.length,
         sortable: {
             order: "id",
             sort: "asc",
@@ -85,43 +99,77 @@ export default defineComponent({
             pageSizeChangeLabel: "Row count:",
             gotoPageLabel: "Go to page:",
             noDataAvailable: "No data",
-        },
-            });
-        },
+          },
+        });
+    },
+
+
   computed: {
-      getAssignmentsEndDate() {
-        let assignments = this.$store.getters["assignments/getAssignments"];
-        let members = this.$store.getters["members/getMembers"];
-        let projects = this.$store.getters["get/getProjects"];
-        console.log( projects)
-        let data = []
+    getProjects() {
+      return this.$store.getters["get/getProjects"];
+    },
+
+    getAssignments() {
+      return this.$store.getters["assignments/getAssignments"];
+    },
+
+    getMembers() {
+      return this.$store.getters["members/getMembers"];
+    },
+
+    getAssignmentsEndDate() {
+      let members = this.getMembers;
+      let assignments = this.getAssignments;
+      let projects = this.getProjects;
+      let data = []
+      if (assignments) {
         assignments.forEach( (assign) => { //finding the minimum
-             if (Date.now() >= assign.start) {
+              if (Date.now() >= assign.start) {
                 let member = members.filter(memb => memb.id == assign.parent);
                 let project = projects.filter(prj => prj.id == assign.name);
-                console.log(project)
+                //console.log(project)
                 member = member[0];
                 project = project[0];
-                let start = new Date(project.start + 10);
-                console.log(start)
-                let end = new Date(project.end);
-                data.push({
-                    id: assign.name,
-                    name: member.name,
-                    email: member.email,
-                    project: project.name,
-                    start: start.toDateString(),
-                    end: end.toDateString(),
-                })
-             }
+                //console.log(project);
+                //console.log(member)
+                let start = new Date();
+                let end = new Date();
+                if (project)
+                  {
+                  start = new Date(project.start + 10);
+                  end = new Date(project.end);
+                  data.push({
+                      id: assign.parent,
+                      name: member.name,
+                      email: member.email,
+                      project: project.name,
+                      start: start.toDateString(),
+                      end: end.toDateString(),
+                  })
+                  }
+              }
         })
-        return data
       }
+      return data
+    },
+    
   },
-  watched: {
-      getAssignmentsEndDate(update) {
-          this.data = update;
-      }
+  watch: {
+    getProjects(update) {
+      this.projects = update;
+    },
+
+    getAssignments(update) {
+      this.members = update;
+    },
+
+    getMembers(update) {
+      this.members = update;
+    },
+
+    getAssignmentsEndDate(update) {
+      this.endAssignments = update;
+    }
   }
 }
  
