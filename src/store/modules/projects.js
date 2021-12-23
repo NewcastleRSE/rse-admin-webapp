@@ -83,7 +83,7 @@ export default {
     Can leave parameter empty and will call all projects
     Returns promise so can be used as async function
     */
-    getProjects({ commit, rootState }, stages) {
+    getProjects({ commit, rootState }, stages, status) {
       //commit("resetProjects");
 
       if (!stages) {
@@ -93,6 +93,10 @@ export default {
           "awaitingAllocation",
           "submittedToFunder",
         ];
+      }
+
+      if(!status) {
+        status = ["green", "amber", "red"]
       }
       let projects = [];
       let index = 0;
@@ -106,6 +110,7 @@ export default {
               },
               params: {
                 stage: stage,
+                status: status
               },
             })
             .then((response) => {
