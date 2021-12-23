@@ -72,8 +72,12 @@
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
-              <i class="fas fa-arrow-up text-emerald-500 mr-4"></i>
-              {{ project.status }}
+              <span v-if="project.status === 'Red'" class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-red-600 bg-red-200 uppercase last:mr-0 mr-1">
+                <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i> {{ project.status }}
+              </span>
+              <span v-if="project.status === 'Amber'" class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-amber-600 bg-amber-200 uppercase last:mr-0 mr-1">
+                <i class="fas fa-exclamation text-amber-600 mr-2"></i> {{ project.status }}
+              </span>
             </td>
           </tr>
         </tbody>
