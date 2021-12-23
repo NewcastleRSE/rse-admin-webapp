@@ -5818,6 +5818,11 @@ moment@^2.10.2:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
 
+money-formatter@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/money-formatter/-/money-formatter-0.1.4.tgz#ab3f6df702d93704671b12e64f867fb1304f602f"
+  integrity sha1-qz9t9wLZNwRnGxLmT4Z/sTBPYC8=
+
 move-concurrently@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
