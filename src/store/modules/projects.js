@@ -144,7 +144,6 @@ export default {
           },
         })
         .then((response) => {
-          console.log(response.data);
           commit("getProject", response.data);
         })
         .catch((error) => {
