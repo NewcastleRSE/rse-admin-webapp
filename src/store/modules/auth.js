@@ -14,6 +14,9 @@ export default {
     login(state, jwt) {
       localStorage.setItem("jwt", jwt);
       state.jwt = jwt;
+      this.dispatch("projects/getProjects", ['allocated'])
+      this.dispatch("members/getMembers")
+      this.dispatch("assignments/getAssignments")
       router.push({ name: "Dashboard" });
     },
     logout(state) {
