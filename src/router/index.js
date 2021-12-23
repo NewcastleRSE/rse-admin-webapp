@@ -13,6 +13,7 @@ import Login from "../views/Login";
 import Dashboard from "../views/Dashboard";
 import Projects from "../views/Projects";
 import Assignments from "../views/Assignments";
+import User from "../views/User";
 
 /**
  * isTokenValid:
@@ -60,6 +61,11 @@ const routes = [
             path: "/assignments",
             name: "Assignments",
             component: Assignments,
+          },
+          {
+            path: "/user",
+            name: "User",
+            component: User,
           }
         ]
     },
