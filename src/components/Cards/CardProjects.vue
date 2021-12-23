@@ -83,6 +83,9 @@
               <span v-if="project.status === 'Amber'" class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-amber-600 bg-amber-200 uppercase last:mr-0 mr-1">
                 <i class="fas fa-exclamation text-amber-600 mr-2"></i> {{ project.status }}
               </span>
+              <span v-if="project.status === 'Green'" class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-emerald-600 bg-emerald-200 uppercase last:mr-0 mr-1">
+                <i class="fas fa-check text-emerald-600 mr-2"></i> {{ project.status }}
+              </span>
             </td>
           </tr>
         </tbody>
@@ -107,11 +110,7 @@
         this.loading = true;
         this.$store.dispatch("projects/getProjects", ['allocated']).then(() => {
 
-          let projects = this.$store.getters["projects/getProjects"],
-              red = projects.filter(project => project.status === 'Red'),
-              amber = projects.filter(project => project.status === 'Amber')
-
-          this.projects = [...red, ...amber]
+          this.projects = this.$store.getters["projects/getProjects"]
           this.loading = false
         });
       }
