@@ -96,8 +96,13 @@ export default {
   methods: {
     getData() {
       this.loading = true;
-      this.$store.dispatch("projects/getProjects", ['allocated'], ['Red']).then(() => {
-        this.projects = this.$store.getters["projects/getProjects"]
+      this.$store.dispatch("projects/getProjects", ['allocated']).then(() => {
+
+        let projects = this.$store.getters["projects/getProjects"],
+            red = projects.filter(project => project.status === 'Red'),
+            amber = projects.filter(project => project.status === 'Amber')
+
+        this.projects = [...red, ...amber]
         this.loading = false
       });
     }

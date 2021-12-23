@@ -87,7 +87,7 @@ export default {
     Can leave parameter empty and will call all projects
     Returns promise so can be used as async function
     */
-    getProjects({ commit, rootState }, stages, status) {
+    getProjects({ commit, rootState }, stages) {
       //commit("resetProjects");
 
       if (!stages) {
@@ -99,9 +99,6 @@ export default {
         ];
       }
 
-      if(!status) {
-        status = ["green", "amber", "red"]
-      }
       let projects = [];
       let index = 0;
 
@@ -110,10 +107,6 @@ export default {
 
           let params = new URLSearchParams();
           params.append("stage", stage);
-          
-          status.forEach((status) => {
-            params.append("status", status)
-          })
 
           axios
             .get(`${process.env.VUE_APP_API_URL}/projects/`, {
