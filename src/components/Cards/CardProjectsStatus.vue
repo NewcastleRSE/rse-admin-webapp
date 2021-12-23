@@ -76,7 +76,7 @@
                 <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i> {{ project.status }}
               </span>
               <span v-if="project.status === 'Amber'" class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-amber-600 bg-amber-200 uppercase last:mr-0 mr-1">
-                <i class="fas fa-exclamation text-amber-600 mr-2"></i> {{ project.status }}
+                <i class="fas fa-exclamation text-amber-600 mx-1"></i> {{ project.status }}
               </span>
             </td>
           </tr>
@@ -86,30 +86,29 @@
   </div>
 </template>
 <script>
+  export default {
+    data() {
+      return {
+        loading: false,
+        projects: [],
+      };
+    },
+    created() {
+      this.getData()
+    },
+    methods: {
+      getData() {
+        this.loading = true;
+        this.$store.dispatch("projects/getProjects", ['allocated']).then(() => {
 
-export default {
-  data() {
-    return {
-      loading: false,
-      projects: [],
-    };
-  },
-  created() {
-    this.getData()
-  },
-  methods: {
-    getData() {
-      this.loading = true;
-      this.$store.dispatch("projects/getProjects", ['allocated']).then(() => {
+          let projects = this.$store.getters["projects/getProjects"],
+              red = projects.filter(project => project.status === 'Red'),
+              amber = projects.filter(project => project.status === 'Amber')
 
-        let projects = this.$store.getters["projects/getProjects"],
-            red = projects.filter(project => project.status === 'Red'),
-            amber = projects.filter(project => project.status === 'Amber')
-
-        this.projects = [...red, ...amber]
-        this.loading = false
-      });
+          this.projects = [...red, ...amber]
+          this.loading = false
+        });
+      }
     }
-  }
-};
+  };
 </script>
