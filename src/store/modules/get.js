@@ -97,7 +97,7 @@ export default {
         */
         getMembers({ commit, rootState }, id = "") {
             axios
-                .get(`http://localhost:1337/members/${id}`, {
+                .get(`${process.env.VUE_APP_API_URL}/members/${id}`, {
                     headers: {
                         Authorization: `Bearer ${rootState.auth.jwt}`,
                     },
@@ -133,7 +133,7 @@ export default {
             return new Promise((resolve) => {
                 stages.forEach((stage) => {
                     axios
-                        .get(`http://localhost:1337/projects/`, {
+                        .get(`${process.env.VUE_APP_API_URL}/projects/`, {
                             headers: {
                                 Authorization: `Bearer ${rootState.auth.jwt}`,
                             },
@@ -165,7 +165,7 @@ export default {
             commit("resetProject");
 
             axios
-                .get(`http://localhost:1337/projects/${id}`, {
+                .get(`${process.env.VUE_APP_API_URL}/projects/${id}`, {
                     headers: {
                         Authorization: `Bearer ${rootState.auth.jwt}`,
                     },
@@ -186,7 +186,7 @@ export default {
         */
         getAssignments({ commit, rootState }, id = "") {
             axios
-                .get(`http://localhost:1337/assignments/${id}`, {
+                .get(`${process.env.VUE_APP_API_URL}/assignments/${id}`, {
                     headers: {
                         Authorization: `Bearer ${rootState.auth.jwt}`,
                     },

@@ -45,7 +45,7 @@ export default {
     */
     getMembers({ commit, rootState }, id = "") {
       axios
-        .get(`http://localhost:1337/members/${id}`, {
+        .get(`${process.env.VUE_APP_API_URL}/members/${id}`, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },

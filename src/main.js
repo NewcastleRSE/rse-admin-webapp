@@ -15,6 +15,7 @@ import {
   faTachometerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import "@/assets/styles/tailwind.css";
 
 library.add(faTasks, faProjectDiagram, faTachometerAlt);
 Gantt(Highcharts);

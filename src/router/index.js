@@ -2,12 +2,17 @@ import { createRouter, createWebHistory } from "vue-router";
 import jwt_decode from "jwt-decode";
 import store from "../store";
 
+// Layouts
+
+import Admin from "../layouts/Admin.vue";
+import Auth from "../layouts/Auth.vue";
+
+// Views
+
 import Login from "../views/Login";
 import Dashboard from "../views/Dashboard";
 import Projects from "../views/Projects";
 import Assignments from "../views/Assignments";
-import User from "../views/User";
-import Max from "../views/Max";
 
 /**
  * isTokenValid:
@@ -28,16 +33,37 @@ function isTokenValid() {
     return false; // when token is not valid
 }
 
-const routes = [{
+const routes = [
+    {
         path: "/",
-        redirect: {
-            name: "Login",
+        redirect: "/dashboard",
+        component: Admin,
+        beforeEnter: (to, from, next) => {
+            if (!isTokenValid()) {
+                next("/auth/login");
+            } else {
+                next();
+            }
         },
+        children: [
+          {
+            path: "/dashboard",
+            component: Dashboard,
+          },
+          {
+            path: "/projects",
+            component: Projects,
+          },
+          {
+            path: "/assignments",
+            component: Assignments,
+          }
+        ]
     },
     {
-        path: "/login",
-        name: "Login",
-        component: Login,
+        path: "/auth",
+        redirect: "/auth/login",
+        component: Auth,
         beforeEnter: (to, from, next) => {
             if (isTokenValid()) {
                 next("/dashboard");
@@ -45,66 +71,12 @@ const routes = [{
                 next();
             }
         },
-    },
-    {
-        path: "/dashboard",
-        name: "Dashboard",
-        component: Dashboard,
-        beforeEnter: (to, from, next) => {
-            if (!isTokenValid()) {
-                next("/login");
-            } else {
-                next();
-            }
-        },
-    },
-    {
-        path: "/projects",
-        name: "Projects",
-        component: Projects,
-        beforeEnter: (to, from, next) => {
-            if (!isTokenValid()) {
-                next("/login");
-            } else {
-                next();
-            }
-        },
-    },
-    {
-        path: "/assignments",
-        name: "Assignments",
-        component: Assignments,
-        beforeEnter: (to, from, next) => {
-            if (!isTokenValid()) {
-                next("/login");
-            } else {
-                next();
-            }
-        },
-    },
-    {
-        path: "/max",
-        name: "Max",
-        component: Max,
-        beforeEnter: (to, from, next) => {
-            if (!isTokenValid()) {
-                next("/login");
-            } else {
-                next();
-            }
-        },
-    },
-    {
-        path: "/user",
-        name: "User",
-        component: User,
-        beforeEnter: (to, from, next) => {
-            if (!isTokenValid()) {
-                next("/login");
-            } else {
-                next();
-            }
-        },
+        children: [
+          {
+            path: "/auth/login",
+            component: Login,
+          }
+        ]
     }
 ];
 

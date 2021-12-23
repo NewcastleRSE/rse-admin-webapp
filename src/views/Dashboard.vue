@@ -1,69 +1,35 @@
 <template>
-  <div class="tile is-ancestor">
-    <div class="tile is-vertical is-8">
-      <div class="tile">
-        <div class="tile is-parent is-vertical">
-          <article class="tile is-child notification is-primary">
-            
-            <p class="title"><font-awesome-icon icon="user"/> Next available person</p>
-            <p class="subtitle">Top tile</p>
-          </article>
-          <article class="tile is-child notification is-warning">
-            <p class="title"><font-awesome-icon icon="user"/> Next available web dev</p>
-            <p class="subtitle">Bottom tile</p>
-          </article>
-           <article class="tile is-child notification is-warning">
-            <p class="title"><font-awesome-icon icon="user"/> Next available data science</p>
-            <p class="subtitle">Bottom tile</p>
-          </article>
-           <article class="tile is-child notification is-warning">
-            <p class="title"><font-awesome-icon icon="user"/> Next available integrations</p>
-            <p class="subtitle">Bottom tile</p>
-          </article>
-        </div>
-        <div class="tile is-parent">
-          <article class="tile is-child notification is-info">
-            <p class="title">Middle tile</p>
-            <p class="subtitle">With an image</p>
-            <figure class="image is-4by3">
-              <img alt="bulma" src="https://bulma.io/images/placeholders/640x480.png">
-            </figure>
-          </article>
-        </div>
+  <div>
+    <div class="flex flex-wrap">
+      <div class="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
+        <card-line-chart />
       </div>
-      <div class="tile is-parent">
-        <article class="tile is-child notification is-danger">
-          <p class="title">Wide tile</p>
-          <p class="subtitle">Aligned with the right tile</p>
-          <div class="content">
-            <!-- Content -->
-          </div>
-        </article>
+      <div class="w-full xl:w-4/12 px-4">
+        <card-bar-chart />
       </div>
     </div>
-    <div class="tile is-parent">
-      <article class="tile is-child notification is-success">
-        <div class="content">
-          <p class="title">Tall tile</p>
-          <p class="subtitle">With even more content</p>
-          <div class="content">
-            <!-- Content -->
-          </div>
-        </div>
-      </article>
+    <div class="flex flex-wrap mt-4">
+      <div class="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
+        <card-page-visits />
+      </div>
+      <div class="w-full xl:w-4/12 px-4">
+        <card-social-traffic />
+      </div>
     </div>
   </div>
-
 </template>
-
 <script>
+import CardLineChart from "@/components/Cards/CardLineChart.vue";
+import CardBarChart from "@/components/Cards/CardBarChart.vue";
+import CardPageVisits from "@/components/Cards/CardPageVisits.vue";
+import CardSocialTraffic from "@/components/Cards/CardSocialTraffic.vue";
 export default {
-  name: "dashboard",
-  data() {
-    return {};
+  name: "dashboard-page",
+  components: {
+    CardLineChart,
+    CardBarChart,
+    CardPageVisits,
+    CardSocialTraffic,
   },
-  //created() {},
-
-  methods: {},
 };
 </script>

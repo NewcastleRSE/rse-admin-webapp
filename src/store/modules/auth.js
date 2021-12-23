@@ -23,8 +23,7 @@ export default {
     //async, commits mutations
     login({ commit }, accessToken) {
       const url =
-        "http://localhost:1337/auth/microsoft/callback/?access_token=" +
-        accessToken;
+      process.env.VUE_APP_API_URL + "/auth/microsoft/callback/?access_token=" + accessToken;
       axios
         .get(url)
         .then((res) => {
