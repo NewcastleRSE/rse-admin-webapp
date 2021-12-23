@@ -53,12 +53,16 @@ export default {
         ganttItem.projectLead = project.properties.project_lead;
         ganttItem.projectValue = project.properties.project_value;
         ganttItem.school = project.properties.school;
+        ganttItem.status = project.properties.status;
 
         return ganttItem;
       });
 
-      //console.log(projects);
-      return projects;
+      return projects.sort(function(a, b) {
+          let textA = a.name.toUpperCase();
+          let textB = b.name.toUpperCase();
+          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      });
     },
   },
 
@@ -103,22 +107,26 @@ export default {
 
       return new Promise((resolve) => {
         stages.forEach((stage) => {
+
+          let params = new URLSearchParams();
+          params.append("stage", stage);
+          
+          status.forEach((status) => {
+            params.append("status", status)
+          })
+
           axios
             .get(`${process.env.VUE_APP_API_URL}/projects/`, {
               headers: {
                 Authorization: `Bearer ${rootState.auth.jwt}`,
               },
-              params: {
-                stage: stage,
-                status: status
-              },
+              params: params,
             })
             .then((response) => {
               projects = [...projects, ...response.data]; // adds response to projects variable
               if (index === stages.length - 1) {
                 // checks if the last stage has been itterated
                 commit("getProjects", projects);
-                console.log(projects);
                 resolve();
               } else index++;
             })
