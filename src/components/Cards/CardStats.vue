@@ -13,12 +13,13 @@
           </span>
         </div>
         <div class="relative w-auto pl-4 flex-initial">
-          <div
+          <a
             class="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full"
             :class="[statIconColor]"
+            v-bind:href="[statUserLink]"
           >
             <i :class="[statIconName]"></i>
-          </div>
+          </a>
         </div>
       </div>
       <p class="text-sm text-blueGray-400 mt-4">
@@ -78,6 +79,10 @@ export default {
       type: String,
       default: "bg-red-500",
     },
+    statUserLink: {
+      type: String,
+      defaullt: null
+    }
   },
 };
 </script>
