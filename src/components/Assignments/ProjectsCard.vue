@@ -85,7 +85,7 @@ export default {
   computed: {
     getProjects() {
       // gets updated value from store
-      let prjs = this.$store.getters["get/getProjects"]; // even when projects is identical to get, dont work
+      let prjs = this.$store.getters["projects/getProjects"]; // even when projects is identical to get, dont work
       prjs.forEach((prj) => {
         prj.amount = format('GBP', prj.amount)
       })

@@ -1,6 +1,5 @@
 import { createStore } from "vuex";
 import auth from "./modules/auth";
-import get from "./modules/get";
 import assignments from "./modules/assignments";
 import projects from "./modules/projects";
 import members from "./modules/members";
@@ -18,5 +17,5 @@ export default createStore({
     //async, commits mutations
   },
 
-  modules: { auth, get, assignments, projects, members },
+  modules: { auth, assignments, projects, members },
 });

@@ -126,7 +126,7 @@ export default {
 
     /*
     Gets project by ID from HubSpot
-    Call with this.$store.dispatch("get/getProject", "{id}}");
+    Call with this.$store.dispatch("projects/getProject", "{id}}");
     */
     getProject({ commit, rootState }, id = "") {
       //commit("resetProject");

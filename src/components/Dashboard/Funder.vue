@@ -59,7 +59,7 @@ export default {
   methods: {},
   computed: {
     getValueByFunders() {
-        let projects = this.$store.getters["get/getProjects"];
+        let projects = this.$store.getters["projects/getProjects"];
         let valueByFunders = {};
         projects.forEach( (project) => {
             let add = (project.amount) ? Number(project.amount) : 0;

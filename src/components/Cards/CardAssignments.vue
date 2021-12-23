@@ -318,7 +318,7 @@ export default {
     },
     getProjects() {
       // gets updated value from store
-      return this.$store.getters["get/getProjects"]; // even when projects is identical to get, doesnt work
+      return this.$store.getters["projects/getProjects"]; // even when projects is identical to get, doesnt work
     },
   },
 

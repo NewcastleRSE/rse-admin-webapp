@@ -142,7 +142,7 @@ export default defineComponent({
 
   computed: {
     getProjects() {
-      return this.$store.getters["get/getProjects"];
+      return this.$store.getters["projects/getProjects"];
     },
 
     getAssignments() {

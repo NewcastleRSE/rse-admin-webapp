@@ -61,7 +61,7 @@ export default {
   methods: {},
   computed: {
     getValueByFaculty() {
-        let projects = this.$store.getters["get/getProjects"];
+        let projects = this.$store.getters["projects/getProjects"];
         let valueByFaculty = {};
         projects.forEach( (project) => {
             let add = (project.amount) ? Number(project.amount) : 0;
