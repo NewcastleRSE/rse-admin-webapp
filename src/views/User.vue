@@ -1,23 +1,21 @@
 <template>
-  <Timeline class="chart" />
+  <div class="flex flex-wrap">
+    <div class="w-full lg:w-4/12 px-4">
+      <CardProfile />
+    </div>
+    <div class="w-full lg:w-8/12 px-4">
+      <CardSettings />
+    </div>
+  </div>
 </template>
-
 <script>
-import Timeline from "../components/User/Timeline.vue";
+import CardSettings from "@/components/Cards/CardSettings.vue";
+import CardProfile from "@/components/Cards/CardProfile.vue";
 
 export default {
-  name: "user",
-  components: { Timeline },
-  data() {
-    return {};
+  components: {
+    CardSettings,
+    CardProfile,
   },
-
-  methods: {},
 };
 </script>
-
-<style scoped>
-.chart {
-  width: 75%;
-}
-</style>
