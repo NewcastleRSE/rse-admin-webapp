@@ -110,7 +110,7 @@ export default {
         */
     getAssignments({ commit, rootState }, id = "") {
       axios
-        .get(`http://localhost:1337/assignments/${id}`, {
+        .get(`${process.env.VUE_APP_API_URL}/assignments/${id}`, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },
@@ -129,7 +129,7 @@ export default {
         */
     addAssignment({ commit, rootState }, assignment) {
       return axios
-        .post(`http://localhost:1337/assignments/`, assignment, {
+        .post(`${process.env.VUE_APP_API_URL}/assignments/`, assignment, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },
@@ -148,7 +148,7 @@ export default {
     */
     saveAssignment({ commit, rootState }, assignment) {
       return axios
-        .post(`http://localhost:1337/assignments/`, assignment, {
+        .post(`${process.env.VUE_APP_API_URL}/assignments/`, assignment, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },
@@ -164,7 +164,7 @@ export default {
     },
     deleteAssignment({ commit, rootState }, assignmentID) {
       return axios
-        .delete(`http://localhost:1337/assignments/${assignmentID}`, {
+        .delete(`${process.env.VUE_APP_API_URL}/assignments/${assignmentID}`, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },
@@ -180,7 +180,7 @@ export default {
     },
     updateAssignment({ commit, rootState }, assignment) {
       return axios
-        .put(`http://localhost:1337/assignments/${assignment.id}`, assignment, {
+        .put(`${process.env.VUE_APP_API_URL}/assignments/${assignment.id}`, assignment, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },

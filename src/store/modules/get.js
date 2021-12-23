@@ -95,108 +95,108 @@ export default {
         Call with this.$store.dispatch("get/getMembers", "{id}");
         Can leave parameter empty and will call all members
         */
-    getMembers({ commit, rootState }, id = "") {
-      axios
-        .get(`http://localhost:1337/members/${id}`, {
-          headers: {
-            Authorization: `Bearer ${rootState.auth.jwt}`,
-          },
-        })
-        .then((response) => {
-          commit("getMembers", response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
+        getMembers({ commit, rootState }, id = "") {
+            axios
+                .get(`${process.env.VUE_APP_API_URL}/members/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${rootState.auth.jwt}`,
+                    },
+                })
+                .then((response) => {
+                    commit("getMembers", response.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
 
-    /*
+        /*
         Gets projects from HubSpot
         Call with this.$store.dispatch("get/getProjects", [stages]);
         Can leave parameter empty and will call all projects
         Returns promise so can be used as async function
         */
-    getProjects({ commit, rootState }, stages) {
-      //commit("resetProjects");
+        getProjects({ commit, rootState }, stages) {
+            //commit("resetProjects");
 
-      if (!stages) {
-        stages = [
-          "allocated",
-          "completed",
-          "awaitingAllocation",
-          "submittedToFunder",
-        ];
-      }
-      let projects = [];
-      let index = 0;
+            if (!stages) {
+                stages = [
+                    "allocated",
+                    "completed",
+                    "awaitingAllocation",
+                    "submittedToFunder",
+                ];
+            }
+            let projects = [];
+            let index = 0;
 
-      return new Promise((resolve) => {
-        stages.forEach((stage) => {
-          axios
-            .get(`http://localhost:1337/projects/`, {
-              headers: {
-                Authorization: `Bearer ${rootState.auth.jwt}`,
-              },
-              params: {
-                stage: stage,
-              },
-            })
-            .then((response) => {
-              projects = [...projects, ...response.data]; // adds response to projects variable
-              if (index === stages.length - 1) {
-                // checks if the last stage has been itterated
-                commit("getProjects", projects);
-                console.log(projects);
-                resolve();
-              } else index++;
-            })
-            .catch((error) => {
-              console.log(error);
+            return new Promise((resolve) => {
+                stages.forEach((stage) => {
+                    axios
+                        .get(`${process.env.VUE_APP_API_URL}/projects/`, {
+                            headers: {
+                                Authorization: `Bearer ${rootState.auth.jwt}`,
+                            },
+                            params: {
+                                stage: stage,
+                            },
+                        })
+                        .then((response) => {
+                            projects = [...projects, ...response.data]; // adds response to projects variable
+                            if (index === stages.length - 1) {
+                                // checks if the last stage has been itterated
+                                commit("getProjects", projects);
+                                console.log(projects);
+                                resolve();
+                            } else index++;
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                });
             });
-        });
-      });
+          }
     },
 
     /*
         Gets project by ID from HubSpot
         Call with this.$store.dispatch("get/getProject", "{id}}");
         */
-    getProject({ commit, rootState }, id = "") {
-      commit("resetProject");
+        getProject({ commit, rootState }, id = "") {
+            commit("resetProject");
 
-      axios
-        .get(`http://localhost:1337/projects/${id}`, {
-          headers: {
-            Authorization: `Bearer ${rootState.auth.jwt}`,
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-          commit("getProject", response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
+            axios
+                .get(`${process.env.VUE_APP_API_URL}/projects/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${rootState.auth.jwt}`,
+                    },
+                })
+                .then((response) => {
+                    console.log(response.data);
+                    commit("getProject", response.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
 
-    /*
+        /*
         Gets assignment or assignments from DB
         Call with this.$store.dispatch("get/getAssignments", "{id}");
         Can leave parameter empty and will call all assignments
         */
-    getAssignments({ commit, rootState }, id = "") {
-      axios
-        .get(`http://localhost:1337/assignments/${id}`, {
-          headers: {
-            Authorization: `Bearer ${rootState.auth.jwt}`,
-          },
-        })
-        .then((response) => {
-          commit("getAssignments", response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-  },
+        getAssignments({ commit, rootState }, id = "") {
+            axios
+                .get(`${process.env.VUE_APP_API_URL}/assignments/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${rootState.auth.jwt}`,
+                    },
+                })
+                .then((response) => {
+                    commit("getAssignments", response.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
 };

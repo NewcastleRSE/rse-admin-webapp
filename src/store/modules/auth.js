@@ -15,7 +15,11 @@ export default {
       localStorage.setItem("jwt", jwt);
       state.jwt = jwt;
       router.push({ name: "Dashboard" });
-      //this.$router.replace({ name: "Dashboard" });
+    },
+    logout(state) {
+      localStorage.removeItem("jwt");
+      state.jwt = null;
+      router.push({ name: "Login" });
     },
   },
 
@@ -23,8 +27,7 @@ export default {
     //async, commits mutations
     login({ commit }, accessToken) {
       const url =
-        "http://localhost:1337/auth/microsoft/callback/?access_token=" +
-        accessToken;
+      process.env.VUE_APP_API_URL + "/auth/microsoft/callback/?access_token=" + accessToken;
       axios
         .get(url)
         .then((res) => {
@@ -34,5 +37,8 @@ export default {
           console.log(err);
         });
     },
+    logout({ commit }) {
+      commit("logout")
+    }
   },
 };

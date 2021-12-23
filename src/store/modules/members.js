@@ -44,25 +44,24 @@ export default {
     actions: {
         //async, commits mutations
 
-        /*
-            Gets member or members from DB
-            Call with this.$store.dispatch("members/getMembers", "{id}");
-            Can leave parameter empty and will call all members
-            */
-        getMembers({ commit, rootState }, id = "") {
-            axios
-                .get(`http://localhost:1337/members/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${rootState.auth.jwt}`,
-                    },
-                })
-                .then((response) => {
-                    console.log(response.data);
-                    commit("getMembers", response.data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        },
+    /*
+    Gets member or members from DB
+    Call with this.$store.dispatch("members/getMembers", "{id}");
+    Can leave parameter empty and will call all members
+    */
+    getMembers({ commit, rootState }, id = "") {
+      axios
+        .get(`${process.env.VUE_APP_API_URL}/members/${id}`, {
+          headers: {
+            Authorization: `Bearer ${rootState.auth.jwt}`,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          commit("getMembers", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
 };

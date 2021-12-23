@@ -1,13 +1,10 @@
 <template>
-  <MenuBar />
   <router-view></router-view>
 </template>
 
 <script>
-import MenuBar from "./components/MenuBar.vue";
 export default {
   name: "App",
-  components: { MenuBar },
   created() {
     this.$store.dispatch("get/getProjects");
     this.$store.dispatch("members/getMembers");
