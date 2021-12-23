@@ -1,13 +1,22 @@
 <template>
-  <ProjectsGantt class="chart" />
+  <div class="flex flex-wrap mt-4">
+    <div class="w-full mb-12 px-4">
+      <card-table />
+      <!-- <ProjectsGantt class="chart" /> -->
+    </div>
+  </div>
 </template>
 
 <script>
-import ProjectsGantt from "../components/Projects/ProjectsGantt.vue";
+import CardTable from "@/components/Cards/CardTable.vue";
+// import ProjectsGantt from "@/components/Projects/ProjectsGantt.vue";
 
 export default {
   name: "projects",
-  components: { ProjectsGantt },
+  components: { 
+    CardTable,
+    // ProjectsGantt
+  },
   data() {
     return {};
   },
@@ -15,9 +24,3 @@ export default {
   methods: {},
 };
 </script>
-
-<style scoped>
-.chart {
-  width: 75%;
-}
-</style>
