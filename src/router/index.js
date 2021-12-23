@@ -48,14 +48,17 @@ const routes = [
         children: [
           {
             path: "/dashboard",
+            name: "Dashboard",
             component: Dashboard,
           },
           {
             path: "/projects",
+            name: "Projects",
             component: Projects,
           },
           {
             path: "/assignments",
+            name: "Assignments",
             component: Assignments,
           }
         ]
@@ -74,6 +77,7 @@ const routes = [
         children: [
           {
             path: "/auth/login",
+            name: "Login",
             component: Login,
           }
         ]
