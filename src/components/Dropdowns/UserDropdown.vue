@@ -47,9 +47,10 @@
       <div class="h-0 my-2 border border-solid border-blueGray-100" />
       <a
         href="javascript:void(0);"
+        v-on:click="logout()"
         class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
       >
-        Seprated link
+        Logout
       </a>
     </div>
   </div>
@@ -79,6 +80,9 @@ export default {
         });
       }
     },
+    logout: function () {
+      this.$store.dispatch("auth/logout");
+    }
   },
 };
 </script>

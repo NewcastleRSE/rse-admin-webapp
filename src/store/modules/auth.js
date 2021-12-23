@@ -15,7 +15,11 @@ export default {
       localStorage.setItem("jwt", jwt);
       state.jwt = jwt;
       router.push({ name: "Dashboard" });
-      //this.$router.replace({ name: "Dashboard" });
+    },
+    logout(state) {
+      localStorage.removeItem("jwt");
+      state.jwt = null;
+      router.push({ name: "Login" });
     },
   },
 
@@ -33,5 +37,8 @@ export default {
           console.log(err);
         });
     },
+    logout({ commit }) {
+      commit("logout")
+    }
   },
 };
