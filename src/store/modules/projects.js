@@ -99,7 +99,7 @@ export default {
         ];
       }
 
-      let projects = [];
+      let rawData = [];
       let index = 0;
 
       return new Promise((resolve) => {
@@ -116,9 +116,24 @@ export default {
               params: params,
             })
             .then((response) => {
-              projects = [...projects, ...response.data]; // adds response to projects variable
+
+              rawData = [...rawData, ...response.data];
+
+              // checks if the last stage has been itterated
               if (index === stages.length - 1) {
-                // checks if the last stage has been itterated
+
+                let projects = []
+                
+                rawData.forEach((rawProject) => {
+                  let project = rawProject.properties
+                  project.archived = rawProject.archived
+                  project.createdAt = rawProject.createdAt
+                  project.updatedAt = rawProject.updatedAt
+                  project.id = rawProject.id
+
+                  projects.push(project)
+                })
+
                 commit("getProjects", projects);
                 resolve();
               } else index++;

@@ -27,7 +27,7 @@
     </div>
     <div class="block w-full overflow-x-auto">
       <!-- Projects table -->
-      <table v-if="!loading" class="items-center w-full bg-transparent border-collapse">
+      <table class="items-center w-full bg-transparent border-collapse">
         <thead>
           <tr>
             <th
@@ -57,12 +57,12 @@
             <th
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left"
             >
-              {{ project.name }}
+              {{ project.dealname }}
             </th>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
-              {{ project.projectLead  }}
+              {{ project.project_lead  }}
             </td>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
@@ -87,28 +87,31 @@
 </template>
 <script>
   export default {
-    data() {
-      return {
-        loading: false,
-        projects: [],
-      };
-    },
-    created() {
-      this.getData()
-    },
-    methods: {
-      getData() {
-        this.loading = true;
-        this.$store.dispatch("projects/getProjects", ['allocated']).then(() => {
+    computed: {
+      projects() {
+        let projects = this.$store.state.projects.projects,
+            red = projects.filter(project => project.status === 'Red'),
+            amber = projects.filter(project => project.status === 'Amber')
 
-          let projects = this.$store.getters["projects/getProjects"],
-              red = projects.filter(project => project.status === 'Red'),
-              amber = projects.filter(project => project.status === 'Amber')
-
-          this.projects = [...red, ...amber]
-          this.loading = false
-        });
+        return [...red, ...amber]
       }
+    },
+    watch: {
+      '$store.state.projects.projects': function(projects) {
+        let red = projects.filter(project => project.status === 'Red'),
+            amber = projects.filter(project => project.status === 'Amber')
+
+        return [...red, ...amber]
+      }  
+    },
+    props: {
+      color: {
+        default: "light",
+        validator: function (value) {
+          // The value must match one of these strings
+          return ["light", "dark"].indexOf(value) !== -1;
+        },
+      },
     }
   };
 </script>
