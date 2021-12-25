@@ -10,14 +10,14 @@
             class="font-semibold text-lg"
             :class="[color === 'light' ? 'text-blueGray-700' : 'text-white']"
           >
-            Card Tables
+            All Projects
           </h3>
         </div>
       </div>
     </div>
     <div class="block w-full overflow-x-auto">
       <!-- Projects table -->
-      <table v-if="!loading" class="items-center w-full bg-transparent border-collapse">
+      <table class="items-center w-full bg-transparent border-collapse">
         <thead>
           <tr>
             <th
@@ -52,12 +52,15 @@
             <th
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left"
             >
-              {{ project.name }}
+              {{ project.dealname }}
             </th>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
-              <img v-bind:src="'img/team-1-800x800.jpg'" alt="..." class="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4">{{ project.projectLead  }}
+              <div class="flex">
+                <img :src="avatars.default" class="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4 mr-2" />
+                <span>{{ project.project_lead }}</span>
+              </div>
             </td>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
@@ -94,26 +97,24 @@
   </div>
 </template>
 <script>
+  import defaultAvatar from "@/assets/img/team-1-800x800.jpg";
 
   export default {
     data() {
       return {
-        loading: false,
-        projects: [],
-      };
-    },
-    created() {
-      this.getData()
-    },
-    methods: {
-      getData() {
-        this.loading = true;
-        this.$store.dispatch("projects/getProjects", ['allocated']).then(() => {
+        avatars: {
+          default: defaultAvatar
+        },
 
-          this.projects = this.$store.getters["projects/getProjects"]
-          this.loading = false
-        });
       }
+    },
+    computed: {
+      projects() {
+        return this.$store.state.projects.projects
+      }
+    },
+    watch: {
+      '$store.state.projects.projects': function() { }  
     },
     props: {
       color: {
