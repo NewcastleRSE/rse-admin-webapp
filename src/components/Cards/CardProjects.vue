@@ -57,9 +57,8 @@
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
-              <div class="flex">
-                <img :src="avatars.default" class="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4 mr-2" />
-                <span>{{ project.project_lead }}</span>
+              <div class="flex items-center">
+                <img :src="avatars.default" class="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow mr-2" />{{ project.project_lead }}
               </div>
             </td>
             <td
