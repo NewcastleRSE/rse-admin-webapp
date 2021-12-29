@@ -1,20 +1,16 @@
 <template>
-  <div class="gantt">
-    <AssignmentGantt />
+    <div class="flex flex-wrap mt-4">
+    <div class="w-full mb-12 px-4">
+      <card-assignments />
+    </div>
   </div>
 </template>
 
 <script>
-import AssignmentGantt from "../components/Assignments/AssignmentGantt.vue";
+import CardAssignments from '../components/Cards/CardAssignments.vue';
 
 export default {
   name: "Assignments",
-  components: { AssignmentGantt },
+  components: { CardAssignments },
 };
 </script>
-
-<style scoped>
-.gantt {
-  width: 90%;
-}
-</style>

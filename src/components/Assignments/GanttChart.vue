@@ -1,24 +1,4 @@
 <template>
-  <!-- <div class="member-filter">
-    <h2>Members Filter</h2>
-    <div class="select is-primary">
-      <select v-model="selected">
-        <option value="All">All</option>
-        <option value="DataScience">Data Science</option>
-        <option value="Integrations">Integrations</option>
-        <option value="WebMobile">Web Mobile</option>
-      </select>
-    </div>
-    <p>{{ selected }}</p>
-    <p>Double click on assignment to open modal</p>
-    <label class="checkbox">
-      <input type="checkbox" v-model="showOldAssignments" />
-      Show assignments that ended over a year ago
-    </label>
-    <p>{{ showOldAssignments }}</p>
-  </div> -->
-  <div class="columns">
-    <div class="box column is-10">
       <highcharts
         v-if="members.length > 0 && chart.length > 0 && projects.length > 0"
         :constructorType="'ganttChart'"
@@ -26,7 +6,7 @@
         :options="chartOptions"
         ref="chart"
       ></highcharts>
-      <progress
+      <!-- <progress
         v-else
         class="progress is-small is-primary"
         max="100"
@@ -38,7 +18,7 @@
           </button>
         </div>
         <div class="save">
-          <a id= "download" class="button is-secondary mr-5" @click="exportCSVFile()"> <font-awesome-icon icon="file-download"/></a>
+          <a id= "download" class="button is-secondary mr-5" @click="exportCSVFile()"> <i class="fas file-download"/></a>
           <button :disabled="!edited" @click="save" class="button is-primary">
             Save
           </button>
@@ -68,20 +48,20 @@
     v-if="showProjectModal"
     :project="projectForModal"
     @toggle-project-modal="toggleProjectModal"
-  />
+  /> -->
 </template>
 
 <script>
 //:disabled="!edited"
-import ProjectsCard from "./ProjectsCard.vue";
-import FormModal from "./AssignmentsFormModal.vue";
-import ProjectModal from "../ProjectModal.vue";
+// import ProjectsCard from "./ProjectsCard.vue";
+// import FormModal from "./AssignmentsFormModal.vue";
+// import ProjectModal from "../ProjectModal.vue";
 
 import differenceWith from "lodash.differencewith";
 import isEqual from "lodash.isequal";
 export default {
   name: "AssignmentGantt",
-  components: { ProjectsCard, FormModal, ProjectModal },
+  // components: { ProjectsCard, FormModal, ProjectModal },
   data() {
     return {
       showFormModal: false,
