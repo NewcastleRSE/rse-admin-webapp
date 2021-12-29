@@ -12,6 +12,7 @@ import Highcharts3D from "highcharts/highcharts-3d";
 import "./assets/main.scss";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@/assets/styles/tailwind.css";
+import "@/assets/styles/index.css";
 
 
 Gantt(Highcharts);

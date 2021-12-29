@@ -1,27 +1,17 @@
 <template>
   <div
-    class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded"
+    class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded"
+    :class="[color === 'light' ? 'bg-white' : 'bg-emerald-900 text-white']"
   >
     <div class="rounded-t mb-0 px-4 py-3 border-0">
       <div class="flex flex-wrap items-center">
         <div class="relative w-full px-4 max-w-full flex-grow flex-1">
-          <h6 class="uppercase text-blueGray-400 mb-1 text-xs font-semibold">
-            Projects
-          </h6>
-          <h2 class="text-blueGray-700 text-xl font-semibold">
-            Status
-          </h2>
-        </div>
-        <div
-          class="relative w-full px-4 max-w-full flex-grow flex-1 text-right"
-        >
-          <a
-            class="bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-            type="button"
-            href="/projects"
+          <h3
+            class="font-semibold text-lg"
+            :class="[color === 'light' ? 'text-blueGray-700' : 'text-white']"
           >
-            See all
-          </a>
+            All Projects
+          </h3>
         </div>
       </div>
     </div>
@@ -48,6 +38,11 @@
             <th
               class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
             >
+              Progress
+            </th>
+            <th
+              class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
+            >
               Status
             </th>
           </tr>
@@ -62,12 +57,24 @@
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
-              {{ project.project_lead  }}
+              <div class="flex items-center">
+                <img :src="avatars.default" class="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow mr-2" />{{ project.project_lead }}
+              </div>
             </td>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
               {{ project.school  }}
+            </td>
+            <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+              <div class="flex items-center">
+                <span class="mr-2">60%</span>
+                <div class="relative w-full">
+                  <div class="overflow-hidden h-2 text-xs flex rounded bg-red-200">
+                    <div class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500" style="width: 60%;"></div>
+                  </div>
+                </div>
+              </div>
             </td>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
@@ -76,7 +83,10 @@
                 <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i> {{ project.status }}
               </span>
               <span v-if="project.status === 'Amber'" class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-amber-600 bg-amber-200 uppercase last:mr-0 mr-1">
-                <i class="fas fa-exclamation text-amber-600 mx-1"></i> {{ project.status }}
+                <i class="fas fa-exclamation text-amber-600 mr-2"></i> {{ project.status }}
+              </span>
+              <span v-if="project.status === 'Green'" class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-emerald-600 bg-emerald-200 uppercase last:mr-0 mr-1">
+                <i class="fas fa-check text-emerald-600 mr-2"></i> {{ project.status }}
               </span>
             </td>
           </tr>
@@ -86,23 +96,24 @@
   </div>
 </template>
 <script>
+  import defaultAvatar from "@/assets/img/team-1-800x800.jpg";
+
   export default {
+    data() {
+      return {
+        avatars: {
+          default: defaultAvatar
+        },
+
+      }
+    },
     computed: {
       projects() {
-        let projects = this.$store.state.projects.projects,
-            red = projects.filter(project => project.status === 'Red'),
-            amber = projects.filter(project => project.status === 'Amber')
-
-        return [...red, ...amber]
+        return this.$store.state.projects.projects
       }
     },
     watch: {
-      '$store.state.projects.projects': function(projects) {
-        let red = projects.filter(project => project.status === 'Red'),
-            amber = projects.filter(project => project.status === 'Amber')
-
-        return [...red, ...amber]
-      }  
+      '$store.state.projects.projects': function() { }  
     },
     props: {
       color: {
@@ -112,6 +123,6 @@
           return ["light", "dark"].indexOf(value) !== -1;
         },
       },
-    }
+    },
   };
 </script>

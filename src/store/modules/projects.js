@@ -53,12 +53,16 @@ export default {
         ganttItem.projectLead = project.properties.project_lead;
         ganttItem.projectValue = project.properties.project_value;
         ganttItem.school = project.properties.school;
+        ganttItem.status = project.properties.status;
 
         return ganttItem;
       });
 
-      //console.log(projects);
-      return projects;
+      return projects.sort(function(a, b) {
+          let textA = a.name.toUpperCase();
+          let textB = b.name.toUpperCase();
+          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      });
     },
   },
 
@@ -94,26 +98,43 @@ export default {
           "submittedToFunder",
         ];
       }
-      let projects = [];
+
+      let rawData = [];
       let index = 0;
 
       return new Promise((resolve) => {
         stages.forEach((stage) => {
+
+          let params = new URLSearchParams();
+          params.append("stage", stage);
+
           axios
             .get(`${process.env.VUE_APP_API_URL}/projects/`, {
               headers: {
                 Authorization: `Bearer ${rootState.auth.jwt}`,
               },
-              params: {
-                stage: stage,
-              },
+              params: params,
             })
             .then((response) => {
-              projects = [...projects, ...response.data]; // adds response to projects variable
+
+              rawData = [...rawData, ...response.data];
+
+              // checks if the last stage has been itterated
               if (index === stages.length - 1) {
-                // checks if the last stage has been itterated
+
+                let projects = []
+                
+                rawData.forEach((rawProject) => {
+                  let project = rawProject.properties
+                  project.archived = rawProject.archived
+                  project.createdAt = rawProject.createdAt
+                  project.updatedAt = rawProject.updatedAt
+                  project.id = rawProject.id
+
+                  projects.push(project)
+                })
+
                 commit("getProjects", projects);
-                console.log(projects);
                 resolve();
               } else index++;
             })
@@ -138,7 +159,6 @@ export default {
           },
         })
         .then((response) => {
-          console.log(response.data);
           commit("getProject", response.data);
         })
         .catch((error) => {

@@ -48,16 +48,16 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr v-for="member in members" :key="member.id">
             <th
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left"
             >
-              Facebook
+              {{ member.firstname }} {{ member.surname }}
             </th>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
-              1,480
+              {{ member.team }}
             </td>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
@@ -77,124 +77,36 @@
               </div>
             </td>
           </tr>
-          <tr>
-            <th
-              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left"
-            >
-              Facebook
-            </th>
-            <td
-              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-            >
-              5,480
-            </td>
-            <td
-              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-            >
-              <div class="flex items-center">
-                <span class="mr-2">70%</span>
-                <div class="relative w-full">
-                  <div
-                    class="overflow-hidden h-2 text-xs flex rounded bg-emerald-200"
-                  >
-                    <div
-                      style="width: 70%;"
-                      class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-emerald-500"
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th
-              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left"
-            >
-              <a href="/user">Google</a>
-            </th>
-            <td
-              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-            >
-              4,807
-            </td>
-            <td
-              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-            >
-              <div class="flex items-center">
-                <span class="mr-2">80%</span>
-                <div class="relative w-full">
-                  <div
-                    class="overflow-hidden h-2 text-xs flex rounded bg-purple-200"
-                  >
-                    <div
-                      style="width: 80%;"
-                      class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-purple-500"
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th
-              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left"
-            >
-              Instagram
-            </th>
-            <td
-              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-            >
-              3,678
-            </td>
-            <td
-              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-            >
-              <div class="flex items-center">
-                <span class="mr-2">75%</span>
-                <div class="relative w-full">
-                  <div
-                    class="overflow-hidden h-2 text-xs flex rounded bg-lightBlue-200"
-                  >
-                    <div
-                      style="width: 75%;"
-                      class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-lightBlue-500"
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th
-              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left"
-            >
-              twitter
-            </th>
-            <td
-              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-            >
-              2,645
-            </td>
-            <td
-              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-            >
-              <div class="flex items-center">
-                <span class="mr-2">30%</span>
-                <div class="relative w-full">
-                  <div
-                    class="overflow-hidden h-2 text-xs flex rounded bg-orange-200"
-                  >
-                    <div
-                      style="width: 30%;"
-                      class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-emerald-500"
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </td>
-          </tr>
         </tbody>
       </table>
     </div>
   </div>
 </template>
+<script>
+
+  export default {
+    data() {
+      return {
+        loading: false,
+      };
+    },
+    computed: {
+      members() {
+        return this.$store.state.members.members
+      }
+    },
+    watch: {
+      '$store.state.members.members': function() {
+      }  
+    },
+    props: {
+      color: {
+        default: "light",
+        validator: function (value) {
+          // The value must match one of these strings
+          return ["light", "dark"].indexOf(value) !== -1;
+        },
+      },
+    },
+  };
+</script>

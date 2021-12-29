@@ -3,3 +3,9 @@
 @tailwind components;
 
 @tailwind utilities;
+
+.cost-recovery-threshold {
+    border-left: 2px dashed;
+    height: 40px;
+    top: 20px;
+}

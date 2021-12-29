@@ -117,7 +117,6 @@ export default {
         })
         .then((response) => {
           commit("getAssignments", response.data);
-          console.log(response.data);
         })
         .catch((error) => {
           console.log(error);

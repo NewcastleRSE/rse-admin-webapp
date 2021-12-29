@@ -37,7 +37,7 @@ export default {
     mutations: {
         //sync, updates state
         getMembers(state, members) {
-            state.members = members;
+          state.members = members;
         },
     },
 
@@ -57,7 +57,6 @@ export default {
           },
         })
         .then((response) => {
-          console.log(response.data);
           commit("getMembers", response.data);
         })
         .catch((error) => {
