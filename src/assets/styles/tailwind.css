@@ -2556,6 +2556,26 @@ select {
   max-height: 860px;
 }
 
+.max-w-xs {
+  max-width: 20rem;
+}
+
+.max-w-sm {
+  max-width: 24rem;
+}
+
+.max-w-3xl {
+  max-width: 48rem;
+}
+
+.max-w-6xl {
+  max-width: 72rem;
+}
+
+.max-w-full {
+  max-width: 100%;
+}
+
 .max-w-md {
   max-width: 28rem;
 }
@@ -2645,8 +2665,12 @@ select {
      object-fit: scale-down;
 }
 
-.opacity-50 {
-  opacity: 0.5;
+.opacity-5 {
+  opacity: 0.05;
+}
+
+.opacity-25 {
+  opacity: 0.25;
 }
 
 .opacity-75 {
@@ -2655,6 +2679,10 @@ select {
 
 .opacity-80 {
   opacity: .8;
+}
+
+.hover\:opacity-75:hover {
+  opacity: 0.75;
 }
 
 .outline-none {
@@ -3033,6 +3061,13 @@ select {
 
 .sticky {
   position: sticky;
+}
+
+.inset-0 {
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
 }
 
 .top-0 {
