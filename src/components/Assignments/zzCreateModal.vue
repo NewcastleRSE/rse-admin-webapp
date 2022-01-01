@@ -82,7 +82,7 @@
 
 <script>
 export default {
-  name: "AssignmentsFormModal",
+  name: "CreateModal",
   props: ["project"],
   // emits: ["toggleModal", "addAssignment"],
 
