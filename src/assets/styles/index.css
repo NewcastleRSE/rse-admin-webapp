@@ -2,8 +2,155 @@
 @tailwind components;
 @tailwind utilities;
 
-.cost-recovery-threshold {
-    border-left: 2px dashed;
-    height: 40px;
-    top: 20px;
+@layer utilities {
+
+    .min-h-screen-75 {
+        min-height: 75vh;
+    }
+
+    .text-55 {
+        font-size: 55rem;
+    }
+
+    .opacity-80 {
+        opacity: .8;
+    }
+
+    .z-2 {
+        z-index: 2;
+    }
+
+    .z-3 {
+        z-index: 3;
+    }
+
+    .-right-100 {
+        right: -100%;
+    }
+
+    .-top-225-px {
+        top: -225px;
+    }
+
+    .-top-160-px {
+        top: -160px;
+    }
+
+    .-top-150-px {
+        top: -150px;
+    }
+
+    .-top-94-px {
+        top: -94px;
+    }
+
+    .-left-50-px {
+        left: -50px;
+    }
+
+    .-top-29-px {
+        top: -29px;
+    }
+
+    .-left-20-px {
+        left: -20px;
+    }
+
+    .top-25-px {
+        top: 25px;
+    }
+
+    .left-40-px {
+        left: 40px;
+    }
+
+    .top-95-px {
+        top: 95px;
+    }
+
+    .left-145-px {
+        left: 145px;
+    }
+
+    .left-195-px {
+        left: 195px;
+    }
+
+    .top-210-px {
+        top: 210px;
+    }
+
+    .left-260-px {
+        left: 260px;
+    }
+
+    .h-95-px {
+        height: 95px;
+    }
+
+    .h-70-px {
+        height: 70px;
+    }
+
+    .h-350-px {
+        height: 350px;
+    }
+
+    .h-500-px {
+        height: 500px;
+    }
+
+    .h-600-px {
+        height: 600px;
+    }
+
+    .max-h-860-px {
+        max-height: 860px;
+    }
+
+    .max-w-100-px {
+        max-width: 100px;
+    }
+
+    .max-w-120-px {
+        max-width: 120px;
+    }
+
+    .max-w-150-px {
+        max-width: 150px;
+    }
+
+    .max-w-180-px {
+        max-width: 180px;
+    }
+
+    .max-w-200-px {
+        max-width: 200px;
+    }
+
+    .max-w-210-px {
+        max-width: 210px;
+    }
+
+    .max-w-580-px {
+        max-width: 580px;
+    }
+
+    .min-w-48 {
+        min-width: 12rem;
+    }
+
+    .min-w-140-px {
+        min-width: 140px;
+    }
+
+    .bg-full {
+        background-size: 100%;
+    }
+
+    .cost-recovery-threshold {
+        border-left: 2px dashed;
+        height: 40px;
+        top: 20px;
+    }
 }
