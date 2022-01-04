@@ -97,7 +97,7 @@ export default {
     }
   },
   mounted() {
-    this.importAvatars(require.context('@/assets/img/avatars/', true, /\.jpg$/));
+    this.importAvatars(require.context('@/assets/img/avatars/', true, /\.(gif|jpe?g|tiff?|png|webp|bmp)$/));
   },
   methods: {
     toggleModal: function(){
