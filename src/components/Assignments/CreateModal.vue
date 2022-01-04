@@ -84,7 +84,6 @@ export default {
       avatars: [],
       getAvatar: (rse) => {
           let avatar = this.avatars.find((avatar) => {
-            console.log(avatar.name + ' === ' + rse.toLowerCase())
             return avatar.name === rse.toLowerCase()
           })
 
@@ -106,7 +105,6 @@ export default {
     },
     importAvatars(r) {
       r.keys().forEach(key => (this.avatars.push({ pathLong: r(key), pathShort: key, name: (key.substring(2)).split('.')[0].split('-').join(' ') })));
-      console.log(this.avatars)
     },
   }
 }
