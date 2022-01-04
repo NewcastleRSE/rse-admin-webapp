@@ -9,6 +9,7 @@ import Gantt from "highcharts/modules/gantt";
 import HighchartsCustomEvents from "highcharts-custom-events";
 import HighchartsVue from "highcharts-vue";
 import Highcharts3D from "highcharts/highcharts-3d";
+import SimpleTypeahead from 'vue3-simple-typeahead';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@/assets/styles/index.css";
 
@@ -21,6 +22,7 @@ Highcharts3D(Highcharts);
 
 createApp(App)
   .use(store)
+  .use(SimpleTypeahead)
   .use(router)
   .use(HighchartsVue)
   .mount("#app");
