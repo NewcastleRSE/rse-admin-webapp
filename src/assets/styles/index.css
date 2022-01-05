@@ -208,8 +208,7 @@
         color: rgb(255, 255, 255);
     }
 
-        /* .simple-typeahead-list-header
-        .simple-typeahead-list-item &.simple-typeahead-list-item-active
-            .simple-typeahead-list-item-text
-        .simple-typeahead-list-footer */
+    .dp__main {
+        width: 100%
+    }
 }

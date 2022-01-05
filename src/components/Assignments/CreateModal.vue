@@ -44,16 +44,7 @@
               <input type="text" placeholder="Project" class="py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border border-blueGray-300 outline-none focus:outline-none focus:shadow-outline w-full pl-10"/>
             </div>
             <div class="relative flex w-full flex-wrap items-stretch mb-3">
-              <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                <i class="fas fa-calendar"></i>
-              </span>
-              <input type="text" placeholder="Start Date" class="py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border border-blueGray-300 outline-none focus:outline-none focus:shadow-outline w-full pl-10"/>
-            </div>
-            <div class="relative flex w-full flex-wrap items-stretch mb-3">
-              <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                <i class="fas fa-calendar"></i>
-              </span>
-              <input type="text" placeholder="End Date" class="py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border border-blueGray-300 outline-none focus:outline-none focus:shadow-outline w-full pl-10"/>
+              <Datepicker v-model="date" range :enableTimePicker="false" inputClassName="py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border border-blueGray-300 outline-none focus:outline-none focus:shadow-outline w-full pl-10" />
             </div>
           </div>
           <!--footer-->
@@ -72,6 +63,8 @@
 </template>
 
 <script>
+import Datepicker from 'vue3-date-time-picker';
+import 'vue3-date-time-picker/dist/main.css'
 
 export default {
   name: "Create",
@@ -86,10 +79,13 @@ export default {
           let avatar = this.avatars.find((avatar) => {
             return avatar.name === rse.toLowerCase()
           })
-
           return avatar ? avatar.pathLong : '' 
       },
+      date: null
     }
+  },
+  components: {
+    Datepicker
   },
   computed: {
     members() {
