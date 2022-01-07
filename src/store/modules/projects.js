@@ -69,8 +69,6 @@ export default {
   mutations: {
     //sync, updates state
     getProjects(state, projects) {
-      //state.projects.push(projects);
-      //state.projects = [...state.projects, ...projects];
       state.projects = projects;
     },
     getProject(state, project) {
