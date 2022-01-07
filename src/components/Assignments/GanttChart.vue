@@ -1,261 +1,29 @@
 <template>
-      <highcharts
-        v-if="members.length > 0 && chart.length > 0 && projects.length > 0"
-        :constructorType="'ganttChart'"
-        class="hc"
-        :options="chartOptions"
-        ref="chart"
-      ></highcharts>
-      <!-- <progress
-        v-else
-        class="progress is-small is-primary"
-        max="100"
-      ></progress>
-      <div class="btns">
-        <div class="delete">
-          <button @click="deleteAssignments" class="button is-primary">
-            Delete Selected
-          </button>
-        </div>
-        <div class="save">
-          <a id= "download" class="button is-secondary mr-5" @click="exportCSVFile()"> <i class="fas file-download"/></a>
-          <button :disabled="!edited" @click="save" class="button is-primary">
-            Save
-          </button>
-          <button
-            :disabled="!edited"
-            @click="cancel"
-            class="button is-secondary"
-          >
-            Cancel
-          </button>
-        </div>
-        
-
-      </div>
-    </div>
-    <div class="column is-3">
-      <ProjectsCard @toggle-form-modal="toggleFormModal" />
-    </div>
-  </div>
-  <FormModal
-    v-if="showFormModal"
-    :project="projectForModal"
-    @toggle-form-modal="toggleFormModal"
-    @add-assignment="addAssignment"
-  />
-  <ProjectModal
-    v-if="showProjectModal"
-    :project="projectForModal"
-    @toggle-project-modal="toggleProjectModal"
-  /> -->
+<!--     v-if="members.length > 0 && assignments.length > 0 && projects.length > 0" -->
+  <highcharts
+    :constructorType="'ganttChart'"
+    class="hc"
+    :options="chartOptions"
+    ref="chart"
+  ></highcharts>
 </template>
 
 <script>
-//:disabled="!edited"
-// import ProjectsCard from "./ProjectsCard.vue";
-// import FormModal from "./AssignmentsFormModal.vue";
-// import ProjectModal from "../ProjectModal.vue";
-
-import differenceWith from "lodash.differencewith";
-import isEqual from "lodash.isequal";
 export default {
   name: "AssignmentGantt",
-  // components: { ProjectsCard, FormModal, ProjectModal },
   data() {
     return {
-      showFormModal: false,
-      showProjectModal: false,
-      projectForModal: null, // used for both form and project modal
-
       edited: false,
-
-      members: [],
-      selected: "All",
-
-      projects: [],
-      showOldAssignments: false,
-
-      chart: [],
+      members: this.$store.getters["members/getMembers"],
+      projects: this.$store.getters["projects/getProjects"],
+      assignments: this.$store.getters["assignments/getAssignments"],
     };
   },
-  /*
-    loads data into chart if the data was retrieved
-    while on a different page
-  */
-  created() {
-    this.members = this.getMembers;
-    this.projects = this.getProjects;
-    this.chart = this.getAssignments;
-  },
-  methods: {
-    toggleFormModal(project) {
-      if (project) {
-        this.projectForModal = project;
-      }
-      this.showFormModal = !this.showFormModal;
-    },
-    toggleProjectModal(project) {
-      if (project) {
-        this.projectForModal = project;
-      }
-      this.showProjectModal = !this.showProjectModal;
-    },
-
-     /**
-     * toCSV(): Converts the charts series dictionary
-     *          into a csv
-     */
-    toCSV() {
-      const header = "id,start,end,name,dealname" + "\r\n";
-      var body = "";
-      var chart = this.$store.getters[
-        "assignments/getSavedAssignments"
-      ];
-      chart.forEach((el) => {
-        var line = "";
-        for (var key in el) {
-          if (line != "") {line += ","} // add commas for csv
-          if (key === "start" || key === "end") {
-            console.log(key)
-            var date = new Date(el[key]);
-            line += date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
-          }
-          else if (el[key]) {
-            line += el[key]; // to remove undefined values
-          } 
-          else {
-            line += " "; 
-          }
-        }
-        body += line + "\r\n";
-      })
-      var csv = header + body;
-      console.log(csv);
-      return csv;
-    },
-
-    /**
-     * exportCSVFile(): Allow you to download the exported csv file
-     */
-    exportCSVFile() {
-      var link = document.getElementById("download");
-      var csv = this.toCSV();
-      var blob = new Blob([csv], { type: "text/csv"});
-      link.download = "data.csv";
-      link.href = URL.createObjectURL(blob);
-    },
-    /*
-    Pushes assignment from AssignmentsFormModal
-    */
-    addAssignment(assignment) {
-      if (!this.edited) {
-        this.edited = true;
-      }
-
-      this.chart.push(assignment);
-    },
-    /*
-    Gets selected points and removes them
-    */
-    deleteAssignments() {
-      if (!this.edited) {
-        this.edited = true;
-      }
-
-      this.$refs.chart.chart.getSelectedPoints().forEach((point) => {
-        try {
-          this.chart = this.chart.filter(
-            (item) => item.assignmentID !== point.assignmentID
-          );
-        } catch {
-          console.log("Failed To Delete");
-        }
-      });
-    },
-    /*
-    Compares saved and unsaved items to find which
-    items need to be added to the db and which
-    items need to be deleted from the db
-    */
-    save() {
-      let savedAssignments = this.$store.getters[
-        "assignments/getSavedAssignments"
-      ];
-      let notSavedAssignments = this.chart;
-
-      let newItems = this.getNewItems(savedAssignments, notSavedAssignments);
-      let deletedItems = this.getNewItems(
-        notSavedAssignments,
-        savedAssignments
-      );
-
-      console.log("new: ", newItems);
-      console.log("deleted: ", deletedItems);
-
-      let promises = [];
-
-      newItems.forEach((item) => {
-        const assignment = {
-          //id: this.$store.getters["assignments/getUID"],
-          member: { id: item.parent },
-          startDate: new Date(item.start).toISOString(),
-          endDate: new Date(item.end).toISOString(),
-          projectID: item.name,
-        };
-        promises.push(
-          this.$store.dispatch("assignments/saveAssignment", assignment)
-        );
-      });
-      deletedItems.forEach((item) => {
-        promises.push(
-          this.$store.dispatch(
-            "assignments/deleteAssignment",
-            item.assignmentID
-          )
-        );
-      });
-
-      Promise.allSettled(promises).then(() => {
-        // updates chart to match what is stored in the db
-        this.chart = this.$store.getters["assignments/getSavedAssignments"];
-        this.edited = false;
-      });
-    },
-    cancel() {
-      // reverst chart back to save assignments
-      this.chart = this.$store.getters["assignments/getSavedAssignments"];
-      this.edited = false;
-    },
-
-    /**
-     * getNewItems():
-     * All assignments dictionaries which are in currentAssignments
-     * however not in tempAssignements
-     * @returns dictionary
-     */
-    getNewItems(savedAssignments, notSavedAssignments) {
-      return differenceWith(notSavedAssignments, savedAssignments, isEqual);
-    },
-    /**
-     * getDeletedItems():
-     * All assignments dictionaries which are in tempAssignments
-     * however not in currentAssignements
-     * @returns dictionary
-     */
-    getDeletedItems(savedAssignments, notSavedAssignments) {
-      return differenceWith(savedAssignments, notSavedAssignments, isEqual);
-    },
-  },
   computed: {
-    // chart settings
     chartOptions() {
-      let members = this.members;
-      let projects = this.projects;
-      let chart = this.chart;
 
       let day = 24 * 3600 * 1000;
-      let scrollHeight = (chart.length + members.length) * 60; // increase '60' if chart cut off at bottom
+      let scrollHeight = (this.assignments.length + this.members.length) * 60; // increase '60' if chart cut off at bottom
       return {
         chart: {
           type: "gantt",
@@ -302,7 +70,7 @@ export default {
           labels: {
             formatter: (label) => {
               // formatts project ids to their names
-              const projectObj = projects.find((project) => {
+              const projectObj = this.projects.find((project) => {
                 if (project.id === label.value) {
                   return project;
                 }
@@ -323,7 +91,7 @@ export default {
             let point = p.chart.hoverPoint;
             let start = new Date(point.start);
             let end = new Date(point.end);
-            let projectName = projects.find((project) => {
+            let projectName = this.projects.find((project) => {
               if (project.id === point.name) {
                 return project;
               }
@@ -368,13 +136,13 @@ export default {
                 drop: (data) => {
                   try {
                     // updates the chart array
-                    let assignmentIndex = chart.findIndex((assignment) => {
+                    let assignmentIndex = this.assignments.findIndex((assignment) => {
                       return (
                         assignment.assignmentID === data.target.assignmentID
                       );
                     });
-                    chart[assignmentIndex].start = data.target.start;
-                    chart[assignmentIndex].end = data.target.end;
+                    this.assignments[assignmentIndex].start = data.target.start;
+                    this.assignments[assignmentIndex].end = data.target.end;
 
                     if (!this.edited) {
                       this.edited = true;
@@ -387,7 +155,7 @@ export default {
                   try {
                     if (event.point.parent) {
                       // if clicked on assignment
-                      let project = projects.find((project) => {
+                      let project = this.projects.find((project) => {
                         return project.id == event.point.name;
                       });
 
@@ -420,10 +188,9 @@ export default {
           enabled: true,
           trackBackgroundColor: "rgba(230, 230, 230, 0.2)",
         },
-        series: [{ data: [...members, ...chart] }],
+        series: [{ data: [...this.members, ...this.assignments] }],
       };
     },
-
     getAssignments() {
       // gets updated value from store
       return this.$store.getters["assignments/getAssignments"];
@@ -436,17 +203,13 @@ export default {
     },
     getProjects() {
       // gets updated value from store
-      return this.$store.getters["projects/getProjects"]; // even when projects is identical to get, doesnt work
+      return this.$store.getters["projects/getProjects"];
     },
   },
-
-  /*
-    loads data once they are retrieved if page is opened on current page
-  */
   watch: {
     getAssignments(update) {
       // watches 'getAssignments()' to update chart
-      this.chart = update;
+      this.assignments = update;
     },
     getMembers(update) {
       // watches 'getMembers()' to update members
@@ -459,18 +222,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.member-filter {
-  margin: 1em;
-  display: flex;
-}
-.member-filter h2 {
-  margin-right: 0.5em;
-}
-.btns {
-  display: flex;
-  justify-content: space-between;
-  margin: 0 1em;
-}
-</style>
