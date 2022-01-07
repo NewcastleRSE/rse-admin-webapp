@@ -21,11 +21,7 @@ export default {
   components: { MenuBar, GanttChart, CreateModal },
   data() {
     return {
-      assignments: [],
-      projects: [],
-      members: [],
       edited: false,
-      showCreateModal: false
     }
   },
   methods: {
@@ -51,10 +47,8 @@ export default {
       this.$refs.create.toggleModal();
     },
     addAssignment: function(assignment) {
-      console.log(assignment)
-
       this.edited = true
-      this.assignments.push(assignment);
+      this.$store.commit("assignments/saveAssignment", assignment)
     },
     save: function() {
       let savedAssignments = this.$store.getters[
