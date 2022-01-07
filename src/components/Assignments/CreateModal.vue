@@ -20,7 +20,7 @@
               <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                 <i class="fas fa-user"></i>
               </span>
-              <vue3-simple-typeahead placeholder="RSE" v-model="member" :items=members :minInputLength="1" :itemProjection="itemProjection" @selectItem="selectMember">
+              <vue3-simple-typeahead placeholder="RSE" v-model="member" :items=members :minInputLength="1" :itemProjection="memberProjection" @selectItem="selectMember">
               <template #list-item-text="slot">
                 <div class="align-middle whitespace-nowrap">
                   <div class="flex items-center">
@@ -35,7 +35,15 @@
               <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                 <i class="fas fa-briefcase"></i>
               </span>
-              <input type="text" placeholder="Project" class="py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border border-blueGray-300 outline-none focus:outline-none focus:shadow-outline w-full pl-10"/>
+              <vue3-simple-typeahead placeholder="Project" v-model="project" :items=projects :minInputLength="1" :itemProjection="projectProjection" @selectItem="selectProject">
+              <template #list-item-text="slot">
+                <div class="align-middle whitespace-nowrap">
+                  <div class="flex items-center">
+                    <span v-html="slot.boldMatchText(slot.itemProjection(slot.item))"></span>
+                  </div>
+                </div>
+              </template>
+              </vue3-simple-typeahead>
             </div>
             <div class="relative flex w-full flex-wrap items-stretch mb-3">
               <Datepicker v-model="dateRange" range :enableTimePicker="false" inputClassName="py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border border-blueGray-300 outline-none focus:outline-none focus:shadow-outline w-full pl-10" />
@@ -65,8 +73,11 @@ export default {
   data() {
     return {
       showModal: false,
-      itemProjection: (item) => {
+      memberProjection: (item) => {
         return item.firstname + " " + item.surname
+      },
+      projectProjection: (item) => {
+        return item.dealname
       },
       avatars: [],
       getAvatar: (rse) => {
@@ -79,6 +90,10 @@ export default {
       selectMember: (member) => {
         this.member = member
       },
+      project: null,
+      selectProject: (project) => {
+        this.project = project
+      },
       dateRange: null
     }
   },
@@ -88,6 +103,9 @@ export default {
   computed: {
     members() {
       return this.$store.state.members.members
+    },
+    projects() {
+      return this.$store.state.projects.projects
     }
   },
   mounted() {
