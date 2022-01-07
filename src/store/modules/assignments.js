@@ -134,7 +134,6 @@ export default {
           },
         })
         .then((response) => {
-          console.log(response.data);
           commit("addAssignment", response.data);
         })
         .catch((error) => {

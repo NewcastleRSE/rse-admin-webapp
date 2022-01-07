@@ -51,10 +51,20 @@ export default {
   components: { GanttChart, CreateModal },
   data() {
     return {
+      assignments: [],
+      projects: [],
+      members: [],
+      edited: false,
       showCreateModal: false
     }
   },
-  props: {
+  methods: {
+    addAssignment: function(assignment) {
+      console.log(assignment)
+
+      this.edited = true
+      this.assignments.push(assignment);
+    },
     save: function(assignments) {
       console.log(assignments);
     },

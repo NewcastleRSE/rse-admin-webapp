@@ -20,12 +20,7 @@
               <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                 <i class="fas fa-user"></i>
               </span>
-              <vue3-simple-typeahead
-                placeholder="RSE"
-                :items=members
-                :minInputLength="1"
-                :itemProjection="itemProjection"
-              >
+              <vue3-simple-typeahead placeholder="RSE" v-model="member" :items=members :minInputLength="1" :itemProjection="itemProjection" @selectItem="selectMember">
               <template #list-item-text="slot">
                 <div class="align-middle whitespace-nowrap">
                   <div class="flex items-center">
@@ -36,7 +31,6 @@
               </template>
               </vue3-simple-typeahead>
             </div>
-
             <div class="relative flex w-full flex-wrap items-stretch mb-3">
               <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                 <i class="fas fa-briefcase"></i>
@@ -44,7 +38,7 @@
               <input type="text" placeholder="Project" class="py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border border-blueGray-300 outline-none focus:outline-none focus:shadow-outline w-full pl-10"/>
             </div>
             <div class="relative flex w-full flex-wrap items-stretch mb-3">
-              <Datepicker v-model="date" range :enableTimePicker="false" inputClassName="py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border border-blueGray-300 outline-none focus:outline-none focus:shadow-outline w-full pl-10" />
+              <Datepicker v-model="dateRange" range :enableTimePicker="false" inputClassName="py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border border-blueGray-300 outline-none focus:outline-none focus:shadow-outline w-full pl-10" />
             </div>
           </div>
           <!--footer-->
@@ -52,7 +46,7 @@
             <button class="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" v-on:click="toggleModal()">
               Close
             </button>
-            <button class="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" v-on:click="toggleModal()">
+            <button class="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" v-on:click="addAssignment()">
               Create
             </button>
           </div>
@@ -81,7 +75,11 @@ export default {
           })
           return avatar ? avatar.pathLong : '' 
       },
-      date: null
+      member: null,
+      selectMember: (member) => {
+        this.member = member
+      },
+      dateRange: null
     }
   },
   components: {
@@ -101,6 +99,27 @@ export default {
     },
     importAvatars(r) {
       r.keys().forEach(key => (this.avatars.push({ pathLong: r(key), pathShort: key, name: (key.substring(2)).split('.')[0].split('-').join(' ') })));
+    },
+    /*
+    id that is set here does not set the assignment id in strapi,
+    id is needed for assignment to be draggable in gantt,
+    
+    Changes assignment format to match chart so save
+    can see the differences between saved items and 
+    items in the chart
+    */
+    addAssignment() {
+
+      const assignment = {
+        name: 1,
+        parent: this.member.toString(),
+        assignmentID: this.$store.getters["assignments/getUID"],
+        start: Date.parse(this.dateRange[0]),
+        end: Date.parse(this.dateRange[1]),
+      };
+
+      this.$parent.addAssignment(assignment);
+      this.toggleModal();
     },
   }
 }
