@@ -48,13 +48,13 @@ export default {
     },
     addAssignment: function(assignment) {
       this.edited = true
-      this.$store.commit("assignments/saveAssignment", assignment)
+      this.$store.commit("assignments/addAssignment", assignment)
     },
     save: function() {
       let savedAssignments = this.$store.getters[
         "assignments/getSavedAssignments"
       ];
-      let notSavedAssignments = this.chart;
+      let notSavedAssignments = this.assignments;
 
       let newItems = this.getNewItems(savedAssignments, notSavedAssignments);
       let deletedItems = this.getNewItems(
