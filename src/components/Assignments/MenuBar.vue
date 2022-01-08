@@ -19,12 +19,12 @@
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 text-blueGray-700" v-on:click="save()">
+              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 text-blueGray-700" v-bind:class="{ 'cursor-not-allowed': !edited }" v-on:click="edited? save() : null">
                 <i class="fas fa-save text-lg leading-lg opacity-75 text-blueGray-700"></i>
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 text-blueGray-700" v-on:click="cancel()">
+              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 text-blueGray-700" v-bind:class="{ 'cursor-not-allowed': !edited }" v-on:click="edited? cancel() : null">
                 <i class="fas fa-undo text-lg leading-lg opacity-75 text-blueGray-700"></i>
               </button>
             </li>
@@ -46,6 +46,7 @@
 <script>
 export default {
   props: {
+    edited: {type: Boolean },
     create: { type: Function },
     save: { type: Function },
     cancel: { type: Function },

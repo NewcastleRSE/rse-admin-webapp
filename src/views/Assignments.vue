@@ -2,7 +2,7 @@
     <div class="flex flex-wrap mt-4">
     <div class="w-full mb-12 px-4">
       <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
-        <menu-bar :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
+        <menu-bar :edited="edited" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
         <gantt-chart ref="gantt" />
       </div>
       <create-modal ref="create" />
@@ -54,11 +54,11 @@ export default {
       let savedAssignments = this.$store.getters[
         "assignments/getSavedAssignments"
       ];
-      let notSavedAssignments = this.assignments;
+      let updates = this.assignments;
 
-      let newItems = this.getNewItems(savedAssignments, notSavedAssignments);
+      let newItems = this.getNewItems(savedAssignments, updates);
       let deletedItems = this.getNewItems(
-        notSavedAssignments,
+        updates,
         savedAssignments
       );
 
