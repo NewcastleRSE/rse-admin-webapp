@@ -16,7 +16,7 @@ export default {
       edited: false,
       members: this.$store.getters["members/getMembers"],
       projects: this.$store.getters["projects/getProjects"],
-      assignments: this.$store.getters["assignments/getAssignments"],
+      assignments: this.$store.getters["assignments/getAssignments"]
     };
   },
   computed: {
@@ -69,7 +69,7 @@ export default {
           uniqueNames: true,
           labels: {
             formatter: (label) => {
-              // formatts project ids to their names
+              // formats project ids to their names
               const projectObj = this.projects.find((project) => {
                 if (project.id === label.value) {
                   return project;
@@ -193,6 +193,7 @@ export default {
     },
     getAssignments() {
       // gets updated value from store
+      console.log('Assignment Changed - Computed')
       return this.$store.getters["assignments/getAssignments"];
 
     },
@@ -209,6 +210,7 @@ export default {
   watch: {
     getAssignments(update) {
       // watches 'getAssignments()' to update chart
+      console.log('Assignment Changed - Watcher')
       this.assignments = update;
     },
     getMembers(update) {
