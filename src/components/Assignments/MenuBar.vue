@@ -14,28 +14,28 @@
         <div class="flex lg:flex-grow items-center">
           <ul class="flex flex-col lg:flex-row list-none ml-auto">
             <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 text-blueGray-700" v-on:click="create()">
+              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="create()">
                 <i class="fas fa-plus text-lg leading-lg opacity-75 text-blueGray-700"></i>
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 text-blueGray-700" v-bind:class="{ 'cursor-not-allowed': !edited }" v-on:click="edited? save() : null">
-                <i class="fas fa-save text-lg leading-lg opacity-75 text-blueGray-700"></i>
+              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-bind:class="{ 'cursor-not-allowed': !edited }" v-on:click="edited? save() : null">
+                <i class="fas fa-save text-lg leading-lg opacity-75" v-bind:class="{ 'text-blueGray-700': edited, 'text-blueGray-300': !edited }"></i>
               </button>
             </li>
             <li class="nav-item">
               <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 text-blueGray-700" v-bind:class="{ 'cursor-not-allowed': !edited }" v-on:click="edited? cancel() : null">
-                <i class="fas fa-undo text-lg leading-lg opacity-75 text-blueGray-700"></i>
+                <i class="fas fa-undo text-lg leading-lg opacity-75" v-bind:class="{ 'text-blueGray-700': edited, 'text-blueGray-300': !edited }"></i>
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 text-blueGray-700" v-on:click="remove()">
+              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="remove()">
                 <i class="fas fa-trash-alt text-lg leading-lg opacity-75 text-blueGray-700"></i>
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 text-blueGray-700" v-on:click="exportCSV()">
-                <i class="fas fa-download-alt text-lg leading-lg opacity-75 text-blueGray-700"></i>
+              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="exportCSV()">
+                <i class="fas fa-download text-lg leading-lg opacity-75 text-blueGray-700"></i>
               </button>
             </li>
           </ul>
