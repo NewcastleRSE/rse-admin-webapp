@@ -25,24 +25,6 @@ export default {
     }
   },
   methods: {
-    /**
-     * getNewItems():
-     * All assignments dictionaries which are in currentAssignments
-     * however not in tempAssignements
-     * @returns dictionary
-     */
-    getNewItems: function(savedAssignments, notSavedAssignments) {
-      return differenceWith(notSavedAssignments, savedAssignments, isEqual);
-    },
-    /**
-     * getDeletedItems():
-     * All assignments dictionaries which are in tempAssignments
-     * however not in currentAssignements
-     * @returns dictionary
-     */
-    getDeletedItems: function(savedAssignments, notSavedAssignments) {
-      return differenceWith(savedAssignments, notSavedAssignments, isEqual);
-    },
     create: function() {
       this.$refs.create.toggleModal();
     },
@@ -56,18 +38,17 @@ export default {
       ];
       let updates = this.assignments;
 
-      let newItems = this.getNewItems(savedAssignments, updates);
-      let deletedItems = this.getNewItems(
-        updates,
-        savedAssignments
-      );
+      console.log(savedAssignments)
 
-      console.log("new: ", newItems);
-      console.log("deleted: ", deletedItems);
+      let newAssignments = differenceWith(updates, savedAssignments, isEqual);
+      let deletedAssignments = differenceWith(savedAssignments, updates, isEqual);
+
+      console.log("new: ", newAssignments);
+      console.log("deleted: ", deletedAssignments);
 
       let promises = [];
 
-      newItems.forEach((item) => {
+      newAssignments.forEach((item) => {
         const assignment = {
           //id: this.$store.getters["assignments/getUID"],
           member: { id: item.parent },
@@ -79,7 +60,7 @@ export default {
           this.$store.dispatch("assignments/saveAssignment", assignment)
         );
       });
-      deletedItems.forEach((item) => {
+      deletedAssignments.forEach((item) => {
         promises.push(
           this.$store.dispatch(
             "assignments/deleteAssignment",
@@ -90,7 +71,7 @@ export default {
 
       Promise.allSettled(promises).then(() => {
         // updates chart to match what is stored in the db
-        this.chart = this.$store.getters["assignments/getSavedAssignments"];
+        this.assignments = this.$store.getters["assignments/getSavedAssignments"];
         this.edited = false;
       });
     },
