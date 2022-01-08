@@ -48,6 +48,12 @@
             <div class="relative flex w-full flex-wrap items-stretch mb-3">
               <Datepicker v-model="dateRange" range :enableTimePicker="false" inputClassName="py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border border-blueGray-300 outline-none focus:outline-none focus:shadow-outline w-full pl-10" />
             </div>
+            <div class="relative flex w-full flex-wrap items-stretch mb-3">
+              <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
+                <i class="fas fa-percentage"></i>
+              </span>
+              <input v-model="split" type="number" min="0" max="100" step="1" placeholder="Split" class="px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border border-blueGray-300 outline-none focus:outline-none focus:shadow-outline w-full pl-10"/>
+            </div>
           </div>
           <!--footer-->
           <div class="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
@@ -94,7 +100,8 @@ export default {
       selectProject: (project) => {
         this.project = project
       },
-      dateRange: null
+      dateRange: null,
+      split: 50
     }
   },
   components: {
@@ -129,11 +136,12 @@ export default {
     addAssignment() {
 
       const assignment = {
-        name: 1,
-        parent: this.member.toString(),
-        assignmentID: this.$store.getters["assignments/getUID"],
-        start: Date.parse(this.dateRange[0]),
-        end: Date.parse(this.dateRange[1]),
+        id: this.$store.getters["assignments/getUID"],
+        member: this.member,
+        projectID: this.project.id,
+        startDate: Date.parse(this.dateRange[0]),
+        endDate: Date.parse(this.dateRange[1]),
+        FTE: this.split
       };
 
       this.$parent.addAssignment(assignment);
