@@ -193,7 +193,6 @@ export default {
     },
     getAssignments() {
       // gets updated value from store
-      console.log('Assignment Changed - Computed')
       return this.$store.getters["assignments/getAssignments"];
 
     },
@@ -210,7 +209,6 @@ export default {
   watch: {
     getAssignments(update) {
       // watches 'getAssignments()' to update chart
-      console.log('Assignment Changed - Watcher')
       this.assignments = update;
     },
     getMembers(update) {

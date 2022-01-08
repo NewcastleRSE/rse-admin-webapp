@@ -139,8 +139,8 @@ export default {
         id: this.$store.getters["assignments/getUID"],
         member: this.member,
         projectID: this.project.id,
-        startDate: Date.parse(this.dateRange[0]),
-        endDate: Date.parse(this.dateRange[1]),
+        startDate: new Date(this.dateRange[0]).toISOString(),
+        endDate: new Date(this.dateRange[1]).toISOString(),
         FTE: this.split
       };
 
