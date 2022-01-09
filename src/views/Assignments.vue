@@ -33,18 +33,11 @@ export default {
       this.$store.commit("assignments/addAssignment", assignment)
     },
     save: function() {
-      let savedAssignments = this.$store.getters[
-        "assignments/getSavedAssignments"
-      ];
-      let updates = this.assignments;
-
-      console.log(savedAssignments)
+      let savedAssignments = this.$store.getters["assignments/getSavedAssignments"];
+      let updates = this.$store.getters["assignments/getAssignments"];
 
       let newAssignments = differenceWith(updates, savedAssignments, isEqual);
       let deletedAssignments = differenceWith(savedAssignments, updates, isEqual);
-
-      console.log("new: ", newAssignments);
-      console.log("deleted: ", deletedAssignments);
 
       let promises = [];
 
