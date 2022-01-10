@@ -73,17 +73,9 @@ export default {
       this.edited = false;
     },
     remove: function() {
-
       this.edited = true;
-      console.log(this.$refs.chart.chart.getSelectedPoints())
-      this.$refs.chart.chart.getSelectedPoints().forEach((point) => {
-        try {
-          this.assignments = this.assignments.filter(
-            (item) => item.assignmentID !== point.assignmentID
-          );
-        } catch {
-          console.log("Failed To Delete");
-        }
+      this.$refs.gantt.getSelectedAssignment().forEach((point) => {
+        this.$store.commit("assignments/removeAssignment", point.assignmentID)
       });
     },
     exportCSV: function() {

@@ -4,7 +4,7 @@
     :constructorType="'ganttChart'"
     class="hc"
     :options="chartOptions"
-    ref="chart"
+    ref="gantt"
   ></highcharts>
 </template>
 
@@ -18,6 +18,11 @@ export default {
       projects: this.$store.getters["projects/getProjects"],
       assignments: this.$store.getters["assignments/getAssignments"]
     };
+  },
+  methods: {
+    getSelectedAssignment() {
+      return this.$refs.gantt.chart.getSelectedPoints()
+    }
   },
   computed: {
     chartOptions() {
