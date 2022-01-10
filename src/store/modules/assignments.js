@@ -22,7 +22,6 @@ export default {
         
         const ganttItem = {};
 
-        //console.log(assignment)
         ganttItem.assignmentID = assignment.id;
         ganttItem.name = assignment.projectID;
         ganttItem.parent = assignment.member.id.toString();
@@ -49,7 +48,6 @@ export default {
         ganttItem.parent = assignment.member.id.toString();
         ganttItem.start = Date.parse(assignment.startDate);
         ganttItem.end = Date.parse(assignment.endDate);
-        //ganttItem.projectID = assignment.projectID;
 
         return ganttItem;
       });
@@ -158,8 +156,6 @@ export default {
           },
         })
         .then((response) => {
-          console.log(response.data);
-          //commit("addAssignment", response.data);
           commit("saveAssignment", response.data);
         })
         .catch((error) => {
@@ -174,8 +170,6 @@ export default {
           },
         })
         .then((response) => {
-          console.log(response.data);
-          //commit("removeAssignment", response.data.id);
           commit("deleteAssignment", response.data.id);
         })
         .catch((error) => {
@@ -190,7 +184,6 @@ export default {
           },
         })
         .then((response) => {
-          console.log(response.data);
           commit("updateAssignment", response.data);
         })
         .catch((error) => {
