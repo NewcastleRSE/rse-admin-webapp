@@ -66,6 +66,7 @@ export default {
         // updates chart to match what is stored in the db
         this.assignments = this.$store.getters["assignments/getSavedAssignments"];
         this.edited = false;
+        this.$refs.gantt.redraw()
       });
     },
     cancel: function() {
