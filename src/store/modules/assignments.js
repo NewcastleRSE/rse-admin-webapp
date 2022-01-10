@@ -17,18 +17,17 @@ export default {
     /*
     Maps the properties from strapi to variables used in highcharts
     */
-    getAssignments: (state) => {
+    getAssignments: (state, getters, rootState, rootGetters) => {
       const assignments = state.assignments.map((assignment) => {
-        
-        const ganttItem = {};
-
-        ganttItem.assignmentID = assignment.id;
-        ganttItem.name = assignment.projectID;
-        ganttItem.parent = assignment.member.id.toString();
-        ganttItem.start = Date.parse(assignment.startDate);
-        ganttItem.end = Date.parse(assignment.endDate);
-
-        return ganttItem;
+        const project = rootGetters['projects/getProject'](assignment.projectID)
+        return {
+          assignmentID: assignment.id,
+          project: project,
+          name: project.dealname,
+          parent: assignment.member.id.toString(),
+          start: Date.parse(assignment.startDate),
+          end: Date.parse(assignment.endDate),
+        };
       });
 
       // assignment with latest end is displayed first
@@ -38,18 +37,17 @@ export default {
 
       return assignments;
     },
-    getSavedAssignments: (state) => {
-      const assignments = state.savedAssignments.map((assignment) => {
-        
-        const ganttItem = {};
-
-        ganttItem.assignmentID = assignment.id;
-        ganttItem.name = assignment.projectID;
-        ganttItem.parent = assignment.member.id.toString();
-        ganttItem.start = Date.parse(assignment.startDate);
-        ganttItem.end = Date.parse(assignment.endDate);
-
-        return ganttItem;
+    getSavedAssignments: (state, getters, rootState, rootGetters) => {
+      const assignments = state.assignments.map((assignment) => {
+        const project = rootGetters['projects/getProject'](assignment.projectID)
+        return {
+          assignmentID: assignment.id,
+          project: project,
+          name: project.dealname,
+          parent: assignment.member.id.toString(),
+          start: Date.parse(assignment.startDate),
+          end: Date.parse(assignment.endDate),
+        };
       });
 
       // assignment with latest end is displayed first

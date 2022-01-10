@@ -2,7 +2,7 @@
     <div class="rounded-t mb-0 px-4 py-3 border-0">
       <div class="px-4 mx-auto flex flex-wrap items-center justify-between">
         <div class="max-w-full flex-grow flex-1 w-full relative flex justify-between lg:w-auto pr-4 lg:static lg:block lg:justify-start">
-          <h3 class="font-semibold text-lg text-white">
+          <h3 class="font-semibold text-lg text-blueGray-700">
             Project Assignments
           </h3>
           <button class="cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none" type="button">

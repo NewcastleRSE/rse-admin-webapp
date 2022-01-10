@@ -20,18 +20,21 @@ export default {
     };
   },
   methods: {
-    getSelectedAssignment() {
+    redraw: function() {
+      this.$refs.gantt.chart.redraw()
+    },
+    getSelectedAssignment: function() {
       return this.$refs.gantt.chart.getSelectedPoints()
     }
   },
   computed: {
     chartOptions() {
-
       let day = 24 * 3600 * 1000;
-      let scrollHeight = (this.assignments.length + this.members.length) * 60; // increase '60' if chart cut off at bottom
+      let scrollHeight = (this.assignments.length + this.members.length) * 65; // increase '65' if chart cut off at bottom
       return {
         chart: {
           type: "gantt",
+          styledMode: true,
           height: "60%", // % for aspect ratio
           scrollablePlotArea: {
             minHeight: scrollHeight,
@@ -55,11 +58,6 @@ export default {
             },
           },
         },
-        title: {
-          text: "Assignments",
-          floating: true,
-          align: "left",
-        },
         xAxis: [
           {
             currentDateIndicator: {
@@ -82,7 +80,7 @@ export default {
               });
 
               try {
-                return projectObj.name;
+                return projectObj.dealname;
               } catch {
                 return label.value;
               }
@@ -93,6 +91,11 @@ export default {
           enabled: true,
           inputEnabled: false,
           selected: 2,
+          buttonPosition: {
+            x: 0,
+            y: 0
+          },
+          height: 50,
           buttons: [{
               type: 'month',
               count: 1,
@@ -119,28 +122,27 @@ export default {
         tooltip: {
           followPointer: true,
           formatter: (p) => {
-            // displays project details at hover
             let point = p.chart.hoverPoint;
-            let start = new Date(point.start);
-            let end = new Date(point.end);
-            let projectName = this.projects.find((project) => {
-              if (project.id === point.name) {
-                return project;
-              }
-            });
-            try {
+
+            if(Object.prototype.hasOwnProperty.call(point, 'parent')) {
               return (
                 "<b>" +
-                projectName.name +
+                point.project.dealname +
                 "</b>" +
                 "<br/>" +
                 "<br/>Start: " +
-                start.toDateString() +
+                new Date(point.start).toDateString() +
                 "<br/>End: " +
-                end.toDateString()
+                new Date(point.end).toDateString()
               );
-            } catch {
-              return point.name;
+            }
+            else {
+              return (
+                "<b>" +
+                point.name +
+                "</b>" +
+                "<br/>"
+              );
             }
           },
         },
@@ -151,12 +153,12 @@ export default {
             dragDrop: {
               draggableX: true,
               draggableY: false,
-              dragPrecisionX: day, // incraments when dragging
+              dragPrecisionX: day, // increments when dragging
             },
             dataLabels: {
               // displays project ids for development
               enabled: true,
-              format: "{point.name}",
+              format: "{point.project.dealname}",
               style: {
                 cursor: "default",
                 pointerEvents: "none",
@@ -188,7 +190,7 @@ export default {
                     if (event.point.parent) {
                       // if clicked on assignment
                       let project = this.projects.find((project) => {
-                        return project.id == event.point.name;
+                        return project.id == event.point.projectID;
                       });
 
                       this.toggleProjectModal(project);
@@ -215,12 +217,25 @@ export default {
             min: 0,
             max: 30,
           },
+          handles: {
+            enabled: false
+          },
+          series: {
+            type: 'gantt',
+            pointPlacement: 0.5,
+            pointPadding: 0.25
+          },
         },
         scrollbar: {
           enabled: true,
           trackBackgroundColor: "rgba(230, 230, 230, 0.2)",
         },
-        series: [{ data: [...this.members, ...this.assignments] }],
+        series: [
+          { 
+            data: [...this.members, ...this.assignments],
+            pointWidth: 32
+          }
+        ],
       };
     },
     getAssignments() {
