@@ -1,3 +1,4 @@
+import { nextTick } from 'vue';
 import { createRouter, createWebHistory } from "vue-router";
 import jwt_decode from "jwt-decode";
 import store from "../store";
@@ -51,21 +52,25 @@ const routes = [
             path: "/dashboard",
             name: "Dashboard",
             component: Dashboard,
+            meta: { title: 'RSE Admin - Dashboard' }
           },
           {
             path: "/projects",
             name: "Projects",
             component: Projects,
+            meta: { title: 'RSE Admin - Projects' }
           },
           {
             path: "/assignments",
             name: "Assignments",
             component: Assignments,
+            meta: { title: 'RSE Admin - Assignments' }
           },
           {
             path: "/user",
             name: "User",
             component: User,
+            meta: { title: 'RSE Admin - User' }
           }
         ]
     },
@@ -85,6 +90,7 @@ const routes = [
             path: "/auth/login",
             name: "Login",
             component: Login,
+            meta: { title: 'RSE Admin - Login' }
           }
         ]
     }
@@ -94,6 +100,12 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
   linkActiveClass: "is-active",
+});
+
+router.afterEach((to) => {
+  nextTick(() => {
+      document.title = to.meta.title || 'RSE Admin';
+  });
 });
 
 export default router;
