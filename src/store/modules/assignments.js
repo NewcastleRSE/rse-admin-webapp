@@ -38,12 +38,12 @@ export default {
       return assignments;
     },
     getSavedAssignments: (state, getters, rootState, rootGetters) => {
-      const assignments = state.assignments.map((assignment) => {
+      const assignments = state.savedAssignments.map((assignment) => {
         const project = rootGetters['projects/getProject'](assignment.projectID)
         return {
           assignmentID: assignment.id,
           project: project,
-          name: project.dealname,
+          name: project ? project.dealname : '',
           parent: assignment.member.id.toString(),
           start: Date.parse(assignment.startDate),
           end: Date.parse(assignment.endDate),

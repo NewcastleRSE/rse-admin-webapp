@@ -15,6 +15,7 @@ import isEqual from "lodash.isequal";
 import GanttChart from "@/components/Assignments/GanttChart.vue";
 import CreateModal from "@/components/Assignments/CreateModal.vue";
 import MenuBar from "@/components/Assignments/MenuBar.vue";
+import CardTimeSplitOverviewVue from '../components/Cards/CardTimeSplitOverview.vue';
 
 export default {
   name: "AssignmentGantt",
@@ -29,7 +30,7 @@ export default {
       this.$refs.create.toggleModal();
     },
     addAssignment: function(assignment) {
-      this.edited = true
+      this.edited = CardTimeSplitOverviewVue
       this.$store.commit("assignments/addAssignment", assignment)
     },
     save: function() {
@@ -38,16 +39,14 @@ export default {
 
       let newAssignments = differenceWith(updates, savedAssignments, isEqual);
       let deletedAssignments = differenceWith(savedAssignments, updates, isEqual);
-
       let promises = [];
 
       newAssignments.forEach((item) => {
         const assignment = {
-          //id: this.$store.getters["assignments/getUID"],
           member: { id: item.parent },
           startDate: new Date(item.start).toISOString(),
           endDate: new Date(item.end).toISOString(),
-          projectID: item.name,
+          projectID: item.project.id,
         };
         promises.push(
           this.$store.dispatch("assignments/saveAssignment", assignment)
