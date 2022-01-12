@@ -27,9 +27,7 @@ export default {
   },
   methods: {
     zoom: function(level) {
-
-      console.log(this.$refs.gantt.zoom(level))
-
+      this.$refs.gantt.zoom(level)
     },
     create: function() {
       this.$refs.create.toggleModal();

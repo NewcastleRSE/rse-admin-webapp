@@ -28,7 +28,6 @@ export default {
     }
     ,
     zoom: function(level) {
-      console.log(level)
 
       let today = new Date().getTime(),
           day = 1000 * 60 * 60 * 24,
@@ -50,12 +49,7 @@ export default {
       }
 
       try {
-        console.log(this.$refs.gantt.chart.xAxis)
-        console.log(this.$refs.gantt.chart.xAxis[2].getExtremes())
-        console.log(extremes)
-        this.$refs.gantt.chart.xAxis[2].setExtremes(extremes)
-        this.$refs.gantt.chart.xAxis[2].update()
-        return true
+        this.$refs.gantt.chart.xAxis[0].setExtremes(extremes[0],extremes[1])
       } catch (error) {
         console.log(error)
       }
@@ -64,19 +58,23 @@ export default {
   computed: {
     chartOptions() {
       let day = 24 * 3600 * 1000;
-      let scrollHeight = (this.assignments.length + this.members.length) * 65; // increase '65' if chart cut off at bottom
+      // let scrollHeight = (this.assignments.length + this.members.length) * 65; // increase '65' if chart cut off at bottom
       return {
         chart: {
           type: "gantt",
           styledMode: true,
           height: "60%", // % for aspect ratio
-          scrollablePlotArea: {
-            minHeight: scrollHeight,
-            opacity: 1,
+          // scrollablePlotArea: {
+          //   minHeight: scrollHeight,
+          //   opacity: 1,
+          // },
+          pan: {
+            enabled: true,
+            type: 'x'
           },
+          panKey: 'alt',
           events: {
             load() {
-              //console.log("loaded: ", chart);
               this.xAxis[0].setExtremes(
                 Date.UTC(
                   new Date().getFullYear(),
@@ -120,38 +118,6 @@ export default {
               }
             },
           },
-        },
-        rangeSelector: {
-          enabled: true,
-          inputEnabled: false,
-          selected: 3,
-          buttonPosition: {
-            x: 0,
-            y: 0
-          },
-          height: 50,
-          buttons: [{
-              type: 'month',
-              count: 1,
-              text: '1m',
-              title: 'View 1 month'
-          }, {
-              type: 'month',
-              count: 3,
-              text: '3m',
-              title: 'View 3 months'
-          }, {
-              type: 'month',
-              count: 6,
-              text: '6m',
-              title: 'View 6 months'
-          }, {
-              type: 'year',
-              count: 1,
-              text: '1y',
-              title: 'View 1 year'
-          }],
-
         },
         tooltip: {
           followPointer: true,
@@ -243,28 +209,28 @@ export default {
             },
           },
         },
-        navigator: {
-          enabled: true,
-          //liveRedraw: true,
-          adaptToUpdatedData: false,
-          yAxis: {
-            min: 0,
-            max: 30,
-          },
-          handles: {
-            enabled: false
-          },
-          series: {
-            type: 'gantt',
-            pointPlacement: 0.5,
-            pointPadding: 0.25,
-            data: [...this.members]
-          },
-        },
-        scrollbar: {
-          enabled: true,
-          trackBackgroundColor: "rgba(230, 230, 230, 0.2)",
-        },
+        // navigator: {
+        //   enabled: true,
+        //   //liveRedraw: true,
+        //   adaptToUpdatedData: false,
+        //   yAxis: {
+        //     min: 0,
+        //     max: 30,
+        //   },
+        //   handles: {
+        //     enabled: false
+        //   },
+        //   series: {
+        //     type: 'gantt',
+        //     pointPlacement: 0.5,
+        //     pointPadding: 0.25,
+        //     data: [...this.members]
+        //   },
+        // },
+        // scrollbar: {
+        //   enabled: true,
+        //   trackBackgroundColor: "rgba(230, 230, 230, 0.2)",
+        // },
         series: [
           { 
             data: [...this.members, ...this.assignments],
