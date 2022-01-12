@@ -2,7 +2,7 @@
     <div class="flex flex-wrap mt-4">
     <div class="w-full mb-12 px-4">
       <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
-        <menu-bar :edited="edited" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
+        <menu-bar :edited="edited" :zoom="zoom" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
         <gantt-chart ref="gantt" />
       </div>
       <create-modal ref="create" />
@@ -26,6 +26,11 @@ export default {
     }
   },
   methods: {
+    zoom: function(level) {
+
+      console.log(this.$refs.gantt.zoom(level))
+
+    },
     create: function() {
       this.$refs.create.toggleModal();
     },

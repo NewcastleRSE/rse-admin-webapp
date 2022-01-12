@@ -26,6 +26,40 @@ export default {
     getSelectedAssignment: function() {
       return this.$refs.gantt.chart.getSelectedPoints()
     }
+    ,
+    zoom: function(level) {
+      console.log(level)
+
+      let today = new Date().getTime(),
+          day = 1000 * 60 * 60 * 24,
+          month = day * 30,
+          extremes = []
+
+      switch(level) {
+        case 0:
+          extremes = [today - (month * 1.5), today + (month * 1.5)]
+          break
+        case 1:
+          extremes = [today - (month * 3), today + (month * 3)]
+          break
+        case 2:
+          extremes = [today - (month * 6), today + (month * 6)]
+          break
+        default:
+          break
+      }
+
+      try {
+        console.log(this.$refs.gantt.chart.xAxis)
+        console.log(this.$refs.gantt.chart.xAxis[2].getExtremes())
+        console.log(extremes)
+        this.$refs.gantt.chart.xAxis[2].setExtremes(extremes)
+        this.$refs.gantt.chart.xAxis[2].update()
+        return true
+      } catch (error) {
+        console.log(error)
+      }
+    }
   },
   computed: {
     chartOptions() {
@@ -90,7 +124,7 @@ export default {
         rangeSelector: {
           enabled: true,
           inputEnabled: false,
-          selected: 2,
+          selected: 3,
           buttonPosition: {
             x: 0,
             y: 0
@@ -223,7 +257,8 @@ export default {
           series: {
             type: 'gantt',
             pointPlacement: 0.5,
-            pointPadding: 0.25
+            pointPadding: 0.25,
+            data: [...this.members]
           },
         },
         scrollbar: {

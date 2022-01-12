@@ -14,6 +14,26 @@
         <div class="flex lg:flex-grow items-center">
           <ul class="flex flex-col lg:flex-row list-none ml-auto">
             <li class="nav-item">
+              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(0)">
+                3m
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(1)">
+                6m
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(2)">
+                12m
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(3)">
+                All
+              </button>
+            </li>
+            <li class="nav-item">
               <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="create()">
                 <i class="fas fa-plus text-lg leading-lg opacity-75 text-blueGray-700"></i>
               </button>
@@ -46,7 +66,8 @@
 <script>
 export default {
   props: {
-    edited: {type: Boolean },
+    edited: { type: Boolean },
+    zoom: { type: Function },
     create: { type: Function },
     save: { type: Function },
     cancel: { type: Function },
