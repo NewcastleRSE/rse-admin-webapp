@@ -57,12 +57,20 @@ export default {
   },
   computed: {
     chartOptions() {
-      let day = 24 * 3600 * 1000;
+      // let day = 24 * 3600 * 1000;
       // let scrollHeight = (this.assignments.length + this.members.length) * 65; // increase '65' if chart cut off at bottom
+      
+      let colors = ['#f0f9ff','#e0f2fe','#bae6fd','#7dd3fc','#38bdf8','#0ea5e9','#0284c7','#0369a1','#075985','#0c4a6e']
+
+      let members = this.members.map(member=> ({ ...member, color: colors[9] })),
+          assignments = this.assignments.map((assignment)=> {
+            return { ...assignment, color: colors[Math.round(assignment.FTE/10)-1] }
+          })
+      
       return {
         chart: {
           type: "gantt",
-          styledMode: true,
+          styledMode: false,
           height: "60%", // % for aspect ratio
           // scrollablePlotArea: {
           //   minHeight: scrollHeight,
@@ -150,11 +158,11 @@ export default {
           series: {
             pointWidth: 18,
             animation: true,
-            dragDrop: {
-              draggableX: true,
-              draggableY: false,
-              dragPrecisionX: day, // increments when dragging
-            },
+            // dragDrop: {
+            //   draggableX: true,
+            //   draggableY: false,
+            //   dragPrecisionX: day, // increments when dragging
+            // },
             dataLabels: {
               // displays project ids for development
               enabled: true,
@@ -167,24 +175,24 @@ export default {
             allowPointSelect: true,
             point: {
               events: {
-                drop: (data) => {
-                  try {
-                    // updates the chart array
-                    let assignmentIndex = this.assignments.findIndex((assignment) => {
-                      return (
-                        assignment.assignmentID === data.target.assignmentID
-                      );
-                    });
-                    this.assignments[assignmentIndex].start = data.target.start;
-                    this.assignments[assignmentIndex].end = data.target.end;
+                // drop: (data) => {
+                //   try {
+                //     // updates the chart array
+                //     let assignmentIndex = this.assignments.findIndex((assignment) => {
+                //       return (
+                //         assignment.assignmentID === data.target.assignmentID
+                //       );
+                //     });
+                //     this.assignments[assignmentIndex].start = data.target.start;
+                //     this.assignments[assignmentIndex].end = data.target.end;
 
-                    if (!this.edited) {
-                      this.edited = true;
-                    }
-                  } catch {
-                    alert("Failed to drop item");
-                  }
-                },
+                //     if (!this.edited) {
+                //       this.edited = true;
+                //     }
+                //   } catch {
+                //     alert("Failed to drop item");
+                //   }
+                // },
                 dblclick: (event) => {
                   try {
                     if (event.point.parent) {
@@ -233,7 +241,7 @@ export default {
         // },
         series: [
           { 
-            data: [...this.members, ...this.assignments],
+            data: [...members, ...assignments],
             pointWidth: 32
           }
         ],
