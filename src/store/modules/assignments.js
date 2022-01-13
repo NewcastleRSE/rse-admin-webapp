@@ -27,6 +27,7 @@ export default {
           parent: assignment.member.id.toString(),
           start: Date.parse(assignment.startDate),
           end: Date.parse(assignment.endDate),
+          FTE: Number(assignment.FTE)
         };
       });
 
@@ -47,6 +48,7 @@ export default {
           parent: assignment.member.id.toString(),
           start: Date.parse(assignment.startDate),
           end: Date.parse(assignment.endDate),
+          FTE: Number(assignment.FTE)
         };
       });
 
