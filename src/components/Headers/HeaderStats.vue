@@ -8,7 +8,7 @@
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
               statSubtitle="ALL"
-              statTitle="01/06/2022"
+              :statTitle=nextMiddleware.availability.from.toLocaleDateString()
               statArrow="up"
               statPercent="3.48"
               statPercentColor="text-emerald-500"
@@ -21,7 +21,7 @@
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
               statSubtitle="MIDDLEWARE"
-              statTitle="01/06/2022"
+              :statTitle=nextMiddleware.availability.from.toLocaleDateString()
               statArrow="down"
               statPercent="3.48"
               statPercentColor="text-red-500"
@@ -33,8 +33,8 @@
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
-              statSubtitle="WEB & MOBILE"
-              statTitle="01/06/2022"
+              statSubtitle="WEB &amp; MOBILE"
+              :statTitle=nextWebMobile.availability.from.toLocaleDateString()
               statArrow="down"
               statPercent="1.10"
               statPercentColor="text-orange-500"
@@ -47,7 +47,7 @@
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
               statSubtitle="DATA SCIENCE"
-              statTitle="01/06/2022"
+              :statTitle=nextDataScience.availability.from.toLocaleDateString()
               statArrow="up"
               statPercent="12"
               statPercentColor="text-emerald-500"
@@ -66,9 +66,42 @@
 <script>
 import CardStats from "@/components/Cards/CardStats.vue";
 
+function nextAvailable(teams, teamName) {
+  var mostRecentDate = new Date(Math.min.apply(null, teams[teamName].map( e => {
+      if(e.availability.from) {
+        return e.availability.from;
+      } else {
+        // return a date 100 years in the future to avoid 1970 being min date
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = today.getMonth();
+        var day = today.getDate();
+        return new Date(year + 100, month, day);
+      }
+      
+    })));
+    return teams[teamName].filter( e => {
+        return new Date(e.availability.from).getTime() === mostRecentDate.getTime();
+    })[0];
+}
+
 export default {
   components: {
     CardStats,
+  },
+  data() {
+
+    const teams = this.$store.getters["members/getFullMembers"].reduce(function (r, a) {
+        r[a.Team] = r[a.Team] || [];
+        r[a.Team].push(a);
+        return r;
+    }, Object.create(null));
+
+    return {
+      nextDataScience: nextAvailable(teams, 'DataScience'),
+      nextMiddleware: nextAvailable(teams, 'Integrations'),
+      nextWebMobile: nextAvailable(teams, 'WebMobile')
+    };
   },
 };
 </script>
