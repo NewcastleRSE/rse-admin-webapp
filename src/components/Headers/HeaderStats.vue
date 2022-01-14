@@ -8,11 +8,11 @@
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
               statSubtitle="ALL"
-              :statTitle=nextMiddleware.availability.from.toLocaleDateString()
+              :statTitle=nextMiddleware.from
               statArrow="up"
               statPercent="3.48"
               statPercentColor="text-emerald-500"
-              statDescripiron="26 Week Wait"
+              :statDescripiron=nextMiddleware.wait
               statIconName="far fa-chart-bar"
               statIconColor="bg-red-500"
               statUserLink="/user"
@@ -21,11 +21,11 @@
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
               statSubtitle="MIDDLEWARE"
-              :statTitle=nextMiddleware.availability.from.toLocaleDateString()
+              :statTitle=nextMiddleware.from
               statArrow="down"
               statPercent="3.48"
               statPercentColor="text-red-500"
-              statDescripiron="26 Week Wait"
+              :statDescripiron=nextMiddleware.wait
               statIconName="fas fa-chart-pie"
               statIconColor="bg-orange-500"
               statUserLink="/user"
@@ -34,11 +34,11 @@
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
               statSubtitle="WEB &amp; MOBILE"
-              :statTitle=nextWebMobile.availability.from.toLocaleDateString()
+              :statTitle=nextWebMobile.from
               statArrow="down"
               statPercent="1.10"
               statPercentColor="text-orange-500"
-              statDescripiron="26 Week Wait"
+              :statDescripiron=nextWebMobile.wait
               statIconName="fas fa-users"
               statIconColor="bg-pink-500"
               statUserlink="/user"
@@ -47,11 +47,11 @@
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
               statSubtitle="DATA SCIENCE"
-              :statTitle=nextDataScience.availability.from.toLocaleDateString()
+              :statTitle=nextDataScience.from
               statArrow="up"
               statPercent="12"
               statPercentColor="text-emerald-500"
-              statDescripiron="26 Week Wait"
+              :statDescripiron=nextDataScience.wait
               statIconName="fas fa-percent"
               statIconColor="bg-emerald-500"
               statUserLink="/user"
@@ -65,6 +65,10 @@
 
 <script>
 import CardStats from "@/components/Cards/CardStats.vue";
+
+function weeksBetween(d1, d2) {
+    return Math.round((d2 - d1) / (7 * 24 * 60 * 60 * 1000));
+}
 
 function nextAvailable(teams, teamName) {
   var mostRecentDate = new Date(Math.min.apply(null, teams[teamName].map( e => {
@@ -80,9 +84,19 @@ function nextAvailable(teams, teamName) {
       }
       
     })));
-    return teams[teamName].filter( e => {
+    let member = teams[teamName].filter( e => {
         return new Date(e.availability.from).getTime() === mostRecentDate.getTime();
     })[0];
+
+    console.log(member)
+
+    return {
+      from: member.availability.from.toLocaleDateString(),
+      to: member.availability.to ? member.availability.to.toLocaleDateString() : null,
+      FTE: member.availability.FTE,
+      wait: weeksBetween(new Date(), member.availability.from) + " weeks",
+      name: member.firstname + ' ' + member.surname
+    }
 }
 
 export default {
@@ -100,8 +114,23 @@ export default {
     return {
       nextDataScience: nextAvailable(teams, 'DataScience'),
       nextMiddleware: nextAvailable(teams, 'Integrations'),
-      nextWebMobile: nextAvailable(teams, 'WebMobile')
+      nextWebMobile: nextAvailable(teams, 'WebMobile'),
+      avatars: [],
+      getAvatar: (rse) => {
+          let avatar = this.avatars.find((avatar) => {
+            return avatar.name === rse.toLowerCase()
+          })
+          return avatar ? avatar.pathLong : '' 
+      },
     };
   },
+  mounted() {
+    this.importAvatars(require.context('@/assets/img/avatars/', true, /\.(gif|jpe?g|tiff?|png|webp|bmp)$/));
+  },
+  methods: {
+    importAvatars(r) {
+      r.keys().forEach(key => (this.avatars.push({ pathLong: r(key), pathShort: key, name: (key.substring(2)).split('.')[0].split('-').join(' ') })));
+    },
+  }
 };
 </script>
