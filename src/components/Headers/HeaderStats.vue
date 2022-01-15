@@ -8,53 +8,61 @@
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
               statSubtitle="ALL"
-              :statTitle=nextMiddleware.from
+              :statTitle=nextMiddleware.name
+              :statDate=nextMiddleware.from
               statArrow="up"
               statPercent="3.48"
               statPercentColor="text-emerald-500"
-              :statDescripiron=nextMiddleware.wait
+              :statDescription=nextMiddleware.wait
               statIconName="far fa-chart-bar"
               statIconColor="bg-red-500"
               statUserLink="/user"
+              :statAvatar=getAvatar(nextMiddleware.name)
             />
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
               statSubtitle="MIDDLEWARE"
-              :statTitle=nextMiddleware.from
+              :statTitle=nextMiddleware.name
+              :statDate=nextMiddleware.from
               statArrow="down"
               statPercent="3.48"
               statPercentColor="text-red-500"
-              :statDescripiron=nextMiddleware.wait
+              :statDescription=nextMiddleware.wait
               statIconName="fas fa-chart-pie"
               statIconColor="bg-orange-500"
               statUserLink="/user"
+              :statAvatar=getAvatar(nextMiddleware.name)
             />
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
               statSubtitle="WEB &amp; MOBILE"
-              :statTitle=nextWebMobile.from
+              :statTitle=nextWebMobile.name
+              :statDate=nextWebMobile.from
               statArrow="down"
               statPercent="1.10"
               statPercentColor="text-orange-500"
-              :statDescripiron=nextWebMobile.wait
+              :statDescription=nextWebMobile.wait
               statIconName="fas fa-users"
               statIconColor="bg-pink-500"
-              statUserlink="/user"
+              statUserLink="/user"
+              :statAvatar=getAvatar(nextWebMobile.name)
             />
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
               statSubtitle="DATA SCIENCE"
-              :statTitle=nextDataScience.from
+              :statTitle=nextDataScience.name
+              :statDate=nextDataScience.from
               statArrow="up"
               statPercent="12"
               statPercentColor="text-emerald-500"
-              :statDescripiron=nextDataScience.wait
+              :statDescription=nextDataScience.wait
               statIconName="fas fa-percent"
               statIconColor="bg-emerald-500"
               statUserLink="/user"
+              :statAvatar=getAvatar(nextDataScience.name)
             />
           </div>
         </div>
@@ -95,7 +103,7 @@ function nextAvailable(teams, teamName) {
       to: member.availability.to ? member.availability.to.toLocaleDateString() : null,
       FTE: member.availability.FTE,
       wait: weeksBetween(new Date(), member.availability.from) + " weeks",
-      name: member.firstname + ' ' + member.surname
+      name: member.firstname + ' ' + member.surname,
     }
 }
 

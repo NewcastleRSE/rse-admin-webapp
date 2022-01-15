@@ -8,18 +8,15 @@
           <h5 class="text-blueGray-400 uppercase font-bold text-xs">
             {{ statSubtitle }}
           </h5>
-          <span class="font-semibold text-xl text-blueGray-700">
+          <h3 class="font-semibold text-blueGray-700">
             {{ statTitle }}
-          </span>
+          </h3>
+          <h1 class="font-semibold text-blueGray-700">
+            {{ statDate }}
+          </h1>
         </div>
         <div class="relative w-auto pl-4 flex-initial">
-          <a
-            class="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full"
-            :class="[statIconColor]"
-            v-bind:href="[statUserLink]"
-          >
-            <i :class="[statIconName]"></i>
-          </a>
+          <img :src="statAvatar" class="h-20 rounded-full border-2 border-blueGray-50 shadow mr-2" />
         </div>
       </div>
       <p class="text-sm text-blueGray-400 mt-4">
@@ -31,7 +28,7 @@
           ></i>
           {{ statPercent }}%
         </span>
-        <span class="whitespace-nowrap">{{ statDescripiron }}</span>
+        <span class="whitespace-nowrap">{{ statDescription }}</span>
       </p>
     </div>
   </div>
@@ -45,6 +42,10 @@ export default {
       default: "Traffic",
     },
     statTitle: {
+      type: String,
+      default: "350,897",
+    },
+    statDate: {
       type: String,
       default: "350,897",
     },
@@ -65,7 +66,7 @@ export default {
       type: String,
       default: "text-emerald-500",
     },
-    statDescripiron: {
+    statDescription: {
       type: String,
       default: "Since last month",
     },
@@ -78,6 +79,9 @@ export default {
     statIconColor: {
       type: String,
       default: "bg-red-500",
+    },
+    statAvatar: {
+      type: String
     },
     statUserLink: {
       type: String,
