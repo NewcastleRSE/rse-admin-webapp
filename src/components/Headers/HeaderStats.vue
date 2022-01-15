@@ -6,63 +6,39 @@
         <!-- Card stats -->
         <div class="flex flex-wrap">
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
-            <card-stats
-              statSubtitle="ALL"
-              :statTitle=nextMiddleware.name
-              :statDate=nextMiddleware.from
-              statArrow="up"
-              statPercent="3.48"
-              statPercentColor="text-emerald-500"
-              :statDescription=nextMiddleware.wait
-              statIconName="far fa-chart-bar"
-              statIconColor="bg-red-500"
-              statUserLink="/user"
-              :statAvatar=getAvatar(nextMiddleware.name)
+            <availability-card
+              :avatar=getAvatar(nextMiddleware.name)
+              team="ALL"
+              :name=nextMiddleware.name
+              :from=nextMiddleware.from
+              :waitTime=nextMiddleware.wait  
             />
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
-            <card-stats
-              statSubtitle="MIDDLEWARE"
-              :statTitle=nextMiddleware.name
-              :statDate=nextMiddleware.from
-              statArrow="down"
-              statPercent="3.48"
-              statPercentColor="text-red-500"
-              :statDescription=nextMiddleware.wait
-              statIconName="fas fa-chart-pie"
-              statIconColor="bg-orange-500"
-              statUserLink="/user"
-              :statAvatar=getAvatar(nextMiddleware.name)
+            <availability-card
+              :avatar=getAvatar(nextMiddleware.name)
+              team="MIDDLEWARE"
+              :name=nextMiddleware.name
+              :from=nextMiddleware.from
+              :waitTime=nextMiddleware.wait              
             />
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
-            <card-stats
-              statSubtitle="WEB &amp; MOBILE"
-              :statTitle=nextWebMobile.name
-              :statDate=nextWebMobile.from
-              statArrow="down"
-              statPercent="1.10"
-              statPercentColor="text-orange-500"
-              :statDescription=nextWebMobile.wait
-              statIconName="fas fa-users"
-              statIconColor="bg-pink-500"
-              statUserLink="/user"
-              :statAvatar=getAvatar(nextWebMobile.name)
+            <availability-card
+              :avatar=getAvatar(nextWebMobile.name)
+              team="WEB &amp; MOBILE"
+              :name=nextWebMobile.name
+              :from=nextWebMobile.from
+              :waitTime=nextWebMobile.wait  
             />
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
-            <card-stats
-              statSubtitle="DATA SCIENCE"
-              :statTitle=nextDataScience.name
-              :statDate=nextDataScience.from
-              statArrow="up"
-              statPercent="12"
-              statPercentColor="text-emerald-500"
-              :statDescription=nextDataScience.wait
-              statIconName="fas fa-percent"
-              statIconColor="bg-emerald-500"
-              statUserLink="/user"
-              :statAvatar=getAvatar(nextDataScience.name)
+            <availability-card
+              :avatar=getAvatar(nextDataScience.name)
+              team="DATA SCIENCE"
+              :name=nextDataScience.name
+              :from=nextDataScience.from
+              :waitTime=nextDataScience.wait 
             />
           </div>
         </div>
@@ -72,7 +48,7 @@
 </template>
 
 <script>
-import CardStats from "@/components/Cards/CardStats.vue";
+import AvailabilityCard from "@/components/Cards/Availability.vue";
 
 function weeksBetween(d1, d2) {
     return Math.round((d2 - d1) / (7 * 24 * 60 * 60 * 1000));
@@ -102,14 +78,14 @@ function nextAvailable(teams, teamName) {
       from: member.availability.from.toLocaleDateString(),
       to: member.availability.to ? member.availability.to.toLocaleDateString() : null,
       FTE: member.availability.FTE,
-      wait: weeksBetween(new Date(), member.availability.from) + " weeks",
+      wait: weeksBetween(new Date(), member.availability.from) + " Weeks",
       name: member.firstname + ' ' + member.surname,
     }
 }
 
 export default {
   components: {
-    CardStats,
+    AvailabilityCard,
   },
   data() {
 
