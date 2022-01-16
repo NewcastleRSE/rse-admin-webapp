@@ -14,22 +14,22 @@
         <div class="flex lg:flex-grow items-center">
           <ul class="flex flex-col lg:flex-row list-none ml-auto">
             <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(0)">
+              <button class="px-3 flex h-full inline-block align-middle items-center text-sm uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(0)">
                 3m
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(1)">
+              <button class="px-3 flex h-full inline-block align-middle items-center text-sm uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(1)">
                 6m
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(2)">
+              <button class="px-3 flex h-full inline-block align-middle items-center text-sm uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(2)">
                 12m
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(3)">
+              <button class="px-3 flex h-full inline-block align-middle items-center text-sm uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(3)">
                 All
               </button>
             </li>
