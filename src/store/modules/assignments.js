@@ -15,57 +15,64 @@ export default {
 
   getters: {
     /*
-        Maps properties from strapi to variables used in highcharts
-        */
-    getAssignments: (state) => {
+    Maps the properties from strapi to variables used in highcharts
+    */
+    getAssignments: (state, getters, rootState, rootGetters) => {
       const assignments = state.assignments.map((assignment) => {
-        const ganttItem = {};
-
-        ganttItem.assignmentID = assignment.id;
-        ganttItem.name = assignment.projectID;
-        ganttItem.parent = assignment.member.id.toString();
-        ganttItem.start = Date.parse(assignment.startDate);
-        ganttItem.end = Date.parse(assignment.endDate);
-
-        return ganttItem;
+        const project = rootGetters['projects/getProject'](assignment.projectID)
+        return {
+          assignmentID: assignment.id,
+          project: project,
+          name: project.dealname,
+          member: assignment.member,
+          parent: assignment.member.id.toString(),
+          start: Date.parse(assignment.startDate),
+          end: Date.parse(assignment.endDate),
+          FTE: Number(assignment.FTE)
+        };
       });
 
+      // assignment with latest end is displayed first
       assignments.sort(function(a, b) {
-        return b.end - a.end; // assignment with latest end is displayed first
+        return b.end - a.end;
       });
 
       return assignments;
     },
-    getSavedAssignments: (state) => {
+    getSavedAssignments: (state, getters, rootState, rootGetters) => {
       const assignments = state.savedAssignments.map((assignment) => {
-        const ganttItem = {};
-
-        ganttItem.assignmentID = assignment.id;
-
-        ganttItem.name = assignment.projectID;
-
-        ganttItem.parent = assignment.member.id.toString();
-
-        ganttItem.start = Date.parse(assignment.startDate);
-
-        ganttItem.end = Date.parse(assignment.endDate);
-        //ganttItem.projectID = assignment.projectID;
-
-        return ganttItem;
+        const project = rootGetters['projects/getProject'](assignment.projectID)
+        return {
+          assignmentID: assignment.id,
+          project: project,
+          name: project ? project.dealname : '',
+          member: assignment.member,
+          parent: assignment.member.id.toString(),
+          start: Date.parse(assignment.startDate),
+          end: Date.parse(assignment.endDate),
+          FTE: Number(assignment.FTE)
+        };
       });
 
+      // assignment with latest end is displayed first
       assignments.sort(function(a, b) {
-        return b.end - a.end; // assignment with latest end is displayed first
-      }); // might not need sorting here
+        return b.end - a.end;
+      });
 
       return assignments;
     },
+    /*
+    Increment the max ID value by one when creating new assignments
+    */
     getUID: (state) => {
       return (
         Math.max(...state.assignments.map((assignment) => assignment.id)) + 1
       );
     },
   },
+  /*
+  Call with this.$store.commit("assignments/{mutation}}", "{assignment}")
+  */
   mutations: {
     getAssignments(state, assignments) {
       state.assignments = assignments;
@@ -74,7 +81,6 @@ export default {
     resetAssignments(state) {
       state.assignments = state.savedAssignments;
     },
-
     saveAssignment(state, assignment) {
       state.savedAssignments = [...state.savedAssignments, assignment];
     },
@@ -83,14 +89,14 @@ export default {
         (item) => item.id !== assignmentID
       );
     },
-    // addAssignment: (state, assignment) => {
-    //   state.assignments.push(assignment);
-    // },
-    // removeAssignment: (state, assignmentID) => {
-    //   state.assignments = state.assignments.filter(
-    //     (item) => item.id !== assignmentID
-    //   );
-    // },
+    addAssignment: (state, assignment) => {
+      state.assignments.push(assignment);
+    },
+    removeAssignment: (state, assignmentID) => {
+      state.assignments = state.assignments.filter(
+        (item) => item.id !== assignmentID
+      );
+    },
     updateAssignment: (state, assignment) => {
       let objIndex = state.savedAssignments.findIndex(
         (obj) => obj.id == assignment.id
@@ -107,7 +113,7 @@ export default {
         Gets assignment or assignments from DB
         Call with this.$store.dispatch("assignments/getAssignments", "{id}");
         Can leave parameter empty and will call all assignments
-        */
+    */
     getAssignments({ commit, rootState }, id = "") {
       axios
         .get(`${process.env.VUE_APP_API_URL}/assignments/${id}`, {
@@ -134,7 +140,6 @@ export default {
           },
         })
         .then((response) => {
-          console.log(response.data);
           commit("addAssignment", response.data);
         })
         .catch((error) => {
@@ -153,8 +158,6 @@ export default {
           },
         })
         .then((response) => {
-          console.log(response.data);
-          //commit("addAssignment", response.data);
           commit("saveAssignment", response.data);
         })
         .catch((error) => {
@@ -169,8 +172,6 @@ export default {
           },
         })
         .then((response) => {
-          console.log(response.data);
-          //commit("removeAssignment", response.data.id);
           commit("deleteAssignment", response.data.id);
         })
         .catch((error) => {
@@ -185,7 +186,6 @@ export default {
           },
         })
         .then((response) => {
-          console.log(response.data);
           commit("updateAssignment", response.data);
         })
         .catch((error) => {

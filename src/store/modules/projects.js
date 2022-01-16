@@ -64,13 +64,18 @@ export default {
           return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
       });
     },
+    getProject: (state) => (id) =>{
+      return state.projects.find((project) => {
+        if (project.id === id) {
+          return project;
+        }
+      })
+    }
   },
 
   mutations: {
     //sync, updates state
     getProjects(state, projects) {
-      //state.projects.push(projects);
-      //state.projects = [...state.projects, ...projects];
       state.projects = projects;
     },
     getProject(state, project) {
