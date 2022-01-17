@@ -1,9 +1,9 @@
 {
-    "name": "rse-project-planner-webapp",
+    "name": "RSE Admin",
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "serve": "vue-cli-service serve",
+        "serve": "vue-cli-service serve --port 1337",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint"
     },
