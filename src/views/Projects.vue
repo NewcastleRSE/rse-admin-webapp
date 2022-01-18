@@ -1,13 +1,19 @@
 <template>
-  <ProjectsGantt class="chart" />
+  <div class="flex flex-wrap mt-4">
+    <div class="w-full mb-12 px-4">
+      <card-projects />
+    </div>
+  </div>
 </template>
 
 <script>
-import ProjectsGantt from "../components/Projects/ProjectsGantt.vue";
+import CardProjects from "@/components/Cards/CardProjects.vue";
 
 export default {
   name: "projects",
-  components: { ProjectsGantt },
+  components: { 
+    CardProjects
+  },
   data() {
     return {};
   },
@@ -15,9 +21,3 @@ export default {
   methods: {},
 };
 </script>
-
-<style scoped>
-.chart {
-  width: 75%;
-}
-</style>

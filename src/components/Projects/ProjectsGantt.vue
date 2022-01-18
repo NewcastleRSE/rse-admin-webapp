@@ -146,7 +146,7 @@ export default {
   computed: {
     getProjects() {
       // gets updated value from store
-      return this.$store.getters["get/getProjects"]; // even when projects is identical to get, dont work
+      return this.$store.getters["projects/getProjects"]; // even when projects is identical to get, dont work
     },
   },
   watch: {

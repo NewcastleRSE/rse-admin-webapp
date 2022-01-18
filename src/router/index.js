@@ -1,13 +1,20 @@
+import { nextTick } from 'vue';
 import { createRouter, createWebHistory } from "vue-router";
 import jwt_decode from "jwt-decode";
 import store from "../store";
+
+// Layouts
+
+import Admin from "../layouts/Admin.vue";
+import Auth from "../layouts/Auth.vue";
+
+// Views
 
 import Login from "../views/Login";
 import Dashboard from "../views/Dashboard";
 import Projects from "../views/Projects";
 import Assignments from "../views/Assignments";
 import User from "../views/User";
-import Max from "../views/Max";
 
 /**
  * isTokenValid:
@@ -16,28 +23,61 @@ import Max from "../views/Max";
  * @return true : if the token is not expired
  */
 function isTokenValid() {
-    // move to auth getter so can be used on components (navbar)
-    var token = store.state.auth.jwt;
-    if (token) {
-        var decoded = jwt_decode(token);
-        var exp = decoded.exp;
-        if (Date.now() < exp * 1000) {
-            return true; // when token is valid
-        }
+  // move to auth getter so can be used on components (navbar)
+  var token = store.state.auth.jwt;
+  if (token) {
+    var decoded = jwt_decode(token);
+    var exp = decoded.exp;
+    if (Date.now() < exp * 1000) {
+      return true; // when token is valid
     }
-    return false; // when token is not valid
+  }
+  return false; // when token is not valid
 }
 
-const routes = [{
+const routes = [
+    {
         path: "/",
-        redirect: {
-            name: "Login",
+        redirect: "/dashboard",
+        component: Admin,
+        beforeEnter: (to, from, next) => {
+            if (!isTokenValid()) {
+                next("/auth/login");
+            } else {
+                next();
+            }
         },
+        children: [
+          {
+            path: "/dashboard",
+            name: "Dashboard",
+            component: Dashboard,
+            meta: { title: 'RSE Admin - Dashboard' }
+          },
+          {
+            path: "/projects",
+            name: "Projects",
+            component: Projects,
+            meta: { title: 'RSE Admin - Projects' }
+          },
+          {
+            path: "/assignments",
+            name: "Assignments",
+            component: Assignments,
+            meta: { title: 'RSE Admin - Assignments' }
+          },
+          {
+            path: "/user",
+            name: "User",
+            component: User,
+            meta: { title: 'RSE Admin - User' }
+          }
+        ]
     },
     {
-        path: "/login",
-        name: "Login",
-        component: Login,
+        path: "/auth",
+        redirect: "/auth/login",
+        component: Auth,
         beforeEnter: (to, from, next) => {
             if (isTokenValid()) {
                 next("/dashboard");
@@ -45,73 +85,27 @@ const routes = [{
                 next();
             }
         },
-    },
-    {
-        path: "/dashboard",
-        name: "Dashboard",
-        component: Dashboard,
-        beforeEnter: (to, from, next) => {
-            if (!isTokenValid()) {
-                next("/login");
-            } else {
-                next();
-            }
-        },
-    },
-    {
-        path: "/projects",
-        name: "Projects",
-        component: Projects,
-        beforeEnter: (to, from, next) => {
-            if (!isTokenValid()) {
-                next("/login");
-            } else {
-                next();
-            }
-        },
-    },
-    {
-        path: "/assignments",
-        name: "Assignments",
-        component: Assignments,
-        beforeEnter: (to, from, next) => {
-            if (!isTokenValid()) {
-                next("/login");
-            } else {
-                next();
-            }
-        },
-    },
-    {
-        path: "/max",
-        name: "Max",
-        component: Max,
-        beforeEnter: (to, from, next) => {
-            if (!isTokenValid()) {
-                next("/login");
-            } else {
-                next();
-            }
-        },
-    },
-    {
-        path: "/user",
-        name: "User",
-        component: User,
-        beforeEnter: (to, from, next) => {
-            if (!isTokenValid()) {
-                next("/login");
-            } else {
-                next();
-            }
-        },
+        children: [
+          {
+            path: "/auth/login",
+            name: "Login",
+            component: Login,
+            meta: { title: 'RSE Admin - Login' }
+          }
+        ]
     }
 ];
 
 const router = createRouter({
-    history: createWebHistory(process.env.BASE_URL),
-    routes,
-    linkActiveClass: "is-active",
+  history: createWebHistory(process.env.BASE_URL),
+  routes,
+  linkActiveClass: "is-active",
+});
+
+router.afterEach((to) => {
+  nextTick(() => {
+      document.title = to.meta.title || 'RSE Admin';
+  });
 });
 
 export default router;

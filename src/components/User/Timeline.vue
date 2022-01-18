@@ -1,10 +1,12 @@
 <template>
   <div class="box">
+    <h1> {{member}}</h1>
     <highcharts
       
       class="hc"
       :options="chartOptions"
       ref="chart"
+
     ></highcharts>
   </div>
 </template>
@@ -14,10 +16,11 @@ export default {
   name: "timeline",
   data() {
     return {
+      member: " ",
       chartOptions: {
         chart: {
           type: "timeline",
-          inverted: true,
+          //inverted: true,
         },
         xAxis: {
           type: "datetime",
@@ -27,80 +30,73 @@ export default {
           visible: false,
         },
         title: {
-          text: "Timeline of Space Exploration",
-        },
-        subtitle: {
-          text: 'Info source: <a href="https://en.wikipedia.org/wiki/Timeline_of_space_exploration">www.wikipedia.org</a>',
+          text: "Timeline of project",
         },
         series: [
           {
             dataLabels: {
               allowOverlap: false,
-              format:
-                '<span style="color:{point.color}">● </span><span style="font-weight: bold;" > ' +
-                "{point.label}</span><br/>{point.x:%d %b %Y}",
             },
             marker: {
               symbol: "circle",
             },
-            data: [
-              {
-                x: Date.UTC(1951, 5, 22),
-                name: "First dogs",
-                label: "1951: First dogs in space",
-                description:
-                  "22 July 1951 First dogs in space (Dezik and Tsygan) ",
-              },
-              {
-                x: Date.UTC(1957, 9, 4),
-                name: "Sputnik 1",
-                label: "1957: First artificial satellite",
-                description:
-                  "4 October 1957 First artificial satellite. First signals from space.",
-              },
-              {
-                x: Date.UTC(1959, 0, 4),
-                name: "First human spaceflight",
-                label: "1961: First human spaceflight (Yuri Gagarin)",
-                description:
-                  "First human spaceflight (Yuri Gagarin), and the first human-crewed orbital flight",
-              },
-              {
-                x: Date.UTC(1961, 3, 12),
-                name: "First human on the Moon",
-                label: "1969: First human on the Moon",
-                description:
-                  "First human on the Moon, and first space launch from a celestial body other than the Earth. First sample return from the Moon",
-              },
-            ],
+            data: null,
           },
         ],
       },
     };
   },
-  created() {
+  async created() {
     this.chartOptions.series[0].data = this.getAssignments;
+    console.log(this.chartOptions.series[0].data)
+    this.member = this.getMember;
+    console.log(this.member)
   },
   methods: {},
   computed: {
     getAssignments() {
-      let assignments = this.$store.getters["assignments/getAssignments"];
+      let id = this.$route.params.id
+      let assignments = this.$store.getters["assignments/getAssignments"].filter(
+        assignment => id == assignment.parent);
       assignments.forEach( (assign) => {
-        this.$store.dispatch("get/getProject", assign.projectId); // how to handlet this
-        this.$store.getters["get/getProject"] ;
+        let project = this.$store.getters["projects/getProjects"].filter(prj => prj.id == assign.name
+        );
+        console.log(project);
+        if (project.length  > 0) {assign.parent = project[0].name;
+                                  assign.description = "Faculty: " + project[0].faculty;}
+        assign.x = assign.start;
+        assign.name = assign.parent;
+        
+  
+        assign.label = (new Date(assign.start)).toDateString() + " to " + (new Date(assign.end)).toDateString();
+        
       });
-      console.log(assignments)
+      assignments = assignments.sort(
+        function(a,b)
+          {return (new Date(a.start)).getTime() - (new Date(b.start)).getTime()});
+
       return assignments;      
+    },
+
+    getMember() {
+      let member = this.$store.getters["members/getMembers"].filter(memb => memb.id === this.$route.params.id);
+      if (member[0]) {
+        return member[0].name;
+      } 
+      return "";
     }
-
-
     
   },
   watch: {
     getAssignments(update) {
         this.chartOptions.series[0].data = update;
 
+    },
+
+    getMember(update) {
+      this.member = update;
     }
+   
   },
 };
 </script>

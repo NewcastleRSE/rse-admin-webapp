@@ -29,44 +29,53 @@ export default {
       const projects = state.projects.map((project) => {
         const ganttItem = {};
 
-        ganttItem.id = project.properties.hs_object_id;
+        ganttItem.id = project.hs_object_id;
 
-        ganttItem.name = project.properties.dealname;
+        ganttItem.name = project.dealname;
 
-        ganttItem.start = Date.parse(project.properties.start_date)
-          ? project.properties.start_date
+        ganttItem.start = Date.parse(project.start_date)
+          ? project.start_date
           : Date.parse("2020-01-01");
-        ganttItem.end = Date.parse(project.properties.end_date)
-          ? project.properties.end_date
+        ganttItem.end = Date.parse(project.end_date)
+          ? project.end_date
           : Date.parse("2022-12-31");
 
         // converts hubspot stage names to english
         stages.forEach((stage) => {
-          if (project.properties.dealstage === stage[1])
+          if (project.dealstage === stage[1])
             ganttItem.stage = stage[0];
         });
 
-        ganttItem.amount = project.properties.amount;
-        ganttItem.faculty = project.properties.faculty;
-        ganttItem.financeContact = project.properties.finance_contact;
-        ganttItem.fundingBody = project.properties.funding_body;
-        ganttItem.projectLead = project.properties.project_lead;
-        ganttItem.projectValue = project.properties.project_value;
-        ganttItem.school = project.properties.school;
+        ganttItem.amount = project.amount;
+        ganttItem.faculty = project.faculty;
+        ganttItem.financeContact = project.finance_contact;
+        ganttItem.fundingBody = project.funding_body;
+        ganttItem.projectLead = project.project_lead;
+        ganttItem.projectValue = project.project_value;
+        ganttItem.school = project.school;
+        ganttItem.status = project.status;
 
         return ganttItem;
       });
 
-      //console.log(projects);
-      return projects;
+      return projects.sort(function(a, b) {
+          let textA = a.name.toUpperCase();
+          let textB = b.name.toUpperCase();
+          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      });
     },
+    getProject: (state) => (id) =>{
+      return state.projects.find((project) => {
+        if (project.id === id) {
+          return project;
+        }
+      })
+    }
   },
 
   mutations: {
     //sync, updates state
     getProjects(state, projects) {
-      //state.projects.push(projects);
-      //state.projects = [...state.projects, ...projects];
       state.projects = projects;
     },
     getProject(state, project) {
@@ -94,26 +103,43 @@ export default {
           "submittedToFunder",
         ];
       }
-      let projects = [];
+
+      let rawData = [];
       let index = 0;
 
       return new Promise((resolve) => {
         stages.forEach((stage) => {
+
+          let params = new URLSearchParams();
+          params.append("stage", stage);
+
           axios
-            .get(`http://localhost:1337/projects/`, {
+            .get(`${process.env.VUE_APP_API_URL}/projects/`, {
               headers: {
                 Authorization: `Bearer ${rootState.auth.jwt}`,
               },
-              params: {
-                stage: stage,
-              },
+              params: params,
             })
             .then((response) => {
-              projects = [...projects, ...response.data]; // adds response to projects variable
+
+              rawData = [...rawData, ...response.data];
+
+              // checks if the last stage has been itterated
               if (index === stages.length - 1) {
-                // checks if the last stage has been itterated
+
+                let projects = []
+                
+                rawData.forEach((rawProject) => {
+                  let project = rawProject.properties
+                  project.archived = rawProject.archived
+                  project.createdAt = rawProject.createdAt
+                  project.updatedAt = rawProject.updatedAt
+                  project.id = rawProject.id
+
+                  projects.push(project)
+                })
+
                 commit("getProjects", projects);
-                console.log(projects);
                 resolve();
               } else index++;
             })
@@ -126,19 +152,18 @@ export default {
 
     /*
     Gets project by ID from HubSpot
-    Call with this.$store.dispatch("get/getProject", "{id}}");
+    Call with this.$store.dispatch("projects/getProject", "{id}}");
     */
     getProject({ commit, rootState }, id = "") {
       //commit("resetProject");
 
       axios
-        .get(`http://localhost:1337/projects/${id}`, {
+        .get(`${process.env.VUE_APP_API_URL}/projects/${id}`, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },
         })
         .then((response) => {
-          console.log(response.data);
           commit("getProject", response.data);
         })
         .catch((error) => {
