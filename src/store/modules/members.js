@@ -3,11 +3,18 @@ import axios from "axios";
 
 function availability(member, assignments) {
 
+  // Temp hack until property added to API
+  let contractFTE = 100
+
+  if(member.firstname === 'Tiago') {
+    contractFTE = 50
+  }
+
   let availability = {
     allocated: [],
     from: new Date(),
     to: null,
-    FTE: 100
+    FTE: contractFTE
   }
 
   if(assignments.length > 0) {
@@ -35,7 +42,7 @@ function availability(member, assignments) {
       // console.log("Offset: " + offset )
   
       for (let i = offset; i < (length + offset); i++) {
-        if(allocated[i] + assignment.FTE > 100) {
+        if(allocated[i] + assignment.FTE > contractFTE) {
           console.error(`Invalid monthly load (${allocated[i] + assignment.FTE}%). Availability cannot be over 100%`)
         }
         allocated[i] = allocated[i] + assignment.FTE
@@ -43,15 +50,20 @@ function availability(member, assignments) {
   
     })
 
-    let nextAvailableMonth = allocated.findIndex((fte) => fte < 100),
+    let nextAvailableMonth = allocated.findIndex((fte) => fte < contractFTE),
         nextAvailableYear = nextAvailableMonth > -1 ? new Date().getFullYear() + Math.floor(nextAvailableMonth/12) : null,
-        nextAvailableFTE = nextAvailableUntil > -1 ? allocated.find((fte) => fte < 100) : 0,
-        nextAvailableUntil = nextAvailableUntil > -1 ? allocated.indexOf(100, nextAvailableMonth) : null
+        nextAvailableFTE = nextAvailableUntil > -1 ? allocated.find((fte) => fte < contractFTE) : 0,
+        nextAvailableUntil = nextAvailableUntil > -1 ? allocated.indexOf(contractFTE, nextAvailableMonth) : null
 
     availability.from = nextAvailableMonth > -1 ? new Date([nextAvailableYear, nextAvailableMonth + 1, 1]) : null,
     availability.to = nextAvailableUntil > -1 ? new Date([nextAvailableYear, nextAvailableUntil + 1, 1]) : null
     availability.FTE = nextAvailableFTE
     availability.allocated = allocated
+
+    // Set available from today if possible start date is in the past
+    if(availability.from && availability.from < new Date()) {
+      availability.from = new Date()
+    }
   }
 
   return availability;
