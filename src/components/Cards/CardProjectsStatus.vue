@@ -57,12 +57,12 @@
             <th
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left"
             >
-              {{ project.dealname }}
+              {{ project.name }}
             </th>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
-              {{ project.project_lead  }}
+              {{ project.projectLead  }}
             </td>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
@@ -89,20 +89,19 @@
   export default {
     computed: {
       projects() {
-        let projects = this.$store.state.projects.projects,
-            red = projects.filter(project => project.status === 'Red'),
-            amber = projects.filter(project => project.status === 'Amber')
+        let projects = this.$store.getters["projects/getProjects"],
+            active = projects.filter(project => project.stage === 'Funded Awaiting Allocation' || project.stage === 'Allocated'),
+            red = active.filter(project => project.status === 'Red'),
+            amber = active.filter(project => project.status === 'Amber')
 
         return [...red, ...amber]
       }
     },
     watch: {
-      '$store.state.projects.projects': function(projects) {
-        let red = projects.filter(project => project.status === 'Red'),
-            amber = projects.filter(project => project.status === 'Amber')
-
-        return [...red, ...amber]
-      }  
+      projects(update) {
+        // watches 'getProjects()' to update projects
+        this.projects = update;
+      }
     },
     props: {
       color: {

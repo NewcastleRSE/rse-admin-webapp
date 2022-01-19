@@ -9,7 +9,7 @@ export default {
   Call state with $store.state.{module}.{stateName}
   */
   state: {
-    projects: [], //check whether loading the projects once when laoding the app is enough or every page switch
+    projects: [], //check whether loading the projects once when loading the app is enough or every page switch
     project: {},
   },
 
