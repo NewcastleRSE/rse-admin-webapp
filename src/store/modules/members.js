@@ -106,7 +106,6 @@ export default {
             return members;
         },
         getFullMembers: (state, getters, rootState, rootGetters) => {
-
           state.members.sort(function(a, b) {
               return a.surname.localeCompare(b.surname);
           });
@@ -135,13 +134,22 @@ export default {
     */
     getMembers({ commit, rootState }, id = "") {
       axios
-        .get(`${process.env.VUE_APP_API_URL}/members/${id}`, {
+        .get(`${process.env.VUE_APP_API_URL}/rses/${id}`, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },
         })
         .then((response) => {
-          commit("getMembers", response.data);
+          let members = []
+
+          response.data.data.forEach((responseMember) => {
+            let member = responseMember.attributes;
+            member.id = responseMember.id
+
+            members.push(member)
+          })
+
+          commit("getMembers", members );
         })
         .catch((error) => {
           console.log(error);
