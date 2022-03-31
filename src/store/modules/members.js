@@ -88,14 +88,14 @@ export default {
     getters: {
         getMembers: (state) => {
             state.members.sort(function(a, b) {
-                return a.surname.localeCompare(b.surname);
+                return a.lastname.localeCompare(b.lastname);
             });
 
             const members = state.members.map((member) => {
                 const ganttItem = {};
 
                 ganttItem.id = member.id.toString();
-                ganttItem.name = member.firstname + " " + member.surname;
+                ganttItem.name = member.firstname + " " + member.lastname;
                 ganttItem.team = member.Team;
                 ganttItem.email = member.email;
                 ganttItem.collapsed = true;
@@ -107,7 +107,7 @@ export default {
         },
         getFullMembers: (state, getters, rootState, rootGetters) => {
           state.members.sort(function(a, b) {
-              return a.surname.localeCompare(b.surname);
+              return a.lastname.localeCompare(b.lastname);
           });
 
           return state.members.map((member) => {

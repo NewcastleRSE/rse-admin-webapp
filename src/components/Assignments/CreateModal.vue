@@ -80,7 +80,7 @@ export default {
     return {
       showModal: false,
       memberProjection: (item) => {
-        return item.firstname + " " + item.surname
+        return item.firstname + " " + item.lastname
       },
       projectProjection: (item) => {
         return item.dealname
