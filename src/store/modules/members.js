@@ -140,7 +140,7 @@ export default {
           },
         })
         .then((response) => {
-          commit("getMembers", response.data );
+          commit("getMembers", response.data.data );
         })
         .catch((error) => {
           console.log(error);
