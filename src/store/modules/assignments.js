@@ -122,7 +122,7 @@ export default {
           },
         })
         .then((response) => {
-          commit("getAssignments", response.data);
+          commit("getAssignments", response.data.data);
         })
         .catch((error) => {
           console.log(error);
@@ -140,7 +140,7 @@ export default {
           },
         })
         .then((response) => {
-          commit("addAssignment", response.data);
+          commit("addAssignment", response.data.data);
         })
         .catch((error) => {
           console.log(error);
@@ -158,7 +158,7 @@ export default {
           },
         })
         .then((response) => {
-          commit("saveAssignment", response.data);
+          commit("saveAssignment", response.data.data);
         })
         .catch((error) => {
           console.log(error);
@@ -186,7 +186,7 @@ export default {
           },
         })
         .then((response) => {
-          commit("updateAssignment", response.data);
+          commit("updateAssignment", response.data.data);
         })
         .catch((error) => {
           console.log(error);
