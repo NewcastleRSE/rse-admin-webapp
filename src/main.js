@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+import interceptors from './utils/interceptors'
 import Highcharts from "highcharts";
 import Draggable from "highcharts/modules/draggable-points";
 import HC_timeLine from "highcharts/modules/timeline";
@@ -13,7 +14,7 @@ import SimpleTypeahead from 'vue3-simple-typeahead';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@/assets/styles/index.css";
 
-
+interceptors();
 Gantt(Highcharts);
 Draggable(Highcharts);
 HC_timeLine(Highcharts);

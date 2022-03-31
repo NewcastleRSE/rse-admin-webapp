@@ -140,16 +140,7 @@ export default {
           },
         })
         .then((response) => {
-          let members = []
-
-          response.data.data.forEach((responseMember) => {
-            let member = responseMember.attributes;
-            member.id = responseMember.id
-
-            members.push(member)
-          })
-
-          commit("getMembers", members );
+          commit("getMembers", response.data );
         })
         .catch((error) => {
           console.log(error);
