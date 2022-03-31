@@ -90,7 +90,7 @@
     computed: {
       projects() {
         let projects = this.$store.getters["projects/getProjects"],
-            active = projects.filter(project => project.stage === 'Funded Awaiting Allocation' || project.stage === 'Allocated'),
+            active = projects.filter(project => project.stage === 'awaitingAllocation' || project.stage === 'allocated'),
             red = active.filter(project => project.status === 'Red'),
             amber = active.filter(project => project.status === 'Amber')
 

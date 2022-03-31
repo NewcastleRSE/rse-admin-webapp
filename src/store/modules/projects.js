@@ -19,12 +19,6 @@ export default {
     Call with this.$store.getters["projects/getProjects"];
     */
     getProjects: (state) => {
-      const stages = [
-        ["Funded Awaiting Allocation", "closedwon"],
-        ["Not Funded", "closedlost"],
-        ["Allocated", "0fd81f66-7cda-4db7-b2e8-b0114be90ef9"],
-        ["Completed", "09b510b5-6871-4771-ad09-1438ce8e6f11"],
-      ];
 
       const projects = state.projects.map((project) => {
         const ganttItem = {};
@@ -40,18 +34,13 @@ export default {
           ? project.end_date
           : Date.parse("2022-12-31");
 
-        // converts hubspot stage names to english
-        stages.forEach((stage) => {
-          if (project.dealstage === stage[1])
-            ganttItem.stage = stage[0];
-        });
-
+        ganttItem.stage = project.dealstage;
         ganttItem.amount = project.amount;
         ganttItem.faculty = project.faculty;
-        ganttItem.financeContact = project.finance_contact;
-        ganttItem.fundingBody = project.funding_body;
-        ganttItem.projectLead = project.project_lead;
-        ganttItem.projectValue = project.project_value;
+        ganttItem.financeContact = project.financeContact;
+        ganttItem.fundingBody = project.fundingBody;
+        ganttItem.projectLead = project.projectLead;
+        ganttItem.projectValue = project.projectValue;
         ganttItem.school = project.school;
         ganttItem.status = project.status;
 
