@@ -79,7 +79,7 @@ function nextAvailable(teams, teamName) {
       to: member.availability.to ? member.availability.to.toLocaleDateString() : null,
       FTE: member.availability.FTE,
       wait: weeksBetween(new Date(), member.availability.from) + " Weeks",
-      name: member.firstname + ' ' + member.surname,
+      name: member.firstname + ' ' + member.lastname,
     }
 }
 
@@ -90,14 +90,14 @@ export default {
   data() {
 
     const teams = this.$store.getters["members/getFullMembers"].reduce(function (r, a) {
-        r[a.Team] = r[a.Team] || [];
-        r[a.Team].push(a);
+        r[a.team] = r[a.team] || [];
+        r[a.team].push(a);
         return r;
     }, Object.create(null));
 
     return {
       nextDataScience: nextAvailable(teams, 'DataScience'),
-      nextMiddleware: nextAvailable(teams, 'Integrations'),
+      nextMiddleware: nextAvailable(teams, 'Middleware'),
       nextWebMobile: nextAvailable(teams, 'WebMobile'),
       avatars: [],
       getAvatar: (rse) => {
