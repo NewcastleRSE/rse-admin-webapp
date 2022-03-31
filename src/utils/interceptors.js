@@ -1,4 +1,5 @@
 import axios from 'axios';
+const camelcaseKeys = require('camelcase-keys');
 
 export default function interceptors() {
     axios.interceptors.response.use(function (response) {
@@ -6,13 +7,13 @@ export default function interceptors() {
         if(!response.config.url.includes('https://rseadmin.azurewebsites.net/api/auth/')){
 
             // If data is array modify every object
-            if(Array.isArray(response.data.data) && Object.prototype.hasOwnProperty.call(response.data.data[0], 'attributes')) {
+            if(Array.isArray(response.data.data) && response.data.data.length > 0 && Object.prototype.hasOwnProperty.call(response.data.data[0], 'attributes')) {
                 let data = []
     
                 response.data.data.forEach(element => {
                     let entity = element.attributes;
                     entity.id = element.id
-                    data.push(entity)
+                    data.push(camelcaseKeys(entity))
                 });
     
                 response.data.data = data       
@@ -24,7 +25,7 @@ export default function interceptors() {
                 response.data.data.forEach(element => {
                     let entity = element.attributes;
                     entity.id = element.id
-                    data.push(entity)
+                    data.push(camelcaseKeys(entity))
                 });
     
                 response.data.data = data 
