@@ -116,7 +116,7 @@ export default {
     */
     getAssignments({ commit, rootState }, id = "") {
       axios
-        .get(`${process.env.VUE_APP_API_URL}/assignments/${id}`, {
+        .get(`${process.env.VUE_APP_API_URL}/assignments/${id}?populate=*`, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },
@@ -134,7 +134,7 @@ export default {
         */
     addAssignment({ commit, rootState }, assignment) {
       return axios
-        .post(`${process.env.VUE_APP_API_URL}/assignments/`, assignment, {
+        .post(`${process.env.VUE_APP_API_URL}/assignments`, assignment, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },
