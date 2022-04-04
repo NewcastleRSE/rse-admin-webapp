@@ -55,7 +55,7 @@ function weeksBetween(d1, d2) {
 }
 
 function nextAvailable(teams, teamName) {
-  console.log(teams, teamName)
+  // console.log(teams, teamName)
   var mostRecentDate = new Date(Math.min.apply(null, teams[teamName].map( e => {
       if(e.availability.from) {
         return e.availability.from;
@@ -73,7 +73,7 @@ function nextAvailable(teams, teamName) {
         return new Date(e.availability.from).getTime() === mostRecentDate.getTime();
     })[0];
 
-    console.log(member)
+    // console.log(member)
 
     return {
       from: member.availability.from.toLocaleDateString(),
