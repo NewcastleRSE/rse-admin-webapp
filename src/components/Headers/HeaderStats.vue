@@ -55,6 +55,7 @@ function weeksBetween(d1, d2) {
 }
 
 function nextAvailable(teams, teamName) {
+  console.log(teams, teamName)
   var mostRecentDate = new Date(Math.min.apply(null, teams[teamName].map( e => {
       if(e.availability.from) {
         return e.availability.from;

@@ -19,16 +19,16 @@ export default {
     */
     getAssignments: (state, getters, rootState, rootGetters) => {
       const assignments = state.assignments.map((assignment) => {
-        const project = rootGetters['projects/getProject'](assignment.projectID)
+        const project = rootGetters['projects/getProject'](assignment.project.data.hubspotID)
         return {
           assignmentID: assignment.id,
           project: project,
           name: project.dealname,
-          member: assignment.member,
-          parent: assignment.member.id.toString(),
-          start: Date.parse(assignment.startDate),
-          end: Date.parse(assignment.endDate),
-          FTE: Number(assignment.FTE)
+          member: assignment.rse.data,
+          parent: assignment.rse.data.id.toString(),
+          start: Date.parse(assignment.start),
+          end: Date.parse(assignment.end),
+          FTE: Number(assignment.fte)
         };
       });
 
