@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 import createPersistedState from "vuex-persistedstate";
 import auth from "./modules/auth";
 import assignments from "./modules/assignments";
+import capacity from "./modules/capacity";
 import projects from "./modules/projects";
 import members from "./modules/members";
 
@@ -18,7 +19,7 @@ export default createStore({
     //async, commits mutations
   },
 
-  modules: { auth, assignments, projects, members },
+  modules: { auth, assignments, capacity, projects, members },
 
   plugins: [createPersistedState()],
 });

@@ -15,6 +15,7 @@ export default {
       localStorage.setItem("jwt", jwt);
       state.jwt = jwt;
       this.dispatch("projects/getProjects")
+      this.dispatch("capacity/getCapacity")
       this.dispatch("members/getMembers")
       this.dispatch("assignments/getAssignments")
       router.push({ name: "Dashboard" });
