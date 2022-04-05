@@ -72,8 +72,6 @@ function nextAvailable(teams, teamName) {
         return new Date(e.availability.from).getTime() === mostRecentDate.getTime();
     })[0];
 
-    console.log(member)
-
     return {
       from: member.availability.from.toLocaleDateString(),
       to: member.availability.to ? member.availability.to.toLocaleDateString() : null,

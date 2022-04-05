@@ -17,18 +17,17 @@ export default {
     /*
     Maps the properties from strapi to variables used in highcharts
     */
-    getAssignments: (state, getters, rootState, rootGetters) => {
+    getAssignments: (state) => {
       const assignments = state.assignments.map((assignment) => {
-        const project = rootGetters['projects/getProject'](assignment.projectID)
         return {
           assignmentID: assignment.id,
-          project: project,
-          name: project.dealname,
-          member: assignment.member,
-          parent: assignment.member.id.toString(),
-          start: Date.parse(assignment.startDate),
-          end: Date.parse(assignment.endDate),
-          FTE: Number(assignment.FTE)
+          project: assignment.project.data,
+          name: assignment.project.data.name,
+          member: assignment.rse.data,
+          parent: assignment.rse.data.id.toString(),
+          start: Date.parse(assignment.start),
+          end: Date.parse(assignment.end),
+          FTE: Number(assignment.fte)
         };
       });
 
@@ -39,18 +38,17 @@ export default {
 
       return assignments;
     },
-    getSavedAssignments: (state, getters, rootState, rootGetters) => {
+    getSavedAssignments: (state) => {
       const assignments = state.savedAssignments.map((assignment) => {
-        const project = rootGetters['projects/getProject'](assignment.projectID)
         return {
           assignmentID: assignment.id,
-          project: project,
-          name: project ? project.dealname : '',
-          member: assignment.member,
-          parent: assignment.member.id.toString(),
-          start: Date.parse(assignment.startDate),
-          end: Date.parse(assignment.endDate),
-          FTE: Number(assignment.FTE)
+          project: assignment.project.data,
+          name: assignment.project.data ? assignment.project.data.name : '',
+          member: assignment.rse.data,
+          parent: assignment.rse.data.id.toString(),
+          start: Date.parse(assignment.start),
+          end: Date.parse(assignment.end),
+          FTE: Number(assignment.fte)
         };
       });
 
