@@ -132,7 +132,7 @@ export default {
         */
     addAssignment({ commit, rootState }, assignment) {
       return axios
-        .post(`${process.env.VUE_APP_API_URL}/assignments/`, assignment, {
+        .post(`${process.env.VUE_APP_API_URL}/assignments`, assignment, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },

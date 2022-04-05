@@ -93,7 +93,6 @@
             active = projects.filter(project => project.stage === 'Awaiting Allocation' || project.stage === 'Allocated'),
             red = active.filter(project => project.status === 'Red'),
             amber = active.filter(project => project.status === 'Amber')
-
         return [...red, ...amber]
       }
     },
