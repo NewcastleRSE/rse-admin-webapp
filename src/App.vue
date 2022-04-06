@@ -4,12 +4,7 @@
 
 <script>
 export default {
-  name: "App",
-  created() {
-    // this.$store.dispatch("projects/getProjects");
-    // this.$store.dispatch("members/getMembers");
-    // this.$store.dispatch("assignments/getAssignments");
-  },
+  name: "App"
 };
 </script>
 

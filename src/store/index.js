@@ -4,7 +4,7 @@ import auth from "./modules/auth";
 import assignments from "./modules/assignments";
 import capacity from "./modules/capacity";
 import projects from "./modules/projects";
-import members from "./modules/members";
+import rses from "./modules/rses";
 
 export default createStore({
   state: {},
@@ -19,7 +19,7 @@ export default createStore({
     //async, commits mutations
   },
 
-  modules: { auth, assignments, capacity, projects, members },
+  modules: { auth, assignments, capacity, projects, rses },
 
   plugins: [createPersistedState()],
 });

@@ -46,7 +46,7 @@ export default {
 
       newAssignments.forEach((item) => {
         const assignment = {
-          member: { id: item.parent },
+          rse: { id: item.parent },
           startDate: new Date(item.start).toISOString(),
           endDate: new Date(item.end).toISOString(),
           projectID: item.project.id,

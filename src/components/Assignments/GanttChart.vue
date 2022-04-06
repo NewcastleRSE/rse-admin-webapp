@@ -1,5 +1,5 @@
 <template>
-<!--     v-if="members.length > 0 && assignments.length > 0 && projects.length > 0" -->
+<!--     v-if="rses.length > 0 && assignments.length > 0 && projects.length > 0" -->
   <highcharts
     :constructorType="'ganttChart'"
     class="hc"
@@ -14,7 +14,7 @@ export default {
   data() {
     return {
       edited: false,
-      members: this.$store.getters["members/getMembers"],
+      rses: this.$store.getters["rses/getRses"],
       projects: this.$store.getters["projects/getProjects"],
       assignments: this.$store.getters["assignments/getAssignments"]
     };
@@ -58,11 +58,11 @@ export default {
   computed: {
     chartOptions() {
       // let day = 24 * 3600 * 1000;
-      // let scrollHeight = (this.assignments.length + this.members.length) * 65; // increase '65' if chart cut off at bottom
+      // let scrollHeight = (this.assignments.length + this.rses.length) * 65; // increase '65' if chart cut off at bottom
       
       let colors = ['#f0f9ff','#e0f2fe','#bae6fd','#7dd3fc','#38bdf8','#0ea5e9','#0284c7','#0369a1','#075985','#0c4a6e']
 
-      let members = this.members.map(member=> ({ ...member, color: colors[9] })),
+      let rses = this.rses.map(rse=> ({ ...rse, color: colors[9] })),
           assignments = this.assignments.map((assignment)=> {
             return { ...assignment, color: colors[Math.round(assignment.FTE/10)-1] }
           })
@@ -232,7 +232,7 @@ export default {
         //     type: 'gantt',
         //     pointPlacement: 0.5,
         //     pointPadding: 0.25,
-        //     data: [...this.members]
+        //     data: [...this.rses]
         //   },
         // },
         // scrollbar: {
@@ -241,7 +241,7 @@ export default {
         // },
         series: [
           { 
-            data: [...members, ...assignments],
+            data: [...rses, ...assignments],
             pointWidth: 32
           }
         ],
@@ -252,9 +252,9 @@ export default {
       return this.$store.getters["assignments/getAssignments"];
 
     },
-    getMembers() {
+    getRses() {
       // gets updated value from store
-      return this.$store.getters["members/getMembers"];
+      return this.$store.getters["rses/getRses"];
    
     },
     getProjects() {
@@ -267,9 +267,9 @@ export default {
       // watches 'getAssignments()' to update chart
       this.assignments = update;
     },
-    getMembers(update) {
-      // watches 'getMembers()' to update members
-      this.members = update;
+    getRses(update) {
+      // watches 'getRses()' to update rses
+      this.rses = update;
     },
     getProjects(update) {
       // watches 'getProjects()' to update projects

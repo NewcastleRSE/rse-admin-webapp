@@ -16,7 +16,7 @@ export default {
       state.jwt = jwt;
       this.dispatch("projects/getProjects")
       this.dispatch("capacity/getCapacity")
-      this.dispatch("members/getMembers")
+      this.dispatch("rses/getRses")
       this.dispatch("assignments/getAssignments")
       router.push({ name: "Dashboard" });
     },

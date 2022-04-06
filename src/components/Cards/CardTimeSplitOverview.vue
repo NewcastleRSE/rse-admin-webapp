@@ -48,16 +48,16 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="member in members" :key="member.id">
+          <tr v-for="rse in rses" :key="rse.id">
             <th
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left"
             >
-              {{ member.firstname }} {{ member.lastname }}
+              {{ rse.firstname }} {{ rse.lastname }}
             </th>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
-              {{ member.team }}
+              {{ rse.team }}
             </td>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
@@ -91,12 +91,12 @@
       };
     },
     computed: {
-      members() {
-        return this.$store.state.members.members
+      rses() {
+        return this.$store.state.rses.rses
       }
     },
     watch: {
-      '$store.state.members.members': function() {
+      '$store.state.rses.rses': function() {
       }  
     },
     props: {

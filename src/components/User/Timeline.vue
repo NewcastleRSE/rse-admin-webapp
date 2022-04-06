@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <h1> {{member}}</h1>
+    <h1> {{rse}}</h1>
     <highcharts
       
       class="hc"
@@ -16,7 +16,7 @@ export default {
   name: "timeline",
   data() {
     return {
-      member: " ",
+      rse: " ",
       chartOptions: {
         chart: {
           type: "timeline",
@@ -49,8 +49,8 @@ export default {
   async created() {
     this.chartOptions.series[0].data = this.getAssignments;
     console.log(this.chartOptions.series[0].data)
-    this.member = this.getMember;
-    console.log(this.member)
+    this.rse = this.getRse;
+    console.log(this.rse)
   },
   methods: {},
   computed: {
@@ -78,10 +78,10 @@ export default {
       return assignments;      
     },
 
-    getMember() {
-      let member = this.$store.getters["members/getMembers"].filter(memb => memb.id === this.$route.params.id);
-      if (member[0]) {
-        return member[0].name;
+    getRse() {
+      let rse = this.$store.getters["rses/getRses"].filter(memb => memb.id === this.$route.params.id);
+      if (rse[0]) {
+        return rse[0].name;
       } 
       return "";
     }
@@ -93,8 +93,8 @@ export default {
 
     },
 
-    getMember(update) {
-      this.member = update;
+    getRse(update) {
+      this.rse = update;
     }
    
   },

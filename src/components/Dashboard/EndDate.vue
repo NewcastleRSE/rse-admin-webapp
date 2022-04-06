@@ -22,7 +22,7 @@ export default defineComponent({
     return {
       endAssignments: null,
       assignments: null,
-      members: {},
+      rses: {},
       projects: null,
       table: {columns: {},
               rows: {}, 
@@ -33,18 +33,18 @@ export default defineComponent({
   },
 
   methods: {
-    endDateData(members, assignments, projects) {
+    endDateData(rses, assignments, projects) {
       let data = []
       if (assignments) {
         assignments.forEach( (assign) => { //finding the minimum
               if (Date.now() >= assign.start) {
-                let member = members.filter(memb => memb.id == assign.parent);
+                let rse = rses.filter(memb => memb.id == assign.parent);
                 let project = projects.filter(prj => prj.id == assign.name);
                 //console.log(project)
-                member = member[0];
+                rse = rse[0];
                 project = project[0];
                 //console.log(project);
-                //console.log(member)
+                //console.log(rse)
                 let start = new Date();
                 let end = new Date();
                 if (project)
@@ -53,8 +53,8 @@ export default defineComponent({
                   end = new Date(project.end);
                   data.push({
                       id: assign.parent,
-                      name: member.name,
-                      email: member.email,
+                      name: rse.name,
+                      email: rse.email,
                       project: project.name,
                       start: start.toDateString(),
                       end: end.toDateString(),
@@ -70,8 +70,8 @@ export default defineComponent({
   
   async created() { 
        this.assignments = this.getAssignments;
-       this.members = this.getMembers;
-       console.log(this.members)
+       this.rses = this.getRses;
+       console.log(this.rses)
        this.projects = this.getProjects;
        this.endAssignments = this.getAssignmentsEndDate;
        console.log(this.endAssignments);
@@ -149,13 +149,13 @@ export default defineComponent({
       return this.$store.getters["assignments/getAssignments"];
     },
 
-    getMembers() {
-      return this.$store.getters["members/getMembers"];
+    getRses() {
+      return this.$store.getters["rses/getRses"];
     },
 
     getAssignmentsEndDate() {
      
-      return this.endDateData(this.getMembers, this.getAssignments, this.getProjects)
+      return this.endDateData(this.getRses, this.getAssignments, this.getProjects)
     },
     
   },
@@ -165,11 +165,11 @@ export default defineComponent({
     },
 
     getAssignments(update) {
-      this.members = update;
+      this.rses = update;
     },
 
-    getMembers(update) {
-      this.members = update;
+    getRses(update) {
+      this.rses = update;
     },
 
     getAssignmentsEndDate(update) {

@@ -41,7 +41,7 @@ export default {
     data() {
         return {
             assignments: null,
-            members: null,
+            rses: null,
             person: {username: "None"},
             webDev: {username: "None"},
             dataScience: {username: "None"},
@@ -50,17 +50,17 @@ export default {
     },
 
     methods: {
-        findNext(assignments, members, team = "") {
+        findNext(assignments, rses, team = "") {
         let min = { end: "-1", username: "None"};
         assignments.forEach((assign) => {
-            let member = null;
+            let rse = null;
             if (team === "") {
-                member = members.filter((memb) => memb.id == assign.parent)
+                rse = rses.filter((memb) => memb.id == assign.parent)
             } else {
-                member = members.filter((memb) => memb.id == assign.parent && memb.team === team)
+                rse = rses.filter((memb) => memb.id == assign.parent && memb.team === team)
             }
-            if (member[0] && (min.end < assign.end || min.end == -1)) {
-                assign["username"] = member[0].name
+            if (rse[0] && (min.end < assign.end || min.end == -1)) {
+                assign["username"] = rse[0].name
                 min = assign;
             }
         })
@@ -69,8 +69,8 @@ export default {
 
     async created() {
         this.assignments = this.getAssignments;
-        this.members = this.getMembers;
-        //console.log(members)
+        this.rses = this.getRses;
+        //console.log(rses)
         this.webDev = this.getWebDev;
         this.integrations = this.getIntegrations;
         this.dataScience = this.getDataScience;
@@ -84,23 +84,23 @@ export default {
         },
 
         getWebDev() {
-            return this.findNext(this.getAssignments, this.getMembers, "WebMobile");
+            return this.findNext(this.getAssignments, this.getRses, "WebMobile");
         },
 
         getIntegrations() {
-            return this.findNext(this.getAssignments, this.getMembers, "Integrations");
+            return this.findNext(this.getAssignments, this.getRses, "Integrations");
         },
 
         getDataScience() {
-            return this.findNext(this.getAssignments, this.getMembers, "DataScience");
+            return this.findNext(this.getAssignments, this.getRses, "DataScience");
         },
 
-        getMembers() {
-            return this.$store.getters["members/getMembers"];
+        getRses() {
+            return this.$store.getters["rses/getRses"];
         },
 
         getPerson() {
-            return this.findNext(this.getAssignments, this.getMembers);
+            return this.findNext(this.getAssignments, this.getRses);
         }
     },
 
@@ -109,8 +109,8 @@ export default {
             this.assignments = update;
         },
 
-        getMembers(update) {
-            this.members = update;
+        getRses(update) {
+            this.rses = update;
         },
 
         getWebDev(update) {

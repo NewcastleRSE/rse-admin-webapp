@@ -12,7 +12,7 @@ export default {
   methods: {
     addAss() {
       const ass = {
-        member: { id: 2 },
+        rse: { id: 2 },
         startDate: "2021-07-21T11:00:00.000Z",
         endDate: "2021-08-01T11:00:00.000Z",
         project: { id: 2 },

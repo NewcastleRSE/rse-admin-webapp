@@ -20,7 +20,7 @@
               <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                 <i class="fas fa-user"></i>
               </span>
-              <vue3-simple-typeahead placeholder="RSE" v-model="member" :items=members :minInputLength="1" :itemProjection="memberProjection" @selectItem="selectMember">
+              <vue3-simple-typeahead placeholder="RSE" v-model="rse" :items=rses :minInputLength="1" :itemProjection="rseProjection" @selectItem="selectRse">
               <template #list-item-text="slot">
                 <div class="align-middle whitespace-nowrap">
                   <div class="flex items-center">
@@ -79,7 +79,7 @@ export default {
   data() {
     return {
       showModal: false,
-      memberProjection: (item) => {
+      rseProjection: (item) => {
         return item.firstname + " " + item.lastname
       },
       projectProjection: (item) => {
@@ -92,9 +92,9 @@ export default {
           })
           return avatar ? avatar.pathLong : '' 
       },
-      member: null,
-      selectMember: (member) => {
-        this.member = member
+      rse: null,
+      selectRse: (rse) => {
+        this.rse = rse
       },
       project: null,
       selectProject: (project) => {
@@ -108,8 +108,8 @@ export default {
     Datepicker
   },
   computed: {
-    members() {
-      return this.$store.state.members.members
+    rses() {
+      return this.$store.state.rses.rses
     },
     projects() {
       return this.$store.state.projects.projects
@@ -137,7 +137,7 @@ export default {
 
       const assignment = {
         id: this.$store.getters["assignments/getUID"],
-        member: this.member,
+        rse: this.rse,
         projectID: this.project.id,
         startDate: new Date(this.dateRange[0]).toISOString(),
         endDate: new Date(this.dateRange[1]).toISOString(),
