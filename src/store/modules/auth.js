@@ -11,9 +11,11 @@ export default {
 
   mutations: {
     //sync, updates state
-    login(state, jwt) {
-      localStorage.setItem("jwt", jwt);
-      state.jwt = jwt;
+    login(state, data) {
+      localStorage.setItem("jwt", data.jwt);
+      state.jwt = data.jwt;
+      state.user = data.user;
+      state.accessToken = data.accessToken;
       this.dispatch("projects/getProjects")
       this.dispatch("capacity/getCapacity")
       this.dispatch("rses/getRses")
@@ -30,12 +32,12 @@ export default {
   actions: {
     //async, commits mutations
     login({ commit }, accessToken) {
-      const url =
-      process.env.VUE_APP_API_URL + "/auth/microsoft/callback/?access_token=" + accessToken;
+      const url = process.env.VUE_APP_API_URL + "/auth/microsoft/callback/?access_token=" + accessToken;
       axios
         .get(url)
         .then((res) => {
-          commit("login", res.data.jwt);
+          res.data.accessToken = accessToken
+          commit("login", res.data);
         })
         .catch((err) => {
           console.log(err);
