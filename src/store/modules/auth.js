@@ -12,10 +12,9 @@ export default {
   mutations: {
     //sync, updates state
     login(state, data) {
-      localStorage.setItem("jwt", data.jwt);
-      state.jwt = data.jwt;
-      state.user = data.user;
       state.accessToken = data.accessToken;
+      state.jwt = data.jwt;
+      state.user = data.profile;
       this.dispatch("projects/getProjects")
       this.dispatch("capacity/getCapacity")
       this.dispatch("rses/getRses")
@@ -32,16 +31,23 @@ export default {
   actions: {
     //async, commits mutations
     login({ commit }, accessToken) {
-      const url = process.env.VUE_APP_API_URL + "/auth/microsoft/callback/?access_token=" + accessToken;
-      axios
-        .get(url)
-        .then((res) => {
-          res.data.accessToken = accessToken
-          commit("login", res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      const loginUrl = process.env.VUE_APP_API_URL + "/auth/microsoft/callback/?access_token=" + accessToken;
+      const azureConfig = { headers: { Authorization: `Bearer ${accessToken}` }};
+    
+      let fetchJWT = axios.get(loginUrl)
+      let fetchProfile = axios.get('https://graph.microsoft.com/v1.0/me', azureConfig)
+
+      Promise.all([fetchJWT, fetchProfile])
+      .then((values) => {
+          commit("login", {
+            accessToken: accessToken,
+            jwt: values[0].data.jwt,
+            profile: values[1].data
+          })
+      })
+      .catch((err) => {
+        console.log(err);
+      })
     },
     logout({ commit }) {
       commit("logout")
