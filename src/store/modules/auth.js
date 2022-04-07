@@ -4,10 +4,16 @@ import axios from "axios";
 export default {
   namespaced: true,
   state: {
-    jwt: localStorage.getItem("jwt"),
+    accessToken: '',
+    jwt: '',
+    user: {}
   },
 
-  getters: {},
+  getters: {
+    user: (state) => {
+      return state.user
+    },
+  },
 
   mutations: {
     //sync, updates state
