@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "serve": "vue-cli-service serve --port 1337",
+        "serve": "vue-cli-service serve --port 3000",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint"
     },
@@ -19,6 +19,7 @@
         "chart.js": "2.9.4",
         "core-js": "^3.6.5",
         "gantt-schedule-timeline-calendar": "^3",
+        "globalthis": "^1.0.3",
         "highcharts": "^9.1.2",
         "highcharts-custom-events": "^3.0.10",
         "highcharts-vue": "^1.4.0",
