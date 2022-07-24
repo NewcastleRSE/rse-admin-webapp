@@ -4,7 +4,7 @@
       <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
         <menu-bar :edited="edited" :zoom="zoom" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
         
-        <GSTC />
+        <Timeline />
       </div>
       <create-modal ref="create" />
     </div>
@@ -13,14 +13,14 @@
 <script>
 import differenceWith from "lodash.differencewith";
 import isEqual from "lodash.isequal";
-import GSTC from "@/components/Assignments/GanttChart.vue";
+import Timeline from "@/components/Assignments/Timeline.vue";
 import CreateModal from "@/components/Assignments/CreateModal.vue";
 import MenuBar from "@/components/Assignments/MenuBar.vue";
 import CardTimeSplitOverviewVue from '../components/Cards/CardTimeSplitOverview.vue';
 
 export default {
   name: "AssignmentGantt",
-  components: { MenuBar, GSTC, CreateModal },
+  components: { MenuBar, Timeline, CreateModal },
   data() {
     return {
       edited: false,
