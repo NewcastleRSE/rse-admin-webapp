@@ -16,7 +16,7 @@ export default {
 
     getters: {
         getRses: (state) => {
-          state.rses.sort(function(a, b) {
+          return state.rses.sort(function(a, b) {
             return a.lastname.localeCompare(b.lastname);
         });
         },
