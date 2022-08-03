@@ -22,17 +22,14 @@ export default {
       const assignments = state.assignments.map((assignment) => {
         return {
           assignmentID: assignment.id,
-          project: assignment.project.data,
-          name: assignment.project.data.name,
-          rse: assignment.rse.data,
-          parent: assignment.rse.data.id.toString(),
+          project: assignment.project,
+          name: assignment.project.name,
+          rse: assignment.rse,
           start: Date.parse(assignment.start),
           end: Date.parse(assignment.end),
           FTE: Number(assignment.fte)
         };
       });
-
-      console.log(assignments)
 
       // assignment with latest end is displayed first
       assignments.sort(function(a, b) {
@@ -45,10 +42,9 @@ export default {
       const assignments = state.savedAssignments.map((assignment) => {
         return {
           assignmentID: assignment.id,
-          project: assignment.project.data,
-          name: assignment.project.data ? assignment.project.data.name : '',
-          rse: assignment.rse.data,
-          parent: assignment.rse.data.id.toString(),
+          project: assignment.project,
+          name: assignment.project.name,
+          rse: assignment.rse,
           start: Date.parse(assignment.start),
           end: Date.parse(assignment.end),
           FTE: Number(assignment.fte)
