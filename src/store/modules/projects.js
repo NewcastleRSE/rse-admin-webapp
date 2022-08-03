@@ -19,40 +19,16 @@ export default {
     Call with this.$store.getters["projects/getProjects"];
     */
     getProjects: (state) => {
-
-      const projects = state.projects.map((project) => {
-        const ganttItem = {};
-
-        ganttItem.id = project.hs_object_id;
-
-        ganttItem.name = project.dealname;
-
-        ganttItem.start = Date.parse(project.start_date)
-          ? project.start_date
-          : Date.parse("2020-01-01");
-        ganttItem.end = Date.parse(project.end_date)
-          ? project.end_date
-          : Date.parse("2022-12-31");
-
-        ganttItem.stage = project.dealstage;
-        ganttItem.amount = project.amount;
-        ganttItem.faculty = project.faculty;
-        ganttItem.financeContact = project.financeContact;
-        ganttItem.fundingBody = project.fundingBody;
-        ganttItem.projectLead = project.projectLead;
-        ganttItem.projectValue = project.projectValue;
-        ganttItem.school = project.school;
-        ganttItem.status = project.status;
-
-        return ganttItem;
-      });
-
-      return projects.sort(function(a, b) {
-          let textA = a.name.toUpperCase();
-          let textB = b.name.toUpperCase();
+      return state.projects.sort(function(a, b) {
+          let textA = a.dealname.toUpperCase();
+          let textB = b.dealname.toUpperCase();
           return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
       });
     },
+    /*
+    Maps properties sent from HubSpot
+    Call with this.$store.getters["projects/getProject", "{id}"];
+    */
     getProject: (state) => (id) =>{
       return state.projects.find((project) => {
         if (project.id === id) {
@@ -128,7 +104,7 @@ export default {
 
     /*
     Gets project by ID from HubSpot
-    Call with this.$store.dispatch("projects/getProject", "{id}}");
+    Call with this.$store.dispatch("projects/getProject", "{id}");
     */
     getProject({ commit, rootState }, id = "") {
       //commit("resetProject");
