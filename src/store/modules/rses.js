@@ -104,14 +104,30 @@ export default {
           const pagination = response.data.meta.pagination
 
           if(pagination.page < pagination.pageCount) {
-            return await fetchRses(pagination.page + 1, pageSize)
+            return await fetchRses(pagination.page + 1, pageSize, populate)
           }
           else {
             return rses
           }
       }
 
-      commit("getRses", await fetchRses(0, 100));
+      let RSEs = await fetchRses(0, 100, ['assignments', 'assignments.project']),
+          assignments = []
+
+      RSEs.forEach(RSE => {
+
+        RSE.assignments.data.forEach(assignment => {
+          let project = assignment.project.data
+          delete assignment.project
+          assignment.project = project
+          assignment.rse = RSE.id
+        })
+
+        assignments = assignments.concat(RSE.assignments.data)
+      })
+
+      commit('assignments/getAssignments', assignments, { root: true })
+      commit("getRses", RSEs)
     }
   }
 }

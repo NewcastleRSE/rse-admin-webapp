@@ -1,6 +1,6 @@
 //import router from "../../router";
 import axios from 'axios'
-import * as qs from 'qs'
+//import * as qs from 'qs'
 
 export default {
   namespaced: true,
@@ -115,41 +115,41 @@ export default {
         Call with this.$store.dispatch("assignments/getAssignments", "{id}");
         Can leave parameter empty and will call all assignments
     */
-    async getAssignments({ commit, rootState }, id = "") {
+    // async getAssignments({ commit, rootState }, id = "") {
 
-      let assignments = []
+    //   let assignments = []
 
-      const fetchAssignments = async function (page, pageSize, populate) {
+    //   const fetchAssignments = async function (page, pageSize, populate) {
 
-          const query = qs.stringify({
-              pagination: {
-                page: page,
-                pageSize: pageSize,
-              },
-              populate: populate
-            },{
-              encodeValuesOnly: true,
-            });
+    //       const query = qs.stringify({
+    //           pagination: {
+    //             page: page,
+    //             pageSize: pageSize,
+    //           },
+    //           populate: populate
+    //         },{
+    //           encodeValuesOnly: true,
+    //         });
   
-          let response = await axios.get(`${process.env.VUE_APP_API_URL}/assignments/${id}?${query}`, {
-            headers: {
-              Authorization: `Bearer ${rootState.auth.jwt}`,
-            }})
+    //       let response = await axios.get(`${process.env.VUE_APP_API_URL}/assignments/${id}?${query}`, {
+    //         headers: {
+    //           Authorization: `Bearer ${rootState.auth.jwt}`,
+    //         }})
           
-          assignments = assignments.concat(response.data.data)
-          const pagination = response.data.meta.pagination
+    //       assignments = assignments.concat(response.data.data)
+    //       const pagination = response.data.meta.pagination
 
-          if(pagination.page < pagination.pageCount) {
-            return await fetchAssignments(pagination.page + 1, pageSize)
-          }
-          else {
-            return assignments
-          }
-      }
+    //       if(pagination.page < pagination.pageCount) {
+    //         return await fetchAssignments(pagination.page + 1, pageSize, populate)
+    //       }
+    //       else {
+    //         return assignments
+    //       }
+    //   }
 
-      commit("getAssignments", await fetchAssignments(0, 100));
+    //   commit("getAssignments", await fetchAssignments(0, 100, 'project'));
       
-    },
+    // },
     /*
         Creates an assignment and adds it to state.assignments
         Call with this.$store.dispatch("assignments/addAssignment", assignment);
