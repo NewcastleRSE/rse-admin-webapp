@@ -1,5 +1,6 @@
 //import router from "../../router";
 import axios from "axios";
+import * as qs from 'qs'
 
 export default {
   namespaced: true,
@@ -30,6 +31,8 @@ export default {
           FTE: Number(assignment.fte)
         };
       });
+
+      console.log(assignments)
 
       // assignment with latest end is displayed first
       assignments.sort(function(a, b) {
@@ -112,19 +115,40 @@ export default {
         Call with this.$store.dispatch("assignments/getAssignments", "{id}");
         Can leave parameter empty and will call all assignments
     */
-    getAssignments({ commit, rootState }, id = "") {
-      axios
-        .get(`${process.env.VUE_APP_API_URL}/assignments/${id}?populate=*`, {
-          headers: {
-            Authorization: `Bearer ${rootState.auth.jwt}`,
-          },
-        })
-        .then((response) => {
-          commit("getAssignments", response.data.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    async getAssignments({ commit, rootState }, id = "") {
+
+      let assignments = []
+
+      const fetchAssignments = async function (page, pageSize) {
+
+          const query = qs.stringify({
+              pagination: {
+                page: page,
+                pageSize: pageSize,
+              },
+              populate: '*'
+            },{
+              encodeValuesOnly: true,
+            });
+  
+          let response = await axios.get(`${process.env.VUE_APP_API_URL}/assignments/${id}?${query}`, {
+            headers: {
+              Authorization: `Bearer ${rootState.auth.jwt}`,
+            }})
+          
+          assignments = assignments.concat(response.data.data)
+          const pagination = response.data.meta.pagination
+
+          if(pagination.page < pagination.pageCount) {
+            return await fetchAssignments(pagination.page + 1, pageSize)
+          }
+          else {
+            return assignments
+          }
+      }
+
+      commit("getAssignments", await fetchAssignments(0, 100));
+      
     },
     /*
         Creates an assignment and adds it to state.assignments
