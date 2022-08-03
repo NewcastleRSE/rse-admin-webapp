@@ -1,5 +1,6 @@
 //import router from "../../router";
-import axios from "axios";
+import axios from 'axios'
+import * as qs from 'qs'
 import { DateTime } from "luxon";
 
 export default {
@@ -15,33 +16,13 @@ export default {
 
     getters: {
         getRses: (state) => {
-            state.rses.sort(function(a, b) {
-                return a.lastname.localeCompare(b.lastname);
-            });
-
-            const rses = state.rses.map((rse) => {
-                const ganttItem = {};
-
-                ganttItem.id = rse.id.toString();
-                ganttItem.name = rse.firstname + " " + rse.lastname;
-                ganttItem.team = rse.Team;
-                ganttItem.email = rse.email;
-                ganttItem.collapsed = true;
-
-                return ganttItem;
-            });
-
-            return rses;
-        },
-        getFullRses: (state) => {
           state.rses.sort(function(a, b) {
-              return a.lastname.localeCompare(b.lastname);
-          });
+            return a.lastname.localeCompare(b.lastname);
+        });
         },
         nextRSE: (state) => {
           let fullTeam = state.rses.filter(rse => rse.nextAvailableDate)
           fullTeam.sort((a, b) => { return DateTime.fromISO(a.nextAvailableDate) - DateTime.fromISO(b.nextAvailableDate) } )
-          
           let nextRSE = fullTeam[0],
               wait = DateTime.now().diff(DateTime.fromISO(nextRSE.nextAvailableDate), ['months', 'days']).toObject()
 
@@ -99,19 +80,38 @@ export default {
     Call with this.$store.dispatch("rses/getRses", "{id}");
     Can leave parameter empty and will call all rses
     */
-    getRses({ commit, rootState }, id = "") {
-      axios
-        .get(`${process.env.VUE_APP_API_URL}/rses/${id}`, {
-          headers: {
-            Authorization: `Bearer ${rootState.auth.jwt}`,
-          },
-        })
-        .then((response) => {
-          commit("getRses", response.data.data );
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    async getRses({ commit, rootState }, id = "") {
+      let rses = []
+
+      const fetchRses = async function (page, pageSize, populate) {
+
+          const query = qs.stringify({
+              pagination: {
+                page: page,
+                pageSize: pageSize,
+              },
+              populate: populate
+            },{
+              encodeValuesOnly: true,
+            });
+  
+          let response = await axios.get(`${process.env.VUE_APP_API_URL}/rses/${id}?${query}`, {
+            headers: {
+              Authorization: `Bearer ${rootState.auth.jwt}`,
+            }})
+          
+          rses = rses.concat(response.data.data)
+          const pagination = response.data.meta.pagination
+
+          if(pagination.page < pagination.pageCount) {
+            return await fetchRses(pagination.page + 1, pageSize)
+          }
+          else {
+            return rses
+          }
+      }
+
+      commit("getRses", await fetchRses(0, 100));
     }
   }
 }

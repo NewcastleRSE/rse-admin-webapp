@@ -1,5 +1,5 @@
 //import router from "../../router";
-import axios from "axios";
+import axios from 'axios'
 import * as qs from 'qs'
 
 export default {
@@ -119,14 +119,14 @@ export default {
 
       let assignments = []
 
-      const fetchAssignments = async function (page, pageSize) {
+      const fetchAssignments = async function (page, pageSize, populate) {
 
           const query = qs.stringify({
               pagination: {
                 page: page,
                 pageSize: pageSize,
               },
-              populate: '*'
+              populate: populate
             },{
               encodeValuesOnly: true,
             });

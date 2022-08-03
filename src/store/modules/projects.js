@@ -1,5 +1,6 @@
 //import router from "../../router";
-import axios from "axios";
+import axios from 'axios'
+import * as qs from 'qs'
 
 export default {
   namespaced: true,
@@ -57,7 +58,40 @@ export default {
     Can leave parameter empty and will call all projects
     Returns promise so can be used as async function
     */
-    getProjects({ commit, rootState }, stages) {
+    async getProjects({ commit, rootState }, id = "") {
+      let projects = []
+
+      const fetchProjects = async function (page, pageSize, populate) {
+
+          const query = qs.stringify({
+              pagination: {
+                page: page,
+                pageSize: pageSize,
+              },
+              populate: populate
+            },{
+              encodeValuesOnly: true,
+            });
+  
+          let response = await axios.get(`${process.env.VUE_APP_API_URL}/projects/${id}?${query}`, {
+            headers: {
+              Authorization: `Bearer ${rootState.auth.jwt}`,
+            }})
+          
+            projects = projects.concat(response.data.data)
+          const pagination = response.data.meta.pagination
+
+          if(pagination.page < pagination.pageCount) {
+            return await fetchProjects(pagination.page + 1, pageSize)
+          }
+          else {
+            return projects
+          }
+      }
+
+      commit("getProjects", await fetchProjects(0, 100));
+    },
+    /*getProjects({ commit, rootState }, stages) {
       //commit("resetProjects");
 
       if (!stages) {
@@ -100,7 +134,7 @@ export default {
             });
         });
       });
-    },
+    },*/
 
     /*
     Gets project by ID from HubSpot

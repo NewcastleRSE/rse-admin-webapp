@@ -34,7 +34,6 @@ export default {
     Can leave parameter empty and will call all capacity
     */
     getCapacity({ commit, rootState }, id = "") {
-      console.log(id)
       axios
         .get(`${process.env.VUE_APP_API_URL}/capacities/${id}?populate=*`, {
           headers: {
