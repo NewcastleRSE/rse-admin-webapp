@@ -34,40 +34,97 @@ function generateRows(RSEs) {
           assignments = GSTC.api.GSTCID(rse.id + '-assignments')
     rows[id] = {
       id,
-      label: rse.name,
+      label: `${rse.firstname} ${rse.lastname}`,
     };
     rows[assignments] = {
       assignments,
-      label: '',
       parentId: id,
+      classNames: ['child-row'],
+      label: '<div class="m-2">Assignment summary goes here.</div>'
     };
   })
   return rows;
 }
-function generateAssignments(assignments) {
+
+function generateAvailability(RSEs) {
 
   /**
    * @type { import("gantt-schedule-timeline-calendar").Items }
    */
-  const items = {};
-  assignments.forEach(assignment => {
-    const id = GSTC.api.GSTCID(assignment.assignmentID),
-          rowId = GSTC.api.GSTCID(assignment.rse.id + '-assignments')
+  const items = {}
+
+  RSEs.forEach(rse => {
+
+    const id = GSTC.api.GSTCID(rse.id),
+          rowId = GSTC.api.GSTCID(rse.id)
  
     items[id] = {
       id,
-      label: assignment.project.name,
+      label: rse.firstname + ' ' + rse.lastname,
       rowId,
       time: {
-        start: GSTC.api.date(assignment.start),
-        end: GSTC.api.date(assignment.end),
+        start: GSTC.api.date(rse.contractStart),
+        end: GSTC.api.date(rse.contractEnd),
       },
+      classNames: ['bg-sky-600']
     }
 
   });
 
   return items;
 }
+
+function generateAssignments(assignments) {
+
+  /**
+   * @type { import("gantt-schedule-timeline-calendar").Items }
+   */
+  const items = {},
+        store = useStore()
+
+  assignments.forEach(assignment => {
+
+    console.log(assignment.project.hubspotID)
+
+    // let project = store.getters["assignments/getProject", assignment.project.hubspotID]
+
+    const id = GSTC.api.GSTCID(assignment.assignmentID),
+          rowId = GSTC.api.GSTCID(assignment.rse + '-assignments')
+
+    let classNames = ['bg-green-600']
+
+    // console.log(project)
+
+    // switch(project.faculty) {
+    //   case 'Science, Agriculture & Engineering':
+    //     classNames = ['bg-green-600']
+    //     break
+    //   case 'Humanities & Social Sciences':
+    //     classNames = ['bg-amber-400']
+    //     break
+    //   case 'Medical Sciences':
+    //     classNames = ['bg-purple-400']
+    //     break
+    //   default:
+    //     break
+    // }
+ 
+    items[id] = {
+      id,
+      label: assignment.name,
+      rowId,
+      time: {
+        start: GSTC.api.date(assignment.start),
+        end: GSTC.api.date(assignment.end),
+      },
+      classNames: classNames
+    }
+
+  });
+
+  return items;
+}
+
 // main component
 export default {
   name: "Timeline",
@@ -92,6 +149,7 @@ export default {
                 id: GSTC.api.GSTCID("label"),
                 width: 200,
                 data: "label",
+                isHTML: true,
                 sortable: 'label',
                 expander: true,
                 header: {
@@ -103,7 +161,7 @@ export default {
           rows: generateRows(store.getters["rses/getRses"]),
         },
         chart: {
-          items: generateAssignments(store.getters["assignments/getAssignments"]),
+          items: {...generateAssignments(store.getters["assignments/getAssignments"]), ...generateAvailability(store.getters["rses/getRses"])}
           // time: {
           //   from: GSTC.api.date("2020-01-01").valueOf(), // from 2020-01-01
           //   to: GSTC.api.date("2020-06-01").endOf("month").valueOf(), // to 2020-06-31
