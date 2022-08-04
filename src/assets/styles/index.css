@@ -213,4 +213,12 @@
     .dp__main {
         width: 100%
     }
+
+    .gstc__list-column-row-expander-toggle img {
+        margin-top: 12px;
+    }
+
+    .child-row .gstc__list-column-row-expander {
+        display: none;
+    }
 }
