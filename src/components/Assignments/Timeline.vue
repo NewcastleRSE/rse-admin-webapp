@@ -17,10 +17,12 @@ import { Plugin as ItemMovement } from "gantt-schedule-timeline-calendar/dist/pl
 import { Plugin as Bookmarks } from "gantt-schedule-timeline-calendar/dist/plugins/time-bookmarks.esm.min.js";
 import { Plugin as HighlightWeekends } from 'gantt-schedule-timeline-calendar/dist/plugins/highlight-weekends.esm.min.js';
 import { Plugin as CalendarScroll } from 'gantt-schedule-timeline-calendar/dist/plugins/calendar-scroll.esm.min.js';
+import { Plugin as ProgressBar } from 'gantt-schedule-timeline-calendar/dist/plugins/progress-bar.esm.min.js';
 
 import "gantt-schedule-timeline-calendar/dist/style.css";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useStore } from 'vuex';
+import { DateTime } from "luxon";
 
 var globalThis = require('globalthis')();
 
@@ -56,8 +58,10 @@ function generateAvailability(RSEs) {
   RSEs.forEach(rse => {
 
     const id = GSTC.api.GSTCID(rse.id),
-          rowId = GSTC.api.GSTCID(rse.id)
- 
+          rowId = GSTC.api.GSTCID(rse.id),
+          contractLength = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.contractEnd), ['days']).toObject(),
+          capacity = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.nextAvailableDate), ['days']).toObject()
+
     items[id] = {
       id,
       label: rse.firstname + ' ' + rse.lastname,
@@ -66,6 +70,7 @@ function generateAvailability(RSEs) {
         start: GSTC.api.date(rse.contractStart),
         end: GSTC.api.date(rse.contractEnd),
       },
+      progress: (capacity.days / contractLength.days) * 100,
       classNames: ['bg-sky-600']
     }
 
@@ -79,12 +84,10 @@ function generateAssignments(assignments) {
   /**
    * @type { import("gantt-schedule-timeline-calendar").Items }
    */
-  const items = {},
-        store = useStore()
+  const items = {}
+        // store = useStore()
 
   assignments.forEach(assignment => {
-
-    console.log(assignment.project.hubspotID)
 
     // let project = store.getters["assignments/getProject", assignment.project.hubspotID]
 
@@ -141,7 +144,7 @@ export default {
       const config = {
         licenseKey:
           `${process.env.VUE_APP_GANTT_KEY}`,
-        plugins: [HighlightWeekends(), TimelinePointer(), Selection(), ItemResizing(), ItemMovement(), Bookmarks(), CalendarScroll()],
+        plugins: [ProgressBar(), HighlightWeekends(), TimelinePointer(), Selection(), ItemResizing(), ItemMovement(), Bookmarks(), CalendarScroll()],
         list: {
           columns: {
             data: {
