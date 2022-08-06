@@ -30,12 +30,8 @@ export default {
     Maps properties sent from HubSpot
     Call with this.$store.getters["projects/getProject", "{id}"];
     */
-    getProject: (state) => (id) =>{
-      return state.projects.find((project) => {
-        if (project.id === id) {
-          return project;
-        }
-      })
+    getProject: (state) => (id) => {
+      return state.projects.find(project => project.id === id )
     }
   },
 
