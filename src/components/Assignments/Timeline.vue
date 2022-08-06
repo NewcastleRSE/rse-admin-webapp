@@ -183,20 +183,26 @@ export default {
       });
     }
     function changeZoomLevel(period) {
-      let zoom = 20;
+      let zoom = null,
+          start = null
       switch (period) {
         case 'days':
-          zoom = 20;
+          zoom = 20
+          start = DateTime.now().startOf('day').minus({days: 7})
           break;
         case 'months':
-          zoom = 25.5;
+          zoom = 25.5
+          start = DateTime.now().startOf('month').minus({months: 6})
           break;
         case 'years':
-          zoom = 26.5;
+          zoom = 26.5
+          start = DateTime.now().startOf('month').minus({months: 6})
           break;
       }
 
       state.update('config.chart.time.zoom', zoom);
+      const api = gstc.api;
+      api.scrollToTime(start.toUTC(), false);
     }
     return {
       gstcElement,
