@@ -214,6 +214,10 @@
         width: 100%
     }
 
+    .gstc__list-column-header .gstc__list-column-row-expander-toggle {
+        display: none;
+    }
+
     .gstc__list-column-row-expander-toggle img {
         margin-top: 12px;
     }
