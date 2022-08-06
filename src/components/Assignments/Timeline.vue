@@ -26,18 +26,20 @@ function generateRows(RSEs) {
    */
   const rows = {};
   RSEs.forEach(rse => {
-    const id = GSTC.api.GSTCID(rse.id),
-          assignments = GSTC.api.GSTCID(rse.id + '-assignments')
-    rows[id] = {
-      id,
-      label: `${rse.firstname} ${rse.lastname}`,
-    };
-    rows[assignments] = {
-      assignments,
-      parentId: id,
-      classNames: ['child-row'],
-      label: '<div class="m-2">Assignment summary goes here.</div>'
-    };
+    if(rse.active) {
+      const id = GSTC.api.GSTCID(rse.id),
+            assignments = GSTC.api.GSTCID(rse.id + '-assignments')
+      rows[id] = {
+        id,
+        label: `${rse.firstname} ${rse.lastname}`,
+      };
+      rows[assignments] = {
+        assignments,
+        parentId: id,
+        classNames: ['child-row'],
+        label: '<div class="m-2">Assignment summary goes here.</div>'
+      };
+    }
   })
   return rows;
 }
@@ -50,24 +52,24 @@ function generateAvailability(RSEs) {
   const items = {}
 
   RSEs.forEach(rse => {
+    if(rse.active) {
+      const id = GSTC.api.GSTCID(rse.id),
+                rowId = GSTC.api.GSTCID(rse.id),
+                contractLength = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.contractEnd), ['days']).toObject(),
+                capacity = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.nextAvailableDate), ['days']).toObject()
 
-    const id = GSTC.api.GSTCID(rse.id),
-          rowId = GSTC.api.GSTCID(rse.id),
-          contractLength = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.contractEnd), ['days']).toObject(),
-          capacity = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.nextAvailableDate), ['days']).toObject()
-
-    items[id] = {
-      id,
-      label: rse.firstname + ' ' + rse.lastname,
-      rowId,
-      time: {
-        start: GSTC.api.date(rse.contractStart),
-        end: GSTC.api.date(rse.contractEnd),
-      },
-      progress: (capacity.days / contractLength.days) * 100,
-      classNames: ['bg-sky-600']
+      items[id] = {
+        id,
+        label: rse.firstname + ' ' + rse.lastname,
+        rowId,
+        time: {
+          start: GSTC.api.date(rse.contractStart),
+          end: GSTC.api.date(rse.contractEnd),
+        },
+        progress: (capacity.days / contractLength.days) * 100,
+        classNames: ['bg-sky-600']
+      }
     }
-
   });
 
   return items;
