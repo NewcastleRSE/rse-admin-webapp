@@ -15,7 +15,6 @@ import { Plugin as ProgressBar } from 'gantt-schedule-timeline-calendar/dist/plu
 
 import "gantt-schedule-timeline-calendar/dist/style.css";
 import { ref, onMounted, onBeforeUnmount } from "vue";
-import { useStore } from 'vuex';
 import { DateTime } from "luxon";
 
 var globalThis = require('globalthis')();
@@ -26,9 +25,9 @@ function generateRows(RSEs) {
    */
   const rows = {};
   RSEs.forEach(rse => {
-    if(rse.active) {
+    if (rse.active) {
       const id = GSTC.api.GSTCID(rse.id),
-            assignments = GSTC.api.GSTCID(rse.id + '-assignments')
+        assignments = GSTC.api.GSTCID(rse.id + '-assignments')
       rows[id] = {
         id,
         label: `${rse.firstname} ${rse.lastname}`,
@@ -52,11 +51,11 @@ function generateAvailability(RSEs) {
   const items = {}
 
   RSEs.forEach(rse => {
-    if(rse.active) {
+    if (rse.active) {
       const id = GSTC.api.GSTCID(rse.id),
-                rowId = GSTC.api.GSTCID(rse.id),
-                contractLength = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.contractEnd), ['days']).toObject(),
-                capacity = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.nextAvailableDate), ['days']).toObject()
+        rowId = GSTC.api.GSTCID(rse.id),
+        contractLength = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.contractEnd), ['days']).toObject(),
+        capacity = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.nextAvailableDate), ['days']).toObject()
 
       items[id] = {
         id,
@@ -75,42 +74,39 @@ function generateAvailability(RSEs) {
   return items;
 }
 
-function generateAssignments(assignments) {
+function generateAssignments(assignments, projects) {
 
   /**
    * @type { import("gantt-schedule-timeline-calendar").Items }
    */
   const items = {}
-        // store = useStore()
 
   assignments.forEach(assignment => {
-
-    // let project = store.getters["assignments/getProject", assignment.project.hubspotID]
 
     const id = GSTC.api.GSTCID(assignment.assignmentID),
           rowId = GSTC.api.GSTCID(assignment.rse + '-assignments')
 
-    let classNames = ['bg-green-600']
+    let classNames
 
-    // console.log(project)
+    assignment.project = projects.find(project => project.id === assignment.project.hubspotID )
 
-    // switch(project.faculty) {
-    //   case 'Science, Agriculture & Engineering':
-    //     classNames = ['bg-green-600']
-    //     break
-    //   case 'Humanities & Social Sciences':
-    //     classNames = ['bg-amber-400']
-    //     break
-    //   case 'Medical Sciences':
-    //     classNames = ['bg-purple-400']
-    //     break
-    //   default:
-    //     break
-    // }
- 
+    switch(assignment.project.faculty) {
+      case 'Science, Agriculture & Engineering':
+        classNames = ['bg-green-600']
+        break
+      case 'Humanities & Social Sciences':
+        classNames = ['bg-amber-400']
+        break
+      case 'Medical Sciences':
+        classNames = ['bg-purple-400']
+        break
+      default:
+        break
+    }
+
     items[id] = {
       id,
-      label: assignment.name,
+      label: assignment.project.dealname,
       rowId,
       time: {
         start: GSTC.api.date(assignment.start),
@@ -127,13 +123,11 @@ function generateAssignments(assignments) {
 // main component
 export default {
   name: "Timeline",
-  setup() {
+  props: ['rses', 'projects', 'assignments'],
+  setup(props) {
     let gstc, state;
     const gstcElement = ref(null);
     onMounted(() => {
-
-      const store = useStore()
-
       /**
        * @type { import("gantt-schedule-timeline-calendar").Config }
        */
@@ -141,7 +135,7 @@ export default {
         licenseKey:
           `${process.env.VUE_APP_GANTT_KEY}`,
         plugins: [ProgressBar(), HighlightWeekends(), TimelinePointer(), Selection(), ItemResizing(), ItemMovement(), Bookmarks(), CalendarScroll()],
-        innerHeight: (store.getters["rses/getRses"].length * 40) + 72,
+        innerHeight: (props.rses.length * 40) + 72,
         list: {
           columns: {
             data: {
@@ -158,10 +152,12 @@ export default {
               },
             },
           },
-          rows: generateRows(store.getters["rses/getRses"]),
+          rows: generateRows(props.rses),
         },
         chart: {
-          items: {...generateAssignments(store.getters["assignments/getAssignments"]), ...generateAvailability(store.getters["rses/getRses"])},
+          items: { 
+            ...generateAssignments(props.assignments, props.projects),
+            ...generateAvailability(props.rses) },
           time: {
             zoom: 25.5
           }
@@ -186,19 +182,19 @@ export default {
     }
     function changeZoomLevel(period) {
       let zoom = null,
-          start = null
+        start = null
       switch (period) {
         case 'days':
           zoom = 20
-          start = DateTime.now().startOf('day').minus({days: 7})
+          start = DateTime.now().startOf('day').minus({ days: 7 })
           break;
         case 'months':
           zoom = 25.5
-          start = DateTime.now().startOf('month').minus({months: 6})
+          start = DateTime.now().startOf('month').minus({ months: 6 })
           break;
         case 'years':
           zoom = 26.5
-          start = DateTime.now().startOf('month').minus({months: 6})
+          start = DateTime.now().startOf('month').minus({ months: 6 })
           break;
       }
 

@@ -4,7 +4,7 @@
       <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
         <menu-bar :edited="edited" :zoom="zoom" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
         
-        <Timeline ref="timeline" />
+        <Timeline ref="timeline" :rses="rses" :projects="projects" :assignments="assignments" />
       </div>
       <create-modal ref="create" />
     </div>
@@ -24,6 +24,9 @@ export default {
   data() {
     return {
       edited: false,
+      rses: this.$store.getters["rses/getRses"],
+      projects: this.$store.getters["projects/getProjects"],
+      assignments: this.$store.getters["assignments/getAssignments"]
     }
   },
   methods: {
