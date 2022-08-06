@@ -21,7 +21,7 @@ export default {
         });
         },
         nextRSE: (state) => {
-          let fullTeam = state.rses.filter(rse => rse.nextAvailableDate)
+          let fullTeam = state.rses.filter(rse => rse.nextAvailableDate && rse.active)
           fullTeam.sort((a, b) => { return DateTime.fromISO(a.nextAvailableDate) - DateTime.fromISO(b.nextAvailableDate) } )
           let nextRSE = fullTeam[0],
               wait = DateTime.now().diff(DateTime.fromISO(nextRSE.nextAvailableDate), ['months', 'days']).toObject()
@@ -31,7 +31,7 @@ export default {
           return nextRSE
         },
         nextWebMobile: (state) => {
-          let webMobileTeam = state.rses.filter(rse => rse.team === 'WebMobile' && rse.nextAvailableDate)
+          let webMobileTeam = state.rses.filter(rse => rse.team === 'WebMobile' && rse.nextAvailableDate && rse.active)
           webMobileTeam.sort((a, b) => { return DateTime.fromISO(a.nextAvailableDate) - DateTime.fromISO(b.nextAvailableDate) } )
           
           let nextRSE = webMobileTeam[0],
@@ -42,7 +42,7 @@ export default {
           return nextRSE
         },
         nextMiddleware: (state) => {
-          let middlewareTeam = state.rses.filter(rse => rse.team === 'Middleware' && rse.nextAvailableDate)
+          let middlewareTeam = state.rses.filter(rse => rse.team === 'Middleware' && rse.nextAvailableDate && rse.active)
           middlewareTeam.sort((a, b) => { return DateTime.fromISO(a.nextAvailableDate) - DateTime.fromISO(b.nextAvailableDate) } )
           
           let nextRSE = middlewareTeam[0],
@@ -53,7 +53,7 @@ export default {
           return nextRSE
         },
         nextDataScience: (state) => {
-          let dataScienceTeam = state.rses.filter(rse => rse.team === 'DataScience' && rse.nextAvailableDate)
+          let dataScienceTeam = state.rses.filter(rse => rse.team === 'DataScience' && rse.nextAvailableDate && rse.active)
           dataScienceTeam.sort((a, b) => { return DateTime.fromISO(a.nextAvailableDate) - DateTime.fromISO(b.nextAvailableDate) } )
           
           let nextRSE = dataScienceTeam[0],
