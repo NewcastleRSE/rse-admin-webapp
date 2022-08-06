@@ -4,7 +4,7 @@
       <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
         <menu-bar :edited="edited" :zoom="zoom" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
         
-        <Timeline />
+        <Timeline ref="timeline" />
       </div>
       <create-modal ref="create" />
     </div>
@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     zoom: function(level) {
-      this.$refs.gantt.zoom(level)
+      this.$refs.timeline.changeZoomLevel(level)
     },
     create: function() {
       this.$refs.create.toggleModal();

@@ -1,11 +1,5 @@
 <template>
-  <div>
-    <div class="toolbox">
-      <button @click="updateFirstRow">Update first row</button>
-      <button @click="changeZoomLevel">Change zoom level</button>
-    </div>
-    <div class="gstc-wrapper" ref="gstcElement"></div>
-  </div>
+  <div class="gstc-wrapper" ref="gstcElement"></div>
 </template>
 
 <script>
@@ -145,6 +139,7 @@ export default {
         licenseKey:
           `${process.env.VUE_APP_GANTT_KEY}`,
         plugins: [ProgressBar(), HighlightWeekends(), TimelinePointer(), Selection(), ItemResizing(), ItemMovement(), Bookmarks(), CalendarScroll()],
+        innerHeight: (store.getters["rses/getRses"].length * 40) + 72,
         list: {
           columns: {
             data: {
@@ -164,12 +159,10 @@ export default {
           rows: generateRows(store.getters["rses/getRses"]),
         },
         chart: {
-          items: {...generateAssignments(store.getters["assignments/getAssignments"]), ...generateAvailability(store.getters["rses/getRses"])}
-          // time: {
-          //   from: GSTC.api.date("2020-01-01").valueOf(), // from 2020-01-01
-          //   to: GSTC.api.date("2020-06-01").endOf("month").valueOf(), // to 2020-06-31
-          //   calculatedZoomMode: true,
-          // }
+          items: {...generateAssignments(store.getters["assignments/getAssignments"]), ...generateAvailability(store.getters["rses/getRses"])},
+          time: {
+            zoom: 25.5
+          }
         },
       };
       state = GSTC.api.stateFromConfig(config);
@@ -189,8 +182,21 @@ export default {
         return row;
       });
     }
-    function changeZoomLevel() {
-      state.update("config.chart.time.zoom", 23);
+    function changeZoomLevel(period) {
+      let zoom = 20;
+      switch (period) {
+        case 'days':
+          zoom = 20;
+          break;
+        case 'months':
+          zoom = 25.5;
+          break;
+        case 'years':
+          zoom = 26.5;
+          break;
+      }
+
+      state.update('config.chart.time.zoom', zoom);
     }
     return {
       gstcElement,
