@@ -2,25 +2,29 @@
   <div>
     <a
       class="text-blueGray-500 block"
-      href="#pablo"
+      href="#"
       ref="btnDropdownRef"
       v-on:click="toggleDropdown($event)"
     >
       <div class="items-center flex">
+        <div class="flex flex-col pr-3 text-white">
+          <span class="font-bold text-right">{{user.displayName}}</span>
+          <span>{{user.jobTitle}}</span>
+        </div>
         <span
           class="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full"
         >
           <img
             alt="..."
             class="w-full rounded-full align-middle border-none shadow-lg"
-            :src="image"
+            :src="`data:image/png;base64,${user.photo}`"
           />
         </span>
       </div>
     </a>
     <div
       ref="popoverDropdownRef"
-      class="bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48"
+      class="bg-white text-base z-50 float-right py-2 list-none text-left rounded shadow-lg min-w-48"
       v-bind:class="{
         hidden: !dropdownPopoverShow,
         block: dropdownPopoverShow,
@@ -58,15 +62,16 @@
 
 <script>
 import { createPopper } from "@popperjs/core";
-
-import image from "@/assets/img/avatars/mark-turner.png";
+import { mapGetters } from 'vuex';
 
 export default {
   data() {
     return {
-      dropdownPopoverShow: false,
-      image: image,
+      dropdownPopoverShow: false
     };
+  },
+  computed: {
+    ...mapGetters('auth', ['user'])
   },
   methods: {
     toggleDropdown: function (event) {
@@ -76,7 +81,7 @@ export default {
       } else {
         this.dropdownPopoverShow = true;
         createPopper(this.$refs.btnDropdownRef, this.$refs.popoverDropdownRef, {
-          placement: "bottom-start",
+          placement: "bottom-end",
         });
       }
     },

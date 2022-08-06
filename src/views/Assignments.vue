@@ -3,7 +3,8 @@
     <div class="w-full mb-12 px-4">
       <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
         <menu-bar :edited="edited" :zoom="zoom" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
-        <gantt-chart ref="gantt" />
+        
+        <Timeline ref="timeline" :rses="rses" :projects="projects" :assignments="assignments" />
       </div>
       <create-modal ref="create" />
     </div>
@@ -12,22 +13,25 @@
 <script>
 import differenceWith from "lodash.differencewith";
 import isEqual from "lodash.isequal";
-import GanttChart from "@/components/Assignments/GanttChart.vue";
+import Timeline from "@/components/Assignments/Timeline.vue";
 import CreateModal from "@/components/Assignments/CreateModal.vue";
 import MenuBar from "@/components/Assignments/MenuBar.vue";
 import CardTimeSplitOverviewVue from '../components/Cards/CardTimeSplitOverview.vue';
 
 export default {
   name: "AssignmentGantt",
-  components: { MenuBar, GanttChart, CreateModal },
+  components: { MenuBar, Timeline, CreateModal },
   data() {
     return {
       edited: false,
+      rses: this.$store.getters["rses/getRses"],
+      projects: this.$store.getters["projects/getProjects"],
+      assignments: this.$store.getters["assignments/getAssignments"]
     }
   },
   methods: {
     zoom: function(level) {
-      this.$refs.gantt.zoom(level)
+      this.$refs.timeline.changeZoomLevel(level)
     },
     create: function() {
       this.$refs.create.toggleModal();

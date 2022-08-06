@@ -1,5 +1,6 @@
 //import router from "../../router";
-import axios from "axios";
+import axios from 'axios'
+import * as qs from 'qs'
 
 export default {
   namespaced: true,
@@ -19,46 +20,18 @@ export default {
     Call with this.$store.getters["projects/getProjects"];
     */
     getProjects: (state) => {
-
-      const projects = state.projects.map((project) => {
-        const ganttItem = {};
-
-        ganttItem.id = project.hs_object_id;
-
-        ganttItem.name = project.dealname;
-
-        ganttItem.start = Date.parse(project.start_date)
-          ? project.start_date
-          : Date.parse("2020-01-01");
-        ganttItem.end = Date.parse(project.end_date)
-          ? project.end_date
-          : Date.parse("2022-12-31");
-
-        ganttItem.stage = project.dealstage;
-        ganttItem.amount = project.amount;
-        ganttItem.faculty = project.faculty;
-        ganttItem.financeContact = project.financeContact;
-        ganttItem.fundingBody = project.fundingBody;
-        ganttItem.projectLead = project.projectLead;
-        ganttItem.projectValue = project.projectValue;
-        ganttItem.school = project.school;
-        ganttItem.status = project.status;
-
-        return ganttItem;
-      });
-
-      return projects.sort(function(a, b) {
-          let textA = a.name.toUpperCase();
-          let textB = b.name.toUpperCase();
+      return state.projects.sort(function(a, b) {
+          let textA = a.dealname.toUpperCase();
+          let textB = b.dealname.toUpperCase();
           return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
       });
     },
-    getProject: (state) => (id) =>{
-      return state.projects.find((project) => {
-        if (project.id === id) {
-          return project;
-        }
-      })
+    /*
+    Maps properties sent from HubSpot
+    Call with this.$store.getters["projects/getProject", "{id}"];
+    */
+    getProject: (state) => (id) => {
+      return state.projects.find(project => project.id === id )
     }
   },
 
@@ -81,7 +54,40 @@ export default {
     Can leave parameter empty and will call all projects
     Returns promise so can be used as async function
     */
-    getProjects({ commit, rootState }, stages) {
+    async getProjects({ commit, rootState }, id = "") {
+      let projects = []
+
+      const fetchProjects = async function (page, pageSize, populate) {
+
+          const query = qs.stringify({
+              pagination: {
+                page: page,
+                pageSize: pageSize,
+              },
+              populate: populate
+            },{
+              encodeValuesOnly: true,
+            });
+  
+          let response = await axios.get(`${process.env.VUE_APP_API_URL}/projects/${id}?${query}`, {
+            headers: {
+              Authorization: `Bearer ${rootState.auth.jwt}`,
+            }})
+          
+            projects = projects.concat(response.data.data)
+          const pagination = response.data.meta.pagination
+
+          if(pagination.page < pagination.pageCount) {
+            return await fetchProjects(pagination.page + 1, pageSize)
+          }
+          else {
+            return projects
+          }
+      }
+
+      commit("getProjects", await fetchProjects(0, 100));
+    },
+    /*getProjects({ commit, rootState }, stages) {
       //commit("resetProjects");
 
       if (!stages) {
@@ -124,11 +130,11 @@ export default {
             });
         });
       });
-    },
+    },*/
 
     /*
     Gets project by ID from HubSpot
-    Call with this.$store.dispatch("projects/getProject", "{id}}");
+    Call with this.$store.dispatch("projects/getProject", "{id}");
     */
     getProject({ commit, rootState }, id = "") {
       //commit("resetProject");
