@@ -26,34 +26,30 @@ function generateRows(RSEs) {
   const rows = {};
   RSEs.forEach(rse => {
     if (rse.active) {
-      const id = GSTC.api.GSTCID(rse.id),
-        assignments = GSTC.api.GSTCID(rse.id + '-assignments')
-      rows[id] = {
-        id,
-        label: `${rse.firstname} ${rse.lastname}`,
-      };
-      rows[assignments] = {
-        assignments,
-        parentId: id,
-        classNames: ['child-row'],
-        label: '<div class="m-2">Assignment summary goes here.</div>'
-      };
+      const id = GSTC.api.GSTCID(`rse-${rse.id}`),
+            assignments = GSTC.api.GSTCID(`rse-${rse.id}-assignments`)
+            rows[id] = {
+              id,
+              label: `${rse.firstname} ${rse.lastname}`,
+            };
+            rows[assignments] = {
+              assignments,
+              parentId: id,
+              classNames: ['child-row'],
+              label: '<div class="m-2">Assignment summary goes here.</div>'
+            };
     }
   })
   return rows;
 }
 
 function generateAvailability(RSEs) {
-
-  /**
-   * @type { import("gantt-schedule-timeline-calendar").Items }
-   */
   const items = {}
 
   RSEs.forEach(rse => {
     if (rse.active) {
-      const id = GSTC.api.GSTCID(rse.id),
-        rowId = GSTC.api.GSTCID(rse.id),
+      const id = GSTC.api.GSTCID(`rse-${rse.id}`),
+        rowId = GSTC.api.GSTCID(`rse-${rse.id}`),
         contractLength = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.contractEnd), ['days']).toObject(),
         capacity = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.nextAvailableDate), ['days']).toObject()
 
@@ -83,8 +79,8 @@ function generateAssignments(assignments, projects) {
 
   assignments.forEach(assignment => {
 
-    const id = GSTC.api.GSTCID(assignment.assignmentID),
-          rowId = GSTC.api.GSTCID(assignment.rse + '-assignments')
+    const id = GSTC.api.GSTCID(`assignment-${assignment.assignmentID}`),
+          rowId = GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`)
 
     let classNames
 
@@ -106,12 +102,13 @@ function generateAssignments(assignments, projects) {
 
     items[id] = {
       id,
-      label: assignment.project.dealname,
+      label: assignment.name,
       rowId,
       time: {
         start: GSTC.api.date(assignment.start),
         end: GSTC.api.date(assignment.end),
       },
+      progress: 100,
       classNames: classNames
     }
 
@@ -155,9 +152,10 @@ export default {
           rows: generateRows(props.rses),
         },
         chart: {
-          items: { 
+          items: {
             ...generateAssignments(props.assignments, props.projects),
-            ...generateAvailability(props.rses) },
+            ...generateAvailability(props.rses)
+          },
           time: {
             zoom: 25.5
           }
