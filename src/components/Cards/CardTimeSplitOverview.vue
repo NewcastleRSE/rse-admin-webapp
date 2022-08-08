@@ -9,7 +9,7 @@
             Team
           </h6>
           <h2 class="text-blueGray-700 text-xl font-semibold">
-            Time Split
+            Last 30 Days Time Split
           </h2>
         </div>
         <div
@@ -65,20 +65,11 @@
               <div class="flex items-center">
                 <!-- <span class="mr-2">60%</span> -->
                 <div class="relative w-full">
-                  <div
-                    class="overflow-hidden h-2 text-xs flex rounded bg-red-200"
-                  >
-                    <div
-                      style="width: 60%;"
-                      class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"
-                    ></div>
-                    <div
-                      style="width: 20%;"
-                      class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-orange-500"
-                    ></div>
-                    <div
-                      style="width: 20%;"
-                      class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"
+                  <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                    <div v-for="(entry, index) in timesheet.distribution" :key="index"
+                      :style="{ width: ((entry.actualTime / timesheet.totalTarget) * 100) + '%' }"
+                      :class="colour(entry, index)"
+                      class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center"
                     ></div>
                   </div>
                 </div>
@@ -97,6 +88,18 @@
         loading: false,
         overview: this.$store.getters["timesheets/getOverview"]
       };
+    },
+    methods: {
+      colour: (entry, index) => {
+        let colours = ['bg-sky-300', 'bg-sky-400', 'bg-sky-500', 'bg-sky-600', 'bg-sky-700']
+        if(entry.targetFTE === 0) {
+          return 'bg-amber-500'
+        }
+        else {
+          return colours[index]
+        }
+        
+      }
     },
     props: {
       color: {

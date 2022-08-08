@@ -49,6 +49,8 @@ export default {
             let rseDistribution = {
               rse: rse,
               warning: false,
+              totalTarget: (workdays * 7.5) * 3600,
+              totalTime: summary ? summary.duration : 0,
               distribution: []
             }
 
@@ -88,8 +90,6 @@ export default {
                 })
               })
             }
-
-            console.log(rseDistribution)
             timeDistribution.push(rseDistribution)
           })
 
