@@ -67,6 +67,7 @@
                 <div class="relative w-full">
                   <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
                     <div v-for="(entry, index) in timesheet.distribution" :key="index"
+                      :data-project="entry.name"
                       :style="{ width: ((entry.actualTime / timesheet.totalTarget) * 100) + '%' }"
                       :class="colour(entry, index)"
                       class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center"
