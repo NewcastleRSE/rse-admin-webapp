@@ -57,12 +57,12 @@
             <th
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left"
             >
-              {{ project.name }}
+              {{ project.dealname }}
             </th>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
-              {{ project.projectLead  }}
+              {{ project.lead  }}
             </td>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
@@ -87,29 +87,14 @@
 </template>
 <script>
   export default {
-    computed: {
-      projects() {
+    data() {
         let projects = this.$store.getters["projects/getProjects"],
-            active = projects.filter(project => project.stage === 'Awaiting Allocation' || project.stage === 'Allocated'),
+            active = projects.filter(project => project.dealstage === 'Awaiting Allocation' || project.dealstage === 'Allocated'),
             red = active.filter(project => project.status === 'Red'),
             amber = active.filter(project => project.status === 'Amber')
-        return [...red, ...amber]
-      }
-    },
-    watch: {
-      projects(update) {
-        // watches 'getProjects()' to update projects
-        this.projects = update;
-      }
-    },
-    props: {
-      color: {
-        default: "light",
-        validator: function (value) {
-          // The value must match one of these strings
-          return ["light", "dark"].indexOf(value) !== -1;
-        },
-      },
+        return {
+          projects: [...red, ...amber]
+        };
     }
   };
 </script>
