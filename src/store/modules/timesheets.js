@@ -42,9 +42,7 @@ export default {
 
           rses.forEach(rse => {
             let summary = timesheetSummary.team.find(summary => summary._id === rse.clockifyID),
-                assignments = rootGetters["assignments/getCurrentAssignments"](rse.id)
-            
-            // console.log(summary)
+                assignments = rootGetters["assignments/getAssignmentsInPeriod"](rse.id, now.minus({days: 30}).toISODate(), now.toISODate())
 
             let rseDistribution = {
               rse: rse,
@@ -80,14 +78,16 @@ export default {
             // Captures times against unassigned projects
             if(summary && summary.children) {
               summary.children.forEach(timeEntry => {
-                if(!rseDistribution.distribution.find(entry => entry.name === timeEntry.name))
-                rseDistribution.distribution.push({
-                  name: timeEntry.name,
-                  targetTime: 0,
-                  targetFTE: 0,
-                  actualTime: timeEntry.duration,
-                  actualFTE: null
-                })
+
+                if(!rseDistribution.distribution.find(entry => entry.name === timeEntry.name)) {
+                  rseDistribution.distribution.push({
+                    name: timeEntry.name,
+                    targetTime: 0,
+                    targetFTE: 0,
+                    actualTime: timeEntry.duration,
+                    actualFTE: null
+                  })
+                }
               })
             }
             timeDistribution.push(rseDistribution)

@@ -72,8 +72,22 @@ export default {
     getCurrentAssignments: (state) => (rse) => {
       return state.assignments.filter(assignment => 
         assignment.rse === rse
-        && DateTime.fromISO(assignment.start) < DateTime.utc()
-        && DateTime.fromISO(assignment.end) > DateTime.utc())
+        && DateTime.fromISO(assignment.start) <= DateTime.utc()
+        && DateTime.fromISO(assignment.end) >= DateTime.utc())
+    },
+    /*
+    Return the current assignments for a given RSE
+    */
+    getAssignmentsInPeriod: (state) => (rse, start, end) => {
+
+      return state.assignments.filter(assignment =>
+        (assignment.rse === rse
+        && DateTime.fromISO(assignment.start) <= DateTime.fromISO(start)
+        && DateTime.fromISO(assignment.end) >= DateTime.fromISO(start)) ||
+        (assignment.rse === rse
+          && DateTime.fromISO(assignment.start) <= DateTime.fromISO(end)
+          && DateTime.fromISO(assignment.end) >= DateTime.fromISO(end))
+      )
     }
   },
   /*
