@@ -22,11 +22,15 @@ export default {
       state.jwt = data.jwt
       state.user = data.profile
       state.user.photo = data.photo
-      this.dispatch("projects/getProjects")
-      // this.dispatch("capacity/getCapacity")
-      this.dispatch("rses/getRses")
-      // this.dispatch("assignments/getAssignments")
-      router.push({ name: "Dashboard" });
+      Promise.all([
+        this.dispatch("projects/getProjects"),
+        this.dispatch("rses/getRses"),
+        this.dispatch("timesheets/getReport")
+      ]).then(() => {
+        router.push({ name: "Dashboard" });
+      }).catch(error => {
+        console.error(error)
+      })
     },
     logout(state) {
       localStorage.removeItem("jwt");

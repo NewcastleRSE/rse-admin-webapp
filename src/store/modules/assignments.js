@@ -1,6 +1,6 @@
 //import router from "../../router";
 import axios from 'axios'
-//import * as qs from 'qs'
+import { DateTime } from "luxon";
 
 export default {
   namespaced: true,
@@ -16,7 +16,7 @@ export default {
 
   getters: {
     /*
-    Maps the properties from strapi to variables used in highcharts
+    Correct data types
     */
     getAssignments: (state) => {
       const assignments = state.assignments.map((assignment) => {
@@ -66,6 +66,29 @@ export default {
         Math.max(...state.assignments.map((assignment) => assignment.id)) + 1
       );
     },
+    /*
+    Return the current assignments for a given RSE
+    */
+    getCurrentAssignments: (state) => (rse) => {
+      return state.assignments.filter(assignment => 
+        assignment.rse === rse
+        && DateTime.fromISO(assignment.start) <= DateTime.utc()
+        && DateTime.fromISO(assignment.end) >= DateTime.utc())
+    },
+    /*
+    Return the current assignments for a given RSE
+    */
+    getAssignmentsInPeriod: (state) => (rse, start, end) => {
+
+      return state.assignments.filter(assignment =>
+        (assignment.rse === rse
+        && DateTime.fromISO(assignment.start) <= DateTime.fromISO(start)
+        && DateTime.fromISO(assignment.end) >= DateTime.fromISO(start)) ||
+        (assignment.rse === rse
+          && DateTime.fromISO(assignment.start) <= DateTime.fromISO(end)
+          && DateTime.fromISO(assignment.end) >= DateTime.fromISO(end))
+      )
+    }
   },
   /*
   Call with this.$store.commit("assignments/{mutation}}", "{assignment}")

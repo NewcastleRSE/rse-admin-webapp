@@ -18,7 +18,7 @@ export default {
         getRses: (state) => {
           return state.rses.sort(function(a, b) {
             return a.lastname.localeCompare(b.lastname);
-        });
+          });
         },
         nextRSE: (state) => {
           let fullTeam = state.rses.filter(rse => rse.nextAvailableDate && rse.active)
