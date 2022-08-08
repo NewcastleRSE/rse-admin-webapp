@@ -87,51 +87,6 @@ export default {
 
       commit("getProjects", await fetchProjects(0, 100));
     },
-    /*getProjects({ commit, rootState }, stages) {
-      //commit("resetProjects");
-
-      if (!stages) {
-        stages = [
-          "allocated",
-          "completed",
-          "awaitingAllocation",
-          "submittedToFunder",
-        ];
-      }
-
-      let projects = [];
-      let index = 0;
-
-      return new Promise((resolve) => {
-        stages.forEach((stage) => {
-
-          let params = new URLSearchParams();
-          params.append("stage", stage);
-
-          axios
-            .get(`${process.env.VUE_APP_API_URL}/projects/`, {
-              headers: {
-                Authorization: `Bearer ${rootState.auth.jwt}`,
-              },
-              params: params,
-            })
-            .then((response) => {
-
-              projects = [...projects, ...response.data.data];
-
-              // checks if the last stage has been itterated
-              if (index === stages.length - 1) {
-                commit("getProjects", projects);
-                resolve();
-              } else index++;
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        });
-      });
-    },*/
-
     /*
     Gets project by ID from HubSpot
     Call with this.$store.dispatch("projects/getProject", "{id}");
