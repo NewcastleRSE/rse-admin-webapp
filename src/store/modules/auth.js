@@ -23,9 +23,8 @@ export default {
       state.user = data.profile
       state.user.photo = data.photo
       this.dispatch("projects/getProjects")
-      // this.dispatch("capacity/getCapacity")
       this.dispatch("rses/getRses")
-      // this.dispatch("assignments/getAssignments")
+      this.dispatch("timesheets/getReport")
       router.push({ name: "Dashboard" });
     },
     logout(state) {
