@@ -6,7 +6,7 @@
       <div class="flex flex-wrap items-center">
         <div class="relative w-full max-w-full flex-grow flex-1">
           <h6 class="uppercase text-blueGray-100 mb-1 text-xs font-semibold">
-            Projects
+            Utilisation
           </h6>
           <h2 class="text-white text-xl font-semibold">
             Overview
@@ -23,38 +23,41 @@
   </div>
 </template>
 <script>
-import Chart from "chart.js";
+import Chart from 'chart.js/auto'
+import annotationPlugin from 'chartjs-plugin-annotation'
+import { DateTime } from 'luxon'
+
+Chart.register(annotationPlugin)
 
 export default {
   mounted: function () {
     this.$nextTick(function () {
+      var utilisationData = this.$store.getters["capacity/getUtilisation"],
+          labels = utilisationData.reduce(function (dates, month) {
+            let date = DateTime.fromISO(month.date)
+            return [...dates, date.toFormat('LLL yy')]
+          }, [])
       var config = {
         type: "line",
         data: {
-          labels: [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-          ],
+          labels: labels,
           datasets: [
             {
-              label: new Date().getFullYear(),
-              backgroundColor: "#4c51bf",
-              borderColor: "#4c51bf",
-              data: [65, 78, 66, 44, 56, 67, 75],
+              label: 'Target',
+              backgroundColor: "#38bdf8",
+              borderColor: "#38bdf8",
+              data: utilisationData.reduce(function (targets, month) { return [...targets, Math.round(month.targetDays)] }, []),
               fill: false,
+              stepped: 'middle',
             },
             {
-              label: new Date().getFullYear() - 1,
+              label: 'Capacity',
+              backgroundColor: "#0284c7",
+              borderColor: "#0284c7",
+              data: utilisationData.reduce(function (capacity, month) { return [...capacity, Math.round(month.capacityDays)] }, []),
               fill: false,
-              backgroundColor: "#fff",
-              borderColor: "#fff",
-              data: [40, 68, 86, 74, 56, 60, 87],
-            },
+              stepped: 'middle',
+            }
           ],
         },
         options: {
@@ -62,15 +65,34 @@ export default {
           responsive: true,
           title: {
             display: false,
-            text: "Sales Charts",
+            text: "Utilisation",
             fontColor: "white",
           },
-          legend: {
-            labels: {
-              fontColor: "white",
+          plugins: {
+            legend: {
+              labels: {
+                color: "#cbd5e1",
+              },
+              align: "end",
+              position: "bottom"
             },
-            align: "end",
-            position: "bottom",
+            annotation: {
+              annotations: {
+                today: {
+                  type: 'line',
+                  xMin: DateTime.utc().toFormat('LLL yy'),
+                  xMax: DateTime.utc().toFormat('LLL yy'),
+                  borderColor: '#cbd5e1',
+                  borderWidth: 1,
+                  label: {
+                    content: 'Today',
+                    display: true,
+                    position: 'end',
+                    yAdjust: -6
+                  }
+                }
+              }
+            }
           },
           tooltips: {
             mode: "index",
@@ -81,38 +103,36 @@ export default {
             intersect: true,
           },
           scales: {
-            xAxes: [
-              {
+            x: {
                 ticks: {
-                  fontColor: "rgba(255,255,255,.7)",
+                  color: "#cbd5e1",
                 },
                 display: true,
-                scaleLabel: {
+                title: {
+                  text: 'Month',
                   display: false,
-                  labelString: "Month",
-                  fontColor: "white",
+                  color:"#cbd5e1"
                 },
                 gridLines: {
                   display: false,
                   borderDash: [2],
                   borderDashOffset: [2],
-                  color: "rgba(33, 37, 41, 0.3)",
+                  color: "#f1f5f9",
                   zeroLineColor: "rgba(0, 0, 0, 0)",
                   zeroLineBorderDash: [2],
                   zeroLineBorderDashOffset: [2],
                 },
-              },
-            ],
-            yAxes: [
-              {
-                ticks: {
-                  fontColor: "rgba(255,255,255,.7)",
+            },
+            y: {
+               min: 0,
+               ticks: {
+                  color: "#cbd5e1",
                 },
                 display: true,
-                scaleLabel: {
-                  display: false,
-                  labelString: "Value",
-                  fontColor: "white",
+                title: {
+                  text: 'Days',
+                  display: true,
+                  color:"#cbd5e1"
                 },
                 gridLines: {
                   borderDash: [3],
@@ -124,12 +144,11 @@ export default {
                   zeroLineBorderDashOffset: [2],
                 },
               },
-            ],
           },
         },
       };
-      var ctx = document.getElementById("line-chart").getContext("2d");
-      window.myLine = new Chart(ctx, config);
+      var ctx = document.getElementById("line-chart").getContext("2d")
+      window.myLine = new Chart(ctx, config)
     });
   },
 };
