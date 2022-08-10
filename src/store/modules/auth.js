@@ -25,7 +25,8 @@ export default {
       Promise.all([
         this.dispatch("projects/getProjects"),
         this.dispatch("rses/getRses"),
-        this.dispatch("timesheets/getReport")
+        this.dispatch("timesheets/getReport"),
+        this.dispatch("capacity/getCapacity")
       ]).then(() => {
         router.push({ name: "Dashboard" });
       }).catch(error => {
