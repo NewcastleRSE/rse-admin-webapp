@@ -17,7 +17,7 @@ export default {
         getCapacity: (state) => {
             return state.capacity;
         },
-        getUtilisation: (state) => {
+        getUtilisation: (state, getters, rootState, rootGetters) => {
           let utilisation = [],
               startDate = DateTime.utc().startOf('month').minus({months: 12}),
               endDate = DateTime.utc().startOf('month').plus({month: 13})
@@ -30,27 +30,35 @@ export default {
 
               return startDate >= capacityStart && startDate <= capacityEnd
             })
+
+            let assignments = rootGetters['assignments/getAssignments'].filter(assignment => {
+              let assignmentStart = DateTime.fromMillis(assignment.start),
+                  assignmentEnd = assignment.end ? DateTime.fromMillis(assignment.end) : endDate
+
+              return startDate >= assignmentStart && startDate <= assignmentEnd
+            })
             
             let monthlyUtilisation = {
               date: startDate.toISODate(),
-              capacityFTE: capacities.reduce(function (totalFTE, rse) { return totalFTE + rse.capacity }, 0),
+              capacityFTE: Math.round(capacities.reduce(function (totalFTE, rse) { return totalFTE + rse.capacity }, 0)),
               targetFTE: Math.round(capacities.reduce(function (totalFTE, rse) { return totalFTE + rse.capacity }, 0) * 0.7),
-              actualFTE: 0,
-              capacityDays: capacities.reduce(function (totalFTE, rse) { return totalFTE + ((220/12) * (rse.capacity/100)) }, 0),
-              targetDays: Math.round(capacities.reduce(function (totalFTE, rse) { return totalFTE + ((220/12) * (rse.capacity/100)) }, 0) * 0.7),
-              actualDays: 0,
+              actualFTE: Math.round(assignments.reduce(function (totalFTE, assignment) { return totalFTE + assignment.FTE }, 0)),
+              capacityDays: Math.round(capacities.reduce(function (totalDays, rse) { return totalDays + ((220/12) * (rse.capacity/100)) }, 0)),
+              targetDays: Math.round(capacities.reduce(function (totalDays, rse) { return totalDays + ((220/12) * (rse.capacity/100)) }, 0) * 0.7),
+              actualDays: Math.round(assignments.reduce(function (totalDays, assignment) { return totalDays + ((220/12) * (assignment.FTE/100)) }, 0)),
             }
 
             utilisation.push(monthlyUtilisation)
 
+            if(startDate.toISODate() === '2022-05-01'){
+              console.log('Capacity FTE: ' + monthlyUtilisation.capacityFTE)
+              console.log(capacities)
+              console.log('Assigned FTE: ' + monthlyUtilisation.actualFTE)
+              console.log(assignments)
+            }
+
             startDate = startDate.plus({months: 1})
           }
-
-          console.log(utilisation)
-
-          // state.capacity.forEach(capacity => {
-          //   console.log(capacity)
-          // });
 
           return utilisation
         }
