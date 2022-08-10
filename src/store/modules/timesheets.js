@@ -42,12 +42,13 @@ export default {
 
           rses.forEach(rse => {
             let summary = timesheetSummary.team.find(summary => summary._id === rse.clockifyID),
-                assignments = rootGetters["assignments/getAssignmentsInPeriod"](rse.id, now.minus({days: 30}).toISODate(), now.toISODate())
+                assignments = rootGetters["assignments/getAssignmentsInPeriod"](rse.id, now.minus({days: 30}).toISODate(), now.toISODate()),
+                capacities = rootGetters["capacity/getCapacityInPeriod"](rse.id, now.minus({days: 30}).toISODate(), now.toISODate())
 
             let rseDistribution = {
               rse: rse,
               warning: false,
-              totalTarget: (workdays * 7.5) * 3600,
+              totalTarget: ((workdays * 7.5) * 3600) * (capacities[0].capacity / 100),
               totalTime: summary ? summary.duration : 0,
               distribution: []
             }

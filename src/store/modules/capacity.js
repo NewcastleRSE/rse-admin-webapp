@@ -1,5 +1,6 @@
 //import router from "../../router";
-import axios from "axios";
+import axios from "axios"
+import { DateTime } from "luxon";
 
 export default {
     namespaced: true,
@@ -15,6 +16,24 @@ export default {
     getters: {
         getCapacity: (state) => {
             return state.capacity;
+        },
+        getCapacityInPeriod: (state) => (rse, start, end) => {
+          return state.capacity.filter(capacity =>
+            (
+              capacity.rse.data.id === rse &&
+              DateTime.fromISO(capacity.start) <= DateTime.fromISO(start) && 
+              (
+                DateTime.fromISO(capacity.end) >= DateTime.fromISO(start) || !capacity.end
+              )
+            ) ||
+            (
+              capacity.rse.data.id === rse &&
+              DateTime.fromISO(capacity.start) <= DateTime.fromISO(end) &&
+              (
+                DateTime.fromISO(capacity.end) >= DateTime.fromISO(end) || !capacity.end
+              )
+            )
+          )
         },
     },
 
