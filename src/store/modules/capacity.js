@@ -28,7 +28,7 @@ export default {
               let capacityStart = DateTime.fromISO(capacity.start),
                   capacityEnd = capacity.end ? DateTime.fromISO(capacity.end) : endDate
 
-              return startDate >= capacityStart && startDate <= capacityEnd
+              return startDate >= capacityStart.startOf('month') && startDate <= capacityEnd.startOf('month')
             })
 
             let assignments = rootGetters['assignments/getAssignments'].filter(assignment => {
@@ -49,13 +49,6 @@ export default {
             }
 
             utilisation.push(monthlyUtilisation)
-
-            if(startDate.toISODate() === '2022-05-01'){
-              console.log('Capacity FTE: ' + monthlyUtilisation.capacityFTE)
-              console.log(capacities)
-              console.log('Assigned FTE: ' + monthlyUtilisation.actualFTE)
-              console.log(assignments)
-            }
 
             startDate = startDate.plus({months: 1})
           }
