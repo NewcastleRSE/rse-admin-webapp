@@ -26,7 +26,8 @@ export default {
         this.dispatch("projects/getProjects"),
         this.dispatch("rses/getRses"),
         this.dispatch("timesheets/getReport"),
-        this.dispatch("capacity/getCapacity")
+        this.dispatch("capacity/getCapacity"),
+        this.dispatch("transactions/getTransactions")
       ]).then(() => {
         router.push({ name: "Dashboard" });
       }).catch(error => {
