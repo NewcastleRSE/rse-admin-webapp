@@ -1008,6 +1008,11 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.9.1.tgz#7f554e7368c9ab679a11f4a042ca17149d70cf12"
   integrity sha512-DvJbbn3dUgMxDnJLH+RZQPnXak1h4ZVYQ7CWiFWjQwBFkVajT4rfw2PdpHLTSTwxrYfnoEXkuBiwkDm6tPMQeA==
 
+"@revolist/vue3-datagrid@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@revolist/vue3-datagrid/-/vue3-datagrid-3.1.0.tgz#052a335d12823b70b40016f8447e1876572236c9"
+  integrity sha512-U0B/u3WBPnMxZT91W+CA3us1SlJBrWjuG1+dyrq5XCKm8Qmol2UPphElXVSiIfYWTAe2QecQ/iBwcXnzN+vwaQ==
+
 "@soda/friendly-errors-webpack-plugin@^1.7.1":
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/@soda/friendly-errors-webpack-plugin/-/friendly-errors-webpack-plugin-1.8.1.tgz#4d4fbb1108993aaa362116247c3d18188a2c6c85"
@@ -3260,21 +3265,6 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
-datatables.net-vue3@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/datatables.net-vue3/-/datatables.net-vue3-1.0.0.tgz#92429ed6a5862fffd16e0f31259cc6bdbd15ed8d"
-  integrity sha512-QvIQEMZCHX3u3iwTTzY6JA8wT6kFqA3C6L40Y534mSQwonXG4n2/HeBdgfCQrRFQ4Y2TGRJknkEa4md5lvMtGg==
-  dependencies:
-    datatables.net "^1.12.1"
-    jquery "^3.6.0"
-
-datatables.net@^1.12.1:
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-1.12.1.tgz#3e625e49a3341f605b0efb519fae94e37b278f24"
-  integrity sha512-e6XAMUoV41JdQPS/r9YRfRcmTPcCVvyZbWI+xog1Zg+kjVliMQbEkvWK5XFItmi64Cvwg+IqsZbTUJ1KSY3umA==
-  dependencies:
-    jquery ">=1.7"
-
 date-fns@^2.27.0:
   version "2.28.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.28.0.tgz#9570d656f5fc13143e50c975a3b6bbeb46cd08b2"
@@ -4663,23 +4653,6 @@ hex-color-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
   integrity sha512-l9sfDFsuqtOqKDsQdqrMRk0U85RZc0RtOR9yPI7mRVOa4FsR/BVnZ0shmQRM96Ji99kYZP/7hn1cedc1+ApsTQ==
 
-highcharts-custom-events@^3.0.10:
-  version "3.0.10"
-  resolved "https://registry.yarnpkg.com/highcharts-custom-events/-/highcharts-custom-events-3.0.10.tgz#6f2fcd67d062221e5dd2bfdfdccb1bba1b695372"
-  integrity sha512-swD0v8qovr9tzW6wNdebJKWQS5xTUclU2XznZw7+U6zMpedzEw7nxMZCog+P3JBDvp2cLO8ySiy7EC29DayfFw==
-  dependencies:
-    highcharts ">=5.0.9"
-
-highcharts-vue@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/highcharts-vue/-/highcharts-vue-1.4.0.tgz#4bdaaddc6b9a3eea0df70d29a22ae713d28e4a0c"
-  integrity sha512-fTPqJmU/wR/nUEtofbC/iJqcgULGcP3C0Hd4YYCKH2FiiteNs7UidjSM4eYj5Y4ldpOVhwPtNj/m6XwC3ajp6g==
-
-highcharts@>=5.0.9, highcharts@^9.1.2:
-  version "9.3.2"
-  resolved "https://registry.yarnpkg.com/highcharts/-/highcharts-9.3.2.tgz#20b34f7277169a48d7b5691f74705e8addc78cd3"
-  integrity sha512-I/48gNMvs3hZxZnPRUqLbnlrGZJJ7YPPVr1+fYeZ35p4pSZAOwTmAGbptrjBr7JlF52HmJH9zMbt/I4TPLu9Pg==
-
 highlight.js@^10.7.1:
   version "10.7.3"
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.7.3.tgz#697272e3991356e40c3cac566a74eef681756531"
@@ -5399,11 +5372,6 @@ javascript-stringify@^2.0.1:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/javascript-stringify/-/javascript-stringify-2.1.0.tgz#27c76539be14d8bd128219a2d731b09337904e79"
   integrity sha512-JVAfqNPTvNq3sB/VHQJAFxN/sPgKnsKrCwyRt15zwNCdrMMJDdcEOdubuy+DuJYYdm0ox1J4uzEuYKkN+9yhVg==
-
-jquery@>=1.7, jquery@^3.6.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.6.0.tgz#c72a09f15c1bdce142f49dbf1170bdf8adac2470"
-  integrity sha512-JVzAR/AjBvVt2BmYhxRCSYysDsPcssdmTFnzyLEts9qNwmjmu4JTAMYubEfwVOSwpQ1I1sKKFcxhZCI2buerfw==
 
 js-message@1.0.7:
   version "1.0.7"
