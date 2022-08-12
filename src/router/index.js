@@ -15,6 +15,7 @@ import Dashboard from "../views/Dashboard";
 import Projects from "../views/Projects";
 import Assignments from "../views/Assignments";
 import User from "../views/User";
+import Transactions from "../views/Transactions";
 
 /**
  * isTokenValid:
@@ -71,6 +72,12 @@ const routes = [
             name: "User",
             component: User,
             meta: { title: 'RSE Admin - User' }
+          },
+          {
+            path: "/transactions",
+            name: "Transactions",
+            component: Transactions,
+            meta: { title: 'RSE Admin - Transactions' }
           }
         ]
     },

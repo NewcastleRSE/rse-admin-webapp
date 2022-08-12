@@ -19,11 +19,7 @@ export default {
     Call with this.$store.getters["transactions/getTransactions"];
     */
     getTransactions: (state) => {
-      return state.transactions.sort(function(a, b) {
-          let textA = a.dealname.toUpperCase();
-          let textB = b.dealname.toUpperCase();
-          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-      });
+      return state.transactions.reverse()
     }
   },
 

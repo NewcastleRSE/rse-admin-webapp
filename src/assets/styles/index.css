@@ -225,4 +225,8 @@
     .child-row .gstc__list-column-row-expander {
         display: none;
     }
+
+    revo-grid .main-viewport {
+        height: 500px !important;
+    }
 }
