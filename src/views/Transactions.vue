@@ -3,13 +3,15 @@
     <div class="w-full mb-12 px-4">
       <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
         <v-grid
-            ref="table"
             theme="compact"
             filter={true}
-            resize={true}
             :source="transactions"
             :columns="columns"
             :columnTypes="columnTypes"
+            :readonly="true"
+            :resize="true"
+            :stretch="true"
+            :canFocus="false"
         ></v-grid>
       </div>
     </div>
@@ -41,9 +43,10 @@ export default {
   name: "AssignmentGantt",
   components: { VGrid },
   data() {
+    console.log(this.$refs)
     return {
         columns: [
-            { name: 'Posted Date', prop: "postedDate", sortable: true, order: 'asc' },
+            { name: 'Posted Date', prop: "postedDate", sortable: true, order: 'asc', columnProperties: () => { return { style: { width: '250px' } } } },
             { name: 'Description', prop: "costElementDescription", sortable: true, order: 'asc', size: 200 },
             { name: 'Document Header', prop: "documentHeader", sortable: true, order: 'asc', size: 200 },
             { name: 'Name', prop: "name", sortable: true, order: 'asc', size: 200 },
