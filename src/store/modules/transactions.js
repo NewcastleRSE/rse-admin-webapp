@@ -10,7 +10,24 @@ export default {
   Call state with $store.state.{module}.{stateName}
   */
   state: {
-    transactions: []
+    transactions: [],
+    summary: {
+      salaryExpenditure: {
+        total: 0,
+        other: 0,
+        specialist: 0,
+        academic: 0
+      },
+      nonSalaryExpenditure: {
+        total: 0
+      },
+      indirectCostsAbsorbedRecovered: {
+        total: 0
+      },
+      income: {
+        total: 0
+      },
+    }
   },
 
   getters: {
@@ -26,7 +43,40 @@ export default {
   mutations: {
     //sync, updates state
     getTransactions(state, transactions) {
-      state.transactions = transactions;
+      // Array of all transactions
+      state.transactions = transactions
+
+      // Sum of salary expenditure
+      state.summary.salaryExpenditure.total = transactions
+        .filter(transaction => transaction.ieCategory === 'Salary Expenditure')
+        .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+
+      state.summary.salaryExpenditure.specialist = transactions
+        .filter(transaction => transaction.bwCategory === 'Specialist')
+        .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+
+      state.summary.salaryExpenditure.academic = transactions
+        .filter(transaction => transaction.bwCategory === 'Acad Research Assoc-Non Clinical')
+        .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+
+      state.summary.salaryExpenditure.other = transactions
+        .filter(transaction => transaction.bwCategory === 'Other Staff')
+        .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+
+      // Sum of non-salary expenditure
+      state.summary.nonSalaryExpenditure.total = transactions
+        .filter(transaction => transaction.ieCategory === 'Non-Salary Expenditure')
+        .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+
+      // Sum of indirect costs
+      state.summary.indirectCostsAbsorbedRecovered.total = transactions
+        .filter(transaction => transaction.ieCategory === 'Indirect Costs Absorbed/Recovered')
+        .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+
+      // Sum of income
+      state.summary.income.total = transactions
+        .filter(transaction => transaction.ieCategory === 'Income')
+        .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
     }
   },
 
