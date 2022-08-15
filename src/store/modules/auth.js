@@ -10,6 +10,12 @@ export default {
   },
 
   getters: {
+    accessToken: (state) => {
+      return state.accessToken
+    },
+    jwt: (state) => {
+      return state.jwt
+    },
     user: (state) => {
       return state.user
     },
@@ -35,7 +41,7 @@ export default {
       })
     },
     logout(state) {
-      localStorage.removeItem("jwt");
+      localStorage.removeItem("vuex");
       state.jwt = null;
       router.push({ name: "Login" });
     },
