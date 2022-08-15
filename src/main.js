@@ -24,4 +24,4 @@ createApp(App)
   .use(SimpleTypeahead)
   .use(router)
   // .use(HighchartsVue)
-  .mount("#app");
+  .mount("#app")

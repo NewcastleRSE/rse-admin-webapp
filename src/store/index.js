@@ -23,5 +23,5 @@ export default createStore({
 
   modules: { auth, assignments, capacity, projects, rses, timesheets, transactions },
 
-  plugins: [createPersistedState()],
+  plugins: [createPersistedState({ paths: ['auth'] })],
 });
