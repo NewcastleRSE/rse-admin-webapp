@@ -41,8 +41,9 @@ export default {
       })
     },
     logout(state) {
-      localStorage.removeItem("vuex");
-      state.jwt = null;
+      state.accessToken = ''
+      state.jwt = ''
+      state.user = {}
       router.push({ name: "Login" });
     },
   },
