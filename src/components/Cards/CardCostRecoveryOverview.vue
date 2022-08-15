@@ -74,4 +74,12 @@
     </div>
   </div>
 </template>
-
+<script>
+  export default {
+    data() {
+      return {
+        summary: this.$store.getters["transactions/getSummary"](2021)
+      };
+    }
+  }
+</script>

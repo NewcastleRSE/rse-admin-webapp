@@ -1,12 +1,10 @@
 //import router from "../../router";
 import axios from 'axios'
 import * as qs from 'qs'
-import { DateTime } from 'luxon'
 
 var camelCase = function camalize(str) {
   return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
 }
-
 
 export default {
   namespaced: true,
@@ -16,10 +14,7 @@ export default {
   Call state with $store.state.{module}.{stateName}
   */
   state: {
-    allTimeTransactions: [],
-    allTimeSummary: {},
-    currentYearTransactions: [],
-    currentYearSummary: {}
+    transactions: []
   },
 
   getters: {
@@ -27,29 +22,18 @@ export default {
     Maps properties sent from HubSpot
     Call with this.$store.getters["transactions/getTransactions"];
     */
-    getAllTimeTransactions: (state) => {
-      return state.allTimeTransactions.reverse()
+    getTransactions: (state) => (year) => {
+      if (year) {
+        return state.transactions.filter(transaction => transaction.fiscalYear === year).reverse()
+      }
+      else {
+        return state.transactions.reverse()
+      }
     },
-    getAllTimeSummary: (state) => {
-      return state.allTimeSummary
-    },
-    getCurrentYearTransactions: (state) => {
-      const FY = DateTime.local().month < 8 ? DateTime.local().year : DateTime.local().year - 1
-      return state.transactions.filter(transaction => transaction.fiscalYear === FY).reverse()
-    },
-    getCurrentYearSummary: (state) => {
-      const FY = DateTime.local().month < 8 ? DateTime.local().year : DateTime.local().year - 1
-      return state.transactions.filter(transaction => transaction.fiscalYear === FY).reverse()
-    }
-  },
+    getSummary: (state, getters) => (year) => {
 
-  mutations: {
-    //sync, updates state
-    getTransactions(state, transactions) {
-      // Array of all transactions
-      state.allTimeTransactions = transactions
-
-      let allTimeSummary = {};
+      let transactions = getters.getTransactions(year),
+          summary = {}
 
       const ieCategories = [...new Set(transactions.map(transaction => transaction.ieCategory))]
 
@@ -57,34 +41,34 @@ export default {
 
         let bwCategories = [...new Set(transactions.filter(transaction => transaction.ieCategory === ieCategory).map(transaction => transaction.bwCategory))]
         
-        try {
-        if(!Object.prototype.hasOwnProperty.call(allTimeSummary, (camelCase(ieCategory)))) {
-          allTimeSummary[camelCase(ieCategory)] = {}
+        if(!Object.prototype.hasOwnProperty.call(summary, (camelCase(ieCategory)))) {
+          summary[camelCase(ieCategory)] = {}
         }
-      }
-      catch(err) {
-        console.log(ieCategories)
-        console.log(ieCategory)
-        console.log(allTimeSummary)
-      }
 
         bwCategories.forEach(bwCategory => {
 
-          if(!Object.prototype.hasOwnProperty.call(allTimeSummary[camelCase(ieCategory)], (camelCase(bwCategory)))) {
-            allTimeSummary[camelCase(ieCategory)][camelCase(bwCategory)] = {}
+          if(!Object.prototype.hasOwnProperty.call(summary[camelCase(ieCategory)], (camelCase(bwCategory)))) {
+            summary[camelCase(ieCategory)][camelCase(bwCategory)] = {}
           }
 
-          allTimeSummary[camelCase(ieCategory)][camelCase(bwCategory)] = transactions
+          summary[camelCase(ieCategory)][camelCase(bwCategory)] = transactions
             .filter(transaction => transaction.ieCategory === ieCategory && transaction.bwCategory === bwCategory)
             .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
         })
 
-        allTimeSummary[camelCase(ieCategory)].total = transactions
+        summary[camelCase(ieCategory)].total = transactions
         .filter(transaction => transaction.ieCategory === ieCategory)
         .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
       })
 
-      state.allTimeSummary = allTimeSummary
+      return summary
+    }
+  },
+
+  mutations: {
+    //sync, updates state
+    getTransactions(state, transactions) {
+      state.transactions = transactions
     }
   },
 
