@@ -1,6 +1,12 @@
 //import router from "../../router";
 import axios from 'axios'
 import * as qs from 'qs'
+import { DateTime } from 'luxon'
+
+var camelCase = function camalize(str) {
+  return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
+}
+
 
 export default {
   namespaced: true,
@@ -10,24 +16,10 @@ export default {
   Call state with $store.state.{module}.{stateName}
   */
   state: {
-    transactions: [],
-    summary: {
-      salaryExpenditure: {
-        total: 0,
-        other: 0,
-        specialist: 0,
-        academic: 0
-      },
-      nonSalaryExpenditure: {
-        total: 0
-      },
-      indirectCostsAbsorbedRecovered: {
-        total: 0
-      },
-      income: {
-        total: 0
-      },
-    }
+    allTimeTransactions: [],
+    allTimeSummary: {},
+    currentYearTransactions: [],
+    currentYearSummary: {}
   },
 
   getters: {
@@ -35,8 +27,19 @@ export default {
     Maps properties sent from HubSpot
     Call with this.$store.getters["transactions/getTransactions"];
     */
-    getTransactions: (state) => {
-      return state.transactions.reverse()
+    getAllTimeTransactions: (state) => {
+      return state.allTimeTransactions.reverse()
+    },
+    getAllTimeSummary: (state) => {
+      return state.allTimeSummary
+    },
+    getCurrentYearTransactions: (state) => {
+      const FY = DateTime.local().month < 8 ? DateTime.local().year : DateTime.local().year - 1
+      return state.transactions.filter(transaction => transaction.fiscalYear === FY).reverse()
+    },
+    getCurrentYearSummary: (state) => {
+      const FY = DateTime.local().month < 8 ? DateTime.local().year : DateTime.local().year - 1
+      return state.transactions.filter(transaction => transaction.fiscalYear === FY).reverse()
     }
   },
 
@@ -44,39 +47,44 @@ export default {
     //sync, updates state
     getTransactions(state, transactions) {
       // Array of all transactions
-      state.transactions = transactions
+      state.allTimeTransactions = transactions
 
-      // Sum of salary expenditure
-      state.summary.salaryExpenditure.total = transactions
-        .filter(transaction => transaction.ieCategory === 'Salary Expenditure')
-        .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+      let allTimeSummary = {};
 
-      state.summary.salaryExpenditure.specialist = transactions
-        .filter(transaction => transaction.bwCategory === 'Specialist')
-        .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+      const ieCategories = [...new Set(transactions.map(transaction => transaction.ieCategory))]
 
-      state.summary.salaryExpenditure.academic = transactions
-        .filter(transaction => transaction.bwCategory === 'Acad Research Assoc-Non Clinical')
-        .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+      ieCategories.forEach(ieCategory => {
 
-      state.summary.salaryExpenditure.other = transactions
-        .filter(transaction => transaction.bwCategory === 'Other Staff')
-        .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+        let bwCategories = [...new Set(transactions.filter(transaction => transaction.ieCategory === ieCategory).map(transaction => transaction.bwCategory))]
+        
+        try {
+        if(!Object.prototype.hasOwnProperty.call(allTimeSummary, (camelCase(ieCategory)))) {
+          allTimeSummary[camelCase(ieCategory)] = {}
+        }
+      }
+      catch(err) {
+        console.log(ieCategories)
+        console.log(ieCategory)
+        console.log(allTimeSummary)
+      }
 
-      // Sum of non-salary expenditure
-      state.summary.nonSalaryExpenditure.total = transactions
-        .filter(transaction => transaction.ieCategory === 'Non-Salary Expenditure')
-        .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+        bwCategories.forEach(bwCategory => {
 
-      // Sum of indirect costs
-      state.summary.indirectCostsAbsorbedRecovered.total = transactions
-        .filter(transaction => transaction.ieCategory === 'Indirect Costs Absorbed/Recovered')
-        .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+          if(!Object.prototype.hasOwnProperty.call(allTimeSummary[camelCase(ieCategory)], (camelCase(bwCategory)))) {
+            allTimeSummary[camelCase(ieCategory)][camelCase(bwCategory)] = {}
+          }
 
-      // Sum of income
-      state.summary.income.total = transactions
-        .filter(transaction => transaction.ieCategory === 'Income')
+          allTimeSummary[camelCase(ieCategory)][camelCase(bwCategory)] = transactions
+            .filter(transaction => transaction.ieCategory === ieCategory && transaction.bwCategory === bwCategory)
+            .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+        })
+
+        allTimeSummary[camelCase(ieCategory)].total = transactions
+        .filter(transaction => transaction.ieCategory === ieCategory)
         .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+      })
+
+      state.allTimeSummary = allTimeSummary
     }
   },
 
