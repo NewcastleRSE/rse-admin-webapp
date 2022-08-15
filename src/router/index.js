@@ -42,9 +42,14 @@ const routes = [
         redirect: "/dashboard",
         component: Admin,
         beforeEnter: (to, from, next) => {
+            console.log(from)
             if (!isTokenValid()) {
                 next("/auth/login");
-            } else {
+            } 
+            else if (from === '/auth/login') {
+              next()
+            }
+            else {
               if (
                 store.getters["assignments/getAssignments"].length === 0 ||
                 store.getters["capacity/getCapacity"].length === 0 ||
