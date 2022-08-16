@@ -33,6 +33,7 @@ export default {
         this.dispatch("rses/getRses"),
         this.dispatch("timesheets/getReport"),
         this.dispatch("capacity/getCapacity"),
+        this.dispatch("facility/getFacility"),
         this.dispatch("transactions/getTransactions")
       ]).then(() => {
         router.push({ name: "Dashboard" });

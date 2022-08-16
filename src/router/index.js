@@ -55,14 +55,16 @@ const routes = [
                 store.getters["projects/getProjects"].length === 0 ||
                 store.getters["rses/getRses"].length === 0 ||
                 store.getters["timesheets/getReport"].length === 0 ||
-                store.getters["transactions/getTransactions"].length === 0
+                store.getters["transactions/getTransactions"].length === 0 ||
+                store.getters["facility/getFacility"].length === 0
               ) {
                 Promise.all([
                   store.dispatch("projects/getProjects"),
                   store.dispatch("rses/getRses"),
                   store.dispatch("timesheets/getReport"),
                   store.dispatch("capacity/getCapacity"),
-                  store.dispatch("transactions/getTransactions")
+                  store.dispatch("transactions/getTransactions"),
+                  store.dispatch("facility/getFacility")
                 ]).then(() => {
                   next();
                 }).catch(error => {
