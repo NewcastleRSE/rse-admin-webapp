@@ -20,17 +20,17 @@
           <div class="flex mb-2 items-center justify-between">
             <div>
               <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-emerald-600 bg-emerald-200">
-                Facility Year 2022/23 
+                FY {{summary.currentYear.label}}
               </span>
             </div>
             <div class="text-right">
               <span class="text-xs font-semibold inline-block text-emerald-600">
-                80%
+                {{summary.currentYear.progress}}%
               </span>
             </div>
           </div>
-          <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-emerald-200">
-            <div style="width:80%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-emerald-500"></div>
+          <div class="overflow-hidden h-4 mb-4 text-xs flex rounded bg-gray-200">
+            <div :style="{ width: summary.currentYear.progress + '%' }" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-emerald-500"></div>
           </div>
           <div class="absolute cost-recovery-threshold" style="left:70%"></div>
         </div>
@@ -38,48 +38,69 @@
           <div class="flex mb-2 items-center justify-between">
             <div>
               <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-red-600 bg-red-200">
-                Facility Year 2023/24
+                FY {{summary.lastYear.label}}
               </span>
             </div>
             <div class="text-right">
               <span class="text-xs font-semibold inline-block text-red-600">
-                30%
+                {{summary.lastYear.progress}}%
               </span>
             </div>
           </div>
-          <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-red-200">
-            <div style="width:30%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"></div>
+          <div class="overflow-hidden h-4 mb-4 text-xs flex rounded bg-gray-200">
+            <div :style="{ width: summary.lastYear.progress + '%' }" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"></div>
           </div>
           <div class="absolute cost-recovery-threshold" style="left:70%"></div>
-        </div>
-        <div class="relative pt-1">
-          <div class="flex mb-2 items-center justify-between">
-            <div>
-              <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-amber-600 bg-amber-200">
-                Directly Incurred
-              </span>
-            </div>
-            <div class="text-right">
-              <span class="text-xs font-semibold inline-block text-amber-600">
-                25%
-              </span>
-            </div>
-          </div>
-          <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-amber-200">
-            <div style="width:25%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-amber-500"></div>
-          </div>
-          <div class="absolute cost-recovery-threshold" style="left:30%"></div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+
+  import { DateTime } from 'luxon'
+
   export default {
-    data() {
-      return {
-        summary: this.$store.getters["transactions/getSummary"](2021)
-      };
+    computed: {
+      summary() {
+
+        let currentFY = DateTime.local().month > 7 ? DateTime.local().year : DateTime.local().year,
+            currentFacility = this.$store.getters["facility/getFacility"](currentFY),
+            currentTransactions = this.$store.getters["transactions/getSummary"](currentFY),
+            currentTarget = currentFacility.annualUseage * currentFacility.dayRate,
+            currentIncome = Object.prototype.hasOwnProperty.call(currentTransactions, 'income') ? currentTransactions.income.total : 0,
+            currentProgress = ((currentIncome / currentTarget) * 100).toFixed(2)
+
+        let lastFY = currentFY - 1,
+            lastFacility = this.$store.getters["facility/getFacility"](lastFY),
+            lastTransactions = this.$store.getters["transactions/getSummary"](lastFY),
+            lastTarget = lastFacility.annualUseage * lastFacility.dayRate,
+            lastIncome = Object.prototype.hasOwnProperty.call(lastTransactions, 'income') ? lastTransactions.income.total : 0,
+            lastProgress = ((lastIncome / lastTarget) * 100).toFixed(2)
+
+        const summary = {
+          currentYear: {
+            year: currentFY,
+            label: `${currentFY}/${currentFY - 1999}`,
+            facility: currentFacility,
+            target: currentTarget,
+            income: currentIncome,
+            progress: Math.abs(currentProgress)
+          },
+          lastYear: {
+            year: lastFY,
+            label: `${lastFY}/${lastFY - 1999}`,
+            facility: lastFacility,
+            target: lastTarget,
+            income: lastIncome,
+            progress: Math.abs(lastProgress)
+          }
+        }
+
+        console.log(summary)
+
+        return summary
+      }
     }
   }
 </script>

@@ -32,12 +32,16 @@ Chart.register(annotationPlugin)
 export default {
   mounted: function () {
     this.$nextTick(function () {
-      var utilisationData = this.$store.getters["capacity/getUtilisation"],
+
+      let startDate = DateTime.utc().startOf('month').minus({months: 12}),
+          endDate = DateTime.utc().startOf('month').plus({month: 13})
+
+      let utilisationData = this.$store.getters["capacity/getUtilisation"](startDate, endDate),
           labels = utilisationData.reduce(function (dates, month) {
             let date = DateTime.fromISO(month.date)
             return [...dates, date.toFormat('LLL yy')]
           }, [])
-      var config = {
+      let config = {
         type: "line",
         data: {
           labels: labels,

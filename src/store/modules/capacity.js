@@ -35,10 +35,8 @@ export default {
             )
           )
         },
-        getUtilisation: (state, getters, rootState, rootGetters) => {
-          let utilisation = [],
-              startDate = DateTime.utc().startOf('month').minus({months: 12}),
-              endDate = DateTime.utc().startOf('month').plus({month: 13})
+        getUtilisation: (state, getters, rootState, rootGetters) => (startDate, endDate) => {
+          let utilisation = []
 
           while(startDate.toISODate() !== endDate.toISODate()) {
             
@@ -71,6 +69,7 @@ export default {
             startDate = startDate.plus({months: 1})
           }
 
+          console.log(utilisation)
           return utilisation
         }
     },
