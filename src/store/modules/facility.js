@@ -17,8 +17,18 @@ export default {
     Maps properties sent from HubSpot
     Call with this.$store.getters["facility/getFacility"];
     */
-    getFacility: (state) => {
-      return state.facility
+    getFacility: (state) => (year = null) => {
+      try {
+        if(year) {
+          return state.facility.find(facility => facility.year === year)
+        }
+        else {
+          return state.facility
+        }
+      }
+      catch (err) {
+        return null
+      }  
     },
   },
 
