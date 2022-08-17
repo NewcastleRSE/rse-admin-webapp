@@ -68,8 +68,7 @@ export default {
 
             startDate = startDate.plus({months: 1})
           }
-
-          console.log(utilisation)
+          
           return utilisation
         }
     },
