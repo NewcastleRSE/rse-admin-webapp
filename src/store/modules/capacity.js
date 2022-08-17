@@ -17,7 +17,7 @@ export default {
         getCapacity: (state) => {
             return state.capacity;
         },
-        getCapacityInPeriod: (state) => (rse, start, end) => {
+        getCapacityInPeriod: (state) => (start, end, rse) => {
           return state.capacity.filter(capacity =>
             (
               capacity.rse.data.id === rse &&

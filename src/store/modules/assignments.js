@@ -76,18 +76,28 @@ export default {
         && DateTime.fromISO(assignment.end) >= DateTime.utc())
     },
     /*
-    Return the current assignments for a given RSE
+    Return the current assignments for an optional RSE
     */
-    getAssignmentsInPeriod: (state) => (rse, start, end) => {
-
-      return state.assignments.filter(assignment =>
-        (assignment.rse === rse
-        && DateTime.fromISO(assignment.start) <= DateTime.fromISO(start)
-        && DateTime.fromISO(assignment.end) >= DateTime.fromISO(start)) ||
-        (assignment.rse === rse
-          && DateTime.fromISO(assignment.start) <= DateTime.fromISO(end)
-          && DateTime.fromISO(assignment.end) >= DateTime.fromISO(end))
-      )
+    getAssignmentsInPeriod: (state) => (start, end, rse) => {
+      if(rse) {
+        return state.assignments.filter(assignment =>
+          (assignment.rse === rse
+          && DateTime.fromISO(assignment.start) <= DateTime.fromISO(start)
+          && DateTime.fromISO(assignment.end) >= DateTime.fromISO(start)) ||
+          (assignment.rse === rse
+            && DateTime.fromISO(assignment.start) <= DateTime.fromISO(end)
+            && DateTime.fromISO(assignment.end) >= DateTime.fromISO(end))
+        )
+      }
+      else {
+        console.log(DateTime.fromISO(start), DateTime.fromISO(end))
+        return state.assignments.filter(assignment =>
+          (DateTime.fromISO(assignment.start) <= DateTime.fromISO(start)
+          && DateTime.fromISO(assignment.end) >= DateTime.fromISO(start)) ||
+          (DateTime.fromISO(assignment.start) <= DateTime.fromISO(end)
+            && DateTime.fromISO(assignment.end) >= DateTime.fromISO(end))
+        )
+      }
     }
   },
   /*
