@@ -99,7 +99,7 @@ const routes = [
             meta: { title: 'RSE Admin - User' }
           },
           {
-            path: "/transactions",
+            path: "/transactions/:year",
             name: "Transactions",
             component: Transactions,
             meta: { title: 'RSE Admin - Transactions' }

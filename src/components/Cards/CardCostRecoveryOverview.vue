@@ -17,7 +17,7 @@
     <div class="p-4 flex-auto">
       <div class="relative h-350-px">
         <div class="relative pt-1 mb-8">
-          <a :href="`transactions/${summary.currentYear.currentFY}`" class="bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150">
+          <a :href="`transactions/${summary.currentYear.year}`" class="bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150">
             FY {{summary.currentYear.label}}
           </a>
           <div class="flex my-2 items-center justify-between">
@@ -55,7 +55,7 @@
           </div>
         </div>
         <div class="relative pt-1">
-          <a :href="`transactions/${summary.currentYear.currentFY}`" class="bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150">
+          <a :href="`transactions/${summary.lastYear.year}`" class="bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150">
             FY {{summary.lastYear.label}}
           </a>
           <div class="flex my-2 items-center justify-between">
