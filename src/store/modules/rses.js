@@ -20,6 +20,9 @@ export default {
             return a.lastname.localeCompare(b.lastname);
           });
         },
+        getRse: (state) => (name) => {
+          return state.rses.find(rse => `${rse.firstname.replace(/\s+/g, '-').toLowerCase()}-${rse.lastname.replace(/\s+/g, '-').toLowerCase()}` == name);
+        },
         nextRSE: (state) => {
           let fullTeam = state.rses.filter(rse => rse.nextAvailableDate && rse.active)
           fullTeam.sort((a, b) => { return DateTime.fromISO(a.nextAvailableDate) - DateTime.fromISO(b.nextAvailableDate) } )
