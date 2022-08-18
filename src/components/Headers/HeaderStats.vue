@@ -6,37 +6,37 @@
         <!-- Card stats -->
         <div class="flex flex-wrap">
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
-            <availability-card
+            <availability-card v-on:click="rse(`${nextRSE.firstname} ${nextRSE.lastname}`)"
               :avatar=getAvatar(nextRSE)
               team="ALL"
-              :name="nextRSE.firstname + ' ' + nextRSE.lastname"
+              :name="`${nextRSE.firstname} ${nextRSE.lastname}`"
               :from=formatDate(nextRSE.nextAvailableDate)
               :waitTime=nextRSE.wait  
             />
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
-            <availability-card
+            <availability-card v-on:click="rse(`${nextMiddleware.firstname} ${nextMiddleware.lastname}`)"
               :avatar=getAvatar(nextMiddleware)
               team="MIDDLEWARE"
-              :name="nextMiddleware.firstname + ' ' + nextMiddleware.lastname"
+              :name="`${nextMiddleware.firstname} ${nextMiddleware.lastname}`"
               :from=formatDate(nextMiddleware.nextAvailableDate)
               :waitTime=nextMiddleware.wait              
             />
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
-            <availability-card
+            <availability-card v-on:click="rse(`${nextWebMobile.firstname} ${nextWebMobile.lastname}`)"
               :avatar=getAvatar(nextWebMobile)
               team="WEB &amp; MOBILE"
-              :name="nextWebMobile.firstname + ' ' + nextWebMobile.lastname"
+              :name="`${nextWebMobile.firstname} ${nextWebMobile.lastname}`"
               :from=formatDate(nextWebMobile.nextAvailableDate)
               :waitTime=nextWebMobile.wait  
             />
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
-            <availability-card
+            <availability-card v-on:click="rse(`${nextDataScience.firstname} ${nextDataScience.lastname}`)"
               :avatar=getAvatar(nextDataScience)
               team="DATA SCIENCE"
-              :name="nextDataScience.firstname + ' ' + nextDataScience.lastname"
+              :name="`${nextDataScience.firstname} ${nextDataScience.lastname}`"
               :from=formatDate(nextDataScience.nextAvailableDate)
               :waitTime=nextDataScience.wait 
             />
@@ -80,6 +80,9 @@ export default {
     importAvatars(r) {
       r.keys().forEach(key => (this.avatars.push({ pathLong: r(key), pathShort: key, name: (key.substring(2)).split('.')[0].split('-').join(' ') })));
     },
+    rse(name) {
+      this.$router.push({ path: `/rse/${name.replace(/\s+/g, '-').toLowerCase()}` })
+    }
   }
 };
 </script>
