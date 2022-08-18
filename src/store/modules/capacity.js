@@ -38,7 +38,7 @@ export default {
         getUtilisation: (state, getters, rootState, rootGetters) => (startDate, endDate) => {
           let utilisation = []
 
-          while(startDate.toISODate() !== endDate.toISODate()) {
+          while(startDate < endDate) {
             
             let capacities = state.capacity.filter(capacity => {
               let capacityStart = DateTime.fromISO(capacity.start),
@@ -77,7 +77,6 @@ export default {
 
             startDate = startDate.plus({months: 1})
           }
-          console.log(utilisation)
           return utilisation
         }
     },

@@ -152,8 +152,8 @@
 
     .cost-recovery-threshold {
         border-left: 2px dashed;
-        height: 40px;
-        top: 20px;
+        height: 30px;
+        top: 60px;
     }
 
     .simple-typeahead {
