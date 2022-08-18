@@ -60,7 +60,7 @@ export default {
   },
   computed: {
     transactions() {
-      return this.$store.getters["transactions/getTransactions"]
+      return this.$store.getters["transactions/getTransactions"](this.$route.params.year)
     }
   }
 }

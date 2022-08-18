@@ -24,7 +24,7 @@ export default {
     */
     getTransactions: (state) => (year) => {
       if (year) {
-        return state.transactions.filter(transaction => transaction.fiscalYear === year).reverse()
+        return state.transactions.filter(transaction => transaction.fiscalYear == year).reverse()
       }
       else {
         return state.transactions.reverse()
