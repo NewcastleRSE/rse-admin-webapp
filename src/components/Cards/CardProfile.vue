@@ -8,13 +8,28 @@
           <div class="relative">
             <img
               alt="..."
-              :src="team2"
+              :src="getAvatar(rse)"
               class="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px"
             />
           </div>
         </div>
         <div class="w-full px-4 text-center mt-20">
-          <div class="flex justify-center py-4 lg:pt-4 pt-8">
+          
+        </div>
+      </div>
+      <div class="text-center mt-12">
+        <h3
+          class="text-xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2"
+        >
+          {{rse.firstname}} {{rse.lastname}}
+        </h3>
+        <div
+          class="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase"
+        >
+          {{rse.team}}
+        </div>
+      </div>
+      <div class="flex justify-center py-4 lg:pt-4 pt-8">
             <div class="mr-4 p-3 text-center">
               <span
                 class="text-xl font-bold block uppercase tracking-wide text-blueGray-600"
@@ -40,29 +55,6 @@
               <span class="text-sm text-blueGray-400">Comments</span>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="text-center mt-12">
-        <h3
-          class="text-xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2"
-        >
-          Jenna Stones
-        </h3>
-        <div
-          class="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase"
-        >
-          <i class="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-          Los Angeles, California
-        </div>
-        <div class="mb-2 text-blueGray-600 mt-10">
-          <i class="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>
-          Solution Manager - Creative Tim Officer
-        </div>
-        <div class="mb-2 text-blueGray-600">
-          <i class="fas fa-university mr-2 text-lg text-blueGray-400"></i>
-          University of Computer Science
-        </div>
-      </div>
       <div class="mt-10 py-10 border-t border-blueGray-200 text-center">
         <div class="flex flex-wrap justify-center">
           <div class="w-full lg:w-9/12 px-4">
@@ -72,9 +64,6 @@
               records all of his own music, giving it a warm, intimate feel with
               a solid groove structure. An artist of considerable range.
             </p>
-            <a href="javascript:void(0);" class="font-normal text-emerald-500">
-              Show more
-            </a>
           </div>
         </div>
       </div>
@@ -82,13 +71,32 @@
   </div>
 </template>
 <script>
-import team2 from "@/assets/img/team-2-800x800.jpg";
 
 export default {
   data() {
     return {
-      team2,
+      avatars: [],
+      getAvatar: (rse) => {
+          let name = rse.firstname + ' ' + rse.lastname
+          let avatar = this.avatars.find((avatar) => {
+            return avatar.name === name.toLowerCase()
+          })
+          return avatar ? avatar.pathLong : '' 
+      }
     };
   },
+  mounted() {
+    this.importAvatars(require.context('@/assets/img/avatars/', true, /\.(gif|jpe?g|tiff?|png|webp|bmp)$/));
+  },
+  computed: {
+    rse() {
+      return this.$store.getters["rses/getRse"](this.$route.params.name)
+    }  
+  },
+  methods: {
+    importAvatars(r) {
+      r.keys().forEach(key => (this.avatars.push({ pathLong: r(key), pathShort: key, name: (key.substring(2)).split('.')[0].split('-').join(' ') })));
+    }
+  }
 };
 </script>
