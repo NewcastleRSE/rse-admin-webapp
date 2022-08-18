@@ -14,7 +14,7 @@ import Login from "../views/Login";
 import Dashboard from "../views/Dashboard";
 import Projects from "../views/Projects";
 import Assignments from "../views/Assignments";
-import User from "../views/User";
+import RSE from "../views/RSE";
 import Transactions from "../views/Transactions";
 
 /**
@@ -93,10 +93,10 @@ const routes = [
             meta: { title: 'RSE Admin - Assignments' }
           },
           {
-            path: "/user",
-            name: "User",
-            component: User,
-            meta: { title: 'RSE Admin - User' }
+            path: "/rse/:name",
+            name: "RSE",
+            component: RSE,
+            meta: { title: 'RSE Admin - RSE' }
           },
           {
             path: "/transactions/:year",
