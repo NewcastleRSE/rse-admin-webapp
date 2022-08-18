@@ -32,21 +32,17 @@
     >
       <a
         href="javascript:void(0);"
+        v-on:click="exportSAP()"
         class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
       >
-        Action
+        <i class="fa-regular fa-calendar-check"></i> Export SAP Allocations
       </a>
       <a
         href="javascript:void(0);"
+        v-on:click="uploadTransactions()"
         class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
       >
-        Another action
-      </a>
-      <a
-        href="javascript:void(0);"
-        class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-      >
-        Something else here
+       <i class="fa-solid fa-cloud-arrow-up"></i> Upload Account Transactions
       </a>
       <div class="h-0 my-2 border border-solid border-blueGray-100" />
       <a
@@ -54,7 +50,7 @@
         v-on:click="logout()"
         class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
       >
-        Logout
+       <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
       </a>
     </div>
   </div>
@@ -84,6 +80,10 @@ export default {
           placement: "bottom-end",
         });
       }
+    },
+    exportSAP: function () {
+    },
+    uploadTransactions: function () {
     },
     logout: function () {
       this.$store.dispatch("auth/logout");

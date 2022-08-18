@@ -10,6 +10,12 @@ export default {
   },
 
   getters: {
+    accessToken: (state) => {
+      return state.accessToken
+    },
+    jwt: (state) => {
+      return state.jwt
+    },
     user: (state) => {
       return state.user
     },
@@ -26,7 +32,9 @@ export default {
         this.dispatch("projects/getProjects"),
         this.dispatch("rses/getRses"),
         this.dispatch("timesheets/getReport"),
-        this.dispatch("capacity/getCapacity")
+        this.dispatch("capacity/getCapacity"),
+        this.dispatch("facility/getFacility"),
+        this.dispatch("transactions/getTransactions")
       ]).then(() => {
         router.push({ name: "Dashboard" });
       }).catch(error => {
@@ -34,8 +42,9 @@ export default {
       })
     },
     logout(state) {
-      localStorage.removeItem("jwt");
-      state.jwt = null;
+      state.accessToken = ''
+      state.jwt = ''
+      state.user = {}
       router.push({ name: "Login" });
     },
   },

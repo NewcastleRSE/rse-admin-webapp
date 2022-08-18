@@ -15,6 +15,7 @@ import Dashboard from "../views/Dashboard";
 import Projects from "../views/Projects";
 import Assignments from "../views/Assignments";
 import User from "../views/User";
+import Transactions from "../views/Transactions";
 
 /**
  * isTokenValid:
@@ -43,8 +44,33 @@ const routes = [
         beforeEnter: (to, from, next) => {
             if (!isTokenValid()) {
                 next("/auth/login");
-            } else {
-                next();
+            } 
+            else if (from.path === '/auth/login') {
+              next()
+            }
+            else {
+              if (
+                store.getters["assignments/getAssignments"].length === 0 ||
+                store.getters["capacity/getCapacity"].length === 0 ||
+                store.getters["projects/getProjects"]().length === 0 ||
+                store.getters["rses/getRses"].length === 0 ||
+                store.getters["timesheets/getReport"].length === 0 ||
+                store.getters["transactions/getTransactions"].length === 0 ||
+                store.getters["facility/getFacility"].length === 0
+              ) {
+                Promise.all([
+                  store.dispatch("projects/getProjects"),
+                  store.dispatch("rses/getRses"),
+                  store.dispatch("timesheets/getReport"),
+                  store.dispatch("capacity/getCapacity"),
+                  store.dispatch("transactions/getTransactions"),
+                  store.dispatch("facility/getFacility")
+                ]).then(() => {
+                  next();
+                }).catch(error => {
+                  console.error(error)
+                })
+              }
             }
         },
         children: [
@@ -71,6 +97,12 @@ const routes = [
             name: "User",
             component: User,
             meta: { title: 'RSE Admin - User' }
+          },
+          {
+            path: "/transactions/:year",
+            name: "Transactions",
+            component: Transactions,
+            meta: { title: 'RSE Admin - Transactions' }
           }
         ]
     },

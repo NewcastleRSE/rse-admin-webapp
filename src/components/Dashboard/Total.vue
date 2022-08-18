@@ -21,7 +21,7 @@ export default {
   methods: {},
   computed: {
     getTotal() {
-        let projects = this.$store.getters["projects/getProjects"];
+        let projects = this.$store.getters["projects/getProjects"]();
         let total = 0;
         projects.forEach( (project) => {
             let add = (project.amount) ? Number(project.amount) : 0;

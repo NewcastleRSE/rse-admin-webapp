@@ -59,7 +59,7 @@ export default {
       let assignments = this.$store.getters["assignments/getAssignments"].filter(
         assignment => id == assignment.parent);
       assignments.forEach( (assign) => {
-        let project = this.$store.getters["projects/getProjects"].filter(prj => prj.id == assign.name
+        let project = this.$store.getters["projects/getProjects"]().filter(prj => prj.id == assign.name
         );
         console.log(project);
         if (project.length  > 0) {assign.parent = project[0].name;

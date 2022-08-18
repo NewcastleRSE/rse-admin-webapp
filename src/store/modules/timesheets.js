@@ -42,8 +42,8 @@ export default {
 
           rses.forEach(rse => {
             let summary = timesheetSummary.team.find(summary => summary._id === rse.clockifyID),
-                assignments = rootGetters["assignments/getAssignmentsInPeriod"](rse.id, now.minus({days: 30}).toISODate(), now.toISODate()),
-                capacities = rootGetters["capacity/getCapacityInPeriod"](rse.id, now.minus({days: 30}).toISODate(), now.toISODate())
+                assignments = rootGetters["assignments/getAssignmentsInPeriod"](now.minus({days: 30}).toISODate(), now.toISODate(), rse.id),
+                capacities = rootGetters["capacity/getCapacityInPeriod"](now.minus({days: 30}).toISODate(), now.toISODate(), rse.id)
 
             let rseDistribution = {
               rse: rse,
