@@ -90,7 +90,6 @@ export default {
         )
       }
       else {
-        console.log(DateTime.fromISO(start), DateTime.fromISO(end))
         return state.assignments.filter(assignment =>
           (DateTime.fromISO(assignment.start) <= DateTime.fromISO(start)
           && DateTime.fromISO(assignment.end) >= DateTime.fromISO(start)) ||

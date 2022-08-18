@@ -52,7 +52,7 @@ const routes = [
               if (
                 store.getters["assignments/getAssignments"].length === 0 ||
                 store.getters["capacity/getCapacity"].length === 0 ||
-                store.getters["projects/getProjects"].length === 0 ||
+                store.getters["projects/getProjects"]().length === 0 ||
                 store.getters["rses/getRses"].length === 0 ||
                 store.getters["timesheets/getReport"].length === 0 ||
                 store.getters["transactions/getTransactions"].length === 0 ||

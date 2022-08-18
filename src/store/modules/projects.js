@@ -17,14 +17,25 @@ export default {
   getters: {
     /*
     Maps properties sent from HubSpot
-    Call with this.$store.getters["projects/getProjects"];
+    Call with this.$store.getters["projects/getProjects"]();
     */
-    getProjects: (state) => {
-      return state.projects.sort(function(a, b) {
+    getProjects: (state) => (ids) => {
+      if(ids && ids.length > 0) {
+        const projects = state.projects.filter(project => { return ids.includes(project.id) })
+        return projects.sort(function(a, b) {
           let textA = a.dealname.toUpperCase();
           let textB = b.dealname.toUpperCase();
           return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
       });
+      }
+      else {
+        return state.projects.sort(function(a, b) {
+          let textA = a.dealname.toUpperCase();
+          let textB = b.dealname.toUpperCase();
+          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      });
+      }
+      
     },
     /*
     Maps properties sent from HubSpot
@@ -74,7 +85,7 @@ export default {
               Authorization: `Bearer ${rootState.auth.jwt}`,
             }})
           
-            projects = projects.concat(response.data.data)
+          projects = projects.concat(response.data.data)
           const pagination = response.data.meta.pagination
 
           if(pagination.page < pagination.pageCount) {
@@ -84,7 +95,7 @@ export default {
             return projects
           }
       }
-
+      commit("getProjects", [])
       commit("getProjects", await fetchProjects(0, 100));
     },
     /*
