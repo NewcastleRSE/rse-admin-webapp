@@ -1,6 +1,6 @@
 //import router from "../../router";
 import axios from "axios"
-import { DateTime } from "luxon";
+import { DateTime } from "luxon"
 
 export default {
     namespaced: true,
@@ -53,22 +53,31 @@ export default {
 
               return startDate >= assignmentStart && startDate <= assignmentEnd
             })
-            
+
+            // Expand assignments to include full HubSpot project details
+            assignments.forEach(assignment => {
+              assignment.project = rootGetters['projects/getProject'](assignment.project.hubspotID)
+            });
+
             let monthlyUtilisation = {
               date: startDate.toISODate(),
               capacityFTE: Math.round(capacities.reduce(function (totalFTE, rse) { return totalFTE + rse.capacity }, 0)),
               targetFTE: Math.round(capacities.reduce(function (totalFTE, rse) { return totalFTE + rse.capacity }, 0) * 0.7),
               actualFTE: Math.round(assignments.reduce(function (totalFTE, assignment) { return totalFTE + assignment.FTE }, 0)),
+              facilityFTE: Math.round(assignments.reduce(function (facilityFTE, assignment) { return assignment.project.costModel === 'Facility' ? (facilityFTE + assignment.FTE) : facilityFTE + 0}, 0)),
+              nonFacilityFTE: Math.round(assignments.reduce(function (nonFacilityFTE, assignment) { return assignment.project.costModel !== 'Facility' ? (nonFacilityFTE + assignment.FTE) : nonFacilityFTE + 0 }, 0)),
               capacityDays: Math.round(capacities.reduce(function (totalDays, rse) { return totalDays + ((220/12) * (rse.capacity/100)) }, 0)),
               targetDays: Math.round(capacities.reduce(function (totalDays, rse) { return totalDays + ((220/12) * (rse.capacity/100)) }, 0) * 0.7),
               actualDays: Math.round(assignments.reduce(function (totalDays, assignment) { return totalDays + ((220/12) * (assignment.FTE/100)) }, 0)),
+              facilityDays: Math.round(assignments.reduce(function (facilityDays, assignment) { return assignment.project.costModel === 'Facility' ? (facilityDays + ((220/12) * (assignment.FTE/100))) : facilityDays + 0}, 0)),
+              nonFacilityDays: Math.round(assignments.reduce(function (nonFacilityDays, assignment) { return assignment.project.costModel !== 'Facility' ? (nonFacilityDays + ((220/12) * (assignment.FTE/100))) : nonFacilityDays + 0 }, 0))
             }
 
             utilisation.push(monthlyUtilisation)
 
             startDate = startDate.plus({months: 1})
           }
-          
+          console.log(utilisation)
           return utilisation
         }
     },
