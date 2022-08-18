@@ -83,11 +83,11 @@ export default {
     return {
         columns: [
             { name: 'Posted Date', prop: "postedDate", sortable: true, order: 'asc', size: columnWidth, columnProperties: () => { return { class: { 'postedDate': true } } } },
-            { name: 'Description', prop: "costElementDescription", sortable: true, order: 'asc', size: columnWidth*2, columnProperties: () => { return { class: { 'costElementDescription': true } } } },
-            { name: 'Document Header', prop: "documentHeader", sortable: true, order: 'asc', size: columnWidth*2, columnProperties: () => { return { class: { 'documentHeader': true } } } },
-            { name: 'Name', prop: "name", sortable: true, order: 'asc', size: columnWidth*2, columnProperties: () => { return { class: { 'name': true } } } },
-            { name: 'Category', prop: "ieCategory", sortable: true, order: 'asc', size: columnWidth*2, columnProperties: () => { return { class: { 'ieCategory': true } } } },
-            { name: 'Value', prop: "value", sortable: true, order: 'asc', size: columnWidth, columnType: 'currency', columnProperties: () => { return { class: { 'value': true } } } }
+            { name: 'Description', prop: "costElementDescription", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'costElementDescription': true } } } },
+            { name: 'Document Header', prop: "documentHeader", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'documentHeader': true } } } },
+            { name: 'Name', prop: "name", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'name': true } } } },
+            { name: 'Category', prop: "ieCategory", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'ieCategory': true } } } },
+            { name: 'Value', prop: "value", sortable: true, size: columnWidth, columnType: 'currency', columnProperties: () => { return { class: { 'value': true } } } }
         ],
         columnTypes: {
             currency: new NumberColumnType('($0,0.00)')
