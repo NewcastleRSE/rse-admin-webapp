@@ -1,7 +1,7 @@
 <template>
   <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-xl rounded-lg bg-white border-0 mt-16">
-    <div class="relative flex flex-col min-w-0 break-words m-6 lg:-mt-16 shadow-lg rounded bg-blueGray-700">
-      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+    <div class="relative flex flex-col min-w-0 h-350-px break-words m-6 lg:-mt-16 shadow-lg rounded-lg bg-blueGray-700">
+        <canvas id="availability-chart"></canvas>
     </div>
     <div class="flex-auto px-4 lg:px-10 py-10 pt-0 mb-6">
       <ol class="relative border-l border-gray-200 dark:border-gray-700 ">
@@ -15,9 +15,8 @@
                 clip-rule="evenodd"></path>
             </svg>
           </span>
-          <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">Flowbite Application UI
-            v2.0.0 <span
-              class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-3">Latest</span>
+          <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">{{rse.firstname}} {{rse.lastname}}
+            <span class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-3">Latest</span>
           </h3>
           <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Released on January
             13th, 2022</time>
@@ -67,3 +66,182 @@
     </div>
   </div>
 </template>
+<script>
+import Chart from 'chart.js/auto'
+import annotationPlugin from 'chartjs-plugin-annotation'
+import { DateTime } from 'luxon'
+
+Chart.register(annotationPlugin)
+export default {
+  data() {
+
+    const RSE = this.$store.getters["rses/getRse"](this.$route.params.name),
+          startDate = DateTime.fromISO(RSE.contractStart).startOf('month'),
+          endDate = DateTime.local().startOf('month').plus({month: 24}),
+          assignments = this.$store.getters["assignments/getAssignmentsInPeriod"](startDate.toISODate(), endDate.toISODate(), RSE.id),
+          projects = this.$store.getters["projects/getProjects"](assignments.reduce(function (ids, assignment) { return [...ids, assignment.project.hubspotID] }, []))
+
+    assignments.forEach(assignment => {
+      assignment.project = projects.find(project => project.id == assignment.project.hubspotID)
+    })
+
+    return {
+      rse: RSE, 
+      assignments: assignments
+    }
+  },
+    mounted: function () {
+    this.$nextTick(function () {
+
+      let startDate = DateTime.fromISO(this.rse.contractStart).startOf('month'),
+          endDate = DateTime.local().startOf('month').plus({month: 24}),
+          labels = [],
+          directlyAllocated = [],
+          facility = []
+
+      while(startDate < endDate) {
+        labels = [...labels, startDate.toFormat('LLL yy')]
+
+        let assignments = this.assignments.filter(assignment => {
+          return DateTime.fromISO(assignment.start) <= startDate &&
+                 DateTime.fromISO(assignment.end) >= startDate
+        })
+        
+        let facilityFTE = 0,
+            directlyAllocatedFTE = 0
+
+        if(assignments.length > 0) {
+          assignments.forEach(assignment => {
+            if(assignment.project.costModel === 'Facility') {
+              facilityFTE += assignment.fte
+            }
+            else {
+              directlyAllocatedFTE += assignment.fte
+            }
+          })
+        }
+
+        facility.push(facilityFTE)
+        directlyAllocated.push(directlyAllocatedFTE)
+
+        startDate = startDate.plus({month: 1})
+      }
+
+      let config = {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Directly Allocated',
+              backgroundColor: "#38bdf8",
+              borderColor: "#38bdf8",
+              data: directlyAllocated,
+              fill: false,
+              stepped: 'middle',
+            },
+            {
+              label: 'Facility',
+              backgroundColor: "#f472b6",
+              borderColor: "#f472b6",
+              data: facility,
+              fill: false,
+              stepped: 'middle',
+            }
+          ],
+        },
+        options: {
+          maintainAspectRatio: false,
+          responsive: true,
+          title: {
+            display: false,
+            text: "Utilisation",
+            fontColor: "white",
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: "#cbd5e1",
+              },
+              align: "end",
+              position: "bottom"
+            },
+            annotation: {
+              annotations: {
+                today: {
+                  type: 'line',
+                  xMin: DateTime.utc().toFormat('LLL yy'),
+                  xMax: DateTime.utc().toFormat('LLL yy'),
+                  borderColor: '#cbd5e1',
+                  borderWidth: 1,
+                  label: {
+                    content: 'Today',
+                    display: true,
+                    position: 'end',
+                    yAdjust: -6
+                  }
+                }
+              }
+            }
+          },
+          tooltips: {
+            mode: "index",
+            intersect: false,
+          },
+          hover: {
+            mode: "nearest",
+            intersect: true,
+          },
+          scales: {
+            x: {
+                stacked: true,
+                ticks: {
+                  color: "#cbd5e1",
+                },
+                display: true,
+                title: {
+                  text: 'Month',
+                  display: false,
+                  color:"#cbd5e1"
+                },
+                gridLines: {
+                  display: false,
+                  borderDash: [2],
+                  borderDashOffset: [2],
+                  color: "#f1f5f9",
+                  zeroLineColor: "rgba(0, 0, 0, 0)",
+                  zeroLineBorderDash: [2],
+                  zeroLineBorderDashOffset: [2],
+                },
+            },
+            y: {
+               stacked: true,
+               min: 0,
+               ticks: {
+                  color: "#cbd5e1",
+                },
+                display: true,
+                title: {
+                  text: 'Days',
+                  display: true,
+                  color:"#cbd5e1"
+                },
+                gridLines: {
+                  borderDash: [3],
+                  borderDashOffset: [3],
+                  drawBorder: false,
+                  color: "rgba(255, 255, 255, 0.15)",
+                  zeroLineColor: "rgba(33, 37, 41, 0)",
+                  zeroLineBorderDash: [2],
+                  zeroLineBorderDashOffset: [2],
+                },
+              },
+          },
+        },
+      };
+      var ctx = document.getElementById("availability-chart").getContext("2d")
+      window.myLine = new Chart(ctx, config)
+    });
+  },
+}
+</script>
