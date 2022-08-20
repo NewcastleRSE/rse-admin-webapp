@@ -53,8 +53,8 @@ export default {
 
       // assignment with latest end is displayed first
       assignments.sort(function(a, b) {
-        return b.end - a.end;
-      });
+        DateTime.fromISO(b.end) - DateTime.fromISO(a.end)
+      })
 
       return assignments;
     },
@@ -64,23 +64,30 @@ export default {
     getUID: (state) => {
       return (
         Math.max(...state.assignments.map((assignment) => assignment.id)) + 1
-      );
+      )
     },
     /*
     Return the current assignments for a given RSE
     */
     getCurrentAssignments: (state) => (rse) => {
-      return state.assignments.filter(assignment => 
+      let assignments = state.assignments.filter(assignment => 
         assignment.rse === rse
         && DateTime.fromISO(assignment.start) <= DateTime.utc()
         && DateTime.fromISO(assignment.end) >= DateTime.utc())
+
+      return assignments.sort(function(a, b) {
+        DateTime.fromISO(b.end) - DateTime.fromISO(a.end)
+      })
     },
     /*
     Return the assignments in a period for an optional RSE
     */
     getAssignmentsInPeriod: (state) => (start, end, rse) => {
+      
+      let assignments
+      
       if(rse) {
-        return state.assignments.filter(assignment =>
+        assignments = state.assignments.filter(assignment =>
           (assignment.rse === rse
           // assignment crosses start date provided
           && DateTime.fromISO(assignment.start) <= DateTime.fromISO(start)
@@ -96,13 +103,17 @@ export default {
         )
       }
       else {
-        return state.assignments.filter(assignment =>
+        assignments = state.assignments.filter(assignment =>
           (DateTime.fromISO(assignment.start) <= DateTime.fromISO(start)
           && DateTime.fromISO(assignment.end) >= DateTime.fromISO(start)) ||
           (DateTime.fromISO(assignment.start) <= DateTime.fromISO(end)
             && DateTime.fromISO(assignment.end) >= DateTime.fromISO(end))
         )
       }
+
+      return assignments.sort(function(a, b) {
+        return DateTime.fromISO(b.end) - DateTime.fromISO(a.end)
+      })
     }
   },
   /*
