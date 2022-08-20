@@ -45,32 +45,8 @@ const routes = [
             if (!isTokenValid()) {
                 next("/auth/login");
             } 
-            else if (from.path === '/auth/login') {
-              next()
-            }
             else {
-              if (
-                store.getters["assignments/getAssignments"].length === 0 ||
-                store.getters["capacity/getCapacity"].length === 0 ||
-                store.getters["projects/getProjects"]().length === 0 ||
-                store.getters["rses/getRses"].length === 0 ||
-                store.getters["timesheets/getReport"].length === 0 ||
-                store.getters["transactions/getTransactions"].length === 0 ||
-                store.getters["facility/getFacility"].length === 0
-              ) {
-                Promise.all([
-                  store.dispatch("projects/getProjects"),
-                  store.dispatch("rses/getRses"),
-                  store.dispatch("timesheets/getReport"),
-                  store.dispatch("capacity/getCapacity"),
-                  store.dispatch("transactions/getTransactions"),
-                  store.dispatch("facility/getFacility")
-                ]).then(() => {
-                  next();
-                }).catch(error => {
-                  console.error(error)
-                })
-              }
+              next()
             }
         },
         children: [
