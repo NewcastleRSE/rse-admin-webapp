@@ -88,13 +88,13 @@ function generateAssignments(assignments, projects) {
 
     switch(assignment.project.faculty) {
       case 'Science, Agriculture & Engineering':
-        classNames = ['bg-green-600']
+        classNames = ['bg-sky-500']
         break
       case 'Humanities & Social Sciences':
-        classNames = ['bg-amber-400']
+        classNames = ['bg-sky-500']
         break
       case 'Medical Sciences':
-        classNames = ['bg-purple-400']
+        classNames = ['bg-sky-500']
         break
       default:
         break
@@ -168,6 +168,7 @@ export default {
         state,
       });
       globalThis.gstc = gstc;
+      gstc.api.scrollToTime(DateTime.now().startOf('month').valueOf());
     });
     onBeforeUnmount(() => {
       if (gstc) gstc.destroy();
