@@ -36,7 +36,7 @@ function generateRows(RSEs) {
               assignments,
               parentId: id,
               classNames: ['child-row'],
-              label: '<div class="m-2">Assignment summary goes here.</div>'
+              label: '<div class="m-2"></div>'
             };
     }
   })

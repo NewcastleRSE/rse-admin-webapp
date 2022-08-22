@@ -226,6 +226,10 @@
         display: none;
     }
 
+    .bg-sky-600 .gstc__chart-timeline-items-row-item-resizing-handle {
+        display: none !important;
+    }
+
     revo-grid .main-viewport {
         height: 500px !important;
     }
