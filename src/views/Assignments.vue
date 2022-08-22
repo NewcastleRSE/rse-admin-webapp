@@ -25,7 +25,7 @@ export default {
     return {
       edited: false,
       rses: this.$store.getters["rses/getRses"],
-      projects: this.$store.getters(["projects/getProjects"]()),
+      projects: this.$store.getters["projects/getProjects"](),
       assignments: this.$store.getters["assignments/getAssignments"]
     }
   },
