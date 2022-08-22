@@ -5,7 +5,7 @@
       <div>
         <!-- Card stats -->
         <div class="flex flex-wrap">
-          <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
+          <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
             <availability-card v-on:click="rse(`${nextRSE.firstname} ${nextRSE.lastname}`)"
               :avatar=getAvatar(nextRSE)
               team="ALL"
@@ -14,7 +14,7 @@
               :waitTime=nextRSE.wait  
             />
           </div>
-          <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
+          <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
             <availability-card v-on:click="rse(`${nextMiddleware.firstname} ${nextMiddleware.lastname}`)"
               :avatar=getAvatar(nextMiddleware)
               team="MIDDLEWARE"
@@ -23,7 +23,7 @@
               :waitTime=nextMiddleware.wait              
             />
           </div>
-          <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
+          <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
             <availability-card v-on:click="rse(`${nextWebMobile.firstname} ${nextWebMobile.lastname}`)"
               :avatar=getAvatar(nextWebMobile)
               team="WEB &amp; MOBILE"
@@ -32,7 +32,7 @@
               :waitTime=nextWebMobile.wait  
             />
           </div>
-          <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
+          <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
             <availability-card v-on:click="rse(`${nextDataScience.firstname} ${nextDataScience.lastname}`)"
               :avatar=getAvatar(nextDataScience)
               team="DATA SCIENCE"
