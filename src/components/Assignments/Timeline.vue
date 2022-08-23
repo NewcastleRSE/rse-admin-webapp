@@ -40,11 +40,11 @@ const resizingPluginConfig = {
   snapToTime: {
     start({ startTime, vido }) {
       const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf());
-      return date.leftGlobalDate.startOf('day').add(12, 'hour');
+      return date.leftGlobalDate.startOf('day');
     },
     end({ endTime, vido }) {
       const date = vido.api.time.findOrCreateMainDateAtTime(endTime.valueOf());
-      return date.leftGlobalDate.startOf('day').add(12, 'hour');
+      return date.leftGlobalDate.endOf('day');
     },
   },
 };
@@ -70,7 +70,7 @@ const movementPluginConfig = {
   snapToTime: {
     start({ startTime, vido }) {
       const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf());
-      return date.leftGlobalDate.startOf('day').add(12, 'hour');
+      return date.leftGlobalDate.startOf('day');
     },
   },
 };
