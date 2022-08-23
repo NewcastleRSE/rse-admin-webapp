@@ -17,7 +17,64 @@ import "gantt-schedule-timeline-calendar/dist/style.css";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { DateTime } from "luxon";
 
-var globalThis = require('globalthis')();
+let globalThis = require('globalthis')(),
+    canChangeRow = false,
+    canCollide = false
+
+function isCollision(item) {
+  const allItems = globalThis.gstc.api.getAllItems();
+  for (const itemId in allItems) {
+    if (itemId === item.id) continue;
+    const currentItem = allItems[itemId];
+    if (currentItem.rowId === item.rowId) {
+      if (item.time.start >= currentItem.time.start && item.time.start <= currentItem.time.end) return true;
+      if (item.time.end >= currentItem.time.start && item.time.end <= currentItem.time.end) return true;
+      if (item.time.start <= currentItem.time.start && item.time.end >= currentItem.time.end) return true;
+      if (item.time.start >= currentItem.time.start && item.time.end <= currentItem.time.end) return true;
+    }
+  }
+  return false;
+}
+
+const resizingPluginConfig = {
+  snapToTime: {
+    start({ startTime, vido }) {
+      const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf());
+      return date.leftGlobalDate.startOf('day').add(12, 'hour');
+    },
+    end({ endTime, vido }) {
+      const date = vido.api.time.findOrCreateMainDateAtTime(endTime.valueOf());
+      return date.leftGlobalDate.startOf('day').add(12, 'hour');
+    },
+  },
+};
+
+const movementPluginConfig = {
+  events: {
+    onMove({ items }) {
+      // prevent items to change row
+      return items.before.map((beforeMovementItem, index) => {
+        const afterMovementItem = items.after[index];
+        const myItem = GSTC.api.merge({}, afterMovementItem);
+        if (!canChangeRow) {
+          myItem.rowId = beforeMovementItem.rowId;
+        }
+        if (!canCollide && isCollision(myItem)) {
+          myItem.time = { ...beforeMovementItem.time };
+          myItem.rowId = beforeMovementItem.rowId;
+        }
+        return myItem;
+      });
+    },
+  },
+  snapToTime: {
+    start({ startTime, vido }) {
+      const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf());
+      return date.leftGlobalDate.startOf('day').add(12, 'hour');
+    },
+  },
+};
+
 
 function generateRows(RSEs) {
   /**
@@ -131,7 +188,7 @@ export default {
       const config = {
         licenseKey:
           `${process.env.VUE_APP_GANTT_KEY}`,
-        plugins: [ProgressBar(), HighlightWeekends(), TimelinePointer(), Selection(), ItemResizing(), ItemMovement(), Bookmarks(), CalendarScroll()],
+        plugins: [ProgressBar(), HighlightWeekends(), TimelinePointer(), Selection(), ItemResizing(resizingPluginConfig), ItemMovement(movementPluginConfig), Bookmarks(), CalendarScroll()],
         innerHeight: (props.rses.length * 40) + 72,
         list: {
           columns: {
