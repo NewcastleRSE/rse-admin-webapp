@@ -54,14 +54,18 @@ const movementPluginConfig = {
     onMove({ items }) {
       // prevent items to change row
       return items.before.map((beforeMovementItem, index) => {
-        const afterMovementItem = items.after[index];
-        const myItem = GSTC.api.merge({}, afterMovementItem);
+        const afterMovementItem = items.after[index]
+        const myItem = GSTC.api.merge({}, afterMovementItem)
+        const type = myItem.id.split('-')[1]
         if (!canChangeRow) {
-          myItem.rowId = beforeMovementItem.rowId;
+          myItem.rowId = beforeMovementItem.rowId
         }
         if (!canCollide && isCollision(myItem)) {
-          myItem.time = { ...beforeMovementItem.time };
-          myItem.rowId = beforeMovementItem.rowId;
+          myItem.time = { ...beforeMovementItem.time }
+          myItem.rowId = beforeMovementItem.rowId
+        }
+        if(type === 'rse') {
+          myItem.time = { ...beforeMovementItem.time }
         }
         return myItem;
       });
