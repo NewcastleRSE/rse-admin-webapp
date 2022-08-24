@@ -18,19 +18,22 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import { DateTime } from "luxon";
 
 let globalThis = require('globalthis')(),
-    canChangeRow = false,
+    canChangeRow = true,
     canCollide = false
 
 function isCollision(item) {
-  const allItems = globalThis.gstc.api.getAllItems();
+  const allItems = globalThis.gstc.api.getAllItems()
   for (const itemId in allItems) {
-    if (itemId === item.id) continue;
-    const currentItem = allItems[itemId];
+    if (itemId === item.id) continue
+    const currentItem = allItems[itemId]
+    // Collision with overview row
+    if (item.rowId.split('-').length === 3) return true
+    // Collision with assignment on same row
     if (currentItem.rowId === item.rowId) {
-      if (item.time.start >= currentItem.time.start && item.time.start <= currentItem.time.end) return true;
-      if (item.time.end >= currentItem.time.start && item.time.end <= currentItem.time.end) return true;
-      if (item.time.start <= currentItem.time.start && item.time.end >= currentItem.time.end) return true;
-      if (item.time.start >= currentItem.time.start && item.time.end <= currentItem.time.end) return true;
+      if (item.time.start >= currentItem.time.start && item.time.start <= currentItem.time.end) return true
+      if (item.time.end >= currentItem.time.start && item.time.end <= currentItem.time.end) return true
+      if (item.time.start <= currentItem.time.start && item.time.end >= currentItem.time.end) return true
+      if (item.time.start >= currentItem.time.start && item.time.end <= currentItem.time.end) return true
     }
   }
   return false;
@@ -56,16 +59,12 @@ const movementPluginConfig = {
       return items.before.map((beforeMovementItem, index) => {
         const afterMovementItem = items.after[index]
         const myItem = GSTC.api.merge({}, afterMovementItem)
-        const type = myItem.id.split('-')[1]
         if (!canChangeRow) {
           myItem.rowId = beforeMovementItem.rowId
         }
         if (!canCollide && isCollision(myItem)) {
           myItem.time = { ...beforeMovementItem.time }
           myItem.rowId = beforeMovementItem.rowId
-        }
-        if(type === 'rse') {
-          myItem.time = { ...beforeMovementItem.time }
         }
         return myItem;
       });
