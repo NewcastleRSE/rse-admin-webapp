@@ -16,7 +16,6 @@ import isEqual from "lodash.isequal";
 import Timeline from "@/components/Assignments/Timeline.vue";
 import CreateModal from "@/components/Assignments/CreateModal.vue";
 import MenuBar from "@/components/Assignments/MenuBar.vue";
-import CardTimeSplitOverviewVue from '../components/Cards/CardTimeSplitOverview.vue';
 
 export default {
   name: "AssignmentGantt",
@@ -37,8 +36,9 @@ export default {
       this.$refs.create.toggleModal();
     },
     addAssignment: function(assignment) {
-      this.edited = CardTimeSplitOverviewVue
-      this.$store.commit("assignments/addAssignment", assignment)
+      this.edited = true
+      this.$refs.timeline.addAssignment(assignment)
+      // this.$store.commit("assignments/addAssignment", assignment)
     },
     save: function() {
       let savedAssignments = this.$store.getters["assignments/getSavedAssignments"];

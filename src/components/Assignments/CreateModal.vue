@@ -133,7 +133,7 @@ export default {
       const assignment = {
         id: this.$store.getters["assignments/getUID"],
         rse: this.rse,
-        projectID: this.project.id,
+        project: this.project,
         startDate: new Date(this.dateRange[0]).toISOString(),
         endDate: new Date(this.dateRange[1]).toISOString(),
         FTE: this.split

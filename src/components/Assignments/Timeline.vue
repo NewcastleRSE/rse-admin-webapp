@@ -142,23 +142,7 @@ function generateAssignments(assignments, projects) {
     const id = GSTC.api.GSTCID(`assignment-${assignment.assignmentID}`),
           rowId = GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`)
 
-    let classNames
-
     assignment.project = projects.find(project => project.id === assignment.project.hubspotID )
-
-    switch(assignment.project.faculty) {
-      case 'Science, Agriculture & Engineering':
-        classNames = ['bg-sky-500']
-        break
-      case 'Humanities & Social Sciences':
-        classNames = ['bg-sky-500']
-        break
-      case 'Medical Sciences':
-        classNames = ['bg-sky-500']
-        break
-      default:
-        break
-    }
 
     items[id] = {
       id,
@@ -169,7 +153,7 @@ function generateAssignments(assignments, projects) {
         end: GSTC.api.date(assignment.end),
       },
       progress: 100,
-      classNames: classNames
+      classNames: ['bg-sky-500']
     }
 
   });
@@ -261,10 +245,30 @@ export default {
       const api = gstc.api;
       api.scrollToTime(start.toUTC(), false);
     }
+    function addAssignment(assignment){
+
+      // Use timestamp as temporary ID
+      let newID = Date.now()
+
+      let newItem = {
+        id: GSTC.api.GSTCID(newID),
+        rowId: GSTC.api.GSTCID(`rse-${assignment.rse.id}-assignments`),
+        label: assignment.project.dealname,
+        time: {
+          start: DateTime.fromISO(assignment.startDate).startOf('day').valueOf(),
+          end: DateTime.fromISO(assignment.endDate).endOf("day").valueOf(),
+        },
+        progress: 100,
+        classNames: ['bg-sky-500']
+      }
+
+      state.update(`config.chart.items.${GSTC.api.GSTCID(newID)}`, (item) => { item = newItem; return item; } );
+    }
     return {
       gstcElement,
       updateFirstRow,
       changeZoomLevel,
+      addAssignment
     };
   }
 };
