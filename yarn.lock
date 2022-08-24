@@ -8882,10 +8882,10 @@ vue3-date-time-picker@^2.4.4:
   dependencies:
     date-fns "^2.27.0"
 
-vue3-simple-typeahead@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/vue3-simple-typeahead/-/vue3-simple-typeahead-1.0.5.tgz#a9ae8b3bf3e6019ef9cb3245c77b1b3da7772ee8"
-  integrity sha512-WCLhDUenFJaivPXRecSs4z/LSySlprs9yJRXssS3YLCvJhPIxRqoeLInYVUl7R2epDdJ9UFVw0RbbBadFIJJdg==
+vue3-simple-typeahead@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/vue3-simple-typeahead/-/vue3-simple-typeahead-1.0.10.tgz#2287dff663fe9f05380e9a74a660f7dfe0137f5e"
+  integrity sha512-rT0a6mwUGaanzo6xbg9sSgf9bloMacgB1ZEnXQviutPAB5vpK2YgoO1QY/YGvAHUY6/eXGZg4Qw5++OrME0TAA==
 
 vue3-table-lite@^1.0.6:
   version "1.1.3"

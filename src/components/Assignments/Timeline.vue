@@ -76,8 +76,7 @@ const movementPluginConfig = {
       return date.leftGlobalDate.startOf('day');
     },
   },
-};
-
+}
 
 function generateRows(RSEs) {
   /**
@@ -165,17 +164,40 @@ function generateAssignments(assignments, projects) {
 export default {
   name: "Timeline",
   props: ['rses', 'projects', 'assignments'],
-  setup(props) {
-    let gstc, state;
-    const gstcElement = ref(null);
+  emits: ['create'],
+  setup(props, { emit }) {
+    let gstc, state
+    const gstcElement = ref(null)
     onMounted(() => {
+      const selectionOptions = {
+        events: {
+          onEnd(selected) {
+
+            let cells = selected['chart-timeline-grid-row-cell'],
+                items = selected["chart-timeline-items-row-item"]
+
+            // Selection includes cells
+            if (cells.length) {
+              let rseID = cells[0].row.id.split('-')[2],
+                  range = [
+                    cells[0].time.leftGlobalDate,
+                    cells[cells.length-1].time.rightGlobalDate
+                  ];
+              console.log(items)
+              emit('create', rseID, null, range)
+            }
+            return selected;
+          },
+        },
+      }
+
       /**
        * @type { import("gantt-schedule-timeline-calendar").Config }
        */
       const config = {
         licenseKey:
           `${process.env.VUE_APP_GANTT_KEY}`,
-        plugins: [ProgressBar(), HighlightWeekends(), TimelinePointer(), Selection(), ItemResizing(resizingPluginConfig), ItemMovement(movementPluginConfig), Bookmarks(), CalendarScroll()],
+        plugins: [ProgressBar(), HighlightWeekends(), TimelinePointer(), Selection(selectionOptions), ItemResizing(resizingPluginConfig), ItemMovement(movementPluginConfig), Bookmarks(), CalendarScroll()],
         innerHeight: (props.rses.length * 40) + 72,
         list: {
           columns: {

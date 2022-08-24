@@ -19,7 +19,7 @@
                       <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                         <i class="fas fa-user"></i>
                       </span>
-                      <vue3-simple-typeahead placeholder="RSE" v-model="rse" :items=rses :minInputLength="1" :itemProjection="rseProjection" @selectItem="selectRse">
+                      <vue3-simple-typeahead placeholder="RSE" v-model="rse" :defaultItem=rse :items=rses :minInputLength="1" :itemProjection="rseProjection" @selectItem="selectRse">
                       <template #list-item-text="slot">
                         <div class="align-middle whitespace-nowrap">
                           <div class="flex items-center">
@@ -34,7 +34,7 @@
                       <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                         <i class="fas fa-briefcase"></i>
                       </span>
-                      <vue3-simple-typeahead placeholder="Project" v-model="project" :items=projects :minInputLength="1" :itemProjection="projectProjection" @selectItem="selectProject">
+                      <vue3-simple-typeahead placeholder="Project" v-model="project" :defaultItem=project :items=projects :minInputLength="1" :itemProjection="projectProjection" @selectItem="selectProject">
                       <template #list-item-text="slot">
                         <div class="align-middle whitespace-nowrap">
                           <div class="flex items-center">
@@ -114,7 +114,14 @@ export default {
     this.importAvatars(require.context('@/assets/img/avatars/', true, /\.(gif|jpe?g|tiff?|png|webp|bmp)$/));
   },
   methods: {
-    toggleModal: function(){
+    toggleModal: function(rseID, projectID, range, split){
+
+      if(rseID) this.selectRse(this.$store.getters["rses/getRseByID"](rseID))
+      if(projectID) this.selectProject(this.$store.getters["projects/getProject"](projectID))
+
+      this.dateRange = range && range.length ? range : null
+      this.split = split ? split : null
+
       this.showModal = !this.showModal;
     },
     importAvatars(r) {
