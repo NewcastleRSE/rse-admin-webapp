@@ -44,8 +44,8 @@
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="remove()">
-                <i class="fas fa-trash-alt text-lg leading-lg opacity-75 text-blueGray-700"></i>
+              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="selection? remove() : null">
+                <i class="fas fa-trash-alt text-lg leading-lg opacity-75" v-bind:class="{ 'text-blueGray-700': selection, 'text-blueGray-300': !selection }"></i>
               </button>
             </li>
             <li class="nav-item">
@@ -68,6 +68,16 @@ export default {
     cancel: { type: Function },
     remove: { type: Function },
     export: { type: Function },
+  },
+  data() {
+    return {
+      selection: false
+    }
+  },
+  methods: {
+    isSelection(selected) {
+      this.selection = selected
+    }
   }
 }
 </script>

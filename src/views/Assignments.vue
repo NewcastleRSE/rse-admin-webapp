@@ -2,9 +2,8 @@
     <div class="flex flex-wrap mt-4">
     <div class="w-full mb-12 px-4">
       <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
-        <menu-bar :edited="edited" :zoom="zoom" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
-        
-        <Timeline ref="timeline" :rses="rses" :projects="projects" :assignments="assignments" @create="create" />
+        <menu-bar ref="menuBar" :edited="edited" :zoom="zoom" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
+        <Timeline ref="timeline" :rses="rses" :projects="projects" :assignments="assignments" @create="create" @selection="selection" />
       </div>
       <create-modal ref="create" />
     </div>
@@ -31,6 +30,9 @@ export default {
   methods: {
     zoom: function(level) {
       this.$refs.timeline.changeZoomLevel(level)
+    },
+    selection: function(selected) {
+      this.$refs.menuBar.isSelection(selected)
     },
     create: function(rseID, projectID, dateRange, split) {
       this.$refs.create.toggleModal(rseID, projectID, dateRange, split);
@@ -81,9 +83,10 @@ export default {
     },
     remove: function() {
       this.edited = true;
-      this.$refs.gantt.getSelectedAssignment().forEach((point) => {
-        this.$store.commit("assignments/removeAssignment", point.assignmentID)
-      });
+      this.$refs.timeline.deleteAssignments()
+      // this.$refs.gantt.getSelectedAssignment().forEach((point) => {
+      //   this.$store.commit("assignments/removeAssignment", point.assignmentID)
+      // });
     },
     exportCSV: function() {
 

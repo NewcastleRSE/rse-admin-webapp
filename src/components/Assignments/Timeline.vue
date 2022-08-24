@@ -50,6 +50,12 @@ const resizingPluginConfig = {
       return date.leftGlobalDate.endOf('day');
     },
   },
+  events: {
+    onEnd({ items }) {
+      console.log(items)
+      return items.after
+    },
+  }
 };
 
 const movementPluginConfig = {
@@ -164,9 +170,9 @@ function generateAssignments(assignments, projects) {
 export default {
   name: "Timeline",
   props: ['rses', 'projects', 'assignments'],
-  emits: ['create'],
+  emits: ['create', 'selection'],
   setup(props, { emit }) {
-    let gstc, state
+    let gstc, state, selectedAssignments
     const gstcElement = ref(null)
     onMounted(() => {
       const selectionOptions = {
@@ -183,8 +189,15 @@ export default {
                     cells[0].time.leftGlobalDate,
                     cells[cells.length-1].time.rightGlobalDate
                   ];
-              console.log(items)
               emit('create', rseID, null, range)
+            }
+            // Selection includes assignments
+            if (items.length) {
+              selectedAssignments = items
+              emit('selection', true)
+            }
+            else {
+              emit('selection', false)
             }
             return selected;
           },
@@ -286,11 +299,21 @@ export default {
 
       state.update(`config.chart.items.${GSTC.api.GSTCID(newID)}`, (item) => { item = newItem; return item; } );
     }
+    function deleteAssignments(){
+      if(selectedAssignments) {
+        selectedAssignments.forEach(assignment => {
+          state.update(`config.chart.items`, (items) => { delete items[assignment.id]; return items } )
+        })
+        state.update("config.plugin.selection.selected.chart-timeline-items-row-item", [])
+        selectedAssignments = null
+      }
+    }
     return {
       gstcElement,
       updateFirstRow,
       changeZoomLevel,
-      addAssignment
+      addAssignment,
+      deleteAssignments
     };
   }
 };
