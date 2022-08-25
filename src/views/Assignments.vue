@@ -38,7 +38,9 @@ export default {
       this.selected = selected
     },
     unallocated: function() {
-      this.$refs.unallocated.toggleModal();
+      let projectIDs = this.projects.filter(project => project.dealstage === 'Awaiting Allocation')
+                        .reduce(function (ids, project) { return [...ids, project.id] }, [])
+      this.$refs.unallocated.toggleModal(projectIDs);
     },
     unallocatedCount: function() {
       return this.projects.filter(project => project.dealstage === 'Awaiting Allocation').length
