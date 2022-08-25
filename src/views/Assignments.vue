@@ -2,10 +2,11 @@
     <div class="flex flex-wrap mt-4">
     <div class="w-full mb-12 px-4">
       <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
-        <menu-bar ref="menuBar" :edited="edited" :zoom="zoom" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
+        <menu-bar :edited="edited" :selected="selected" :zoom="zoom" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
         <Timeline ref="timeline" :rses="rses" :projects="projects" :assignments="assignments" @create="create" @selection="selection" />
       </div>
       <create-modal ref="create" />
+      <unallocated-modal ref="unallocated" />
     </div>
   </div>
 </template>
@@ -14,14 +15,16 @@ import differenceWith from "lodash.differencewith";
 import isEqual from "lodash.isequal";
 import Timeline from "@/components/Assignments/Timeline.vue";
 import CreateModal from "@/components/Assignments/CreateModal.vue";
+import UnallocatedModal from "@/components/Assignments/UnallocatedModal.vue";
 import MenuBar from "@/components/Assignments/MenuBar.vue";
 
 export default {
   name: "AssignmentGantt",
-  components: { MenuBar, Timeline, CreateModal },
+  components: { MenuBar, Timeline, CreateModal, UnallocatedModal },
   data() {
     return {
       edited: false,
+      selected: false,
       rses: this.$store.getters["rses/getRses"],
       projects: this.$store.getters["projects/getProjects"](),
       assignments: this.$store.getters["assignments/getAssignments"]
@@ -32,7 +35,13 @@ export default {
       this.$refs.timeline.changeZoomLevel(level)
     },
     selection: function(selected) {
-      this.$refs.menuBar.isSelection(selected)
+      this.selected = selected
+    },
+    unallocated: function() {
+      this.$refs.unallocated.toggleModal();
+    },
+    unallocatedCount: function() {
+      return this.projects.filter(project => project.dealstage === 'Awaiting Allocation').length
     },
     create: function(rseID, projectID, dateRange, split) {
       this.$refs.create.toggleModal(rseID, projectID, dateRange, split);

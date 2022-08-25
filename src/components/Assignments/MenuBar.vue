@@ -29,6 +29,12 @@
               </button>
             </li>
             <li class="nav-item">
+              <button class="px-3 -mr-4 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="unallocated()">
+                <i class="fas fa-bars text-lg leading-lg opacity-75 text-blueGray-700"></i>
+                <span class="text-sm bg-red-600 py-0.5 px-1 rounded rounded-full text-white relative -left-2 -top-2">{{unallocatedCount()}}</span>
+              </button>
+            </li>
+            <li class="nav-item">
               <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="create()">
                 <i class="fas fa-plus text-lg leading-lg opacity-75 text-blueGray-700"></i>
               </button>
@@ -44,8 +50,8 @@
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="selection? remove() : null">
-                <i class="fas fa-trash-alt text-lg leading-lg opacity-75" v-bind:class="{ 'text-blueGray-700': selection, 'text-blueGray-300': !selection }"></i>
+              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="selected? remove() : null">
+                <i class="fas fa-trash-alt text-lg leading-lg opacity-75" v-bind:class="{ 'text-blueGray-700': selected, 'text-blueGray-300': !selected }"></i>
               </button>
             </li>
             <li class="nav-item">
@@ -61,23 +67,16 @@
 <script>
 export default {
   props: {
+    selected: { type: Boolean },
     edited: { type: Boolean },
     zoom: { type: Function },
+    unallocated: { type: Function },
+    unallocatedCount: { type: Number },
     create: { type: Function },
     save: { type: Function },
     cancel: { type: Function },
     remove: { type: Function },
     export: { type: Function },
-  },
-  data() {
-    return {
-      selection: false
-    }
-  },
-  methods: {
-    isSelection(selected) {
-      this.selection = selected
-    }
   }
 }
 </script>
