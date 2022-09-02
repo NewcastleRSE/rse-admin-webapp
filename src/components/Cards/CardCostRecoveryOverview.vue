@@ -46,12 +46,12 @@
             </div>
             <div class="text-right">
               <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full bg-sky-200 text-sky-600">
-                {{(((summary.currentYear.nonSalary) / (summary.currentYear.facility.nonSalaryCosts)) * 100).toFixed(2)}}%
+                {{(((summary.currentYear.nonSalary * -1) / (summary.currentYear.facility.nonSalaryCosts)) * 100).toFixed(2)}}%
               </span>
             </div>
           </div>
           <div class="overflow-hidden h-3 mb-4 text-xs flex rounded bg-gray-200">
-            <div :style="{ width: (((summary.currentYear.nonSalary) / (summary.currentYear.facility.nonSalaryCosts)) * 100).toFixed(2) + '%' }" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-sky-500"></div>
+            <div :style="{ width: (((summary.currentYear.nonSalary * -1) / (summary.currentYear.facility.nonSalaryCosts)) * 100).toFixed(2) + '%' }" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-sky-500"></div>
           </div>
         </div>
         <div class="relative pt-1">
@@ -84,12 +84,12 @@
             </div>
             <div class="text-right">
               <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full bg-sky-200 text-sky-600">
-                {{(((summary.lastYear.nonSalary) / (summary.lastYear.facility.nonSalaryCosts)) * 100).toFixed(2)}}%
+                {{(((summary.lastYear.nonSalary * -1) / (summary.lastYear.facility.nonSalaryCosts)) * 100).toFixed(2)}}%
               </span>
             </div>
           </div>
           <div class="overflow-hidden h-3 mb-4 text-xs flex rounded bg-gray-200">
-            <div :style="{ width: (((summary.lastYear.nonSalary) / (summary.lastYear.facility.nonSalaryCosts)) * 100).toFixed(2) + '%' }" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-sky-500"></div>
+            <div :style="{ width: (((summary.lastYear.nonSalary * -1) / (summary.lastYear.facility.nonSalaryCosts)) * 100).toFixed(2) + '%' }" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-sky-500"></div>
           </div>
         </div>
       </div>

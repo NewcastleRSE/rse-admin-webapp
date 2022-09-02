@@ -14,8 +14,11 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <div class="p-6 space-y-6">
-                    
+                <div class="p-6 space-y-6 overflow-y-scroll max-h-96">
+                    <div v-for="project in projects" :key="project.id">
+                      <p class="text-lg font-bold">{{project.dealname}}</p>
+                      <p class="text-sm mb-4">{{project.contacts[0].firstname}} {{project.contacts[0].lastname}} - {{project.school}}</p>
+                    </div>
                 </div>
                 <!-- Modal footer -->
                 <div class="flex items-center justify-end p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
