@@ -107,8 +107,6 @@
         let FY = DateTime.local().month > 7 ? DateTime.local().year : DateTime.local().year - 1,
             FYStart = DateTime.fromObject({ year: FY, month: 8, day: 1})
 
-            console.log(this.$store.getters["transactions/getSummary"](FYStart.minus({years: 1}).year))
-
         let currentFY = FYStart.year,
             currentFacility = this.$store.getters["facility/getFacility"](currentFY),
             currentTransactions = this.$store.getters["transactions/getSummary"](currentFY),
@@ -122,7 +120,6 @@
             lastInvestment = Object.prototype.hasOwnProperty.call(lastTransactions, 'indirectCostsAbsorbedRecovered') ? parseFloat(lastTransactions.indirectCostsAbsorbedRecovered.total) : 0,
             lastNonSalary = Object.prototype.hasOwnProperty.call(lastTransactions, 'nonSalaryExpenditure') ? parseFloat(lastTransactions.nonSalaryExpenditure.total) : 0,
             lastYearUtilisation = this.$store.getters["capacity/getUtilisation"](FYStart.minus({years: 1}), FYStart)
-
 
         let summary = {
           currentYear: {
@@ -149,8 +146,6 @@
 
         summary.currentYear.progress = (((summary.currentYear.facilityIncome + summary.currentYear.facultyIncome + summary.currentYear.directlyAllocated) / (summary.currentYear.target * 0.7)) * 100).toFixed(2),
         summary.lastYear.progress = (((summary.lastYear.facilityIncome + summary.lastYear.facultyIncome + summary.lastYear.directlyAllocated) / (summary.lastYear.target * 0.7)) * 100).toFixed(2)
-
-        console.log(summary)
 
         return summary
       }
