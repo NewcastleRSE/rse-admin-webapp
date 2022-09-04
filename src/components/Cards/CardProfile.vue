@@ -66,10 +66,10 @@
                 <dd class="mb-4">{{rse.nextAvailableFTE}}%</dd>
 
                 <dt class="font-bold">Contract Start</dt>
-                <dd class="mb-4">{{formatDate(rse.contractStart, 'Do LLLL yyyy')}}</dd>
+                <dd class="mb-4">{{formatDate(rse.contractStart, 'dd LLLL yyyy')}}</dd>
 
                 <dt class="font-bold">Contract End</dt>
-                <dd class="mb-4">{{formatDate(rse.contractEnd, 'Do LLLL yyyy')}}</dd>
+                <dd class="mb-4">{{formatDate(rse.contractEnd, 'dd LLLL yyyy')}}</dd>
 
                 <dt class="font-bold">Personnel Number</dt>
                 <dd class="mb-4">{{rse.personnelNumber}}</dd>
