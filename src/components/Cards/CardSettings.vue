@@ -180,7 +180,7 @@ export default {
                 },
                 display: true,
                 title: {
-                  text: 'Days',
+                  text: 'FTE',
                   display: true,
                   color:"#cbd5e1"
                 },
