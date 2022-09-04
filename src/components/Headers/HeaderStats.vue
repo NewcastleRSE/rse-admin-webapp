@@ -1,6 +1,6 @@
 <template>
   <!-- Header -->
-  <div class="relative bg-emerald-600 md:pt-32 pb-32 pt-12">
+  <div class="relative bg-emerald-600 bg-blend-multiply bg-cover md:pt-32 pb-32 pt-12" :style="{ backgroundImage: 'url(' + require('@/assets/img/header.jpeg') + ')' }">
     <div class="px-4 md:px-10 mx-auto w-full">
       <div>
         <!-- Card stats -->
@@ -48,8 +48,8 @@
 </template>
 
 <script>
-import AvailabilityCard from "@/components/Cards/Availability.vue";
-import { mapGetters } from 'vuex';
+import AvailabilityCard from "@/components/Cards/Availability.vue"
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
