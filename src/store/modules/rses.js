@@ -29,10 +29,15 @@ export default {
         nextRSE: (state) => {
           let fullTeam = state.rses.filter(rse => rse.nextAvailableDate && rse.active)
           fullTeam.sort((a, b) => { return DateTime.fromISO(a.nextAvailableDate) - DateTime.fromISO(b.nextAvailableDate) } )
-          let nextRSE = fullTeam[0],
-              wait = DateTime.now().diff(DateTime.fromISO(nextRSE.nextAvailableDate), ['months', 'days']).toObject()
+          
+          let index = 0
 
-          nextRSE.wait = `${wait.months} Months ${Math.floor(wait.days)} Days`
+          if(`${fullTeam[0].firstname} ${fullTeam[0].lastname}` === 'Mark Turner') {
+            index = 1
+          }
+          
+          let nextRSE = fullTeam[index]
+          nextRSE.wait = DateTime.fromISO(nextRSE.nextAvailableDate).diff(DateTime.now(), ['months', 'days']).toObject()
           
           return nextRSE
         },
@@ -40,10 +45,14 @@ export default {
           let webMobileTeam = state.rses.filter(rse => rse.team === 'WebMobile' && rse.nextAvailableDate && rse.active)
           webMobileTeam.sort((a, b) => { return DateTime.fromISO(a.nextAvailableDate) - DateTime.fromISO(b.nextAvailableDate) } )
           
-          let nextRSE = webMobileTeam[0],
-          wait = DateTime.now().diff(DateTime.fromISO(nextRSE.nextAvailableDate), ['months', 'days']).toObject()
+          let index = 0
 
-          nextRSE.wait = `${wait.months} Months ${Math.floor(wait.days)} Days`
+          if(`${webMobileTeam[0].firstname} ${webMobileTeam[0].lastname}` === 'Mark Turner') {
+            index = 1
+          }
+          
+          let nextRSE = webMobileTeam[index]
+          nextRSE.wait = DateTime.fromISO(nextRSE.nextAvailableDate).diff(DateTime.now(), ['months', 'days']).toObject()
           
           return nextRSE
         },
@@ -51,10 +60,8 @@ export default {
           let middlewareTeam = state.rses.filter(rse => rse.team === 'Middleware' && rse.nextAvailableDate && rse.active)
           middlewareTeam.sort((a, b) => { return DateTime.fromISO(a.nextAvailableDate) - DateTime.fromISO(b.nextAvailableDate) } )
           
-          let nextRSE = middlewareTeam[0],
-          wait = DateTime.now().diff(DateTime.fromISO(nextRSE.nextAvailableDate), ['months', 'days']).toObject()
-
-          nextRSE.wait = `${wait.months} Months ${Math.floor(wait.days)} Days`
+          let nextRSE = middlewareTeam[0]
+          nextRSE.wait = DateTime.fromISO(nextRSE.nextAvailableDate).diff(DateTime.now(), ['months', 'days']).toObject()
           
           return nextRSE
         },
@@ -62,10 +69,8 @@ export default {
           let dataScienceTeam = state.rses.filter(rse => rse.team === 'DataScience' && rse.nextAvailableDate && rse.active)
           dataScienceTeam.sort((a, b) => { return DateTime.fromISO(a.nextAvailableDate) - DateTime.fromISO(b.nextAvailableDate) } )
           
-          let nextRSE = dataScienceTeam[0],
-          wait = DateTime.now().diff(DateTime.fromISO(nextRSE.nextAvailableDate), ['months', 'days']).toObject()
-
-          nextRSE.wait = `${wait.months} Months ${Math.floor(wait.days)} Days`
+          let nextRSE = dataScienceTeam[0]
+          nextRSE.wait = DateTime.fromISO(nextRSE.nextAvailableDate).diff(DateTime.now(), ['months', 'days']).toObject()
           
           return nextRSE
         }

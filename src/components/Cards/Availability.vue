@@ -18,7 +18,7 @@
           </h1>
           <span class="mr-2 font-bold text-emerald-500">
             <i class="fas fa-calendar-alt"></i>
-            {{ waitTime }}
+            {{ Math.floor(waitTime.months) }} Months {{ Math.floor(waitTime.days) }} Days
           </span>
       </div>
     </div>
@@ -41,7 +41,7 @@ export default {
       type: String,
     },
     waitTime: {
-      type: String,
+      type: Object,
     }
   },
 };
