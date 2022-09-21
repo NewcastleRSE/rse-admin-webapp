@@ -33,7 +33,7 @@
             </div>
           </div>
           <div class="overflow-hidden h-3 mb-6 text-xs flex rounded bg-gray-200">
-            <div :style="{ width: (((summary.currentYear.facultyIncome) / (summary.currentYear.target)) * 100).toFixed(2) + '%' }" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-sky-500"></div>
+            <div :style="{ width: (((summary.currentYear.facultyIncome) / (summary.currentYear.target)) * 100).toFixed(2) + '%' }" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"></div>
             <div :style="{ width: (((summary.currentYear.directlyAllocated) / (summary.currentYear.target)) * 100).toFixed(2) + '%' }" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-orange-500"></div>
             <div :style="{ width: (((summary.currentYear.facilityIncome) / (summary.currentYear.target)) * 100).toFixed(2) + '%' }" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-emerald-500"></div>
           </div>
