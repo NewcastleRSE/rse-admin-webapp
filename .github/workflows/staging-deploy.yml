@@ -11,24 +11,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
-      - name: Setup node env
+      - name: Setup Node
         uses: actions/setup-node@v2.1.2
         with:
           node-version: 16
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: yarn
 
-      - name: Generate
+      - name: Generate Distribution
         run: yarn build
         env:
           VUE_APP_API_URL: ${{ secrets.VUE_APP_API_URL }}
           VUE_APP_GANTT_KEY: ${{ secrets.VUE_APP_GANTT_KEY }}
 
-      - uses: lauchacarro/Azure-Storage-Action@master
+      - name: Deploy
+        uses: lauchacarro/Azure-Storage-Action@master
         with:
           enabled-static-website: 'true'
-          folder: ./dist
+          folder: 'home/runner/work/rse-admin-webapp/rse-admin-webapp/dist'
           index-document: 'index.html'
           error-document: 'index.html'
           connection-string: ${{ secrets.CONNECTION_STRING }}
