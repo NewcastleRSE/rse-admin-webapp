@@ -25,9 +25,10 @@ jobs:
           VUE_APP_API_URL: ${{ secrets.VUE_APP_API_URL }}
           VUE_APP_GANTT_KEY: ${{ secrets.VUE_APP_GANTT_KEY }}
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+      - uses: lauchacarro/Azure-Storage-Action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          cname: admin.ncldata.dev
+          enabled-static-website: 'true'
+          folder: ./dist
+          index-document: 'index.html'
+          error-document: 'index.html'
+          connection-string: ${{ secrets.CONNECTION_STRING }}
