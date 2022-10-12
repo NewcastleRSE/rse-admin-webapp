@@ -114,17 +114,12 @@ function generateAvailability(RSEs) {
   RSEs.forEach(rse => {
     if (rse.active) {
 
-      // RSE is open-ended, project one year into future
-      if(!rse.contractEnd) {
-
-        let assignmentEndDates = rse.assignments.data.reduce(function (dates, assignment) { return [...dates, assignment.end] }, [])
-        const maxDate = new Date(Math.max(...assignmentEndDates.map(date => { return new Date(date) })))
-        rse.contractEnd = maxDate
-      }
+      let assignmentEndDates = rse.assignments.data.reduce(function (dates, assignment) { return [...dates, assignment.end] }, [])
+      const maxDate = new Date(Math.max(...assignmentEndDates.map(date => { return new Date(date) })))
 
       const id = GSTC.api.GSTCID(`rse-${rse.id}`),
         rowId = GSTC.api.GSTCID(`rse-${rse.id}`),
-        contractLength = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.contractEnd), ['days']).toObject(),
+        assignmentsLength = DateTime.fromISO(rse.contractStart).diff(DateTime.fromJSDate(maxDate), ['days']).toObject(),
         capacity = DateTime.fromISO(rse.contractStart).diff(DateTime.fromISO(rse.nextAvailableDate), ['days']).toObject()
 
       items[id] = {
@@ -133,9 +128,9 @@ function generateAvailability(RSEs) {
         rowId,
         time: {
           start: GSTC.api.date(rse.contractStart),
-          end: GSTC.api.date(rse.contractEnd),
+          end: GSTC.api.date(maxDate),
         },
-        progress: (capacity.days / contractLength.days) * 100,
+        progress: (capacity.days / assignmentsLength.days) * 100,
         classNames: ['bg-sky-600']
       }
     }
