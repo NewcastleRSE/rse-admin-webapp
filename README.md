@@ -47,6 +47,13 @@ Run with hot reload for development
 yarn serve
 ```
 
+If using Node 18 You may need to run this command if `yarn serve` fails with an 'digital envelope routines::unsupported' error.
+
+`export NODE_OPTIONS=--openssl-legacy-provider`
+
+or switch to Node 16.
+
+
 ### Running Tests
 
 Detect linting errors
