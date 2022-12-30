@@ -3,19 +3,19 @@
 </template>
 
 <script>
-import GSTC from "gantt-schedule-timeline-calendar/dist/gstc.wasm.esm.min.js";
-import { Plugin as TimelinePointer } from "gantt-schedule-timeline-calendar/dist/plugins/timeline-pointer.esm.min.js";
-import { Plugin as Selection } from "gantt-schedule-timeline-calendar/dist/plugins/selection.esm.min.js";
-import { Plugin as ItemResizing } from "gantt-schedule-timeline-calendar/dist/plugins/item-resizing.esm.min.js";
-import { Plugin as ItemMovement } from "gantt-schedule-timeline-calendar/dist/plugins/item-movement.esm.min.js";
-import { Plugin as Bookmarks } from "gantt-schedule-timeline-calendar/dist/plugins/time-bookmarks.esm.min.js";
-import { Plugin as HighlightWeekends } from 'gantt-schedule-timeline-calendar/dist/plugins/highlight-weekends.esm.min.js';
-import { Plugin as CalendarScroll } from 'gantt-schedule-timeline-calendar/dist/plugins/calendar-scroll.esm.min.js';
-import { Plugin as ProgressBar } from 'gantt-schedule-timeline-calendar/dist/plugins/progress-bar.esm.min.js';
+import GSTC from "gantt-schedule-timeline-calendar/dist/gstc.wasm.esm.min.js"
+import { Plugin as TimelinePointer } from "gantt-schedule-timeline-calendar/dist/plugins/timeline-pointer.esm.min.js"
+import { Plugin as Selection } from "gantt-schedule-timeline-calendar/dist/plugins/selection.esm.min.js"
+import { Plugin as ItemResizing } from "gantt-schedule-timeline-calendar/dist/plugins/item-resizing.esm.min.js"
+import { Plugin as ItemMovement } from "gantt-schedule-timeline-calendar/dist/plugins/item-movement.esm.min.js"
+import { Plugin as Bookmarks } from "gantt-schedule-timeline-calendar/dist/plugins/time-bookmarks.esm.min.js"
+import { Plugin as HighlightWeekends } from 'gantt-schedule-timeline-calendar/dist/plugins/highlight-weekends.esm.min.js'
+import { Plugin as CalendarScroll } from 'gantt-schedule-timeline-calendar/dist/plugins/calendar-scroll.esm.min.js'
+import { Plugin as ProgressBar } from 'gantt-schedule-timeline-calendar/dist/plugins/progress-bar.esm.min.js'
 
-import "gantt-schedule-timeline-calendar/dist/style.css";
-import { ref, onMounted, onBeforeUnmount } from "vue";
-import { DateTime } from "luxon";
+import "gantt-schedule-timeline-calendar/dist/style.css"
+import { ref, onMounted, onBeforeUnmount } from "vue"
+import { DateTime } from "luxon"
 
 let globalThis = require('globalthis')(),
     canChangeRow = true,
@@ -36,18 +36,18 @@ function isCollision(item) {
       if (item.time.start >= currentItem.time.start && item.time.end <= currentItem.time.end) return true
     }
   }
-  return false;
+  return false
 }
 
 const resizingPluginConfig = {
   snapToTime: {
     start({ startTime, vido }) {
-      const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf());
-      return date.leftGlobalDate.startOf('day');
+      const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf())
+      return date.leftGlobalDate.startOf('day')
     },
     end({ endTime, vido }) {
-      const date = vido.api.time.findOrCreateMainDateAtTime(endTime.valueOf());
-      return date.leftGlobalDate.endOf('day');
+      const date = vido.api.time.findOrCreateMainDateAtTime(endTime.valueOf())
+      return date.leftGlobalDate.endOf('day')
     },
   },
   events: {
@@ -56,7 +56,7 @@ const resizingPluginConfig = {
       return items.after
     },
   }
-};
+}
 
 const movementPluginConfig = {
   events: {
@@ -72,14 +72,14 @@ const movementPluginConfig = {
           myItem.time = { ...beforeMovementItem.time }
           myItem.rowId = beforeMovementItem.rowId
         }
-        return myItem;
-      });
+        return myItem
+      })
     },
   },
   snapToTime: {
     start({ startTime, vido }) {
-      const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf());
-      return date.leftGlobalDate.startOf('day');
+      const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf())
+      return date.leftGlobalDate.startOf('day')
     },
   },
 }
@@ -88,7 +88,7 @@ function generateRows(RSEs) {
   /**
    * @type { import("gantt-schedule-timeline-calendar").Rows }
    */
-  const rows = {};
+  const rows = {}
   RSEs.forEach(rse => {
     if (rse.active) {
       const id = GSTC.api.GSTCID(`rse-${rse.id}`),
@@ -96,16 +96,16 @@ function generateRows(RSEs) {
             rows[id] = {
               id,
               label: `${rse.firstname} ${rse.lastname}`,
-            };
+            }
             rows[assignments] = {
               assignments,
               parentId: id,
               classNames: ['child-row'],
               label: '<div class="m-2"></div>'
-            };
+            }
     }
   })
-  return rows;
+  return rows
 }
 
 function generateAvailability(RSEs) {
@@ -134,9 +134,9 @@ function generateAvailability(RSEs) {
         classNames: ['bg-sky-600']
       }
     }
-  });
+  })
 
-  return items;
+  return items
 }
 
 function generateAssignments(assignments, projects) {
@@ -165,9 +165,9 @@ function generateAssignments(assignments, projects) {
       classNames: ['bg-sky-500']
     }
 
-  });
+  })
 
-  return items;
+  return items
 }
 
 // main component
@@ -192,7 +192,7 @@ export default {
                   range = [
                     cells[0].time.leftGlobalDate,
                     cells[cells.length-1].time.rightGlobalDate
-                  ];
+                  ]
               emit('create', rseID, null, range)
             }
             // Selection includes assignments
@@ -203,7 +203,7 @@ export default {
             else {
               emit('selection', false)
             }
-            return selected;
+            return selected
           },
         },
       }
@@ -243,24 +243,24 @@ export default {
             zoom: 25.5
           }
         },
-      };
-      state = GSTC.api.stateFromConfig(config);
-      globalThis.state = state;
+      }
+      state = GSTC.api.stateFromConfig(config)
+      globalThis.state = state
       gstc = GSTC({
         element: gstcElement.value,
         state,
-      });
-      globalThis.gstc = gstc;
-      gstc.api.scrollToTime(DateTime.now().startOf('month').valueOf());
-    });
+      })
+      globalThis.gstc = gstc
+      gstc.api.scrollToTime(DateTime.now().startOf('month').valueOf())
+    })
     onBeforeUnmount(() => {
-      if (gstc) gstc.destroy();
-    });
+      if (gstc) gstc.destroy()
+    })
     function updateFirstRow() {
       state.update(`config.list.rows.${GSTC.api.GSTCID("0")}`, (row) => {
-        row.label = "Changed dynamically";
-        return row;
-      });
+        row.label = "Changed dynamically"
+        return row
+      })
     }
     function changeZoomLevel(period) {
       let zoom = null,
@@ -269,20 +269,20 @@ export default {
         case 'days':
           zoom = 20
           start = DateTime.now().startOf('day').minus({ days: 7 })
-          break;
+          break
         case 'months':
           zoom = 25.5
           start = DateTime.now().startOf('month').minus({ months: 6 })
-          break;
+          break
         case 'years':
           zoom = 26.5
           start = DateTime.now().startOf('month').minus({ months: 6 })
-          break;
+          break
       }
 
-      state.update('config.chart.time.zoom', zoom);
-      const api = gstc.api;
-      api.scrollToTime(start.toUTC(), false);
+      state.update('config.chart.time.zoom', zoom)
+      const api = gstc.api
+      api.scrollToTime(start.toUTC(), false)
     }
     function addAssignment(assignment){
 
@@ -301,7 +301,7 @@ export default {
         classNames: ['bg-sky-500']
       }
 
-      state.update(`config.chart.items.${GSTC.api.GSTCID(newID)}`, (item) => { item = newItem; return item; } );
+      state.update(`config.chart.items.${GSTC.api.GSTCID(newID)}`, (item) => { item = newItem; return item } )
     }
     function deleteAssignments(){
       if(selectedAssignments) {
@@ -318,9 +318,9 @@ export default {
       changeZoomLevel,
       addAssignment,
       deleteAssignments
-    };
+    }
   }
-};
+}
 </script>
 <style scoped>
 .gstc-component {
