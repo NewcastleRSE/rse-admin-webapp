@@ -7,8 +7,8 @@ The RSE Admin tool is for tracking the assignment of RSEs to projects, cost reco
 
 ### Project Team
 Mark Turner, Newcastle University  ([mark.turner@newcastle.ac.uk](mailto:mark.turner@newcastle.ac.uk))    
-Adana Obibuaku, Newcastle University  ([a.obibuaku@newcastle.ac.uk](mailto:a.obibuaku@newcastle.ac.uk))  
-Max Haskiewicz, Newcastle University  ([m.haskiewicz1@newcastle.ac.uk](mailto:m.haskiewicz1@newcastle.ac.uk@newcastle.ac.uk))  
+Kate Court, Newcastle University  ([kate.court@newcastle.ac.uk](mailto:kate.court@newcastle.ac.uk))  
+Becky Osselton, Newcastle University  ([rebecca.osselton@newcastle.ac.uk](mailto:rebecca.osselton@newcastle.ac.uk))   
 
 ### RSE Contact
 Mark Turner  
@@ -29,7 +29,7 @@ The application uses Vue to manage routes and daa binding, with Vuex for state m
 
 ### Prerequisites
 
-Any tools or versions of languages needed to run code. For example specific Python or Node versions. Minimum hardware requirements also go here.
+A local version of NodeJS ([nvm](https://github.com/nvm-sh/nvm) is recommended) and a local [MySQL Community Server](https://dev.mysql.com/downloads/mysql/) running for development. Whilst possible to interact with the database via an interactive shell, it is recommended to use a GUI tool such as [MySQL Workbench](https://dev.mysql.com/downloads/workbench/).
 
 ### Installation
 
