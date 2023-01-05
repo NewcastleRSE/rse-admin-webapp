@@ -42,9 +42,10 @@ export default {
       })
     },
     logout(state) {
-      state.accessToken = ''
-      state.jwt = ''
-      state.user = {}
+      // Clear all state
+      Object.keys(state).forEach(key => {
+        state[key] = null
+      })
       router.push({ name: "Login" });
     },
   },
