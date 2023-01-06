@@ -4,21 +4,21 @@
   >
     <div class="flex p-4">
       <div class="relative w-auto pr-4 flex-none">
-        <img :src="avatar" class="h-20 rounded-full m-2 shadow-lg" />
+        <img :src="image" class="h-20 rounded-full m-2 shadow-lg" />
       </div>
       <div class="flex-1">
           <h5 class="text-blueGray-400 uppercase font-bold text-xs">
-            {{ team }}
+            {{ label }}
           </h5>
           <h3 class="font-semibold text-blueGray-700">
-            {{ name }}
+            {{ title }}
           </h3>
           <h1 class="font-semibold text-blueGray-700">
-            {{ from }}
+            {{ subTitle }}
           </h1>
           <span class="mr-2 font-bold text-emerald-500">
             <i class="fas fa-calendar-alt"></i>
-            {{ Math.floor(waitTime.months) }} Months {{ Math.floor(waitTime.days) }} Days
+            {{ value }}
           </span>
       </div>
     </div>
@@ -28,20 +28,20 @@
 export default {
   name: "availability-card",
   props: {
-    avatar: {
+    image: {
       type: String,
     },
-    team: {
+    label: {
       type: String,
     },
-    name: {
+    title: {
       type: String,
     },
-    from: {
+    subTitle: {
       type: String,
     },
-    waitTime: {
-      type: Object,
+    value: {
+      type: String,
     }
   },
 };

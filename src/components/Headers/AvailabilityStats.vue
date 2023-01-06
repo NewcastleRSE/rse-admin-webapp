@@ -6,39 +6,38 @@
         <!-- Card stats -->
         <div class="flex flex-wrap">
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-            <availability-card v-on:click="rse(`${nextRSE.firstname} ${nextRSE.lastname}`)"
-              :avatar=getAvatar(nextRSE)
-              team="ALL"
-              :name="`${nextRSE.firstname} ${nextRSE.lastname}`"
-              :from=formatDate(nextRSE.nextAvailableDate)
-              :waitTime=nextRSE.wait  
+            <timeline-link v-on:click="$router.push({name:'Assignments'})"
+              label="Assignments"
+              title="View All Project Assignments"
+              subLabel="Overall Wait Time"
+              :subTitle="`${Math.floor(nextRSE.wait.months) > 0 ? Math.floor(nextRSE.wait.months) : 0} Months ${Math.floor(nextRSE.wait.days) > 0 ? Math.floor(nextRSE.wait.days) : 0 } Days`"
             />
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
             <availability-card v-on:click="rse(`${nextMiddleware.firstname} ${nextMiddleware.lastname}`)"
-              :avatar=getAvatar(nextMiddleware)
-              team="MIDDLEWARE"
-              :name="`${nextMiddleware.firstname} ${nextMiddleware.lastname}`"
-              :from=formatDate(nextMiddleware.nextAvailableDate)
-              :waitTime=nextMiddleware.wait              
+              :image=getAvatar(nextMiddleware)
+              label="MIDDLEWARE"
+              :title="`${nextMiddleware.firstname} ${nextMiddleware.lastname}`"
+              :subTitle=formatDate(nextMiddleware.nextAvailableDate)
+              :value="`${Math.floor(nextMiddleware.wait.months) > 0 ? Math.floor(nextMiddleware.wait.months) : 0} Months ${Math.floor(nextMiddleware.wait.days) > 0 ? Math.floor(nextMiddleware.wait.days) : 0 } Days`"            
             />
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
             <availability-card v-on:click="rse(`${nextWebMobile.firstname} ${nextWebMobile.lastname}`)"
-              :avatar=getAvatar(nextWebMobile)
-              team="WEB &amp; MOBILE"
-              :name="`${nextWebMobile.firstname} ${nextWebMobile.lastname}`"
-              :from=formatDate(nextWebMobile.nextAvailableDate)
-              :waitTime=nextWebMobile.wait  
+              :image=getAvatar(nextWebMobile)
+              label="WEB &amp; MOBILE"
+              :title="`${nextWebMobile.firstname} ${nextWebMobile.lastname}`"
+              :subTitle=formatDate(nextWebMobile.nextAvailableDate)
+              :value="`${Math.floor(nextWebMobile.wait.months) > 0 ? Math.floor(nextWebMobile.wait.months) : 0} Months ${Math.floor(nextWebMobile.wait.days) > 0 ? Math.floor(nextWebMobile.wait.days) : 0 } Days`"
             />
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
             <availability-card v-on:click="rse(`${nextDataScience.firstname} ${nextDataScience.lastname}`)"
-              :avatar=getAvatar(nextDataScience)
-              team="DATA SCIENCE"
-              :name="`${nextDataScience.firstname} ${nextDataScience.lastname}`"
-              :from=formatDate(nextDataScience.nextAvailableDate)
-              :waitTime=nextDataScience.wait 
+              :image=getAvatar(nextDataScience)
+              label="DATA SCIENCE"
+              :title="`${nextDataScience.firstname} ${nextDataScience.lastname}`"
+              :subTitle=formatDate(nextDataScience.nextAvailableDate)
+              :value="`${Math.floor(nextDataScience.wait.months) > 0 ? Math.floor(nextDataScience.wait.months) : 0} Months ${Math.floor(nextDataScience.wait.days) > 0 ? Math.floor(nextDataScience.wait.days) : 0 } Days`"
             />
           </div>
         </div>
@@ -49,11 +48,13 @@
 
 <script>
 import AvailabilityCard from "@/components/Cards/Availability.vue"
+import TimelineLink from "@/components/Cards/TimelineLink.vue"
 import { mapGetters } from 'vuex'
 
 export default {
   components: {
     AvailabilityCard,
+    TimelineLink
   },
   data() {
     return {
