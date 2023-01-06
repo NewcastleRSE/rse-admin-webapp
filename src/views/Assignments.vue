@@ -1,26 +1,30 @@
 <template>
-    <div class="flex flex-wrap mt-4">
-    <div class="w-full mb-12 px-4">
-      <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
-        <menu-bar :edited="edited" :selected="selected" :zoom="zoom" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
-        <Timeline ref="timeline" :rses="rses" :projects="projects" :assignments="assignments" @create="create" @selection="selection" />
+  <div>
+    <availability-stats />
+    <div class="px-4 md:px-10 mx-auto w-full -m-24">
+      <div class="w-full mb-12 px-4">
+        <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
+          <menu-bar :edited="edited" :selected="selected" :zoom="zoom" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
+          <Timeline ref="timeline" :rses="rses" :projects="projects" :assignments="assignments" @create="create" @selection="selection" />
+        </div>
+        <create-modal ref="create" />
+        <unallocated-modal ref="unallocated" />
       </div>
-      <create-modal ref="create" />
-      <unallocated-modal ref="unallocated" />
     </div>
   </div>
 </template>
 <script>
-import differenceWith from "lodash.differencewith";
-import isEqual from "lodash.isequal";
-import Timeline from "@/components/Assignments/Timeline.vue";
-import CreateModal from "@/components/Assignments/CreateModal.vue";
-import UnallocatedModal from "@/components/Assignments/UnallocatedModal.vue";
-import MenuBar from "@/components/Assignments/MenuBar.vue";
+import differenceWith from "lodash.differencewith"
+import isEqual from "lodash.isequal"
+import AvailabilityStats from "@/components/Headers/AvailabilityStats.vue"
+import Timeline from "@/components/Assignments/Timeline.vue"
+import CreateModal from "@/components/Assignments/CreateModal.vue"
+import UnallocatedModal from "@/components/Assignments/UnallocatedModal.vue"
+import MenuBar from "@/components/Assignments/MenuBar.vue"
 
 export default {
   name: "AssignmentGantt",
-  components: { MenuBar, Timeline, CreateModal, UnallocatedModal },
+  components: { AvailabilityStats, MenuBar, Timeline, CreateModal, UnallocatedModal },
   data() {
     return {
       edited: false,
@@ -40,13 +44,13 @@ export default {
     unallocated: function() {
       let projectIDs = this.projects.filter(project => project.dealstage === 'Awaiting Allocation')
                         .reduce(function (ids, project) { return [...ids, project.id] }, [])
-      this.$refs.unallocated.toggleModal(projectIDs);
+      this.$refs.unallocated.toggleModal(projectIDs)
     },
     unallocatedCount: function() {
       return this.projects.filter(project => project.dealstage === 'Awaiting Allocation').length
     },
     create: function(rseID, projectID, dateRange, split) {
-      this.$refs.create.toggleModal(rseID, projectID, dateRange, split);
+      this.$refs.create.toggleModal(rseID, projectID, dateRange, split)
     },
     addAssignment: function(assignment) {
       this.edited = true
@@ -54,12 +58,12 @@ export default {
       // this.$store.commit("assignments/addAssignment", assignment)
     },
     save: function() {
-      let savedAssignments = this.$store.getters["assignments/getSavedAssignments"];
-      let updates = this.$store.getters["assignments/getAssignments"];
+      let savedAssignments = this.$store.getters["assignments/getSavedAssignments"]
+      let updates = this.$store.getters["assignments/getAssignments"]
 
-      let newAssignments = differenceWith(updates, savedAssignments, isEqual);
-      let deletedAssignments = differenceWith(savedAssignments, updates, isEqual);
-      let promises = [];
+      let newAssignments = differenceWith(updates, savedAssignments, isEqual)
+      let deletedAssignments = differenceWith(savedAssignments, updates, isEqual)
+      let promises = []
 
       newAssignments.forEach((item) => {
         const assignment = {
@@ -67,70 +71,70 @@ export default {
           startDate: new Date(item.start).toISOString(),
           endDate: new Date(item.end).toISOString(),
           projectID: item.project.id,
-        };
+        }
         promises.push(
           this.$store.dispatch("assignments/saveAssignment", assignment)
-        );
-      });
+        )
+      })
       deletedAssignments.forEach((item) => {
         promises.push(
           this.$store.dispatch(
             "assignments/deleteAssignment",
             item.assignmentID
           )
-        );
-      });
+        )
+      })
 
       Promise.allSettled(promises).then(() => {
         // updates chart to match what is stored in the db
-        this.assignments = this.$store.getters["assignments/getSavedAssignments"];
-        this.edited = false;
+        this.assignments = this.$store.getters["assignments/getSavedAssignments"]
+        this.edited = false
         this.$refs.gantt.redraw()
-      });
+      })
     },
     cancel: function() {
-      this.assignments = this.$store.getters["assignments/getSavedAssignments"];
-      this.edited = false;
+      this.assignments = this.$store.getters["assignments/getSavedAssignments"]
+      this.edited = false
     },
     remove: function() {
-      this.edited = true;
+      this.edited = true
       this.$refs.timeline.deleteAssignments()
       // this.$refs.gantt.getSelectedAssignment().forEach((point) => {
       //   this.$store.commit("assignments/removeAssignment", point.assignmentID)
-      // });
+      // })
     },
     exportCSV: function() {
 
-      const header = "id,start,end,name,dealname" + "\r\n";
-      let body = "";
+      const header = "id,start,end,name,dealname" + "\r\n"
+      let body = ""
       let chart = this.$store.getters[
         "assignments/getSavedAssignments"
-      ];
+      ]
       chart.forEach((el) => {
-        let line = "";
+        let line = ""
         for (let key in el) {
           if (line != "") {line += ","} // add commas for csv
           if (key === "start" || key === "end") {
             console.log(key)
-            let date = new Date(el[key]);
-            line += date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
+            let date = new Date(el[key])
+            line += date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear()
           }
           else if (el[key]) {
-            line += el[key]; // to remove undefined values
+            line += el[key] // to remove undefined values
           } 
           else {
-            line += " "; 
+            line += " " 
           }
         }
-        body += line + "\r\n";
+        body += line + "\r\n"
       })
-      let csv = header + body;
-      let link = document.getElementById("download");
-      let blob = new Blob([csv], { type: "text/csv"});
-      link.download = "data.csv";
-      link.href = URL.createObjectURL(blob);
+      let csv = header + body
+      let link = document.getElementById("download")
+      let blob = new Blob([csv], { type: "text/csv"})
+      link.download = "data.csv"
+      link.href = URL.createObjectURL(blob)
 
     }
   }
-};
+}
 </script>
