@@ -1,7 +1,11 @@
 //import router from "../../router";
 import axios from 'axios'
 import * as qs from 'qs'
-import { DateTime } from "luxon";
+import { DateTime } from "luxon"
+
+const initialState =  {
+  rses: []
+}
 
 export default {
     namespaced: true,
@@ -10,9 +14,7 @@ export default {
     Global Variables
     Call state with $store.state.{module}.{stateName}
     */
-    state: {
-        rses: [],
-    },
+    state: { ...initialState },
 
     getters: {
         getRses: (state) => {
@@ -81,6 +83,9 @@ export default {
         getRses(state, rses) {
           state.rses = rses;
         },
+        reset: (state) => {
+          Object.assign(state, initialState)
+        }
     },
 
     actions: {

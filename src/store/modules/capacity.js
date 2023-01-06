@@ -2,6 +2,10 @@
 import axios from "axios"
 import { DateTime } from "luxon"
 
+const initialState =  {
+  capacity: []
+}
+
 export default {
     namespaced: true,
 
@@ -9,9 +13,7 @@ export default {
     Global Variables
     Call state with $store.state.{module}.{stateName}
     */
-    state: {
-        capacity: [],
-    },
+    state: { ...initialState },
 
     getters: {
         getCapacity: (state) => {
@@ -86,6 +88,9 @@ export default {
         getCapacity(state, capacity) {
           state.capacity = capacity;
         },
+        reset: (state) => {
+          Object.assign(state, initialState)
+        }
     },
 
     actions: {

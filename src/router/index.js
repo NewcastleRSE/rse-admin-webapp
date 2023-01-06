@@ -1,21 +1,21 @@
-import { nextTick } from 'vue';
-import { createRouter, createWebHistory } from "vue-router";
-import jwt_decode from "jwt-decode";
-import store from "../store";
+import { nextTick } from 'vue'
+import { createRouter, createWebHistory } from "vue-router"
+import jwt_decode from "jwt-decode"
+import store from "../store"
 
 // Layouts
 
-import Admin from "../layouts/Admin.vue";
-import Auth from "../layouts/Auth.vue";
+import Admin from "../layouts/Admin.vue"
+import Auth from "../layouts/Auth.vue"
 
 // Views
 
-import Login from "../views/Login";
-import Dashboard from "../views/Dashboard";
-import Projects from "../views/Projects";
-import Assignments from "../views/Assignments";
-import RSE from "../views/RSE";
-import Transactions from "../views/Transactions";
+import Login from "../views/Login"
+import Dashboard from "../views/Dashboard"
+import Projects from "../views/Projects"
+import Assignments from "../views/Assignments"
+import RSE from "../views/RSE"
+import Transactions from "../views/Transactions"
 
 /**
  * isTokenValid:
@@ -25,15 +25,15 @@ import Transactions from "../views/Transactions";
  */
 function isTokenValid() {
   // move to auth getter so can be used on components (navbar)
-  var token = store.state.auth.jwt;
+  var token = store.state.auth.jwt
   if (token) {
-    var decoded = jwt_decode(token);
-    var exp = decoded.exp;
+    var decoded = jwt_decode(token)
+    var exp = decoded.exp
     if (Date.now() < exp * 1000) {
-      return true; // when token is valid
+      return true // when token is valid
     }
   }
-  return false; // when token is not valid
+  return false // when token is not valid
 }
 
 const routes = [
@@ -43,7 +43,7 @@ const routes = [
         component: Admin,
         beforeEnter: (to, from, next) => {
             if (!isTokenValid()) {
-                next("/auth/login");
+                next("/auth/login")
             } 
             else {
               next()
@@ -87,10 +87,23 @@ const routes = [
         redirect: "/auth/login",
         component: Auth,
         beforeEnter: (to, from, next) => {
+            // If directed from a logout action
+            if(to.params && to.params.logout) {
+              // Clear all state
+              store.commit("assignments/reset")
+              store.commit("auth/reset")
+              store.commit("capacity/reset")
+              store.commit("facility/reset")
+              store.commit("projects/reset")
+              store.commit("rses/reset")
+              store.commit("timesheets/reset")
+              store.commit("transactions/reset")
+            }
+
             if (isTokenValid()) {
-                next("/dashboard");
+                next("/dashboard")
             } else {
-                next();
+                next()
             }
         },
         children: [
@@ -102,18 +115,18 @@ const routes = [
           }
         ]
     }
-];
+]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
   linkActiveClass: "is-active",
-});
+})
 
 router.afterEach((to) => {
   nextTick(() => {
-      document.title = to.meta.title || 'RSE Admin';
-  });
-});
+      document.title = to.meta.title || 'RSE Admin'
+  })
+})
 
-export default router;
+export default router
