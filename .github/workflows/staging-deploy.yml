@@ -31,7 +31,7 @@ jobs:
           VUE_APP_GANTT_KEY: ${{ secrets.VUE_APP_GANTT_KEY }}
 
       - name: Deploy
-        uses: lauchacarro/Azure-Storage-Action@master
+        uses: lauchacarro/Azure-Storage-Action@v1.1
         with:
           enabled-static-website: 'true'
           folder: 'dist'
