@@ -1,6 +1,10 @@
 //import router from "../../router";
 import axios from 'axios'
 
+const initialState =  {
+  facility: []
+}
+
 export default {
   namespaced: true,
 
@@ -8,9 +12,7 @@ export default {
   Global Variables
   Call state with $store.state.{module}.{stateName}
   */
-  state: {
-    facility: []
-  },
+  state: { ...initialState },
 
   getters: {
     /*
@@ -37,6 +39,9 @@ export default {
     getFacility(state, facility) {
       state.facility = facility;
     },
+    reset: (state) => {
+      Object.assign(state, initialState)
+    }
   },
 
   actions: {

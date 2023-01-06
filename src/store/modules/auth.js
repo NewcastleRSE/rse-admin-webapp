@@ -1,13 +1,15 @@
-import router from "../../router";
-import axios from "axios";
+import router from "../../router"
+import axios from "axios"
+
+const initialState = {
+  accessToken: '',
+  jwt: '',
+  user: {}
+}
 
 export default {
   namespaced: true,
-  state: {
-    accessToken: '',
-    jwt: '',
-    user: {}
-  },
+  state: {...initialState},
 
   getters: {
     accessToken: (state) => {
@@ -36,25 +38,24 @@ export default {
         this.dispatch("facility/getFacility"),
         this.dispatch("transactions/getTransactions")
       ]).then(() => {
-        router.push({ name: "Dashboard" });
+        router.push({ name: "Dashboard" })
       }).catch(error => {
         console.error(error)
       })
     },
-    logout(state) {
-      // Clear all state
-      Object.keys(state).forEach(key => {
-        state[key] = null
-      })
-      router.push({ name: "Login" });
+    logout() {
+      router.push({ name: 'Login', params: { logout: true } })
     },
+    reset: (state) => {
+      Object.assign(state, initialState)
+    }
   },
 
   actions: {
     //async, commits mutations
     login({ commit }, accessToken) {
-      const loginUrl = process.env.VUE_APP_API_URL + "/auth/microsoft/callback/?access_token=" + accessToken;
-      const azureConfig = { headers: { Authorization: `Bearer ${accessToken}` }};
+      const loginUrl = process.env.VUE_APP_API_URL + "/auth/microsoft/callback/?access_token=" + accessToken
+      const azureConfig = { headers: { Authorization: `Bearer ${accessToken}` }}
 
       let fetchJWT = axios.get(loginUrl)
       let fetchProfile = axios.get('https://graph.microsoft.com/v1.0/me', azureConfig)
@@ -70,11 +71,11 @@ export default {
           })
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err)
       })
     },
     logout({ commit }) {
       commit("logout")
     }
   },
-};
+}

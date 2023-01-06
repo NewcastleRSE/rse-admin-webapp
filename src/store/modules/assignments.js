@@ -2,6 +2,11 @@
 import axios from 'axios'
 import { DateTime } from "luxon";
 
+const initialState =  {
+  assignments: [],
+  savedAssignments: [],
+}
+
 export default {
   namespaced: true,
 
@@ -9,10 +14,8 @@ export default {
   Global Variables
   Call state with $store.state.{module}.{stateName}
   */
-  state: {
-    assignments: [],
-    savedAssignments: [],
-  },
+
+  state: { ...initialState },
 
   getters: {
     /*
@@ -152,6 +155,9 @@ export default {
         state.savedAssignments[objIndex] = assignment;
       }
     },
+    reset: (state) => {
+      Object.assign(state, initialState)
+    }
   },
 
   actions: {

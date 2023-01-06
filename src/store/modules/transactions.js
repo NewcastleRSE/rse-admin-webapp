@@ -6,6 +6,10 @@ var camelCase = function camalize(str) {
   return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
 }
 
+const initialState =  {
+  transactions: []
+}
+
 export default {
   namespaced: true,
 
@@ -13,9 +17,7 @@ export default {
   Global Variables
   Call state with $store.state.{module}.{stateName}
   */
-  state: {
-    transactions: []
-  },
+  state: {...initialState},
 
   getters: {
     /*
@@ -69,6 +71,9 @@ export default {
     //sync, updates state
     getTransactions(state, transactions) {
       state.transactions = transactions
+    },
+    reset: (state) => {
+      Object.assign(state, initialState)
     }
   },
 

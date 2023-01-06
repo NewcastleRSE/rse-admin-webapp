@@ -1,6 +1,13 @@
 import axios from "axios"
 import { DateTime } from 'luxon'
 
+const initialState =  {
+  summary: {},
+  detailed: {},
+  overview: [],
+  bankHolidays: []
+}
+
 export default {
     namespaced: true,
 
@@ -8,12 +15,7 @@ export default {
     Global Variables
     Call state with $store.state.{module}.{stateName}
     */
-    state: {
-      summary: {},
-      detailed: {},
-      overview: [],
-      bankHolidays: []
-    },
+    state: {...initialState},
 
     getters: {
         getSummary: (state) => {
@@ -118,6 +120,9 @@ export default {
         setBankHolidays(state, bankHolidays) {
           state.bankHolidays = bankHolidays
         },
+        reset: (state) => {
+          Object.assign(state, initialState)
+        }
     },
 
     actions: {

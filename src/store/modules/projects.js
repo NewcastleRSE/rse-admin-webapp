@@ -2,6 +2,11 @@
 import axios from 'axios'
 import * as qs from 'qs'
 
+const initialState =  {
+  projects: [], //check whether loading the projects once when loading the app is enough or every page switch
+  project: {},
+}
+
 export default {
   namespaced: true,
 
@@ -9,10 +14,7 @@ export default {
   Global Variables
   Call state with $store.state.{module}.{stateName}
   */
-  state: {
-    projects: [], //check whether loading the projects once when loading the app is enough or every page switch
-    project: {},
-  },
+  state: { ...initialState },
 
   getters: {
     /*
@@ -54,6 +56,9 @@ export default {
     getProject(state, project) {
       state.project = project;
     },
+    reset: (state) => {
+      Object.assign(state, initialState)
+    }
   },
 
   actions: {
