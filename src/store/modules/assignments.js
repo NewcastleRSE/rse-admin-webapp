@@ -1,10 +1,12 @@
 //import router from "../../router";
 import axios from 'axios'
-import { DateTime } from "luxon";
+import { DateTime } from 'luxon'
 
 const initialState =  {
   assignments: [],
-  savedAssignments: [],
+  created: [],
+  edited: [],
+  deleted: [],
 }
 
 export default {
@@ -19,7 +21,7 @@ export default {
 
   getters: {
     /*
-    Correct data types
+    Return the current assignments
     */
     getAssignments: (state) => {
       const assignments = state.assignments.map((assignment) => {
@@ -41,33 +43,23 @@ export default {
 
       return assignments;
     },
-    getSavedAssignments: (state) => {
-      const assignments = state.savedAssignments.map((assignment) => {
-        return {
-          assignmentID: assignment.id,
-          project: assignment.project,
-          name: assignment.project.name,
-          rse: assignment.rse,
-          start: Date.parse(assignment.start),
-          end: Date.parse(assignment.end),
-          FTE: Number(assignment.fte)
-        };
-      });
-
-      // assignment with latest end is displayed first
-      assignments.sort(function(a, b) {
-        DateTime.fromISO(b.end) - DateTime.fromISO(a.end)
-      })
-
-      return assignments;
+    /*
+    Return the assignments marked for creation
+    */
+    getCreated: (state) => {
+      return state.created
     },
     /*
-    Increment the max ID value by one when creating new assignments
+    Return the assignments marked for update
     */
-    getUID: (state) => {
-      return (
-        Math.max(...state.assignments.map((assignment) => assignment.id)) + 1
-      )
+    getEdited: (state) => (id) => {
+      return state.edited.find(assignment => assignment.id === id )
+    },
+    /*
+    Return the assignments marked for deletion
+    */
+    getDeleted: (state) => (id) => {
+      return state.deleted.find(assignment => assignment.id === id )
     },
     /*
     Return the current assignments for a given RSE
@@ -124,36 +116,20 @@ export default {
   */
   mutations: {
     getAssignments(state, assignments) {
-      state.assignments = assignments;
-      state.savedAssignments = assignments; // should only be called once when loading app
+      state.assignments = assignments
     },
-    resetAssignments(state) {
-      state.assignments = state.savedAssignments;
+    createAssignment(state, assignment) {
+      state.created.push(assignment)
     },
-    saveAssignment(state, assignment) {
-      state.savedAssignments = [...state.savedAssignments, assignment];
+    editAssignment(state, assignment) {
+      state.edited.push(assignment)
     },
-    deleteAssignment(state, assignmentID) {
-      state.savedAssignments = state.savedAssignments.filter(
-        (item) => item.id !== assignmentID
-      );
-    },
-    addAssignment: (state, assignment) => {
-      state.assignments.push(assignment);
-    },
-    removeAssignment: (state, assignmentID) => {
-      state.assignments = state.assignments.filter(
-        (item) => item.id !== assignmentID
-      );
-    },
-    updateAssignment: (state, assignment) => {
-      let objIndex = state.savedAssignments.findIndex(
-        (obj) => obj.id == assignment.id
-      );
-
-      if (objIndex > -1) {
-        state.savedAssignments[objIndex] = assignment;
-      }
+    deleteAssignment(state, assignment) {
+      console.log(assignment)
+      state.deleted.push(assignment)
+      state.assignments = state.assignments.filter(function(el){
+        return el.id !== assignment.id
+      })
     },
     reset: (state) => {
       Object.assign(state, initialState)
@@ -162,108 +138,61 @@ export default {
 
   actions: {
     /*
-        Gets assignment or assignments from DB
-        Call with this.$store.dispatch("assignments/getAssignments", "{id}");
-        Can leave parameter empty and will call all assignments
+    Uses the created, edited and deleted state to update the DB
+    Call with this.$store.dispatch("assignments/commitAssignments");
     */
-    // async getAssignments({ commit, rootState }, id = "") {
+    commitAssignments({ state, rootState }) {
 
-    //   let assignments = []
+      const promises = [],
+            token = rootState.auth.jwt
 
-    //   const fetchAssignments = async function (page, pageSize, populate) {
+      state.created.forEach(assignment => {
+        
+        const payload = {
+          rse: assignment.rse.id,
+          project: assignment.project.id,
+          fte: assignment.fte,
+          start: assignment.startDate,
+          end: assignment.endDate
+        }
 
-    //       const query = qs.stringify({
-    //           pagination: {
-    //             page: page,
-    //             pageSize: pageSize,
-    //           },
-    //           populate: populate
-    //         },{
-    //           encodeValuesOnly: true,
-    //         });
-  
-    //       let response = await axios.get(`${process.env.VUE_APP_API_URL}/assignments/${id}?${query}`, {
-    //         headers: {
-    //           Authorization: `Bearer ${rootState.auth.jwt}`,
-    //         }})
-          
-    //       assignments = assignments.concat(response.data.data)
-    //       const pagination = response.data.meta.pagination
+        promises.push(axios.post(`${process.env.VUE_APP_API_URL}/assignments/`, { data: payload }, { headers: { Authorization: `Bearer ${token}`} }).then((newAssignment) => {
+          state.assignments.push({
+            createdAt: newAssignment.data.createdAt,
+            end: newAssignment.data.end,
+            fte: newAssignment.data.fte,
+            id: newAssignment.data.id,
+            project: {
+              id: assignment.project.id,
+              createdAt: assignment.project.createdAt,
+              updatedAt: assignment.project.updatedAt,
+              clockifyID: assignment.project.clockifyID,
+              name: assignment.project.dealname,
+              hubspotID: assignment.project.hubspotID
+            },
+            rse: assignment.rse.id,
+            start: newAssignment.data.start,
+            updatedAt: newAssignment.data.updatedAt
+          })
+        }))
+      })
 
-    //       if(pagination.page < pagination.pageCount) {
-    //         return await fetchAssignments(pagination.page + 1, pageSize, populate)
-    //       }
-    //       else {
-    //         return assignments
-    //       }
-    //   }
+      state.edited.forEach(assignment => {
+        promises.push(axios.put(`${process.env.VUE_APP_API_URL}/assignments/${assignment.assignmentID}`, assignment, { headers: { Authorization: `Bearer ${token}`} }))
+      })
 
-    //   commit("getAssignments", await fetchAssignments(0, 100, 'project'));
-      
-    // },
-    /*
-        Creates an assignment and adds it to state.assignments
-        Call with this.$store.dispatch("assignments/addAssignment", assignment);
-        */
-    addAssignment({ commit, rootState }, assignment) {
-      return axios
-        .post(`${process.env.VUE_APP_API_URL}/assignments`, assignment, {
-          headers: {
-            Authorization: `Bearer ${rootState.auth.jwt}`,
-          },
-        })
-        .then((response) => {
-          commit("addAssignment", response.data.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    /*
-    Creates an assignment and adds it to the DB
-    Call with this.$store.dispatch("assignments/saveAssignment", assignment);
-    */
-    saveAssignment({ commit, rootState }, assignment) {
-      return axios
-        .post(`${process.env.VUE_APP_API_URL}/assignments/`, assignment, {
-          headers: {
-            Authorization: `Bearer ${rootState.auth.jwt}`,
-          },
-        })
-        .then((response) => {
-          commit("saveAssignment", response.data.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    deleteAssignment({ commit, rootState }, assignmentID) {
-      return axios
-        .delete(`${process.env.VUE_APP_API_URL}/assignments/${assignmentID}`, {
-          headers: {
-            Authorization: `Bearer ${rootState.auth.jwt}`,
-          },
-        })
-        .then((response) => {
-          commit("deleteAssignment", response.data.id);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    updateAssignment({ commit, rootState }, assignment) {
-      return axios
-        .put(`${process.env.VUE_APP_API_URL}/assignments/${assignment.id}`, assignment, {
-          headers: {
-            Authorization: `Bearer ${rootState.auth.jwt}`,
-          },
-        })
-        .then((response) => {
-          commit("updateAssignment", response.data.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
+      state.deleted.forEach(assignment => {
+        promises.push(axios.delete(`${process.env.VUE_APP_API_URL}/assignments/${assignment.assignmentID}`, { headers: { Authorization: `Bearer ${token}`} }))
+      })
+
+      Promise.all(promises).then(() => {
+        state.created = []
+        state.edited = []
+        state.deleted = []
+      })
+      .catch(err => {
+        console.error(err)
+      })
+    }
   },
 };

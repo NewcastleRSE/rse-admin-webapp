@@ -58,8 +58,8 @@ export default {
 
             // Expand assignments to include full HubSpot project details
             assignments.forEach(assignment => {
-              assignment.project = rootGetters['projects/getProject'](assignment.project.hubspotID)
-            });
+              assignment.project = rootGetters['projects/getProject'](assignment.project.id)
+            })
 
             let monthlyUtilisation = {
               date: startDate.toISODate(),

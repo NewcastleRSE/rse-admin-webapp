@@ -14,8 +14,6 @@
   </div>
 </template>
 <script>
-import differenceWith from "lodash.differencewith"
-import isEqual from "lodash.isequal"
 import AvailabilityStats from "@/components/Headers/AvailabilityStats.vue"
 import Timeline from "@/components/Assignments/Timeline.vue"
 import CreateModal from "@/components/Assignments/CreateModal.vue"
@@ -34,6 +32,11 @@ export default {
       assignments: this.$store.getters["assignments/getAssignments"]
     }
   },
+  computed: {
+    unallocatedCount() {
+      return this.projects.filter(project => project.dealstage === 'Awaiting Allocation').length
+    },
+  },
   methods: {
     zoom: function(level) {
       this.$refs.timeline.changeZoomLevel(level)
@@ -46,69 +49,68 @@ export default {
                         .reduce(function (ids, project) { return [...ids, project.id] }, [])
       this.$refs.unallocated.toggleModal(projectIDs)
     },
-    unallocatedCount: function() {
-      return this.projects.filter(project => project.dealstage === 'Awaiting Allocation').length
-    },
     create: function(rseID, projectID, dateRange, split) {
       this.$refs.create.toggleModal(rseID, projectID, dateRange, split)
     },
     addAssignment: function(assignment) {
       this.edited = true
       this.$refs.timeline.addAssignment(assignment)
-      // this.$store.commit("assignments/addAssignment", assignment)
+      this.$store.commit("assignments/createAssignment", assignment)
     },
     save: function() {
-      let savedAssignments = this.$store.getters["assignments/getSavedAssignments"]
-      let updates = this.$store.getters["assignments/getAssignments"]
+      // let savedAssignments = this.$store.getters["assignments/getSavedAssignments"]
+      // let updates = this.$store.getters["assignments/getAssignments"]
 
-      let newAssignments = differenceWith(updates, savedAssignments, isEqual)
-      let deletedAssignments = differenceWith(savedAssignments, updates, isEqual)
-      let promises = []
+      // let newAssignments = differenceWith(updates, savedAssignments, isEqual)
+      // let deletedAssignments = differenceWith(savedAssignments, updates, isEqual)
+      // let promises = []
 
-      newAssignments.forEach((item) => {
-        const assignment = {
-          rse: { id: item.parent },
-          startDate: new Date(item.start).toISOString(),
-          endDate: new Date(item.end).toISOString(),
-          projectID: item.project.id,
-        }
-        promises.push(
-          this.$store.dispatch("assignments/saveAssignment", assignment)
-        )
-      })
-      deletedAssignments.forEach((item) => {
-        promises.push(
-          this.$store.dispatch(
-            "assignments/deleteAssignment",
-            item.assignmentID
-          )
-        )
-      })
+      // console.log(newAssignments)
 
-      Promise.allSettled(promises).then(() => {
-        // updates chart to match what is stored in the db
-        this.assignments = this.$store.getters["assignments/getSavedAssignments"]
+      // newAssignments.forEach((item) => {
+      //   const assignment = {
+      //     rse: { id: item.parent },
+      //     startDate: new Date(item.start).toISOString(),
+      //     endDate: new Date(item.end).toISOString(),
+      //     projectID: item.project.id,
+      //   }
+      //   promises.push(
+      //     this.$store.dispatch("assignments/saveAssignment", assignment)
+      //   )
+      // })
+      // deletedAssignments.forEach((item) => {
+      //   promises.push(
+      //     this.$store.dispatch(
+      //       "assignments/deleteAssignment",
+      //       item.assignmentID
+      //     )
+      //   )
+      // })
+
+      this.$store.dispatch("assignments/commitAssignments").then(() => {
+        this.assignments = this.$store.getters["assignments/getAssignments"]
         this.edited = false
-        this.$refs.gantt.redraw()
+        // this.$refs.timeline.redraw()
       })
     },
     cancel: function() {
-      this.assignments = this.$store.getters["assignments/getSavedAssignments"]
+      this.assignments = this.$store.getters["assignments/getAssignments"]
       this.edited = false
     },
     remove: function() {
       this.edited = true
       this.$refs.timeline.deleteAssignments()
-      // this.$refs.gantt.getSelectedAssignment().forEach((point) => {
-      //   this.$store.commit("assignments/removeAssignment", point.assignmentID)
-      // })
+      this.$refs.timeline.getSelectedAssignments().forEach((assignmentID) => {
+        let assignment = this.assignments.filter(assignment => assignment.assignmentID === Number(assignmentID))[0]
+        this.$store.commit("assignments/deleteAssignment", assignment)
+      })
     },
     exportCSV: function() {
 
       const header = "id,start,end,name,dealname" + "\r\n"
       let body = ""
       let chart = this.$store.getters[
-        "assignments/getSavedAssignments"
+        "assignments/getAssignments"
       ]
       chart.forEach((el) => {
         let line = ""

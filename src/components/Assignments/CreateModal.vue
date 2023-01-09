@@ -138,7 +138,7 @@ export default {
     addAssignment() {
 
       const assignment = {
-        id: this.$store.getters["assignments/getUID"],
+        id: Math.max(...this.$store.getters["assignments/getAssignments"]) + 1,
         rse: this.rse,
         project: this.project,
         startDate: new Date(this.dateRange[0]).toISOString(),
