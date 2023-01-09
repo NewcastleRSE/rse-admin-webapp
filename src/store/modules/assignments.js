@@ -118,6 +118,9 @@ export default {
     getAssignments(state, assignments) {
       state.assignments = assignments
     },
+    addAssignment(state, assignment) {
+      state.assignments.push(assignment)
+    },
     createAssignment(state, assignment) {
       state.created.push(assignment)
     },
@@ -129,6 +132,11 @@ export default {
       state.deleted.push(assignment)
       state.assignments = state.assignments.filter(assignment => assignment.id !== assignmentID)
     },
+    resetModifications: (state) => {
+      state.created = []
+      state.edited = []
+      state.deleted = []
+    },
     reset: (state) => {
       Object.assign(state, initialState)
     }
@@ -139,7 +147,7 @@ export default {
     Uses the created, edited and deleted state to update the DB
     Call with this.$store.dispatch("assignments/commitAssignments");
     */
-    commitAssignments({ state, rootState }) {
+    commitAssignments({ commit, state, rootState }) {
 
       const promises = [],
             token = rootState.auth.jwt
@@ -155,7 +163,7 @@ export default {
         }
 
         promises.push(axios.post(`${process.env.VUE_APP_API_URL}/assignments/`, { data: payload }, { headers: { Authorization: `Bearer ${token}`} }).then((newAssignment) => {
-          state.assignments.push({
+          commit('addAssignment', {
             createdAt: newAssignment.data.createdAt,
             end: newAssignment.data.end,
             fte: newAssignment.data.fte,
@@ -184,14 +192,10 @@ export default {
       })
 
       Promise.all(promises).then(() => {
-        state.created = []
-        state.edited = []
-        state.deleted = []
+        commit('resetModifications')
       })
       .catch(err => {
-        state.created = []
-        state.edited = []
-        state.deleted = []
+        commit('resetModifications')
         console.error(err)
       })
     }
