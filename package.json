@@ -22,7 +22,7 @@
         "chartjs-adapter-luxon": "^1.2.0",
         "chartjs-plugin-annotation": "^2.0.0",
         "core-js": "^3.6.5",
-        "gantt-schedule-timeline-calendar": "^3",
+        "gantt-schedule-timeline-calendar": "3.33.13",
         "globalthis": "^1.0.3",
         "jwt-decode": "^3.1.2",
         "lodash.differencewith": "^4.5.0",

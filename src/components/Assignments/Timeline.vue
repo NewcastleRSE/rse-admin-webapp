@@ -127,8 +127,8 @@ function generateAvailability(RSEs) {
         label: rse.firstname + ' ' + rse.lastname,
         rowId,
         time: {
-          start: GSTC.api.date(rse.contractStart),
-          end: GSTC.api.date(maxDate),
+          start: DateTime.fromISO(rse.contractStart).toMillis(),
+          end: DateTime.fromJSDate(maxDate).toMillis(),
         },
         progress: (capacity.days / assignmentsLength.days) * 100,
         classNames: ['bg-sky-600']
@@ -139,34 +139,33 @@ function generateAvailability(RSEs) {
   return items
 }
 
-function generateAssignments(assignments, projects) {
+function generateAssignments(rses, assignments, projects) {
 
   /**
    * @type { import("gantt-schedule-timeline-calendar").Items }
    */
   const items = {}
+  const availableRSEs = rses.filter(rse => rse.active).map(rse => rse.id)
 
   assignments.forEach(assignment => {
+    if(availableRSEs.includes(assignment.rse)){
+      const id = GSTC.api.GSTCID(`assignment-${assignment.assignmentID}`),
+            rowId = GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`)
 
-    const id = GSTC.api.GSTCID(`assignment-${assignment.assignmentID}`),
-          rowId = GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`)
-
-    assignment.project = projects.find(project => project.id === assignment.project.hubspotID )
-
-    items[id] = {
-      id,
-      label: assignment.name,
-      rowId,
-      time: {
-        start: GSTC.api.date(assignment.start),
-        end: GSTC.api.date(assignment.end),
-      },
-      progress: 100,
-      classNames: ['bg-sky-500']
+      assignment.project = projects.find(project => project.id === assignment.project.hubspotID )
+      items[id] = {
+        id,
+        label: assignment.name,
+        rowId,
+        time: {
+          start: assignment.start,
+          end: assignment.end,
+        },
+        progress: 100,
+        classNames: ['bg-sky-500']
+      }
     }
-
   })
-
   return items
 }
 
@@ -176,7 +175,7 @@ export default {
   props: ['rses', 'projects', 'assignments'],
   emits: ['create', 'selection'],
   setup(props, { emit }) {
-    let gstc, state, selectedAssignments
+    let gstc, state
     const gstcElement = ref(null)
     onMounted(() => {
       const selectionOptions = {
@@ -197,7 +196,6 @@ export default {
             }
             // Selection includes assignments
             if (items.length) {
-              selectedAssignments = items
               emit('selection', true)
             }
             else {
@@ -236,7 +234,7 @@ export default {
         },
         chart: {
           items: {
-            ...generateAssignments(props.assignments, props.projects),
+            ...generateAssignments(props.rses, props.assignments, props.projects),
             ...generateAvailability(props.rses)
           },
           time: {
@@ -246,6 +244,7 @@ export default {
       }
       state = GSTC.api.stateFromConfig(config)
       globalThis.state = state
+      console.log(state)
       gstc = GSTC({
         element: gstcElement.value,
         state,
@@ -304,20 +303,41 @@ export default {
       state.update(`config.chart.items.${GSTC.api.GSTCID(newID)}`, (item) => { item = newItem; return item } )
     }
     function deleteAssignments(){
-      if(selectedAssignments) {
-        selectedAssignments.forEach(assignment => {
-          state.update(`config.chart.items`, (items) => { delete items[assignment.id]; return items } )
-        })
-        state.update("config.plugin.selection.selected.chart-timeline-items-row-item", [])
-        selectedAssignments = null
+      const selectedItems = gstc.api.plugins.Selection.getSelected()['chart-timeline-items-row-item'] // cloned items
+      gstc.api.plugins.Selection.selectItems([]); // clear selection
+      console.log(gstc.api.plugins.Selection)
+      console.log(gstc.api.plugins.Selection.getSelected())
+      state.update('config.plugin.Selection.lastSelecting.chart-timeline-items-row-item',[])
+      state.update('config.chart.items', items => {
+        for(const item of selectedItems){
+            delete items[item.id];
+        }
+        return items;
+      })
+    }
+    function getSelectedItems() {
+      return state
+        .get(`config.plugin.Selection.selected.chart-timeline-items-row-item`)
+        .map((itemId) => globalThis.gstc.api.mergeDeep({}, globalThis.gstc.api.getItem(itemId)))
+    }
+
+    function getSelectedItemsData(selectedItems) {
+      const itemsData = []
+      for (const item of selectedItems) {
+        itemsData.push(item.id.replace('gstcid-assignment-', ''))
       }
+      return itemsData
+    }
+    function getSelectedAssignments () {
+      return getSelectedItemsData(getSelectedItems())
     }
     return {
       gstcElement,
       updateFirstRow,
       changeZoomLevel,
       addAssignment,
-      deleteAssignments
+      deleteAssignments,
+      getSelectedAssignments,
     }
   }
 }
