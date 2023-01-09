@@ -125,11 +125,9 @@ export default {
       state.edited.push(assignment)
     },
     deleteAssignment(state, assignment) {
-      console.log(assignment)
+      const assignmentID = assignment.assignmentID
       state.deleted.push(assignment)
-      state.assignments = state.assignments.filter(function(el){
-        return el.id !== assignment.id
-      })
+      state.assignments = state.assignments.filter(assignment => assignment.id !== assignmentID)
     },
     reset: (state) => {
       Object.assign(state, initialState)
@@ -191,6 +189,9 @@ export default {
         state.deleted = []
       })
       .catch(err => {
+        state.created = []
+        state.edited = []
+        state.deleted = []
         console.error(err)
       })
     }

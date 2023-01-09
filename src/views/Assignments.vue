@@ -90,7 +90,6 @@ export default {
       this.$store.dispatch("assignments/commitAssignments").then(() => {
         this.assignments = this.$store.getters["assignments/getAssignments"]
         this.edited = false
-        // this.$refs.timeline.redraw()
       })
     },
     cancel: function() {
@@ -99,9 +98,11 @@ export default {
     },
     remove: function() {
       this.edited = true
-      this.$refs.timeline.deleteAssignments()
-      this.$refs.timeline.getSelectedAssignments().forEach((assignmentID) => {
-        let assignment = this.assignments.filter(assignment => assignment.assignmentID === Number(assignmentID))[0]
+      let deletedItems = this.$refs.timeline.deleteAssignments()
+      let assignmentIDs = deletedItems.map(item => Number(item.id.replace('gstcid-assignment-', '')))
+
+      assignmentIDs.forEach((assignmentID) => {
+        let assignment = this.assignments.filter(assignment => assignment.assignmentID === assignmentID)[0]
         this.$store.commit("assignments/deleteAssignment", assignment)
       })
     },

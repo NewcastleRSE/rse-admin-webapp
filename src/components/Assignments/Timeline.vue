@@ -244,7 +244,6 @@ export default {
       }
       state = GSTC.api.stateFromConfig(config)
       globalThis.state = state
-      console.log(state)
       gstc = GSTC({
         element: gstcElement.value,
         state,
@@ -303,17 +302,20 @@ export default {
       state.update(`config.chart.items.${GSTC.api.GSTCID(newID)}`, (item) => { item = newItem; return item } )
     }
     function deleteAssignments(){
-      const selectedItems = gstc.api.plugins.Selection.getSelected()['chart-timeline-items-row-item'] // cloned items
-      gstc.api.plugins.Selection.selectItems([]); // clear selection
-      console.log(gstc.api.plugins.Selection)
-      console.log(gstc.api.plugins.Selection.getSelected())
+      const selectedItems = gstc.api.plugins.Selection.getSelected()['chart-timeline-items-row-item']
       state.update('config.plugin.Selection.lastSelecting.chart-timeline-items-row-item',[])
-      state.update('config.chart.items', items => {
-        for(const item of selectedItems){
-            delete items[item.id];
-        }
-        return items;
-      })
+      gstc.api.plugins.Selection.selectItems([])
+
+      const allItems = state.get('config.chart.items')
+
+      for(const item of selectedItems) {
+        delete allItems[item.id];
+      }
+
+      state.update('config.chart.items', allItems)
+
+      // Return the items that have been deleted
+      return selectedItems
     }
     function getSelectedItems() {
       return state
