@@ -39,51 +39,6 @@ function isCollision(item) {
   return false
 }
 
-const resizingPluginConfig = {
-  snapToTime: {
-    start({ startTime, vido }) {
-      const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf())
-      return date.leftGlobalDate.startOf('day')
-    },
-    end({ endTime, vido }) {
-      const date = vido.api.time.findOrCreateMainDateAtTime(endTime.valueOf())
-      return date.leftGlobalDate.endOf('day')
-    },
-  },
-  events: {
-    onEnd({ items }) {
-      console.log(items)
-      return items.after
-    },
-  }
-}
-
-const movementPluginConfig = {
-  events: {
-    onMove({ items }) {
-      // prevent items to change row
-      return items.before.map((beforeMovementItem, index) => {
-        const afterMovementItem = items.after[index]
-        const myItem = GSTC.api.merge({}, afterMovementItem)
-        if (!canChangeRow) {
-          myItem.rowId = beforeMovementItem.rowId
-        }
-        if (!canCollide && isCollision(myItem)) {
-          myItem.time = { ...beforeMovementItem.time }
-          myItem.rowId = beforeMovementItem.rowId
-        }
-        return myItem
-      })
-    },
-  },
-  snapToTime: {
-    start({ startTime, vido }) {
-      const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf())
-      return date.leftGlobalDate.startOf('day')
-    },
-  },
-}
-
 function generateRows(RSEs) {
   /**
    * @type { import("gantt-schedule-timeline-calendar").Rows }
@@ -127,8 +82,8 @@ function generateAvailability(RSEs) {
         label: rse.firstname + ' ' + rse.lastname,
         rowId,
         time: {
-          start: GSTC.api.date(rse.contractStart),
-          end: GSTC.api.date(maxDate),
+          start: DateTime.fromISO(rse.contractStart).toMillis(),
+          end: DateTime.fromJSDate(maxDate).toMillis(),
         },
         progress: (capacity.days / assignmentsLength.days) * 100,
         classNames: ['bg-sky-600']
@@ -139,34 +94,33 @@ function generateAvailability(RSEs) {
   return items
 }
 
-function generateAssignments(assignments, projects) {
+function generateAssignments(rses, assignments, projects) {
 
   /**
    * @type { import("gantt-schedule-timeline-calendar").Items }
    */
   const items = {}
+  const availableRSEs = rses.filter(rse => rse.active).map(rse => rse.id)
 
   assignments.forEach(assignment => {
+    if(availableRSEs.includes(assignment.rse)){
+      const id = GSTC.api.GSTCID(`assignment-${assignment.id}`),
+            rowId = GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`)
 
-    const id = GSTC.api.GSTCID(`assignment-${assignment.assignmentID}`),
-          rowId = GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`)
-
-    assignment.project = projects.find(project => project.id === assignment.project.hubspotID )
-
-    items[id] = {
-      id,
-      label: assignment.name,
-      rowId,
-      time: {
-        start: GSTC.api.date(assignment.start),
-        end: GSTC.api.date(assignment.end),
-      },
-      progress: 100,
-      classNames: ['bg-sky-500']
+      assignment.project = projects.find(project => project.id === assignment.project.hubspotID )
+      items[id] = {
+        id,
+        label: assignment.name,
+        rowId,
+        time: {
+          start: assignment.start,
+          end: assignment.end,
+        },
+        progress: 100,
+        classNames: ['bg-sky-500']
+      }
     }
-
   })
-
   return items
 }
 
@@ -174,9 +128,9 @@ function generateAssignments(assignments, projects) {
 export default {
   name: "Timeline",
   props: ['rses', 'projects', 'assignments'],
-  emits: ['create', 'selection'],
+  emits: ['create', 'selection', 'edit'],
   setup(props, { emit }) {
-    let gstc, state, selectedAssignments
+    let gstc, state
     const gstcElement = ref(null)
     onMounted(() => {
       const selectionOptions = {
@@ -197,13 +151,69 @@ export default {
             }
             // Selection includes assignments
             if (items.length) {
-              selectedAssignments = items
               emit('selection', true)
             }
             else {
               emit('selection', false)
             }
             return selected
+          },
+        },
+      }
+
+      const resizingPluginConfig = {
+        snapToTime: {
+          start({ startTime, vido }) {
+            const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf())
+            return date.leftGlobalDate.startOf('day')
+          },
+          end({ endTime, vido }) {
+            const date = vido.api.time.findOrCreateMainDateAtTime(endTime.valueOf())
+            return date.leftGlobalDate.endOf('day')
+          },
+        },
+        events: {
+          onEnd({ items }) {
+            items.after.forEach(assignment => {
+              const assignmentID = Number(assignment.id.split('-')[2]),
+                    rseID = Number(assignment.rowId.split('-')[2])
+              emit('edit', assignmentID, rseID, assignment.time.start, assignment.time.end)
+            })
+            return items.after
+          }
+        }
+      }
+
+      const movementPluginConfig = {
+        events: {
+          onMove({ items }) {
+            // prevent items to change row
+            return items.before.map((beforeMovementItem, index) => {
+              const afterMovementItem = items.after[index]
+              const myItem = GSTC.api.merge({}, afterMovementItem)
+              if (!canChangeRow) {
+                myItem.rowId = beforeMovementItem.rowId
+              }
+              if (!canCollide && isCollision(myItem)) {
+                myItem.time = { ...beforeMovementItem.time }
+                myItem.rowId = beforeMovementItem.rowId
+              }
+              return myItem
+            })
+          },
+          onEnd({ items }) {
+            items.after.forEach(assignment => {
+              const assignmentID = Number(assignment.id.split('-')[2]),
+                    rseID = Number(assignment.rowId.split('-')[2])
+              emit('edit', assignmentID, rseID, assignment.time.start, assignment.time.end)
+            })
+            return items.after
+          }
+        },
+        snapToTime: {
+          start({ startTime, vido }) {
+            const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf())
+            return date.leftGlobalDate.startOf('day')
           },
         },
       }
@@ -236,7 +246,7 @@ export default {
         },
         chart: {
           items: {
-            ...generateAssignments(props.assignments, props.projects),
+            ...generateAssignments(props.rses, props.assignments, props.projects),
             ...generateAvailability(props.rses)
           },
           time: {
@@ -304,20 +314,44 @@ export default {
       state.update(`config.chart.items.${GSTC.api.GSTCID(newID)}`, (item) => { item = newItem; return item } )
     }
     function deleteAssignments(){
-      if(selectedAssignments) {
-        selectedAssignments.forEach(assignment => {
-          state.update(`config.chart.items`, (items) => { delete items[assignment.id]; return items } )
-        })
-        state.update("config.plugin.selection.selected.chart-timeline-items-row-item", [])
-        selectedAssignments = null
+      const selectedItems = gstc.api.plugins.Selection.getSelected()['chart-timeline-items-row-item']
+      state.update('config.plugin.Selection.lastSelecting.chart-timeline-items-row-item',[])
+      gstc.api.plugins.Selection.selectItems([])
+
+      const allItems = state.get('config.chart.items')
+
+      for(const item of selectedItems) {
+        delete allItems[item.id];
       }
+
+      state.update('config.chart.items', allItems)
+
+      // Return the items that have been deleted
+      return selectedItems
+    }
+    function getSelectedItems() {
+      return state
+        .get(`config.plugin.Selection.selected.chart-timeline-items-row-item`)
+        .map((itemId) => globalThis.gstc.api.mergeDeep({}, globalThis.gstc.api.getItem(itemId)))
+    }
+
+    function getSelectedItemsData(selectedItems) {
+      const itemsData = []
+      for (const item of selectedItems) {
+        itemsData.push(item.id.replace('gstcid-assignment-', ''))
+      }
+      return itemsData
+    }
+    function getSelectedAssignments () {
+      return getSelectedItemsData(getSelectedItems())
     }
     return {
       gstcElement,
       updateFirstRow,
       changeZoomLevel,
       addAssignment,
-      deleteAssignments
+      deleteAssignments,
+      getSelectedAssignments,
     }
   }
 }

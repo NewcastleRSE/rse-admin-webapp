@@ -31,7 +31,7 @@
             <li class="nav-item">
               <button class="px-3 -mr-4 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="unallocated()">
                 <i class="fas fa-bars text-lg leading-lg opacity-75 text-blueGray-700"></i>
-                <span class="text-sm bg-red-600 py-0.5 px-1 rounded rounded-full text-white relative -left-2 -top-2">{{unallocatedCount()}}</span>
+                <span class="text-sm bg-red-600 py-0.5 px-1 rounded rounded-full text-white relative -left-2 -top-2">{{unallocatedCount}}</span>
               </button>
             </li>
             <li class="nav-item">
