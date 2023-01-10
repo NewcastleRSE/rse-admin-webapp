@@ -39,25 +39,6 @@ function isCollision(item) {
   return false
 }
 
-const resizingPluginConfig = {
-  snapToTime: {
-    start({ startTime, vido }) {
-      const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf())
-      return date.leftGlobalDate.startOf('day')
-    },
-    end({ endTime, vido }) {
-      const date = vido.api.time.findOrCreateMainDateAtTime(endTime.valueOf())
-      return date.leftGlobalDate.endOf('day')
-    },
-  },
-  events: {
-    onEnd({ items }) {
-      console.log(items)
-      return items.after
-    },
-  }
-}
-
 function generateRows(RSEs) {
   /**
    * @type { import("gantt-schedule-timeline-calendar").Rows }
@@ -180,6 +161,29 @@ export default {
         },
       }
 
+      const resizingPluginConfig = {
+        snapToTime: {
+          start({ startTime, vido }) {
+            const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf())
+            return date.leftGlobalDate.startOf('day')
+          },
+          end({ endTime, vido }) {
+            const date = vido.api.time.findOrCreateMainDateAtTime(endTime.valueOf())
+            return date.leftGlobalDate.endOf('day')
+          },
+        },
+        events: {
+          onEnd({ items }) {
+            items.after.forEach(assignment => {
+              const assignmentID = Number(assignment.id.split('-')[2]),
+                    rseID = Number(assignment.rowId.split('-')[2])
+              emit('edit', assignmentID, rseID, assignment.time.start, assignment.time.end)
+            })
+            return items.after
+          }
+        }
+      }
+
       const movementPluginConfig = {
         events: {
           onMove({ items }) {
@@ -198,7 +202,6 @@ export default {
             })
           },
           onEnd({ items }) {
-            console.log(`Moved from ${items.initial[0].rowId} to ${items.after[0].rowId}`)
             items.after.forEach(assignment => {
               const assignmentID = Number(assignment.id.split('-')[2]),
                     rseID = Number(assignment.rowId.split('-')[2])
