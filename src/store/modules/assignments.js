@@ -5,7 +5,7 @@ import { DateTime } from 'luxon'
 const initialState =  {
   assignments: [],
   created: [],
-  edited: [],
+  edited: {},
   deleted: [],
 }
 
@@ -26,7 +26,7 @@ export default {
     getAssignments: (state) => {
       const assignments = state.assignments.map((assignment) => {
         return {
-          assignmentID: assignment.id,
+          id: assignment.id,
           project: assignment.project,
           name: assignment.project.name,
           rse: assignment.rse,
@@ -42,6 +42,12 @@ export default {
       });
 
       return assignments;
+    },
+    /*
+    Return the assignment with a matching ID
+    */
+    getAssignment: (state) => (id) => {
+      return state.assignments.find(assignment => assignment.id === id )
     },
     /*
     Return the assignments marked for creation
@@ -124,17 +130,22 @@ export default {
     createAssignment(state, assignment) {
       state.created.push(assignment)
     },
+    updateAssignment(state, assignment) {
+      const position = state.assignments.map(e => e.id).indexOf(assignment.id)
+      state.assignments[position] = assignment
+    },
     editAssignment(state, assignment) {
-      state.edited.push(assignment)
+      state.edited[assignment.id] = assignment
+    },
+    removeAssignment(state, id) {
+      state.assignments = state.assignments.filter(assignment => assignment.id !== id)
     },
     deleteAssignment(state, assignment) {
-      const assignmentID = assignment.assignmentID
       state.deleted.push(assignment)
-      state.assignments = state.assignments.filter(assignment => assignment.id !== assignmentID)
     },
     resetModifications: (state) => {
       state.created = []
-      state.edited = []
+      state.edited = {}
       state.deleted = []
     },
     reset: (state) => {
@@ -183,12 +194,17 @@ export default {
         }))
       })
 
-      state.edited.forEach(assignment => {
-        promises.push(axios.put(`${process.env.VUE_APP_API_URL}/assignments/${assignment.assignmentID}`, assignment, { headers: { Authorization: `Bearer ${token}`} }))
+      Object.keys(state.edited).forEach(key => {
+        const assignment = state.edited[key]
+        promises.push(axios.put(`${process.env.VUE_APP_API_URL}/assignments/${assignment.id}`, { data: assignment }, { headers: { Authorization: `Bearer ${token}`} }).then(() => {
+          commit('updateAssignment', assignment)
+        }))
       })
 
       state.deleted.forEach(assignment => {
-        promises.push(axios.delete(`${process.env.VUE_APP_API_URL}/assignments/${assignment.assignmentID}`, { headers: { Authorization: `Bearer ${token}`} }))
+        promises.push(axios.delete(`${process.env.VUE_APP_API_URL}/assignments/${assignment.id}`, { headers: { Authorization: `Bearer ${token}`} }).then(assignment => {
+          commit('removeAssignment', assignment.id)
+        }))
       })
 
       Promise.all(promises).then(() => {

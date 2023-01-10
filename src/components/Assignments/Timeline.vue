@@ -58,32 +58,6 @@ const resizingPluginConfig = {
   }
 }
 
-const movementPluginConfig = {
-  events: {
-    onMove({ items }) {
-      // prevent items to change row
-      return items.before.map((beforeMovementItem, index) => {
-        const afterMovementItem = items.after[index]
-        const myItem = GSTC.api.merge({}, afterMovementItem)
-        if (!canChangeRow) {
-          myItem.rowId = beforeMovementItem.rowId
-        }
-        if (!canCollide && isCollision(myItem)) {
-          myItem.time = { ...beforeMovementItem.time }
-          myItem.rowId = beforeMovementItem.rowId
-        }
-        return myItem
-      })
-    },
-  },
-  snapToTime: {
-    start({ startTime, vido }) {
-      const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf())
-      return date.leftGlobalDate.startOf('day')
-    },
-  },
-}
-
 function generateRows(RSEs) {
   /**
    * @type { import("gantt-schedule-timeline-calendar").Rows }
@@ -149,7 +123,7 @@ function generateAssignments(rses, assignments, projects) {
 
   assignments.forEach(assignment => {
     if(availableRSEs.includes(assignment.rse)){
-      const id = GSTC.api.GSTCID(`assignment-${assignment.assignmentID}`),
+      const id = GSTC.api.GSTCID(`assignment-${assignment.id}`),
             rowId = GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`)
 
       assignment.project = projects.find(project => project.id === assignment.project.hubspotID )
@@ -173,7 +147,7 @@ function generateAssignments(rses, assignments, projects) {
 export default {
   name: "Timeline",
   props: ['rses', 'projects', 'assignments'],
-  emits: ['create', 'selection'],
+  emits: ['create', 'selection', 'edit'],
   setup(props, { emit }) {
     let gstc, state
     const gstcElement = ref(null)
@@ -202,6 +176,41 @@ export default {
               emit('selection', false)
             }
             return selected
+          },
+        },
+      }
+
+      const movementPluginConfig = {
+        events: {
+          onMove({ items }) {
+            // prevent items to change row
+            return items.before.map((beforeMovementItem, index) => {
+              const afterMovementItem = items.after[index]
+              const myItem = GSTC.api.merge({}, afterMovementItem)
+              if (!canChangeRow) {
+                myItem.rowId = beforeMovementItem.rowId
+              }
+              if (!canCollide && isCollision(myItem)) {
+                myItem.time = { ...beforeMovementItem.time }
+                myItem.rowId = beforeMovementItem.rowId
+              }
+              return myItem
+            })
+          },
+          onEnd({ items }) {
+            console.log(`Moved from ${items.initial[0].rowId} to ${items.after[0].rowId}`)
+            items.after.forEach(assignment => {
+              const assignmentID = Number(assignment.id.split('-')[2]),
+                    rseID = Number(assignment.rowId.split('-')[2])
+              emit('edit', assignmentID, rseID, assignment.time.start, assignment.time.end)
+            })
+            return items.after
+          }
+        },
+        snapToTime: {
+          start({ startTime, vido }) {
+            const date = vido.api.time.findOrCreateMainDateAtTime(startTime.valueOf())
+            return date.leftGlobalDate.startOf('day')
           },
         },
       }
