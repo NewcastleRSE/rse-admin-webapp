@@ -61,7 +61,26 @@ export default {
             { name: 'Description', prop: "costElementDescription", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'costElementDescription': true } } } },
             { name: 'Document Header', prop: "documentHeader", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'documentHeader': true } } } },
             { name: 'Name', prop: "name", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'name': true } } } },
-            { name: 'Category', prop: "ieCategory", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'ieCategory': true } } } },
+            
+            { name: 'Category',
+              prop: "ieCategory",
+              sortable: true,
+              size: columnWidth*2,
+              columnProperties: () => { return { class: { 'ieCategory': true } } }, 
+              cellTemplate: (createElement, props) => {
+              if (props.model.ieCategory === "Income") {
+                return createElement(
+                "span",
+                {
+                  style: {
+                    color: 'green',
+                  },
+                },
+                props.model[props.prop]
+              );
+            }
+          },
+            },
             { name: 'Value', prop: "value", sortable: true, size: columnWidth, columnType: 'currency', columnProperties: () => { return { class: { 'value': true } } } }
         ],
         columnTypes: {
