@@ -68,20 +68,61 @@ export default {
               size: columnWidth*2,
               columnProperties: () => { return { class: { 'ieCategory': true } } }, 
               cellTemplate: (createElement, props) => {
+                // change text colour to distinguish income vs expenditures
               if (props.model.ieCategory === "Income") {
                 return createElement(
                 "span",
                 {
-                  style: {
-                    color: 'green',
-                  },
+                  class: "text-green-800"
+                },
+                props.model[props.prop]
+              );
+            } else if (props.model.ieCategory === "Non-Salary Expenditure") {
+                return createElement(
+                "span",
+                {
+                  class: "text-red-800"
+                },
+                props.model[props.prop]
+              );
+            } else if (props.model.ieCategory === "Salary Expenditure") {
+                return createElement(
+                "span",
+                {
+                  class: "text-purple-800"
                 },
                 props.model[props.prop]
               );
             }
           },
             },
-            { name: 'Value', prop: "value", sortable: true, size: columnWidth, columnType: 'currency', columnProperties: () => { return { class: { 'value': true } } } }
+            { name: 'Value',
+              prop: "value",
+              sortable: true,
+              size: columnWidth, 
+              columnType: 'currency', 
+              columnProperties: () => { return { class: { 'value': true } } }, 
+              cellTemplate: (createElement, props) => {
+                // income is shown in a green badge, expenditure in red
+              if (props.model.value > 0) {
+                return createElement(
+                "span",
+                {               
+                  class: "bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"
+                },
+                props.model[props.prop]
+              );
+            } else {
+              return createElement(
+                "span",
+                {
+                  class: "bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300"
+                },
+                props.model[props.prop]
+              );
+            }
+          },
+        }
         ],
         columnTypes: {
             currency: new NumberColumnType('($0,0.00)')
