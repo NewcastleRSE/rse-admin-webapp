@@ -17,6 +17,9 @@
         <div class="w-full xl:w-4/12 px-4">
           <card-time-split />
         </div>
+        <div class="w-full xl:w-4/12 px-4">
+          <card-time-volunteering />
+        </div>
       </div>
     </div>
   </div>
@@ -27,6 +30,8 @@ import CardProjectsOverview from "@/components/Cards/CardProjectsOverview.vue"
 import CardProjectsStatus from "@/components/Cards/CardProjectsStatus.vue"
 import CardTimeSplit from "@/components/Cards/CardTimeSplitOverview.vue"
 import AvailabilityStats from "@/components/Headers/AvailabilityStats.vue"
+import CardTimeVolunteering from "@/components/Cards/CardTimeVolunteering.vue"
+
 export default {
   name: "dashboard-page",
   components: {
@@ -34,6 +39,7 @@ export default {
     CardProjectsOverview,
     CardProjectsStatus,
     CardTimeSplit,
+    CardTimeVolunteering,
     AvailabilityStats
   },
 }
