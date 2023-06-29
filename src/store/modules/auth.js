@@ -1,5 +1,6 @@
 import router from "../../router"
 import axios from "axios"
+import { Buffer } from "buffer"
 
 const initialState = {
   accessToken: '',
