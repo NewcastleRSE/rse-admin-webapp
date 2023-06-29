@@ -53,7 +53,7 @@ export default {
     */
     getFacility({ commit, rootState }, id = "") {
       axios
-        .get(`${process.env.VUE_APP_API_URL}/facilities/${id}`, {
+        .get(`${import.meta.env.VITE_API_URL}/facilities/${id}`, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },

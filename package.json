@@ -3,9 +3,10 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "serve": "vue-cli-service serve --port 3000",
-        "build": "vue-cli-service build",
-        "lint": "vue-cli-service lint"
+        "dev": "vite",
+        "serve": "vite preview",
+        "build": "vite build",
+        "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src"
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "6.1.2",
@@ -14,14 +15,13 @@
         "@revolist/vue3-datagrid": "3.1.0",
         "@tailwindcss/forms": "0.2.1",
         "@tailwindcss/postcss7-compat": "^2.2.17",
+        "@vuepic/vue-datepicker": "^5.3.0",
         "autoprefixer": "^9",
         "axios": "^0.21.1",
-        "bulma": "^0.9.3",
         "camelcase-keys": "^7.0.2",
         "chart.js": "3.9.1",
         "chartjs-adapter-luxon": "^1.2.0",
         "chartjs-plugin-annotation": "^2.0.0",
-        "core-js": "^3.6.5",
         "gantt-schedule-timeline-calendar": "3.33.13",
         "globalthis": "^1.0.3",
         "jwt-decode": "^3.1.2",
@@ -29,26 +29,23 @@
         "lodash.isequal": "^4.5.0",
         "luxon": "^3.0.1",
         "money-formatter": "^0.1.4",
-        "postcss": "^7",
-        "tailwindcss": "npm:@tailwindcss/postcss7-compat",
+        "postcss": "^8",
+        "qs": "^6.11.2",
+        "tailwindcss": "^3.3.2",
         "vue": "^3.0.0",
         "vue-router": "^4.0.10",
-        "vue3-date-time-picker": "^2.4.4",
         "vue3-simple-typeahead": "^1.0.10",
         "vue3-table-lite": "^1.0.6",
         "vuex": "4.0.2",
         "vuex-persistedstate": "^4.1.0"
     },
     "devDependencies": {
-        "@vue/cli-plugin-babel": "~4.5.0",
-        "@vue/cli-plugin-eslint": "~4.5.0",
-        "@vue/cli-service": "~4.5.0",
-        "@vue/compiler-sfc": "^3.0.0",
-        "babel-eslint": "^10.1.0",
+        "@originjs/vite-plugin-commonjs": "^1.0.3",
+        "@vitejs/plugin-vue": "^1.6.1",
         "eslint": "^6.7.2",
         "eslint-plugin-vue": "^7.0.0",
         "sass": "^1.35.2",
-        "sass-loader": "^10.1.1"
+        "vite": "^2.5.4"
     },
     "eslintConfig": {
         "root": true,

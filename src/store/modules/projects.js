@@ -85,7 +85,7 @@ export default {
               encodeValuesOnly: true,
             });
   
-          let response = await axios.get(`${process.env.VUE_APP_API_URL}/projects/${id}?${query}`, {
+          let response = await axios.get(`${import.meta.env.VITE_API_URL}/projects/${id}?${query}`, {
             headers: {
               Authorization: `Bearer ${rootState.auth.jwt}`,
             }})
@@ -111,7 +111,7 @@ export default {
       //commit("resetProject");
 
       axios
-        .get(`${process.env.VUE_APP_API_URL}/projects/${id}`, {
+        .get(`${import.meta.env.VITE_API_URL}/projects/${id}`, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },

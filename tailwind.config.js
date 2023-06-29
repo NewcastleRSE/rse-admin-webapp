@@ -1,8 +1,9 @@
 const colors = require('tailwindcss/colors');
 
 module.exports = {
-    purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
-    darkMode: false,
+    content: [
+      './src/**/*.{html,js,vue}',
+    ],
     theme: {
       colors: {
         transparent: 'transparent',
@@ -13,11 +14,10 @@ module.exports = {
         cyan: colors.cyan,
         emerald: colors.emerald,
         fuchsia: colors.fuchsia,
-        gray: colors.trueGray,
-        blueGray: colors.blueGray,
-        coolGray: colors.coolGray,
-        trueGray: colors.trueGray,
-        warmGray: colors.warmGray,
+        neutral: colors.neutral,
+        blueGray: colors.slate,
+        gray: colors.gray,
+        stone: colors.stone,
         green: colors.green,
         indigo: colors.indigo,
         lime: colors.lime,

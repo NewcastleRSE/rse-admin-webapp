@@ -27,8 +27,8 @@ jobs:
       - name: Generate Distribution
         run: yarn build
         env:
-          VUE_APP_API_URL: ${{ secrets.VUE_APP_API_URL }}
-          VUE_APP_GANTT_KEY: ${{ secrets.VUE_APP_GANTT_KEY }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_GANTT_KEY: ${{ secrets.VITE_GANTT_KEY }}
 
       - name: Deploy
         uses: lauchacarro/Azure-Storage-Action@v1.1

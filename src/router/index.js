@@ -10,12 +10,12 @@ import Auth from "../layouts/Auth.vue"
 
 // Views
 
-import Login from "../views/Login"
-import Dashboard from "../views/Dashboard"
-import Projects from "../views/Projects"
-import Assignments from "../views/Assignments"
-import RSE from "../views/RSE"
-import Transactions from "../views/Transactions"
+import Login from "../views/Login.vue"
+import Dashboard from "../views/Dashboard.vue"
+import Projects from "../views/Projects.vue"
+import Assignments from "../views/Assignments.vue"
+import RSE from "../views/RSE.vue"
+import Transactions from "../views/Transactions.vue"
 
 /**
  * isTokenValid:
@@ -118,7 +118,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
   linkActiveClass: "is-active",
 })

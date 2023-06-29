@@ -173,7 +173,7 @@ export default {
           end: assignment.endDate
         }
 
-        promises.push(axios.post(`${process.env.VUE_APP_API_URL}/assignments/`, { data: payload }, { headers: { Authorization: `Bearer ${token}`} }).then((newAssignment) => {
+        promises.push(axios.post(`${import.meta.env.VITE_API_URL}/assignments/`, { data: payload }, { headers: { Authorization: `Bearer ${token}`} }).then((newAssignment) => {
           commit('addAssignment', {
             createdAt: newAssignment.data.createdAt,
             end: newAssignment.data.end,
@@ -196,13 +196,13 @@ export default {
 
       Object.keys(state.edited).forEach(key => {
         const assignment = state.edited[key]
-        promises.push(axios.put(`${process.env.VUE_APP_API_URL}/assignments/${assignment.id}`, { data: assignment }, { headers: { Authorization: `Bearer ${token}`} }).then(() => {
+        promises.push(axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.id}`, { data: assignment }, { headers: { Authorization: `Bearer ${token}`} }).then(() => {
           commit('updateAssignment', assignment)
         }))
       })
 
       state.deleted.forEach(assignment => {
-        promises.push(axios.delete(`${process.env.VUE_APP_API_URL}/assignments/${assignment.id}`, { headers: { Authorization: `Bearer ${token}`} }).then(assignment => {
+        promises.push(axios.delete(`${import.meta.env.VITE_API_URL}/assignments/${assignment.id}`, { headers: { Authorization: `Bearer ${token}`} }).then(assignment => {
           commit('removeAssignment', assignment.id)
         }))
       })

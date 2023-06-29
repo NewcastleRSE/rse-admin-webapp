@@ -135,7 +135,7 @@ export default {
     */
     getReport({ commit, rootState }, id = "") {
       axios
-        .get(`${process.env.VUE_APP_API_URL}/timesheets/${id}`, {
+        .get(`${import.meta.env.VITE_API_URL}/timesheets/${id}`, {
           headers: {
             Authorization: `Bearer ${rootState.auth.jwt}`,
           },

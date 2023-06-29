@@ -54,7 +54,7 @@ export default {
   actions: {
     //async, commits mutations
     login({ commit }, accessToken) {
-      const loginUrl = process.env.VUE_APP_API_URL + "/auth/microsoft/callback/?access_token=" + accessToken
+      const loginUrl = import.meta.env.VITE_API_URL + "/auth/microsoft/callback/?access_token=" + accessToken
       const azureConfig = { headers: { Authorization: `Bearer ${accessToken}` }}
 
       let fetchJWT = axios.get(loginUrl)

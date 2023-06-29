@@ -71,14 +71,14 @@
   </div>
 </template>
 <script>
-import nclLogoWhite from "@/assets/img/ncl-logo-white.png";
+import nclLogoWhite from "@/assets/img/ncl-logo-white.png"
 
 export default {
   name: "login",
   data() {
     return {
       nclLogoWhite,
-      apiUrl: process.env.VUE_APP_API_URL,
+      apiUrl: import.meta.env.VITE_API_URL,
       accessToken: null
     };
   },

@@ -45,7 +45,7 @@
                       </vue3-simple-typeahead>
                     </div>
                     <div class="relative flex w-full flex-wrap items-stretch mb-3">
-                      <Datepicker v-model="dateRange" range :enableTimePicker="false" inputClassName="py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border border-blueGray-300 outline-none focus:outline-none focus:shadow-outline w-full pl-10" />
+                      <VueDatePicker v-model="dateRange" range :enableTimePicker="false" inputClassName="py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border border-blueGray-300 outline-none focus:outline-none focus:shadow-outline w-full pl-10" />
                     </div>
                     <div class="relative flex w-full flex-wrap items-stretch mb-3">
                       <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
@@ -66,8 +66,8 @@
 </template>
 
 <script>
-import Datepicker from 'vue3-date-time-picker';
-import 'vue3-date-time-picker/dist/main.css'
+import VueDatePicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 
 export default {
   name: "Create",
@@ -100,7 +100,7 @@ export default {
     }
   },
   components: {
-    Datepicker
+    VueDatePicker
   },
   computed: {
     rses() {

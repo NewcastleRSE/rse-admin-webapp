@@ -17,7 +17,9 @@ import "gantt-schedule-timeline-calendar/dist/style.css"
 import { ref, onMounted, onBeforeUnmount } from "vue"
 import { DateTime } from "luxon"
 
-let globalThis = require('globalthis')(),
+const globalthis = require('globalthis')
+
+let globalThis = globalthis(),
     canChangeRow = true,
     canCollide = false
 
@@ -223,7 +225,7 @@ export default {
        */
       const config = {
         licenseKey:
-          `${process.env.VUE_APP_GANTT_KEY}`,
+          `${import.meta.env.VITE_GANTT_KEY}`,
         plugins: [ProgressBar(), HighlightWeekends(), TimelinePointer(), Selection(selectionOptions), ItemResizing(resizingPluginConfig), ItemMovement(movementPluginConfig), Bookmarks(), CalendarScroll()],
         innerHeight: (props.rses.length * 40) + 72,
         list: {

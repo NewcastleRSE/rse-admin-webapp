@@ -101,7 +101,7 @@ export default {
               encodeValuesOnly: true,
             });
   
-          let response = await axios.get(`${process.env.VUE_APP_API_URL}/transactions?${query}`, {
+          let response = await axios.get(`${import.meta.env.VITE_API_URL}/transactions?${query}`, {
             headers: {
               Authorization: `Bearer ${rootState.auth.jwt}`,
             }})
