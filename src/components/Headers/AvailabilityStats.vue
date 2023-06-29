@@ -1,6 +1,6 @@
 <template>
   <!-- Header -->
-  <div class="relative bg-emerald-600 bg-blend-multiply bg-cover md:pt-32 pb-32 pt-12" :style="{ backgroundImage: 'url(' + require('@/assets/img/header.jpeg') + ')' }">
+  <div class="relative bg-emerald-600 bg-blend-multiply bg-cover md:pt-32 pb-32 pt-12" :style="{ backgroundImage: `url('${BackgroundImage}')` }">
     <div class="px-4 md:px-10 mx-auto w-full">
       <div>
         <!-- Card stats -->
@@ -49,6 +49,7 @@
 <script>
 import AvailabilityCard from "@/components/Cards/Availability.vue"
 import TimelineLink from "@/components/Cards/TimelineLink.vue"
+import BackgroundImage from '@/assets/img/header.jpeg'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -64,22 +65,29 @@ export default {
           let avatar = this.avatars.find((avatar) => {
             return avatar.name === name.toLowerCase()
           })
-          return avatar ? avatar.pathLong : '' 
+          return new URL(`${avatar.pathLong}`, import.meta.url)
       },
       formatDate: (date) => {
         return new Date(date).toLocaleDateString()
-      }
+      },
+      BackgroundImage
     };
   },
-  mounted() {
-    this.importAvatars(require.context('@/assets/img/avatars/', true, /\.(gif|jpe?g|tiff?|png|webp|bmp)$/));
+  beforeMount() {
+    this.importAvatars(import.meta.glob('@/assets/img/avatars/*.*'))
   },
   computed: {
     ...mapGetters('rses', ['nextRSE', 'nextWebMobile', 'nextMiddleware', 'nextDataScience'])
   },
   methods: {
     importAvatars(r) {
-      r.keys().forEach(key => (this.avatars.push({ pathLong: r(key), pathShort: key, name: (key.substring(2)).split('.')[0].split('-').join(' ') })));
+      Object.keys(r).forEach(key => {
+        this.avatars.push({ 
+          pathLong: key,
+          pathShort: key.replace(/^.*[\\/]/, ''),
+          name: key.replace(/^.*[\\/]/, '').split('.')[0].split('-').join(' ')
+        })
+      })
     },
     rse(name) {
       this.$router.push({ path: `/rse/${name.replace(/\s+/g, '-').toLowerCase()}` })

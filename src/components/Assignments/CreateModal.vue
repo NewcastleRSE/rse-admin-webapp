@@ -85,7 +85,7 @@ export default {
           let avatar = this.avatars.find((avatar) => {
             return avatar.name === rse.toLowerCase()
           })
-          return avatar ? avatar.pathLong : '' 
+          return new URL(`${avatar.pathLong}`, import.meta.url) 
       },
       rse: null,
       selectRse: (rse) => {
@@ -110,8 +110,8 @@ export default {
       return this.$store.state.projects.projects
     }
   },
-  mounted() {
-    this.importAvatars(require.context('@/assets/img/avatars/', true, /\.(gif|jpe?g|tiff?|png|webp|bmp)$/));
+  beforeMount() {
+    this.importAvatars(import.meta.glob('@/assets/img/avatars/*.*'))
   },
   methods: {
     toggleModal: function(rseID, projectID, range, split){
@@ -125,7 +125,13 @@ export default {
       this.showModal = !this.showModal;
     },
     importAvatars(r) {
-      r.keys().forEach(key => (this.avatars.push({ pathLong: r(key), pathShort: key, name: (key.substring(2)).split('.')[0].split('-').join(' ') })));
+      Object.keys(r).forEach(key => {
+        this.avatars.push({ 
+          pathLong: key,
+          pathShort: key.replace(/^.*[\\/]/, ''),
+          name: key.replace(/^.*[\\/]/, '').split('.')[0].split('-').join(' ')
+        })
+      })
     },
     /*
     id that is set here does not set the assignment id in strapi,

@@ -93,12 +93,12 @@ export default {
           let avatar = this.avatars.find((avatar) => {
             return avatar.name === name.toLowerCase()
           })
-          return avatar ? avatar.pathLong : '' 
+          return new URL(`${avatar.pathLong}`, import.meta.url)
       }
     };
   },
-  mounted() {
-    this.importAvatars(require.context('@/assets/img/avatars/', true, /\.(gif|jpe?g|tiff?|png|webp|bmp)$/));
+  beforeMount() {
+    this.importAvatars(import.meta.glob('@/assets/img/avatars/*.*'))
   },
   computed: {
     rse() {
@@ -107,7 +107,13 @@ export default {
   },
   methods: {
     importAvatars(r) {
-      r.keys().forEach(key => (this.avatars.push({ pathLong: r(key), pathShort: key, name: (key.substring(2)).split('.')[0].split('-').join(' ') })));
+      Object.keys(r).forEach(key => {
+        this.avatars.push({ 
+          pathLong: key,
+          pathShort: key.replace(/^.*[\\/]/, ''),
+          name: key.replace(/^.*[\\/]/, '').split('.')[0].split('-').join(' ')
+        })
+      })
     },
     formatDate(date, format) {
       return DateTime.fromISO(date).toFormat(format)
