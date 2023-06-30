@@ -56,7 +56,7 @@ export default {
           let avatar = this.avatars.find((avatar) => {
             return avatar.name === name.toLowerCase()
           })
-          return new URL(`${avatar.pathLong}`, import.meta.url)
+          return `/src/assets/img/avatars/${avatar.pathShort}`
       },
       formatDate: (date) => {
         return new Date(date).toLocaleDateString()

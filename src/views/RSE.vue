@@ -16,7 +16,7 @@
 <script>
 import CardSettings from "@/components/Cards/CardSettings.vue"
 import CardProfile from "@/components/Cards/CardProfile.vue"
-import AvailabilityStats from "@/components/Header/AvailabilityStats.vue"
+import AvailabilityStats from "@/components/Headers/Availability.vue"
 
 export default {
   components: {

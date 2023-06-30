@@ -11,7 +11,7 @@ import Auth from "../layouts/Auth.vue"
 // Views
 
 import Login from "../views/Login.vue"
-import Header from '../components/Header/AvailabilityStats.vue'
+import Header from '../components/Headers/Availability.vue'
 import Dashboard from "../views/Dashboard.vue"
 import Projects from "../views/Projects.vue"
 import Assignments from "../views/Assignments.vue"
