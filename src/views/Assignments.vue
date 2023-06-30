@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import AvailabilityStats from "@/components/Headers/AvailabilityStats.vue"
+import AvailabilityStats from "@/components/Header/AvailabilityStats.vue"
 import Timeline from "@/components/Assignments/Timeline.vue"
 import CreateModal from "@/components/Assignments/CreateModal.vue"
 import UnallocatedModal from "@/components/Assignments/UnallocatedModal.vue"
