@@ -1,22 +1,22 @@
 import { nextTick } from 'vue'
-import { createRouter, createWebHistory } from "vue-router"
-import jwt_decode from "jwt-decode"
-import store from "../store"
+import { createRouter, createWebHistory } from 'vue-router'
+import jwt_decode from 'jwt-decode'
+import * as Store from '../stores'
 
 // Layouts
 
-import Admin from "../layouts/Admin.vue"
-import Auth from "../layouts/Auth.vue"
+import Admin from '../layouts/Admin.vue'
+import Auth from '../layouts/Auth.vue'
 
 // Views
 
-import Login from "../views/Login.vue"
+import Login from '../views/Login.vue'
 import Header from '../components/Headers/Availability.vue'
-import Dashboard from "../views/Dashboard.vue"
-import Projects from "../views/Projects.vue"
-import Assignments from "../views/Assignments.vue"
-import RSE from "../views/RSE.vue"
-import Transactions from "../views/Transactions.vue"
+import Dashboard from '../views/Dashboard.vue'
+import Projects from '../views/Projects.vue'
+import Assignments from '../views/Assignments.vue'
+import RSE from '../views/RSE.vue'
+import Transactions from '../views/Transactions.vue'
 
 /**
  * isTokenValid:
@@ -25,8 +25,9 @@ import Transactions from "../views/Transactions.vue"
  * @return true : if the token is not expired
  */
 function isTokenValid() {
+  const authStore = Store.useAuthStore()
   // move to auth getter so can be used on components (navbar)
-  var token = store.state.auth.jwt
+  var token = authStore.jwt
   if (token) {
     var decoded = jwt_decode(token)
     var exp = decoded.exp
@@ -39,12 +40,12 @@ function isTokenValid() {
 
 const routes = [
     {
-        path: "/",
-        redirect: "/dashboard",
+        path: '/',
+        redirect: '/dashboard',
         component: Admin,
         beforeEnter: (to, from, next) => {
             if (!isTokenValid()) {
-                next("/auth/login")
+                next('/auth/login')
             } 
             else {
               next()
@@ -52,8 +53,8 @@ const routes = [
         },
         children: [
           {
-            path: "/dashboard",
-            name: "Dashboard",
+            path: '/dashboard',
+            name: 'Dashboard',
             components: {
               default: Dashboard,
               header: Header
@@ -61,59 +62,59 @@ const routes = [
             meta: { title: 'RSE Admin - Dashboard' }
           },
           {
-            path: "/projects",
-            name: "Projects",
+            path: '/projects',
+            name: 'Projects',
             component: Projects,
             meta: { title: 'RSE Admin - Projects' }
           },
           {
-            path: "/assignments",
-            name: "Assignments",
+            path: '/assignments',
+            name: 'Assignments',
             component: Assignments,
             meta: { title: 'RSE Admin - Assignments' }
           },
           {
-            path: "/rse/:name",
-            name: "RSE",
+            path: '/rse/:name',
+            name: 'RSE',
             component: RSE,
             meta: { title: 'RSE Admin - RSE' }
           },
           {
-            path: "/transactions/:year",
-            name: "Transactions",
+            path: '/transactions/:year',
+            name: 'Transactions',
             component: Transactions,
             meta: { title: 'RSE Admin - Transactions' }
           }
         ]
     },
     {
-        path: "/auth",
-        redirect: "/auth/login",
+        path: '/auth',
+        redirect: '/auth/login',
         component: Auth,
         beforeEnter: (to, from, next) => {
             // If directed from a logout action
             if(to.params && to.params.logout) {
               // Clear all state
-              store.commit("assignments/reset")
-              store.commit("auth/reset")
-              store.commit("capacity/reset")
-              store.commit("facility/reset")
-              store.commit("projects/reset")
-              store.commit("rses/reset")
-              store.commit("timesheets/reset")
-              store.commit("transactions/reset")
+              // store.commit('assignments/reset')
+              // store.commit('auth/reset')
+              // store.commit('capacity/reset')
+              // store.commit('facility/reset')
+              // store.commit('projects/reset')
+              // store.commit('rses/reset')
+              // store.commit('timesheets/reset')
+              // store.commit('transactions/reset')
             }
 
             if (isTokenValid()) {
-                next("/dashboard")
+                next('/dashboard')
             } else {
                 next()
             }
         },
         children: [
           {
-            path: "/auth/login",
-            name: "Login",
+            path: '/auth/login',
+            name: 'Login',
             component: Login,
             meta: { title: 'RSE Admin - Login' }
           }
@@ -124,7 +125,7 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-  linkActiveClass: "is-active",
+  linkActiveClass: 'is-active',
 })
 
 router.afterEach((to) => {

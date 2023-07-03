@@ -91,11 +91,11 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import BackgroundImage from '@/assets/img/header.jpeg'
-import { useStore } from 'vuex'
+import { useAuthStore } from '../stores/auth'
 
-const store = useStore()
+const store = useAuthStore()
 
-const user = store.getters['auth/user']
+const user = store.getUser()
 
 const navigation = [
   { name: 'Dashboard', href: '#', current: true },
