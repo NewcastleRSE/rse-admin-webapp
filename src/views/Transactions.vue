@@ -25,7 +25,7 @@
 
 import VGrid from '@revolist/vue3-datagrid'
 import NumberColumnType from '@revolist/revogrid-column-numeral'
-import AvailabilityStats from "@/components/Headers/AvailabilityStats.vue"
+import AvailabilityStats from "@/components/Headers/Availability.vue"
 
 const numeral = NumberColumnType.getNumeralInstance()
 

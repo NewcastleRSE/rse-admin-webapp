@@ -13,7 +13,7 @@
 
 <script>
 import CardProjects from "@/components/Cards/CardProjects.vue"
-import AvailabilityStats from "@/components/Headers/AvailabilityStats.vue"
+import AvailabilityStats from "@/components/Headers/Availability.vue"
 
 export default {
   name: "projects",

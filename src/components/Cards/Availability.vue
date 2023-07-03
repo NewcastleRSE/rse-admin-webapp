@@ -16,7 +16,7 @@
           <h1 class="font-semibold text-blueGray-700">
             {{ subTitle }}
           </h1>
-          <span class="mr-2 font-bold text-emerald-500">
+          <span class="mr-2 font-bold text-cyan-600">
             <i class="fas fa-calendar-alt"></i>
             {{ value }}
           </span>

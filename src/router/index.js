@@ -11,6 +11,7 @@ import Auth from "../layouts/Auth.vue"
 // Views
 
 import Login from "../views/Login.vue"
+import Header from '../components/Headers/Availability.vue'
 import Dashboard from "../views/Dashboard.vue"
 import Projects from "../views/Projects.vue"
 import Assignments from "../views/Assignments.vue"
@@ -53,7 +54,10 @@ const routes = [
           {
             path: "/dashboard",
             name: "Dashboard",
-            component: Dashboard,
+            components: {
+              default: Dashboard,
+              header: Header
+            },
             meta: { title: 'RSE Admin - Dashboard' }
           },
           {
