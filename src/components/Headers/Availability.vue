@@ -3,7 +3,7 @@
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
       <timeline-link v-on:click="$router.push({name:'Assignments'})"
         label="Assignments"
-        title="View All Project Assignments"
+        title="All Projects"
         subLabel="Overall Wait Time"
         :subTitle="`${Math.floor(nextRSE.wait.months) > 0 ? Math.floor(nextRSE.wait.months) : 0} Months ${Math.floor(nextRSE.wait.days) > 0 ? Math.floor(nextRSE.wait.days) : 0 } Days`"
       />
