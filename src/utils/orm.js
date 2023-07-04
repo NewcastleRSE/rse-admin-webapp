@@ -32,10 +32,6 @@ export const fetchObjects = async function (object, page, pageSize, populate) {
             Authorization: `Bearer ${store.jwt}`,
           }
         })
-
-        if(object === 'timesheets') {
-          console.log(response.data)
-        }
         
         objects = objects.concat(response.data.data)
         const pagination = response.data.meta.pagination

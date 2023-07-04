@@ -55,7 +55,7 @@ export const useAuthStore = defineStore('auth', () => {
                 facilitiesStore.fetchFacilities(),
                 projectsStore.fetchProjects(),
                 rsesStore.fetchRSEs(),
-                // timesheetsStore.fetchTimesheets(),
+                timesheetsStore.fetchTimesheets(),
                 transactionsStore.fetchTransactions()
             ]).then(() => {
             router.push({ name: "Dashboard" })
