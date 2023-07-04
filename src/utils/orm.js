@@ -30,7 +30,8 @@ export const fetchObjects = async function (object, page, pageSize, populate) {
         let response = await axios.get(`${import.meta.env.VITE_API_URL}/${object}?${query}`, {
           headers: {
             Authorization: `Bearer ${store.jwt}`,
-          }})
+          }
+        })
 
         if(object === 'timesheets') {
           console.log(response.data)
@@ -48,4 +49,30 @@ export const fetchObjects = async function (object, page, pageSize, populate) {
     }
 
     return await recursiveFetch(object, 0, 100, populate)
+}
+
+/**
+ * 
+ * @param {string} object the name of the object type
+ * @param {number} id the unique id of the object
+ * @param {Array.<string>} populate an array of properties for Strapi to populate
+ * @returns 
+ */
+export const fetchObject = async function (object, id, populate) {
+
+  const store = useAuthStore()
+
+  const query = qs.stringify({
+    populate: populate
+  },{
+    encodeValuesOnly: true,
+  });
+
+  let response = await axios.get(`${import.meta.env.VITE_API_URL}/${object}/${id}?${query}`, {
+    headers: {
+      Authorization: `Bearer ${store.jwt}`,
+    }
+  })
+
+  return response.data.data
 }

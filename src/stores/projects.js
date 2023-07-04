@@ -6,7 +6,11 @@ export const useProjectsStore = defineStore('projects', () => {
     const projects = ref([])
 
     function getProjects() {
-        return projects.value
+        return projects.value.sort(function(a, b) {
+            let textA = a.dealname.toUpperCase();
+            let textB = b.dealname.toUpperCase();
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+        })
     }
 
     function getByID(id) {

@@ -13,11 +13,15 @@ export const useFacilitiesStore = defineStore('facilities', () => {
         return facilities.value.find(facility => facility.id == id)
     }
 
+    function getByYear(year) {
+        return facilities.value.find(facility => facility.year == year)
+    }
+
     async function fetchFacilities () {
         facilities.value = await fetchObjects('facilities', 0, 100)
     }
 
-    return { facilities, getFacilities, getByID, fetchFacilities }
+    return { facilities, getFacilities, getByID, getByYear, fetchFacilities }
 },
 {
     persist: true
