@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { Buffer } from 'buffer'
 import router from '../router'
+import { useResetStore } from '@/utils/stores'
 import * as Stores from '@/stores'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -69,7 +70,8 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     function logout() {
-        return true
+        const resetStore = useResetStore()
+        resetStore.all()
     }
 
     return { accessToken, jwt, user, getAccessToken, getJWT, getUser, login, logout }

@@ -92,19 +92,6 @@ const routes = [
         redirect: '/auth/login',
         component: Auth,
         beforeEnter: (to, from, next) => {
-            // If directed from a logout action
-            if(to.params && to.params.logout) {
-              // Clear all state
-              // store.commit('assignments/reset')
-              // store.commit('auth/reset')
-              // store.commit('capacity/reset')
-              // store.commit('facility/reset')
-              // store.commit('projects/reset')
-              // store.commit('rses/reset')
-              // store.commit('timesheets/reset')
-              // store.commit('transactions/reset')
-            }
-
             if (isTokenValid()) {
                 next('/dashboard')
             } else {
