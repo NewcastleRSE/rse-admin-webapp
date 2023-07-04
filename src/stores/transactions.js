@@ -15,7 +15,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
     }
 
     function getByYear(year) {
-        return transactions.value.find(transaction => transaction.fiscalYear == year).reverse()
+        return transactions.value.filter(transaction => transaction.fiscalYear == year).reverse()
     }
 
     function getSummary(year) {
