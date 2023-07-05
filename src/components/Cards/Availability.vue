@@ -24,10 +24,14 @@
     </div>
   </div>
 </template>
-<script>
-export default {
-  name: "availability-card",
-  props: {
+<script setup>
+import { defineOptions, defineProps } from 'vue'
+
+defineOptions({
+  name: 'availability-card'
+})
+
+defineProps({
     image: {
       type: String,
     },
@@ -43,6 +47,5 @@ export default {
     value: {
       type: String,
     }
-  },
-};
+  })
 </script>

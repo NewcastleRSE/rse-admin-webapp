@@ -3,14 +3,14 @@
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
       <timeline-link v-on:click="$router.push({name:'Assignments'})"
         label="Assignments"
-        title="View All Project Assignments"
+        title="All Projects"
         subLabel="Overall Wait Time"
         :subTitle="`${Math.floor(nextRSE.wait.months) > 0 ? Math.floor(nextRSE.wait.months) : 0} Months ${Math.floor(nextRSE.wait.days) > 0 ? Math.floor(nextRSE.wait.days) : 0 } Days`"
       />
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <availability-card v-on:click="rse(`${nextMiddleware.firstname} ${nextMiddleware.lastname}`)"
-        :image=getAvatar(nextMiddleware)
+      <availability-card v-on:click="$router.push({path:`/rse/${(nextMiddleware.firstname + ' ' + nextMiddleware.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
+        :image="`/src/assets/img/avatars/${nextMiddleware.photo}`"
         label="MIDDLEWARE"
         :title="`${nextMiddleware.firstname} ${nextMiddleware.lastname}`"
         :subTitle=formatDate(nextMiddleware.nextAvailableDate)
@@ -18,8 +18,8 @@
       />
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <availability-card v-on:click="rse(`${nextWebMobile.firstname} ${nextWebMobile.lastname}`)"
-        :image=getAvatar(nextWebMobile)
+      <availability-card v-on:click="$router.push({path:`/rse/${(nextWebMobile.firstname + ' ' + nextWebMobile.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
+        :image="`/src/assets/img/avatars/${nextWebMobile.photo}`"
         label="WEB &amp; MOBILE"
         :title="`${nextWebMobile.firstname} ${nextWebMobile.lastname}`"
         :subTitle=formatDate(nextWebMobile.nextAvailableDate)
@@ -27,8 +27,8 @@
       />
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <availability-card v-on:click="rse(`${nextDataScience.firstname} ${nextDataScience.lastname}`)"
-        :image=getAvatar(nextDataScience)
+      <availability-card v-on:click="$router.push({path:`/rse/${(nextDataScience.firstname + ' ' + nextDataScience.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
+      :image="`/src/assets/img/avatars/${nextDataScience.photo}`"
         label="DATA SCIENCE"
         :title="`${nextDataScience.firstname} ${nextDataScience.lastname}`"
         :subTitle=formatDate(nextDataScience.nextAvailableDate)
@@ -38,50 +38,21 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
 import AvailabilityCard from "@/components/Cards/Availability.vue"
 import TimelineLink from "@/components/Cards/TimelineLink.vue"
-import { mapGetters } from 'vuex'
+import { useRSEsStore } from '@/stores/rses'
 
-export default {
-  components: {
-    AvailabilityCard,
-    TimelineLink
-  },
-  data() {
-    return {
-      avatars: [],
-      getAvatar: (rse) => {
-          let name = rse.firstname + ' ' + rse.lastname
-          let avatar = this.avatars.find((avatar) => {
-            return avatar.name === name.toLowerCase()
-          })
-          return `/src/assets/img/avatars/${avatar.pathShort}`
-      },
-      formatDate: (date) => {
-        return new Date(date).toLocaleDateString()
-      }
-    };
-  },
-  beforeMount() {
-    this.importAvatars(import.meta.glob('@/assets/img/avatars/*.*'))
-  },
-  computed: {
-    ...mapGetters('rses', ['nextRSE', 'nextWebMobile', 'nextMiddleware', 'nextDataScience'])
-  },
-  methods: {
-    importAvatars(r) {
-      Object.keys(r).forEach(key => {
-        this.avatars.push({ 
-          pathLong: key,
-          pathShort: key.replace(/^.*[\\/]/, ''),
-          name: key.replace(/^.*[\\/]/, '').split('.')[0].split('-').join(' ')
-        })
-      })
-    },
-    rse(name) {
-      this.$router.push({ path: `/rse/${name.replace(/\s+/g, '-').toLowerCase()}` })
-    }
-  }
-};
+const rsesStore = useRSEsStore()
+
+const nextRSE = ref(rsesStore.getNext()),
+      nextMiddleware = ref(rsesStore.getNext('Middleware')),
+      nextWebMobile = ref(rsesStore.getNext('WebMobile')),
+      nextDataScience = ref(rsesStore.getNext('DataScience'))
+
+function formatDate(date) {
+  return new Date(date).toLocaleDateString()
+}
+
 </script>
