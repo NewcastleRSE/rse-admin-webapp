@@ -98,11 +98,11 @@ const store = useAuthStore()
 const user = store.getUser()
 
 const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Finances', href: '#', current: false },
-  { name: 'Forecasting', href: '#', current: false },
+  { name: 'Dashboard', href: '/dashboard', current: true },
+  { name: 'Team', href: '/team', current: false },
+  { name: 'Projects', href: '/projects', current: false },
+  { name: 'Finances', href: '/finances', current: false },
+  { name: 'Forecasting', href: '/forecasting', current: false },
 ]
 const userNavigation = [
   { name: 'Settings', href: '#' },

@@ -15,6 +15,7 @@ import Header from '../components/Headers/Availability.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Projects from '../views/Projects.vue'
 import Assignments from '../views/Assignments.vue'
+import Team from '../views/Team.vue'
 import RSE from '../views/RSE.vue'
 import Transactions from '../views/Transactions.vue'
 
@@ -74,7 +75,16 @@ const routes = [
             meta: { title: 'RSE Admin - Assignments' }
           },
           {
-            path: '/rse/:name',
+            path: '/team',
+            name: 'Team',
+            components: {
+              default: Team,
+              header: Header
+            },
+            meta: { title: 'RSE Admin - RSE' }
+          },
+          {
+            path: '/team/:name',
             name: 'RSE',
             component: RSE,
             meta: { title: 'RSE Admin - RSE' }
