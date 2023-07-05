@@ -10,7 +10,7 @@
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
       <availability-card v-on:click="$router.push({path:`/rse/${(nextMiddleware.firstname + ' ' + nextMiddleware.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
-        :image=getAvatar(nextMiddleware)
+        :image="`/src/assets/img/avatars/${nextMiddleware.photo}`"
         label="MIDDLEWARE"
         :title="`${nextMiddleware.firstname} ${nextMiddleware.lastname}`"
         :subTitle=formatDate(nextMiddleware.nextAvailableDate)
@@ -19,7 +19,7 @@
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
       <availability-card v-on:click="$router.push({path:`/rse/${(nextWebMobile.firstname + ' ' + nextWebMobile.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
-        :image=getAvatar(nextWebMobile)
+        :image="`/src/assets/img/avatars/${nextWebMobile.photo}`"
         label="WEB &amp; MOBILE"
         :title="`${nextWebMobile.firstname} ${nextWebMobile.lastname}`"
         :subTitle=formatDate(nextWebMobile.nextAvailableDate)
@@ -28,7 +28,7 @@
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
       <availability-card v-on:click="$router.push({path:`/rse/${(nextDataScience.firstname + ' ' + nextDataScience.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
-        :image=getAvatar(nextDataScience)
+      :image="`/src/assets/img/avatars/${nextDataScience.photo}`"
         label="DATA SCIENCE"
         :title="`${nextDataScience.firstname} ${nextDataScience.lastname}`"
         :subTitle=formatDate(nextDataScience.nextAvailableDate)
@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { onBeforeMount, ref } from 'vue'
+import { ref } from 'vue'
 import AvailabilityCard from "@/components/Cards/Availability.vue"
 import TimelineLink from "@/components/Cards/TimelineLink.vue"
 import { useRSEsStore } from '@/stores/rses'
@@ -51,28 +51,8 @@ const nextRSE = ref(rsesStore.getNext()),
       nextWebMobile = ref(rsesStore.getNext('WebMobile')),
       nextDataScience = ref(rsesStore.getNext('DataScience'))
 
-const avatars = []
-
-function getAvatar(rse) {
-    let name = rse.firstname + ' ' + rse.lastname
-    let avatar = this.avatars.find((avatar) => {
-      return avatar.name === name.toLowerCase()
-    })
-    return `/src/assets/img/avatars/${avatar.pathShort}`
-}
-
 function formatDate(date) {
   return new Date(date).toLocaleDateString()
 }
-
-onBeforeMount(() => {
-  Object.keys(import.meta.glob('@/assets/img/avatars/*.*')).forEach(key => {
-    avatars.push({ 
-      pathLong: key,
-      pathShort: key.replace(/^.*[\\/]/, ''),
-      name: key.replace(/^.*[\\/]/, '').split('.')[0].split('-').join(' ')
-    })
-  })
-})
 
 </script>

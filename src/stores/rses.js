@@ -43,7 +43,20 @@ export const useRSEsStore = defineStore('rses', () => {
     }
 
     async function fetchRSEs () {
-        rses.value = await fetchObjects('rses', 0, 100, ['assignments', 'assignments.project'])
+        let rseData = await fetchObjects('rses', 0, 100, ['assignments', 'assignments.project'])
+
+        Object.keys(import.meta.glob('@/assets/img/avatars/*.*')).forEach(key => {
+
+            const rseIndex = rseData.findIndex(rse => {
+                let name = `${rse.firstname} ${rse.lastname}`
+                return name.toLowerCase() === key.replace(/^.*[\\/]/, '').split('.')[0].split('-').join(' ')
+            })
+
+            rseData[rseIndex].photo = key.replace(/^.*[\\/]/, '')
+            rseData[rseIndex].displayName = `${rseData[rseIndex].firstname} ${rseData[rseIndex].lastname}`
+        })
+
+        rses.value = rseData
     }
 
     return { rses, getRSEs, getByName, getByID, getNext, fetchRSEs }
