@@ -7,8 +7,7 @@ import * as Stores from '@/stores'
 
 export const useAuthStore = defineStore('auth', () => {
 
-    const assignmentsStore = Stores.useAssignmentsStore(),
-          capacitiesStore = Stores.useCapacitiesStore(),
+    const capacitiesStore = Stores.useCapacitiesStore(),
           facilitiesStore = Stores.useFacilitiesStore(),
           projectsStore = Stores.useProjectsStore(),
           rsesStore = Stores.useRSEsStore(),
@@ -50,7 +49,6 @@ export const useAuthStore = defineStore('auth', () => {
             user.value = profile
 
             Promise.all([
-                //assignmentsStore.fetchAssignments(),
                 capacitiesStore.fetchCapacities(),
                 facilitiesStore.fetchFacilities(),
                 projectsStore.fetchProjects(),
