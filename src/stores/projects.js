@@ -17,6 +17,10 @@ export const useProjectsStore = defineStore('projects', () => {
         return projects.value.find(project => project.id == id)
     }
 
+    function getByHubspotID(id) {
+        return projects.value.find(project => project.hubspotId == id)
+    }
+
     async function fetchProjects () {
         projects.value = await fetchObjects('projects', 0, 100)
     }
@@ -25,7 +29,7 @@ export const useProjectsStore = defineStore('projects', () => {
         projects.value = []
     }
 
-    return { projects, getProjects, getByID, fetchProjects, reset }
+    return { projects, getProjects, getByID, getByHubspotID, fetchProjects, reset }
 },
 {
     persist: true
