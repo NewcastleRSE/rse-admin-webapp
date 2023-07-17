@@ -4,7 +4,7 @@
       <div class="w-full mb-12 px-4">
         <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
           <menu-bar :edited="edited" :selected="selected" :zoom="zoom" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
-          <Timeline ref="timeline" :rses="rses" :projects="projects" :assignments="assignments" @create="create" @selection="selection" @edit="edit" />
+          <Timeline ref="timeline" :rses="rses" :projects="projects" @create="create" @selection="selection" @edit="edit" />
         </div>
         <create-modal ref="create" />
         <unallocated-modal ref="unallocated" />
@@ -18,18 +18,16 @@ import CreateModal from '@/components/Assignments/CreateModal.vue'
 import UnallocatedModal from '@/components/Assignments/UnallocatedModal.vue'
 import MenuBar from '@/components/Assignments/MenuBar.vue'
 import { DateTime } from 'luxon'
-import { useRSEsStore, useAssignmentsStore, useProjectsStore } from '../stores'
+import { useRSEsStore, useProjectsStore } from '../stores'
 import { ref, computed } from 'vue'
 
 const rsesStore = useRSEsStore()
-const assignmentsStore = useAssignmentsStore()
 const projectsStore = useProjectsStore()
 
 const edited = ref(false),
       selected = ref(false),
       rses = rsesStore.getRSEs(),
-      projects = projectsStore.getProjects(),
-      assignments = assignmentsStore.getAssignments()
+      projects = projectsStore.getProjects()
 
 const unallocatedCount = computed(() => projects.filter(project => project.dealstage === 'Awaiting Allocation').length)
 

@@ -59,8 +59,9 @@ export const useRSEsStore = defineStore('rses', () => {
 
         let assignmentData = []
 
-        rseData.forEach(rse => {
+        rseData.forEach((rse, index) => {
             assignmentData = [...assignmentData, ...rse.assignments.data.map(assignment => ({...assignment, rse: rse.id}))]
+            rseData[index].assignments = rse.assignments.data
         })
 
         const assignmentsStore = Stores.useAssignmentsStore()

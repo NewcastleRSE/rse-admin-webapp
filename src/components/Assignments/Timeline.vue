@@ -16,14 +16,13 @@ import { Plugin as ProgressBar } from 'gantt-schedule-timeline-calendar/dist/plu
 import 'gantt-schedule-timeline-calendar/dist/style.css'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { DateTime } from 'luxon'
-import { useAssignmentsStore, useProjectsStore, useRSEsStore } from '../../stores'
+import { useProjectsStore, useRSEsStore } from '../../stores'
 
 const globalthis = require('globalthis')
 
 let globalThis = globalthis(),
     canChangeRow = true,
     canCollide = false,
-    assignmentsStore = null,
     projectsStore = null,
     rsesStore = null
 
@@ -66,6 +65,7 @@ function generateRows(RSEs) {
             }
     }
   })
+  console.log(rows)
   return rows
 }
 
@@ -75,7 +75,7 @@ function generateAvailability(RSEs) {
   RSEs.forEach(rse => {
     if (rse.active) {
 
-      let assignmentEndDates = rse.assignments.data.reduce(function (dates, assignment) { return [...dates, assignment.end] }, [])
+      let assignmentEndDates = rse.assignments.reduce(function (dates, assignment) { return [...dates, assignment.end] }, [])
       const maxDate = new Date(Math.max(...assignmentEndDates.map(date => { return new Date(date) })))
 
       const id = GSTC.api.GSTCID(`rse-${rse.id}`),
@@ -100,51 +100,53 @@ function generateAvailability(RSEs) {
   return items
 }
 
-function generateAssignments(assignments) {
+function generateAssignments(rses) {
 
   /**
    * @type { import('gantt-schedule-timeline-calendar').Items }
    */
   const items = {}
-  //const availableRSEs = rses.filter(rse => rse.active).map(rse => rse.id)
 
-  console.log(assignments)
+  rses.forEach(rse => {
+    if (rse.active) {
+    rse.assignments.forEach(assignment => {
 
-  assignments.forEach(assignment => {
-    //if(availableRSEs.includes(assignment.rse.data.id)){
+      const id = GSTC.api.GSTCID(`assignment-${assignment.id}`),
+            rowId = GSTC.api.GSTCID(`rse-${rse.id}-assignments`)
 
-    const rse = rsesStore.getByID(assignment.rse),
-          project = projectsStore.getByID(assignment.project)
+      if(rse.id === 2) {
+      console.log(id)
+      console.log(rowId)
+      }
 
-    const id = GSTC.api.GSTCID(`assignment-${assignment.id}`),
-          rowId = GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`)
+      const assignmentStart = DateTime.fromISO(assignment.start),
+            assignmentEnd = DateTime.fromISO(assignment.end)
 
-    //assignment.project = projects.find(project => project.id === assignment.project.hubspotID )
-    items[id] = {
-      id,
-      label: assignment.name,
-      rowId,
-      time: {
-        start: assignment.start,
-        end: assignment.end,
-      },
-      progress: 100,
-      classNames: ['bg-sky-500']
-    }
+      items[id] = {
+        id,
+        label: assignment.project.data.name,
+        rowId,
+        time: {
+          start: assignmentStart.toMillis(),
+          end: assignmentEnd.toMillis(),
+        },
+        progress: 100,
+        classNames: ['bg-sky-500']
+      }
+    })
+  }
   })
-
   return items
 }
 
 // main component
 export default {
   name: 'Timeline',
-  props: ['rses', 'projects', 'assignments'],
+  props: ['rses', 'projects'],
   emits: ['create', 'selection', 'edit'],
   setup(props, { emit }) {
     let gstc, state
     const gstcElement = ref(null)
-    assignmentsStore = useAssignmentsStore()
       projectsStore = useProjectsStore()
       rsesStore = useRSEsStore()
     onMounted(() => {
@@ -261,7 +263,7 @@ export default {
         },
         chart: {
           items: {
-            ...generateAssignments(props.assignments),
+            ...generateAssignments(props.rses),
             ...generateAvailability(props.rses)
           },
           time: {
