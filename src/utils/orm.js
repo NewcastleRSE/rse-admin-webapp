@@ -40,6 +40,20 @@ export const fetchObjects = async function (object, page, pageSize, populate) {
           return await recursiveFetch(object, pagination.page + 1, pageSize, populate)
         }
         else {
+          objects.forEach((object, index) => {
+            const keys = Object.keys(object)
+            keys.forEach(key => {
+              try {
+                if(object[key] !== null && typeof object[key] === 'object' && 'data' in object[key]) {
+                  objects[index][key] = object[key].data
+                }
+            }
+            catch(err) {
+              console.log(keys)
+              console.error(err)
+            }
+            })
+          })
           return objects
         }
     }

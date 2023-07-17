@@ -44,7 +44,7 @@ export const useRSEsStore = defineStore('rses', () => {
     }
 
     async function fetchRSEs () {
-        let rseData = await fetchObjects('rses', 0, 100, ['assignments', 'assignments.project'])
+        let rseData = await fetchObjects('rses', 0, 100, ['assignments', 'assignments.project', 'capacities'])
 
         Object.keys(import.meta.glob('@/assets/img/avatars/*.*')).forEach(key => {
 
@@ -59,9 +59,12 @@ export const useRSEsStore = defineStore('rses', () => {
 
         let assignmentData = []
 
-        rseData.forEach((rse, index) => {
-            assignmentData = [...assignmentData, ...rse.assignments.data.map(assignment => ({...assignment, rse: rse.id}))]
-            rseData[index].assignments = rse.assignments.data
+        rseData.forEach((rse) => {
+            assignmentData = [...assignmentData, ...rse.assignments.map(assignment => ({...assignment, rse: rse.id}))]
+        })
+
+        assignmentData.forEach((assignment, index) => {
+            assignmentData[index].project = assignment.project.data
         })
 
         const assignmentsStore = Stores.useAssignmentsStore()
