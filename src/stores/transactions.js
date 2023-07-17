@@ -55,7 +55,11 @@ export const useTransactionsStore = defineStore('transactions', () => {
         transactions.value = await fetchObjects('transactions', 0, 100)
     }
 
-    return { transactions, getTransactions, getByID, getByYear, getSummary, fetchTransactions }
+    async function reset () {
+        transactions.value = []
+    }
+
+    return { transactions, getTransactions, getByID, getByYear, getSummary, fetchTransactions, reset }
 },
 {
     persist: true

@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { Buffer } from 'buffer'
 import router from '../router'
-import { useResetStore } from '@/utils/stores'
 import * as Stores from '@/stores'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -51,7 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
             user.value = profile
 
             Promise.all([
-                assignmentsStore.fetchAssignments(),
+                //assignmentsStore.fetchAssignments(),
                 capacitiesStore.fetchCapacities(),
                 facilitiesStore.fetchFacilities(),
                 projectsStore.fetchProjects(),
@@ -69,12 +68,13 @@ export const useAuthStore = defineStore('auth', () => {
         })
     }
 
-    function logout() {
-        const resetStore = useResetStore()
-        resetStore.all()
-    }
+    async function reset () {
+        accessToken.value = null
+        jwt.value = null
+        user.value = null
+      }
 
-    return { accessToken, jwt, user, getAccessToken, getJWT, getUser, login, logout }
+    return { accessToken, jwt, user, getAccessToken, getJWT, getUser, login, reset }
 },
 { 
     persist: true

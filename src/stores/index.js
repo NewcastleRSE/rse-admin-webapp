@@ -6,4 +6,3 @@ export { useProjectsStore } from './projects'
 export { useRSEsStore } from './rses'
 export { useTimesheetsStore } from './timesheets'
 export { useTransactionsStore } from './transactions'
-export default {}

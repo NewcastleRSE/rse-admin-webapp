@@ -10,6 +10,10 @@ export const useAssignmentsStore = defineStore('assignments', () => {
         return assignments.value
     }
 
+    function setAssignments(data) {
+      assignments.value = data
+  }
+
     function getByID(id) {
         return assignments.value.find(assignment => assignment.id == id)
     }
@@ -52,10 +56,14 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     async function fetchAssignments () {
-        assignments.value = await fetchObjects('assignments', 0, 100, ['rse', 'project'])
+        assignments.value = await fetchObjects('assignments', 0, 100)
     }
 
-    return { assignments, getAssignments, getByID, getByRSE, getByPeriod, fetchAssignments }
+    async function reset () {
+      assignments.value = []
+  }
+
+    return { assignments, getAssignments, setAssignments, getByID, getByRSE, getByPeriod, fetchAssignments, reset }
 },
 {
     persist: true

@@ -72,3 +72,23 @@ export const fetchObject = async function (object, id, populate) {
 
   return response.data.data
 }
+
+/**
+ * 
+ * @param {string} object the name of the object type
+ * @param {number} id the unique id of the object
+ * @param {Array.<string>} populate an array of properties for Strapi to populate
+ * @returns 
+ */
+export const fetchTimesheetsSummary = async function (period) {
+
+  const store = useAuthStore()
+
+  let response = await axios.get(`${import.meta.env.VITE_API_URL}/timesheets/allocated?period=${period}`, {
+    headers: {
+      Authorization: `Bearer ${store.jwt}`,
+    }
+  })
+
+  return response.data.data
+}

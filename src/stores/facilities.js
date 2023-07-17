@@ -21,7 +21,11 @@ export const useFacilitiesStore = defineStore('facilities', () => {
         facilities.value = await fetchObjects('facilities', 0, 100)
     }
 
-    return { facilities, getFacilities, getByID, getByYear, fetchFacilities }
+    async function reset () {
+        facilities.value = []
+    }
+
+    return { facilities, getFacilities, getByID, getByYear, fetchFacilities, reset }
 },
 {
     persist: true

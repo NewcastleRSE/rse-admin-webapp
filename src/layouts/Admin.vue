@@ -94,7 +94,6 @@ import BackgroundImage from '@/assets/img/header.jpeg'
 import { useAuthStore } from '../stores/auth'
 
 const store = useAuthStore()
-
 const user = store.getUser()
 
 const navigation = [
@@ -106,6 +105,6 @@ const navigation = [
 ]
 const userNavigation = [
   { name: 'Settings', href: '#' },
-  { name: 'Sign Out', href: '#' },
+  { name: 'Sign Out', href: '/auth/logout' },
 ]
 </script>

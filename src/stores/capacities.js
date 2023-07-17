@@ -59,7 +59,7 @@ export const useCapacitiesStore = defineStore('capacities', () => {
 
           // Expand assignments to include full HubSpot project details
           assignments.forEach(assignment => {
-            assignment.project = projectsStore.getByID(assignment.project.id)
+            assignment.project = projectsStore.getByID(assignment.project)
           })
 
           let monthlyUtilisation = {
@@ -87,7 +87,11 @@ export const useCapacitiesStore = defineStore('capacities', () => {
         capacities.value = await fetchObjects('capacities', 0, 100, ['rse'])
     }
 
-    return { capacities, getCapacities, getByID, getCapacityInPeriod, getUtilisation, fetchCapacities }
+    async function reset () {
+      capacities.value = []
+    }
+
+    return { capacities, getCapacities, getByID, getCapacityInPeriod, getUtilisation, fetchCapacities, reset }
 },
 {
     persist: true

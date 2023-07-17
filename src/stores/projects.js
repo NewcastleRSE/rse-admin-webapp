@@ -18,10 +18,14 @@ export const useProjectsStore = defineStore('projects', () => {
     }
 
     async function fetchProjects () {
-        projects.value = await fetchObjects('projects', 0, 100, ['rse', 'project'])
+        projects.value = await fetchObjects('projects', 0, 100)
     }
 
-    return { projects, getProjects, getByID, fetchProjects }
+    async function reset () {
+        projects.value = []
+    }
+
+    return { projects, getProjects, getByID, fetchProjects, reset }
 },
 {
     persist: true

@@ -65,13 +65,19 @@ const routes = [
           {
             path: '/projects',
             name: 'Projects',
-            component: Projects,
+            components: {
+              default: Projects,
+              header: Header
+            },
             meta: { title: 'RSE Admin - Projects' }
           },
           {
             path: '/assignments',
             name: 'Assignments',
-            component: Assignments,
+            components: {
+              default: Assignments,
+              header: Header
+            },
             meta: { title: 'RSE Admin - Assignments' }
           },
           {
@@ -86,13 +92,19 @@ const routes = [
           {
             path: '/team/:name',
             name: 'RSE',
-            component: RSE,
+            components: {
+              default: RSE,
+              header: Header
+            },
             meta: { title: 'RSE Admin - RSE' }
           },
           {
             path: '/transactions/:year',
             name: 'Transactions',
-            component: Transactions,
+            components: {
+              default: Transactions,
+              header: Header
+            },
             meta: { title: 'RSE Admin - Transactions' }
           }
         ]
@@ -116,6 +128,41 @@ const routes = [
             meta: { title: 'RSE Admin - Login' }
           }
         ]
+    },
+    {
+        path: '/auth/logout',
+        name: 'Logout',
+        beforeEnter: (to, from, next) => {
+
+          const assignmentsStore = Store.useAssignmentsStore()
+          assignmentsStore.reset()
+
+          const authStore = Store.useAuthStore()
+          authStore.reset()
+
+          const capacitiesStore = Store.useCapacitiesStore()
+          capacitiesStore.reset()
+
+          const facilitiesStore = Store.useFacilitiesStore()
+          facilitiesStore.reset()
+
+          const projectsStore = Store.useProjectsStore()
+          projectsStore.reset()
+
+          const rsesStore = Store.useRSEsStore()
+          rsesStore.reset()
+
+          const timesheetsStore = Store.useTimesheetsStore()
+          timesheetsStore.reset()
+
+          const transactionsStore = Store.useTransactionsStore()
+          transactionsStore.reset()
+
+          localStorage.clear()
+
+          next('/auth/login')
+        },
+        meta: { title: 'RSE Admin - Logout' }
     }
 ]
 

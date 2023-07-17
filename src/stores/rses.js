@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { DateTime } from 'luxon'
 import { fetchObjects } from '../utils/orm'
+import * as Stores from '@/stores'
 
 export const useRSEsStore = defineStore('rses', () => {
     const rses = ref([])
@@ -56,10 +57,23 @@ export const useRSEsStore = defineStore('rses', () => {
             rseData[rseIndex].displayName = `${rseData[rseIndex].firstname} ${rseData[rseIndex].lastname}`
         })
 
+        let assignmentData = []
+
+        rseData.forEach(rse => {
+            assignmentData = [...assignmentData, ...rse.assignments.data.map(assignment => ({...assignment, rse: rse.id}))]
+        })
+
+        const assignmentsStore = Stores.useAssignmentsStore()
+        assignmentsStore.setAssignments(assignmentData)
+
         rses.value = rseData
     }
 
-    return { rses, getRSEs, getByName, getByID, getNext, fetchRSEs }
+    async function reset () {
+        rses.value = []
+    }
+
+    return { rses, getRSEs, getByName, getByID, getNext, fetchRSEs, reset }
 },
 {
     persist: true

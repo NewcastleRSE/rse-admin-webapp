@@ -3,25 +3,29 @@
 </template>
 
 <script>
-import GSTC from "gantt-schedule-timeline-calendar/dist/gstc.wasm.esm.min.js"
-import { Plugin as TimelinePointer } from "gantt-schedule-timeline-calendar/dist/plugins/timeline-pointer.esm.min.js"
-import { Plugin as Selection } from "gantt-schedule-timeline-calendar/dist/plugins/selection.esm.min.js"
-import { Plugin as ItemResizing } from "gantt-schedule-timeline-calendar/dist/plugins/item-resizing.esm.min.js"
-import { Plugin as ItemMovement } from "gantt-schedule-timeline-calendar/dist/plugins/item-movement.esm.min.js"
-import { Plugin as Bookmarks } from "gantt-schedule-timeline-calendar/dist/plugins/time-bookmarks.esm.min.js"
+import GSTC from 'gantt-schedule-timeline-calendar/dist/gstc.wasm.esm.min.js'
+import { Plugin as TimelinePointer } from 'gantt-schedule-timeline-calendar/dist/plugins/timeline-pointer.esm.min.js'
+import { Plugin as Selection } from 'gantt-schedule-timeline-calendar/dist/plugins/selection.esm.min.js'
+import { Plugin as ItemResizing } from 'gantt-schedule-timeline-calendar/dist/plugins/item-resizing.esm.min.js'
+import { Plugin as ItemMovement } from 'gantt-schedule-timeline-calendar/dist/plugins/item-movement.esm.min.js'
+import { Plugin as Bookmarks } from 'gantt-schedule-timeline-calendar/dist/plugins/time-bookmarks.esm.min.js'
 import { Plugin as HighlightWeekends } from 'gantt-schedule-timeline-calendar/dist/plugins/highlight-weekends.esm.min.js'
 import { Plugin as CalendarScroll } from 'gantt-schedule-timeline-calendar/dist/plugins/calendar-scroll.esm.min.js'
 import { Plugin as ProgressBar } from 'gantt-schedule-timeline-calendar/dist/plugins/progress-bar.esm.min.js'
 
-import "gantt-schedule-timeline-calendar/dist/style.css"
-import { ref, onMounted, onBeforeUnmount } from "vue"
-import { DateTime } from "luxon"
+import 'gantt-schedule-timeline-calendar/dist/style.css'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { DateTime } from 'luxon'
+import { useAssignmentsStore, useProjectsStore, useRSEsStore } from '../../stores'
 
 const globalthis = require('globalthis')
 
 let globalThis = globalthis(),
     canChangeRow = true,
-    canCollide = false
+    canCollide = false,
+    assignmentsStore = null,
+    projectsStore = null,
+    rsesStore = null
 
 function isCollision(item) {
   const allItems = globalThis.gstc.api.getAllItems()
@@ -43,7 +47,7 @@ function isCollision(item) {
 
 function generateRows(RSEs) {
   /**
-   * @type { import("gantt-schedule-timeline-calendar").Rows }
+   * @type { import('gantt-schedule-timeline-calendar').Rows }
    */
   const rows = {}
   RSEs.forEach(rse => {
@@ -96,51 +100,60 @@ function generateAvailability(RSEs) {
   return items
 }
 
-function generateAssignments(rses, assignments, projects) {
+function generateAssignments(assignments) {
 
   /**
-   * @type { import("gantt-schedule-timeline-calendar").Items }
+   * @type { import('gantt-schedule-timeline-calendar').Items }
    */
   const items = {}
-  const availableRSEs = rses.filter(rse => rse.active).map(rse => rse.id)
+  //const availableRSEs = rses.filter(rse => rse.active).map(rse => rse.id)
+
+  console.log(assignments)
 
   assignments.forEach(assignment => {
-    if(availableRSEs.includes(assignment.rse)){
-      const id = GSTC.api.GSTCID(`assignment-${assignment.id}`),
-            rowId = GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`)
+    //if(availableRSEs.includes(assignment.rse.data.id)){
 
-      assignment.project = projects.find(project => project.id === assignment.project.hubspotID )
-      items[id] = {
-        id,
-        label: assignment.name,
-        rowId,
-        time: {
-          start: assignment.start,
-          end: assignment.end,
-        },
-        progress: 100,
-        classNames: ['bg-sky-500']
-      }
+    const rse = rsesStore.getByID(assignment.rse),
+          project = projectsStore.getByID(assignment.project)
+
+    const id = GSTC.api.GSTCID(`assignment-${assignment.id}`),
+          rowId = GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`)
+
+    //assignment.project = projects.find(project => project.id === assignment.project.hubspotID )
+    items[id] = {
+      id,
+      label: assignment.name,
+      rowId,
+      time: {
+        start: assignment.start,
+        end: assignment.end,
+      },
+      progress: 100,
+      classNames: ['bg-sky-500']
     }
   })
+
   return items
 }
 
 // main component
 export default {
-  name: "Timeline",
+  name: 'Timeline',
   props: ['rses', 'projects', 'assignments'],
   emits: ['create', 'selection', 'edit'],
   setup(props, { emit }) {
     let gstc, state
     const gstcElement = ref(null)
+    assignmentsStore = useAssignmentsStore()
+      projectsStore = useProjectsStore()
+      rsesStore = useRSEsStore()
     onMounted(() => {
       const selectionOptions = {
         events: {
           onEnd(selected) {
 
             let cells = selected['chart-timeline-grid-row-cell'],
-                items = selected["chart-timeline-items-row-item"]
+                items = selected['chart-timeline-items-row-item']
 
             // Selection includes cells
             if (cells.length) {
@@ -221,7 +234,7 @@ export default {
       }
 
       /**
-       * @type { import("gantt-schedule-timeline-calendar").Config }
+       * @type { import('gantt-schedule-timeline-calendar').Config }
        */
       const config = {
         licenseKey:
@@ -231,15 +244,15 @@ export default {
         list: {
           columns: {
             data: {
-              [GSTC.api.GSTCID("label")]: {
-                id: GSTC.api.GSTCID("label"),
+              [GSTC.api.GSTCID('label')]: {
+                id: GSTC.api.GSTCID('label'),
                 width: 200,
-                data: "label",
+                data: 'label',
                 isHTML: true,
                 sortable: 'label',
                 expander: true,
                 header: {
-                  content: "Name",
+                  content: 'Name',
                 },
               },
             },
@@ -248,7 +261,7 @@ export default {
         },
         chart: {
           items: {
-            ...generateAssignments(props.rses, props.assignments, props.projects),
+            ...generateAssignments(props.assignments),
             ...generateAvailability(props.rses)
           },
           time: {
@@ -269,8 +282,8 @@ export default {
       if (gstc) gstc.destroy()
     })
     function updateFirstRow() {
-      state.update(`config.list.rows.${GSTC.api.GSTCID("0")}`, (row) => {
-        row.label = "Changed dynamically"
+      state.update(`config.list.rows.${GSTC.api.GSTCID('0')}`, (row) => {
+        row.label = 'Changed dynamically'
         return row
       })
     }
@@ -307,7 +320,7 @@ export default {
         label: assignment.project.dealname,
         time: {
           start: DateTime.fromISO(assignment.startDate).startOf('day').valueOf(),
-          end: DateTime.fromISO(assignment.endDate).endOf("day").valueOf(),
+          end: DateTime.fromISO(assignment.endDate).endOf('day').valueOf(),
         },
         progress: 100,
         classNames: ['bg-sky-500']
