@@ -16,15 +16,12 @@ import { Plugin as ProgressBar } from 'gantt-schedule-timeline-calendar/dist/plu
 import 'gantt-schedule-timeline-calendar/dist/style.css'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { DateTime } from 'luxon'
-import { useProjectsStore, useRSEsStore } from '../../stores'
 
 const globalthis = require('globalthis')
 
 let globalThis = globalthis(),
     canChangeRow = true,
-    canCollide = false,
-    projectsStore = null,
-    rsesStore = null
+    canCollide = false
 
 function isCollision(item) {
   const allItems = globalThis.gstc.api.getAllItems()
@@ -134,8 +131,6 @@ export default {
   setup(props, { emit }) {
     let gstc, state
     const gstcElement = ref(null)
-      projectsStore = useProjectsStore()
-      rsesStore = useRSEsStore()
     onMounted(() => {
       const selectionOptions = {
         events: {
@@ -349,6 +344,7 @@ export default {
     function getSelectedAssignments () {
       return getSelectedItemsData(getSelectedItems())
     }
+
     return {
       gstcElement,
       updateFirstRow,
@@ -360,7 +356,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style lang="scss">
 .gstc-component {
   margin: 0;
   padding: 0;
@@ -368,5 +364,13 @@ export default {
 
 .toolbox {
   padding: 10px;
+}
+
+.gstc__list-column-row-expander-toggle {
+  display: flex;
+
+  img {
+    align-self: center;
+  }
 }
 </style>
