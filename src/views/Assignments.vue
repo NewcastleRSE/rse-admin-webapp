@@ -24,7 +24,8 @@ import { ref, computed } from 'vue'
 const rsesStore = useRSEsStore()
 const projectsStore = useProjectsStore()
 
-const edited = ref(false),
+const timeline = ref(),
+      edited = ref(false),
       selected = ref(false),
       rses = rsesStore.getRSEs(),
       projects = projectsStore.getProjects()
@@ -32,7 +33,7 @@ const edited = ref(false),
 const unallocatedCount = computed(() => projects.filter(project => project.dealstage === 'Awaiting Allocation').length)
 
 function zoom(level) {
-  this.$refs.timeline.changeZoomLevel(level)
+  timeline.value.changeZoomLevel(level)
 }
 
 function selection(selected) {
