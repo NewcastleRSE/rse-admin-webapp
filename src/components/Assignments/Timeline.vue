@@ -84,7 +84,7 @@ function generateAvailability(RSEs) {
           end: DateTime.fromJSDate(maxDate).toMillis(),
         },
         progress: (capacity.days / assignmentsLength.days) * 100,
-        classNames: ['bg-sky-600']
+        classNames: ['bg-cyan-600', 'rounded']
       }
   })
 
@@ -116,7 +116,7 @@ function generateAssignments(rses) {
           end: assignmentEnd.toMillis(),
         },
         progress: 100,
-        classNames: ['bg-sky-500']
+        classNames: ['bg-cyan-500', 'rounded']
       }
     })
   })
@@ -307,7 +307,7 @@ export default {
           end: DateTime.fromISO(assignment.endDate).endOf('day').valueOf(),
         },
         progress: 100,
-        classNames: ['bg-sky-500']
+        classNames: ['bg-cyan-500', 'rounded']
       }
 
       state.update(`config.chart.items.${GSTC.api.GSTCID(newID)}`, (item) => { item = newItem; return item } )
@@ -366,11 +366,20 @@ export default {
   padding: 10px;
 }
 
+.gstc__scroll-bar {
+  display: none !important;
+}
+
 .gstc__list-column-row-expander-toggle {
   display: flex;
 
   img {
     align-self: center;
   }
+}
+
+.gstc__chart-timeline-items-row-item--left-cut {
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
 }
 </style>

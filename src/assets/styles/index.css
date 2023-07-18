@@ -214,22 +214,6 @@
         width: 100%
     }
 
-    /* .gstc__list-column-header .gstc__list-column-row-expander-toggle {
-        display: none;
-    }
-
-    .gstc__list-column-row-expander-toggle img {
-        margin-top: 12px;
-    } */
-
-    .child-row .gstc__list-column-row-expander {
-        display: none;
-    }
-
-    .bg-sky-600 .gstc__chart-timeline-items-row-item-resizing-handle {
-        display: none !important;
-    }
-
     revo-grid .main-viewport {
         height: 500px !important;
     }
