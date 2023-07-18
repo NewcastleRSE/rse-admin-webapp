@@ -376,6 +376,10 @@ export default {
   img {
     align-self: center;
   }
+
+  .gstc__list-column-row-expander-toggle-child {
+    display: none;
+  }
 }
 
 .gstc__chart-timeline-items-row-item--left-cut {
