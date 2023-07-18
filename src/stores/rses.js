@@ -7,8 +7,10 @@ import * as Stores from '@/stores'
 export const useRSEsStore = defineStore('rses', () => {
     const rses = ref([])
 
-    function getRSEs() {
-        return rses.value.sort(function(a, b) {
+    function getRSEs(inactive = false) {
+        return rses.value.filter(rse => {
+            return inactive ? true : rse.active
+        }).sort(function(a, b) {
             return a.lastname.localeCompare(b.lastname);
         })
     }
@@ -58,9 +60,11 @@ export const useRSEsStore = defineStore('rses', () => {
         })
 
         let assignmentData = []
+        let capacityData = []
 
         rseData.forEach((rse) => {
             assignmentData = [...assignmentData, ...rse.assignments.map(assignment => ({...assignment, rse: rse.id}))]
+            capacityData = [...capacityData, ...rse.capacities.map(capacity => ({...capacity, rse: rse.id}))]
         })
 
         assignmentData.forEach((assignment, index) => {
@@ -69,6 +73,9 @@ export const useRSEsStore = defineStore('rses', () => {
 
         const assignmentsStore = Stores.useAssignmentsStore()
         assignmentsStore.setAssignments(assignmentData)
+
+        const capacitiesStore = Stores.useCapacitiesStore()
+        capacitiesStore.setCapacities(capacityData)
 
         rses.value = rseData
     }

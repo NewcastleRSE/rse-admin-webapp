@@ -50,22 +50,19 @@ function generateRows(RSEs) {
    */
   const rows = {}
   RSEs.forEach(rse => {
-    if (rse.active) {
-      const id = GSTC.api.GSTCID(`rse-${rse.id}`),
-            assignments = GSTC.api.GSTCID(`rse-${rse.id}-assignments`)
-            rows[id] = {
-              id,
-              label: `${rse.firstname} ${rse.lastname}`,
-            }
-            rows[assignments] = {
-              assignments,
-              parentId: id,
-              classNames: ['child-row'],
-              label: '<div class="m-2"></div>'
-            }
-    }
+    const id = GSTC.api.GSTCID(`rse-${rse.id}`),
+          assignments = GSTC.api.GSTCID(`rse-${rse.id}-assignments`)
+          rows[id] = {
+            id,
+            label: `${rse.firstname} ${rse.lastname}`,
+          }
+          rows[assignments] = {
+            assignments,
+            parentId: id,
+            classNames: ['child-row'],
+            label: '<div class="m-2"></div>'
+          }
   })
-  console.log(rows)
   return rows
 }
 
@@ -73,8 +70,6 @@ function generateAvailability(RSEs) {
   const items = {}
 
   RSEs.forEach(rse => {
-    if (rse.active) {
-
       let assignmentEndDates = rse.assignments.reduce(function (dates, assignment) { return [...dates, assignment.end] }, [])
       const maxDate = new Date(Math.max(...assignmentEndDates.map(date => { return new Date(date) })))
 
@@ -94,7 +89,6 @@ function generateAvailability(RSEs) {
         progress: (capacity.days / assignmentsLength.days) * 100,
         classNames: ['bg-sky-600']
       }
-    }
   })
 
   return items
@@ -108,16 +102,10 @@ function generateAssignments(rses) {
   const items = {}
 
   rses.forEach(rse => {
-    if (rse.active) {
     rse.assignments.forEach(assignment => {
 
       const id = GSTC.api.GSTCID(`assignment-${assignment.id}`),
             rowId = GSTC.api.GSTCID(`rse-${rse.id}-assignments`)
-
-      if(rse.id === 2) {
-      console.log(id)
-      console.log(rowId)
-      }
 
       const assignmentStart = DateTime.fromISO(assignment.start),
             assignmentEnd = DateTime.fromISO(assignment.end)
@@ -134,7 +122,6 @@ function generateAssignments(rses) {
         classNames: ['bg-sky-500']
       }
     })
-  }
   })
   return items
 }
