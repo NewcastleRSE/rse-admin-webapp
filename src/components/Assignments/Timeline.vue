@@ -273,7 +273,7 @@ export default {
     }
     function changeZoomLevel(period) {
       let zoom = null,
-        start = null
+          start = null
       switch (period) {
         case 'days':
           zoom = 20

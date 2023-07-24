@@ -9,15 +9,21 @@ import Admin from '../layouts/Admin.vue'
 import Auth from '../layouts/Auth.vue'
 
 // Views
-
 import Login from '../views/Login.vue'
-import Header from '../components/Headers/Availability.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Projects from '../views/Projects.vue'
 import Assignments from '../views/Assignments.vue'
 import Team from '../views/Team.vue'
 import RSE from '../views/RSE.vue'
-import Transactions from '../views/Transactions.vue'
+
+import Budget from '../views/finances/Budget.vue'
+import FinanceDashboard from '../views/finances/Dashboard.vue'
+import Invoices from '../views/finances/Invoices.vue'
+import Transactions from '../views/finances/Transactions.vue'
+
+// Headers
+import AvailabilityHeader from '../components/Headers/Availability.vue'
+import FinanceHeader from '../components/Headers/Finance.vue'
 
 /**
  * isTokenValid:
@@ -58,7 +64,7 @@ const routes = [
             name: 'Dashboard',
             components: {
               default: Dashboard,
-              header: Header
+              header: AvailabilityHeader
             },
             meta: { title: 'RSE Admin - Dashboard' }
           },
@@ -67,7 +73,7 @@ const routes = [
             name: 'Projects',
             components: {
               default: Projects,
-              header: Header
+              header: AvailabilityHeader
             },
             meta: { title: 'RSE Admin - Projects' }
           },
@@ -76,7 +82,7 @@ const routes = [
             name: 'Assignments',
             components: {
               default: Assignments,
-              header: Header
+              header: AvailabilityHeader
             },
             meta: { title: 'RSE Admin - Assignments' }
           },
@@ -85,7 +91,7 @@ const routes = [
             name: 'Team',
             components: {
               default: Team,
-              header: Header
+              header: AvailabilityHeader
             },
             meta: { title: 'RSE Admin - RSE' }
           },
@@ -94,16 +100,43 @@ const routes = [
             name: 'RSE',
             components: {
               default: RSE,
-              header: Header
+              header: AvailabilityHeader
             },
             meta: { title: 'RSE Admin - RSE' }
           },
           {
-            path: '/transactions/:year',
+            path: '/finance',
+            name: 'Finances',
+            components: {
+              default: FinanceDashboard,
+              header: FinanceHeader
+            },
+            meta: { title: 'RSE Admin - Finances' }
+          },
+          {
+            path: '/finance/invoices',
+            name: 'Invoices',
+            components: {
+              default: Invoices,
+              header: FinanceHeader
+            },
+            meta: { title: 'RSE Admin - Invoices' }
+          },
+          {
+            path: '/finance/budget',
+            name: 'Budget',
+            components: {
+              default: Budget,
+              header: FinanceHeader
+            },
+            meta: { title: 'RSE Admin - Budget' }
+          },
+          {
+            path: '/finance/transactions/:year',
             name: 'Transactions',
             components: {
               default: Transactions,
-              header: Header
+              header: FinanceHeader
             },
             meta: { title: 'RSE Admin - Transactions' }
           }

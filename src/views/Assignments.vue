@@ -1,15 +1,11 @@
 <template>
-  <div>
-    <div class="mx-auto w-full -m-24">
-      <div class="w-full mb-12 px-4">
-        <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
-          <menu-bar :edited="edited" :selected="selected" :zoom="zoom" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
-          <Timeline ref="timeline" :rses="rses" :projects="projects" @create="create" @selection="selection" @edit="edit" />
-        </div>
-        <create-modal ref="create" />
-        <unallocated-modal ref="unallocated" />
-      </div>
+  <div class="w-full mb-12 px-4">
+    <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
+      <menu-bar :edited="edited" :selected="selected" :zoom="zoom" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
+      <Timeline ref="timeline" :rses="rses" :projects="projects" @create="create" @selection="selection" @edit="edit" />
     </div>
+    <create-modal ref="createAssignment" :isOpen="createIsOpen" />
+    <unallocated-modal ref="unallocated" />
   </div>
 </template>
 <script setup>
@@ -23,6 +19,9 @@ import { ref, computed } from 'vue'
 
 const rsesStore = useRSEsStore()
 const projectsStore = useProjectsStore()
+
+const createAssignment = ref(),
+      createIsOpen = ref(false)
 
 const timeline = ref(),
       edited = ref(false),
@@ -46,7 +45,8 @@ function unallocated() {
 }
 
 function create(rseID, projectID, dateRange, split) {
-  this.$refs.create.toggleModal(rseID, projectID, dateRange, split)
+  createIsOpen.value = true
+  // createAssignment.value.toggleModal(rseID, projectID, dateRange, split)
 }
 
 function edit(assignmentID, rseID, start, end) {

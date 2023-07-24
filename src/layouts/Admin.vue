@@ -81,7 +81,9 @@
     </header>
     <main>
       <div class="py-6 sm:px-6 lg:px-8">
-        <router-view />
+        <div class="w-full -mt-24">
+          <router-view />
+        </div>
       </div>
     </main>
   </div>
@@ -100,7 +102,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', current: true },
   { name: 'Team', href: '/team', current: false },
   { name: 'Projects', href: '/projects', current: false },
-  { name: 'Finances', href: '/finances', current: false },
+  { name: 'Finance', href: '/finance', current: false },
   { name: 'Forecasting', href: '/forecasting', current: false },
 ]
 const userNavigation = [

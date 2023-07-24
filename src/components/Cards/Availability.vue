@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="relative flex flex-col min-w-0 break-words bg-white rounded mb-6 xl:mb-0 shadow-lg"
-  >
+  <div class="relative flex flex-col min-w-0 break-words bg-white rounded mb-6 xl:mb-0 shadow-lg">
     <div class="flex p-4">
       <div class="relative w-auto pr-4 flex-none">
         <img :src="image" class="h-20 rounded-full m-2 shadow-lg" />
