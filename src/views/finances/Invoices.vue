@@ -21,7 +21,7 @@
                     <div class="min-w-0">
                       <div class="flex items-start gap-x-3">
                         <p class="text-sm font-semibold leading-6 text-gray-900">{{ project.dealname }}</p>
-                        <p :class="[statuses['Sent'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Sent</p>
+                        <p v-if="getInvoice(project.id, month.year, month.name)" :class="[statuses['Sent'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Sent</p>
                       </div>
                       <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
                         <p class="whitespace-nowrap">
@@ -34,9 +34,15 @@
                       </div>
                     </div>
                     <div class="flex flex-none items-center gap-x-4">
-                      <a :href="project.href" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
-                        View project<span class="sr-only">, {{ project.name }}</span>
-                      </a>
+                      <button v-if="!getInvoice(project.id, month.year, month.name)" v-on:click="createInvoice(project.clockifyID, month.year, month.name)" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
+                        Generate Invoice
+                      </button>
+                      <button v-else-if="getInvoice(project.id, month.year, month.name).sent === null" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
+                        Mark As Sent
+                      </button>
+                      <button v-else class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
+                        Mark As Processed
+                      </button>
                     </div>
                   </li>
                 </ul>
@@ -52,9 +58,10 @@
 import { DateTime } from 'luxon'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
-import { useAssignmentsStore, useProjectsStore } from '@/stores'
+import { useAssignmentsStore, useInvoicesStore, useProjectsStore } from '@/stores'
 
 const assignmentsStore = useAssignmentsStore(),
+      invoicesStore = useInvoicesStore(),
       projectsStore = useProjectsStore()
 
 let currentDate = DateTime.utc(),
@@ -63,6 +70,8 @@ let currentDate = DateTime.utc(),
 if(currentDate.month < 8) {
   startDate = startDate.minus({ year: 1 })
 } 
+
+const invoices = invoicesStore.getByFinancialYear(startDate.year)
 
 const monthsToDate = Math.floor(currentDate.diff(startDate, ['months']).values.months)
 
@@ -87,6 +96,15 @@ for (let i = 0; i < monthsToDate; i++) {
 }
 
 months.reverse()
+
+function getInvoice(projectId, year, month) {
+  return invoices.find(invoice => invoice.project.id == projectId && invoice.year == year && invoice.month == month.toLowerCase())
+}
+
+function createInvoice(clockifyID, year, month) {
+  console.log(clockifyID)
+  invoicesStore.createInvoice(clockifyID, year, month)
+}
 
 const statuses = {
   Sent: 'text-yellow-700 bg-yellow-50 ring-yellow-600/20',
