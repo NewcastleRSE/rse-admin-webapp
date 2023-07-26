@@ -25,8 +25,6 @@ export const useInvoicesStore = defineStore('invoices', () => {
         const yearStart = DateTime.utc(year, 8),
               yearEnd = yearStart.plus({years: 1}).minus({days: 1})
 
-        console.log(invoices.value)
-
         const results = invoices.value.filter(invoice => {
             const period = DateTime.fromFormat(`${invoice.year} ${titleCase(invoice.month)}`, 'yyyy MMMM')
             return yearStart <= period && period <= yearEnd
