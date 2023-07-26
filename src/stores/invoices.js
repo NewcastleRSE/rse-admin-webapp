@@ -25,6 +25,8 @@ export const useInvoicesStore = defineStore('invoices', () => {
         const yearStart = DateTime.utc(year, 8),
               yearEnd = yearStart.plus({years: 1}).minus({days: 1})
 
+        console.log(invoices.value)
+
         const results = invoices.value.filter(invoice => {
             const period = DateTime.fromFormat(`${invoice.year} ${titleCase(invoice.month)}`, 'yyyy MMMM')
             return yearStart <= period && period <= yearEnd
@@ -57,7 +59,7 @@ export const useInvoicesStore = defineStore('invoices', () => {
                 month: month.toLowerCase()
             }
           })
-          console.log(response)
+         
           const linkSource = `data:application/pdf;base64,${response.data}`;
           const downloadLink = document.createElement("a");
           const fileName = "file.pdf";
@@ -67,11 +69,33 @@ export const useInvoicesStore = defineStore('invoices', () => {
           downloadLink.click();
     }
 
+    async function updateInvoiceState(invoice, state) {
+        switch(state){
+            case 'sent':
+                invoice.sent = DateTime.utc().toISODate()
+                invoices.value[invoices.value.findIndex(inv => inv.id === invoice.id)].sent = invoice.sent
+                break;
+            case 'processed':
+                invoice.processed = DateTime.utc().toISODate()
+                invoices.value[invoices.value.findIndex(inv => inv.id === invoice.id)].processed = invoice.processed
+                break;
+            default:
+                break;
+        }
+
+        await axios.put(`${import.meta.env.VITE_API_URL}/invoices/${invoice.id}`, {
+            headers: {
+              Authorization: `Bearer ${store.jwt}`
+            },
+            data: invoice
+        })
+    }
+
     async function reset () {
         invoices.value = []
     }
 
-    return { invoices, getFacilities, getByID, getByFinancialYear, getByPeriod, getByProject, fetchInvoices, createInvoice, reset }
+    return { invoices, getFacilities, getByID, getByFinancialYear, getByPeriod, getByProject, fetchInvoices, createInvoice, updateInvoiceState, reset }
 },
 {
     persist: true

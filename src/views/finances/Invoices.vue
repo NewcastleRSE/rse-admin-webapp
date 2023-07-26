@@ -21,7 +21,9 @@
                     <div class="min-w-0">
                       <div class="flex items-start gap-x-3">
                         <p class="text-sm font-semibold leading-6 text-gray-900">{{ project.dealname }}</p>
-                        <p v-if="getInvoice(project.id, month.year, month.name)" :class="[statuses['Sent'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Sent</p>
+                        <p v-if="hasState(getInvoice(project.id, month.year, month.name), 'paid')" :class="[statuses['paid'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Paid {{ getInvoice(project.id, month.year, month.name).paid }}</p>
+                        <p v-else-if="hasState(getInvoice(project.id, month.year, month.name), 'processed')" :class="[statuses['processed'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Processed {{ getInvoice(project.id, month.year, month.name).processed }}</p>
+                        <p v-else-if="hasState(getInvoice(project.id, month.year, month.name), 'sent')" :class="[statuses['sent'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Sent {{ getInvoice(project.id, month.year, month.name).sent }}</p>
                       </div>
                       <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
                         <p class="whitespace-nowrap">
@@ -34,15 +36,21 @@
                       </div>
                     </div>
                     <div class="flex flex-none items-center gap-x-4">
-                      <button v-if="!getInvoice(project.id, month.year, month.name)" v-on:click="createInvoice(project.clockifyID, month.year, month.name)" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
+                      <button v-if="!getInvoice(project.id, month.year, month.name)" v-on:click="invoicesStore.createInvoice(project.clockifyID, month.year, month.name)" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
                         Generate Invoice
                       </button>
-                      <button v-else-if="getInvoice(project.id, month.year, month.name).sent === null" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
+                      <button v-else-if="getInvoice(project.id, month.year, month.name).sent === null" v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.id, month.year, month.name), 'sent')" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
                         Mark As Sent
                       </button>
-                      <button v-else class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
+                      <button v-else-if="getInvoice(project.id, month.year, month.name).processed === null" v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.id, month.year, month.name), 'processed')" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
                         Mark As Processed
                       </button>
+                      <div v-else-if="getInvoice(project.id, month.year, month.name).paid === null" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:block">
+                        Payment Pending
+                      </div>
+                      <div v-else class="hidden rounded-md bg-green-300 px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-green-60 sm:block">
+                        Paid
+                      </div>
                     </div>
                   </li>
                 </ul>
@@ -101,15 +109,14 @@ function getInvoice(projectId, year, month) {
   return invoices.find(invoice => invoice.project.id == projectId && invoice.year == year && invoice.month == month.toLowerCase())
 }
 
-function createInvoice(clockifyID, year, month) {
-  console.log(clockifyID)
-  invoicesStore.createInvoice(clockifyID, year, month)
+function hasState(invoice, state) {
+  return invoice && invoice[state]
 }
 
 const statuses = {
-  Sent: 'text-yellow-700 bg-yellow-50 ring-yellow-600/20',
-  Processed: 'text-blue-600 bg-blue-50 ring-blue-500/10',
-  Paid: 'text-green-700 bg-green-50 ring-green-600/20',
+  sent: 'text-yellow-700 bg-yellow-50 ring-yellow-600/20',
+  processed: 'text-blue-600 bg-blue-50 ring-blue-500/10',
+  paid: 'text-green-700 bg-green-50 ring-green-600/20',
 }
 
 </script>
