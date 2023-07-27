@@ -135,8 +135,6 @@ for (let i = 0; i < monthsToDate; i++) {
 
 months.reverse()
 
-console.log(months)
-
 function getInvoice(projectId, year, month) {
   return invoices.find(invoice => invoice.project.id == projectId && invoice.year == year && invoice.month == month.toLowerCase())
 }

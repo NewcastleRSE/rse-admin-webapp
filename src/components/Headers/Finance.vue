@@ -43,7 +43,7 @@
       </div>
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <div v-on:click="$router.push({path:`/finance/transactions`})" class="relative overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 shadow-lg sm:px-6 sm:pt-6 h-full">
+      <div v-on:click="$router.push({path:`/finance/transactions/2022`})" class="relative overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 shadow-lg sm:px-6 sm:pt-6 h-full">
         <dt>
             <div class="absolute rounded-md bg-cyan-500 p-3">
                 <CurrencyPoundIcon class="h-12 w-12 text-white" aria-hidden="true" />
