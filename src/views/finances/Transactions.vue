@@ -64,3 +64,43 @@ function convertRemToPixels(rem) {
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
 }
 </script>
+<style lang="scss">
+revo-grid {
+  .rgHeaderCell .rv-filter {
+    margin-left: 10px;
+  }
+
+  button.revo-button {
+    border-radius: 0.375rem !important;
+    --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    --tw-text-opacity: 1;
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1.25rem !important;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+
+    &.red {
+      color: rgb(255 255 255 / var(--tw-text-opacity));
+      background-color: rgb(6 182 212 / var(--tw-bg-opacity));
+      border: none;
+    }
+
+    &.light {
+      color: rgb(17 24 39 / var(--tw-text-opacity));
+      background-color: none;
+      border: none;
+      --tw-ring-opacity: 1;
+      --tw-ring-color: rgb(209 213 219 / var(--tw-ring-opacity));
+      --tw-ring-inset: inset;
+      --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+      --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+      box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+    }
+  }
+}
+</style>

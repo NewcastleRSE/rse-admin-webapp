@@ -214,7 +214,7 @@
         width: 100%
     }
 
-    revo-grid .main-viewport {
-        height: 500px !important;
+    revo-grid .rgHeaderCell .rv-filter {
+        margin-left: 10px;
     }
 }
