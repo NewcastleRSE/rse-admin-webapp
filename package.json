@@ -40,8 +40,7 @@
         "tailwindcss": "^3.3.2",
         "vue": "^3.0.0",
         "vue-router": "^4.0.10",
-        "vue3-simple-typeahead": "^1.0.10",
-        "vue3-table-lite": "^1.0.6"
+        "vue3-simple-typeahead": "^1.0.10"
     },
     "devDependencies": {
         "@originjs/vite-plugin-commonjs": "^1.0.3",

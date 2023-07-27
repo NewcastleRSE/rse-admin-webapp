@@ -22,7 +22,7 @@
             <p class="ml-24 truncate text-sm font-medium text-gray-500">Invoices</p>
         </dt>
         <dd class="ml-24 mt-2 flex items-baseline grid grid-cols-1 gap-1 sm:grid-cols-3">
-          <span  v-for="state in states" :key="state.name" :class="[state.bgColor, state.textColor, 'text-center rounded-md px-2 py-3 text-sm font-bold']">{{ state.count }} {{ state.name }}</span>
+          <span  v-for="state in states" :key="state.name" :class="[state.bgColor, state.textColor, 'text-center rounded-md px-2 py-3 text-sm font-bold truncate overflow-hidden']">{{ state.count }} {{ state.name }}</span>
         </dd>
       </div>
     </div>

@@ -1,32 +1,27 @@
 <template>
-  <div>
-    <availability-stats />
-    <div class="px-4 md:px-10 mx-auto w-full -m-24">
-      <div class="w-full mb-12 px-4">
-        <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
-          <v-grid
-              class="transaction-grid"
-              theme="compact"
-              filter={true}
-              :source="transactions"
-              :columns="columns"
-              :columnTypes="columnTypes"
-              :readonly="true"
-              :resize="true"
-              :stretch="true"
-              :canFocus="false"
-          ></v-grid>
-        </div>
-      </div>
+  <div class="w-full mb-12 px-4">
+    <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
+      <v-grid
+          class="transaction-grid h-screen"
+          theme="compact"
+          filter={true}
+          :source="transactions"
+          :columns="columns"
+          :columnTypes="columnTypes"
+          :readonly="true"
+          :resize="true"
+          :stretch="true"
+          :canFocus="false"
+      ></v-grid>
     </div>
   </div>
 </template>
-<script>
-
+<script setup>
 import VGrid from '@revolist/vue3-datagrid'
 import NumberColumnType from '@revolist/revogrid-column-numeral'
-import AvailabilityStats from "@/components/Headers/Availability.vue"
+import { useTransactionsStore } from '@/stores'
 
+const transactionsStore = useTransactionsStore()
 const numeral = NumberColumnType.getNumeralInstance()
 
 numeral.register('locale', 'gb', {
@@ -46,33 +41,26 @@ numeral.register('locale', 'gb', {
 })
 numeral.locale('gb')
 
-function convertRemToPixels(rem) {    
-    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
+const columnWidth = (window.innerWidth - convertRemToPixels(7)) / 10
+
+const columns = [
+    { name: 'Posted Date', prop: "postedDate", sortable: true, order: 'asc', size: columnWidth, columnProperties: () => { return { class: { 'postedDate': true } } } },
+    { name: 'Description', prop: "costElementDescription", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'costElementDescription': true } } } },
+    { name: 'Document Header', prop: "documentHeader", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'documentHeader': true } } } },
+    { name: 'Name', prop: "name", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'name': true } } } },
+    { name: 'Category', prop: "ieCategory", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'ieCategory': true } } } },
+    { name: 'Value', prop: "value", sortable: true, size: columnWidth, columnType: 'currency', columnProperties: () => { return { class: { 'value': true } } } }
+]
+
+const columnTypes = { 
+  currency: new NumberColumnType('($0,0.00)')
 }
 
-export default {
-  name: "AssignmentGantt",
-  components: { VGrid, AvailabilityStats },
-  data() {
-    const columnWidth = (window.innerWidth - convertRemToPixels(7)) / 10
-    return {
-        columns: [
-            { name: 'Posted Date', prop: "postedDate", sortable: true, order: 'asc', size: columnWidth, columnProperties: () => { return { class: { 'postedDate': true } } } },
-            { name: 'Description', prop: "costElementDescription", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'costElementDescription': true } } } },
-            { name: 'Document Header', prop: "documentHeader", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'documentHeader': true } } } },
-            { name: 'Name', prop: "name", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'name': true } } } },
-            { name: 'Category', prop: "ieCategory", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'ieCategory': true } } } },
-            { name: 'Value', prop: "value", sortable: true, size: columnWidth, columnType: 'currency', columnProperties: () => { return { class: { 'value': true } } } }
-        ],
-        columnTypes: {
-            currency: new NumberColumnType('($0,0.00)')
-        }
-    }
-  },
-  computed: {
-    transactions() {
-      return this.$store.getters["transactions/getTransactions"](this.$route.params.year)
-    }
-  }
+const transactions = transactionsStore.getByYear(2022)
+
+console.log(transactions)
+
+function convertRemToPixels(rem) {    
+    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
 }
 </script>
