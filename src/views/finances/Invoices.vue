@@ -41,17 +41,17 @@
                         <span v-else>Generate Invoice</span>
                       </button>
                       <div v-else-if="getInvoice(project.id, month.year, month.name).sent === null" class="inline-flex rounded-md shadow-sm">
-                        <button v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.id, month.year, month.name), 'sent')" type="button" class="relative inline-flex items-center rounded-l-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">Mark As Sent</button>
+                        <button v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.id, month.year, month.name), 'sent')" type="button" class="relative inline-flex items-center rounded-l-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">Mark As Sent</button>
                         <Menu as="div" class="relative -ml-px block">
-                          <MenuButton class="relative inline-flex items-center rounded-r-md bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">
+                          <MenuButton class="relative inline-flex items-center rounded-r-md bg-white px-2.5 h-full text-gray-400 text-sm font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">
                             <span class="sr-only">Mark As Sent</span>
                             <ChevronDownIcon class="h-5 w-5" aria-hidden="true" />
                           </MenuButton>
                           <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                            <MenuItems class="absolute right-0 z-10 -mr-1 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <MenuItems class="absolute right-0 z-10 mt-0.5 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                               <div class="py-1">
                                 <MenuItem>
-                                  <span class="text-gray-700 block px-4 py-2 text-sm">Generate Invoice</span>
+                                  <button v-on:click="createInvoice(project.clockifyID, month.year, month.name)" class="text-gray-900 block px-4 py-2 text-sm whitespace-nowrap font-semibold shadow-s sm:block hover:bg-gray-50 cursor-pointer">Generate Invoice</button>
                                 </MenuItem>
                               </div>
                             </MenuItems>
