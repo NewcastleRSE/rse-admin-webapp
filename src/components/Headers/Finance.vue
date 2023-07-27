@@ -34,8 +34,11 @@
             </div>
             <p class="ml-24 truncate text-sm font-medium text-gray-500">Budget</p>
         </dt>
-        <dd class="ml-24 flex items-baseline pb-6 sm:pb-7">
-            <p class="text-2xl font-semibold text-gray-900">20%</p>
+        <dd class="ml-24 flex items-baseline relative">
+          <div class="my-4 overflow-hidden w-full rounded-full bg-gray-200">
+            <div class="h-4 rounded-full bg-cyan-600" :style="{'width': budgetUsed + '%'}"></div>
+            <div class="absolute border-r-2 border-black h-8 top-2" :style="{'left': yearCompleted + '%'}"></div>
+          </div>
         </dd>
       </div>
     </div>
@@ -45,10 +48,11 @@
             <div class="absolute rounded-md bg-cyan-500 p-3">
                 <CurrencyPoundIcon class="h-12 w-12 text-white" aria-hidden="true" />
             </div>
-            <p class="ml-24 truncate text-sm font-medium text-gray-500">Finances</p>
+            <p class="ml-24 truncate text-sm font-medium text-gray-500">Transactions</p>
         </dt>
-        <dd class="ml-24 flex items-baseline pb-6 sm:pb-7">
-            <p class="text-2xl font-semibold text-gray-900">20%</p>
+        <dd class="ml-24 items-baseline">
+            <p class="text-2xl font-semibold text-gray-900">Until {{ upToDate }}</p>
+            <p class="text-sm text-gray-900">{{ daysPassed }} days ago</p>
         </dd>
       </div>
     </div>
@@ -64,6 +68,9 @@ const assignmentsStore = useAssignmentsStore(),
       invoicesStore = useInvoicesStore(),
       projectsStore = useProjectsStore()
 
+/**
+ * Invoice state counts
+ */
 let currentDate = DateTime.utc(),
     startDate = DateTime.utc(currentDate.year, 8)
 
@@ -77,13 +84,10 @@ const monthsToDate = Math.floor(currentDate.diff(startDate, ['months']).values.m
 let expectedInvoices = 0
 
 for (let i = 0; i < monthsToDate; i++) {
-
   const assignments = assignmentsStore.getByPeriod(startDate.toISODate(), currentDate.toISODate())
   const projectIDs = assignments.reduce(function (IDs, assignment) { return [...IDs, assignment.project.id] }, [])
   const projects = projectsStore.filterByIDs([...new Set(projectIDs)]).filter(project => project.costModel === 'Facility')
-
   expectedInvoices = expectedInvoices + projects.length
-
   startDate = startDate.plus({ month: 1 })
 }
 
@@ -107,5 +111,18 @@ const states = [
     textColor: 'text-blue-700'
   },
 ]
+
+/**
+ * Budget progress bar
+ */
+const diff = startDate.plus({year: 1}).minus({day: 1}).diff(currentDate, ['days'])
+const budgetUsed = 63.8
+const yearCompleted = (100 - (diff.toObject().days / 365))
+
+/**
+ * Transactions validity date
+ */
+const upToDate = currentDate.minus({ days:19 }).toLocaleString()
+const daysPassed = Math.round(currentDate.diff(currentDate.minus({ days:19 }), ['days']).toObject().days)
 
 </script>
