@@ -36,12 +36,28 @@
                       </div>
                     </div>
                     <div class="flex flex-none items-center gap-x-4">
-                      <button v-if="!getInvoice(project.id, month.year, month.name)" v-on:click="invoicesStore.createInvoice(project.clockifyID, month.year, month.name)" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
-                        Generate Invoice
+                      <button v-if="!getInvoice(project.id, month.year, month.name)" :disabled="creating !== null" v-on:click="createInvoice(project.clockifyID, month.year, month.name)" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
+                        <span v-if="creating == `${project.clockifyID}-${month.year}-${month.month}`">Generating...</span>
+                        <span v-else>Generate Invoice</span>
                       </button>
-                      <button v-else-if="getInvoice(project.id, month.year, month.name).sent === null" v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.id, month.year, month.name), 'sent')" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
-                        Mark As Sent
-                      </button>
+                      <div v-else-if="getInvoice(project.id, month.year, month.name).sent === null" class="inline-flex rounded-md shadow-sm">
+                        <button v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.id, month.year, month.name), 'sent')" type="button" class="relative inline-flex items-center rounded-l-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">Mark As Sent</button>
+                        <Menu as="div" class="relative -ml-px block">
+                          <MenuButton class="relative inline-flex items-center rounded-r-md bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">
+                            <span class="sr-only">Mark As Sent</span>
+                            <ChevronDownIcon class="h-5 w-5" aria-hidden="true" />
+                          </MenuButton>
+                          <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
+                            <MenuItems class="absolute right-0 z-10 -mr-1 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                              <div class="py-1">
+                                <MenuItem>
+                                  <span class="text-gray-700 block px-4 py-2 text-sm">Generate Invoice</span>
+                                </MenuItem>
+                              </div>
+                            </MenuItems>
+                          </transition>
+                        </Menu>
+                      </div>
                       <button v-else-if="getInvoice(project.id, month.year, month.name).processed === null" v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.id, month.year, month.name), 'processed')" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
                         Mark As Processed
                       </button>
@@ -63,8 +79,9 @@
   </div>
 </template>
 <script setup>
+import { ref } from 'vue'
 import { DateTime } from 'luxon'
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
+import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 import { useAssignmentsStore, useInvoicesStore, useProjectsStore } from '@/stores'
 
@@ -84,6 +101,7 @@ const invoices = invoicesStore.getByFinancialYear(startDate.year)
 const monthsToDate = Math.floor(currentDate.diff(startDate, ['months']).values.months)
 
 const months = []
+const creating = ref(null)
 
 for (let i = 0; i < monthsToDate; i++) {
 
@@ -91,10 +109,14 @@ for (let i = 0; i < monthsToDate; i++) {
   const projectIDs = assignments.reduce(function (IDs, assignment) { return [...IDs, assignment.project.id] }, [])
   const projects = projectsStore.filterByIDs([...new Set(projectIDs)]).filter(project => project.costModel === 'Facility')
 
+  for (let y = 0; y < projects.length; y++) {
+    projects[y].invoice = invoices.find(invoice => invoice.project.id == projects[y].id && invoice.year == startDate.year && invoice.month == startDate.monthLong.toLowerCase())
+  }
+
   months.push({
     name: startDate.monthLong,
     year: startDate.year,
-    total: 11,
+    total: projectIDs.length,
     sent: 11,
     processed: 9,
     paid: 2,
@@ -107,6 +129,13 @@ months.reverse()
 
 function getInvoice(projectId, year, month) {
   return invoices.find(invoice => invoice.project.id == projectId && invoice.year == year && invoice.month == month.toLowerCase())
+}
+
+function createInvoice(clockifyID, year, month) {
+  creating.value = `${clockifyID}-${year}-${month}`
+  console.log(creating.value)
+  console.log(`${clockifyID}-${year}-${month}`)
+  invoicesStore.createInvoice(clockifyID, year, month).then(() => creating.value = null)
 }
 
 function hasState(invoice, state) {

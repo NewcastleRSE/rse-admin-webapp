@@ -47,7 +47,7 @@ export const useInvoicesStore = defineStore('invoices', () => {
     }
 
     async function createInvoice (clockifyID, year, month) {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/invoices`, {
+        return axios.post(`${import.meta.env.VITE_API_URL}/invoices`, {
             headers: {
               Authorization: `Bearer ${store.jwt}`
             },
@@ -56,15 +56,17 @@ export const useInvoicesStore = defineStore('invoices', () => {
                 year: year,
                 month: month.toLowerCase()
             }
-          })
-         
-          const linkSource = `data:application/pdf;base64,${response.data}`;
-          const downloadLink = document.createElement("a");
-          const fileName = "file.pdf";
+          }).then(response => {
+            const pdf = response.data.pdf
+            delete response.data.pdf
 
-          downloadLink.href = linkSource;
-          downloadLink.download = fileName;
-          downloadLink.click();
+            invoices.value.push(response.data)
+
+            const downloadLink = document.createElement('a')
+            downloadLink.href = `data:application/pdf;base64,${pdf}`
+            downloadLink.download = 'file.pdf'
+            downloadLink.click()
+          })
     }
 
     async function updateInvoiceState(invoice, state) {
