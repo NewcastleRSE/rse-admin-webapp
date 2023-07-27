@@ -8,7 +8,13 @@
             <Disclosure as="div" v-for="month in months" :key="month.name" class="pt-6" v-slot="{ open }">
               <dt>
                 <DisclosureButton class="flex w-full items-start justify-between text-left text-gray-900">
-                  <span class="text-base font-semibold leading-7">{{ month.name }} {{ month.year }}</span>
+                  <div>
+                    <span class="text-base font-semibold leading-7">{{ month.name }} {{ month.year }}</span>
+                    <span v-if="month.total" class="inline-flex items-center rounded-md bg-red-100 ml-4 px-2 py-1 text-xs font-medium text-red-700">{{ month.total }} Due</span>
+                    <span v-if="month.sent" class="inline-flex items-center rounded-md bg-yellow-100 ml-4 px-2 py-1 text-xs font-medium text-yellow-800">{{ month.sent }} Sent</span>
+                    <span v-if="month.processed" class="inline-flex items-center rounded-md bg-blue-100 ml-4 px-2 py-1 text-xs font-medium text-blue-700">{{ month.processed }} Processed</span>
+                    <span v-if="month.paid" class="inline-flex items-center rounded-md bg-green-100 ml-4 px-2 py-1 text-xs font-medium text-green-700">{{ month.paid }} Paid</span>
+                  </div>
                   <span class="ml-6 flex h-7 items-center">
                     <ChevronRightIcon v-if="!open" class="h-6 w-6" aria-hidden="true" />
                     <ChevronDownIcon v-else class="h-6 w-6" aria-hidden="true" />
@@ -113,19 +119,23 @@ for (let i = 0; i < monthsToDate; i++) {
     projects[y].invoice = invoices.find(invoice => invoice.project.id == projects[y].id && invoice.year == startDate.year && invoice.month == startDate.monthLong.toLowerCase())
   }
 
+  const monthlyInvoices = invoices.filter(invoice => invoice.month === startDate.monthLong.toLowerCase())
+
   months.push({
     name: startDate.monthLong,
     year: startDate.year,
-    total: projectIDs.length,
-    sent: 11,
-    processed: 9,
-    paid: 2,
+    total: projects.length - monthlyInvoices.filter(invoice => invoice.sent).length,
+    sent: monthlyInvoices.filter(invoice => invoice.sent && !invoice.processed).length,
+    processed: monthlyInvoices.filter(invoice => invoice.processed && !invoice.paid).length,
+    paid: monthlyInvoices.filter(invoice => invoice.paid).length,
     projects: projects
   })
   startDate = startDate.plus({ month: 1 })
 }
 
 months.reverse()
+
+console.log(months)
 
 function getInvoice(projectId, year, month) {
   return invoices.find(invoice => invoice.project.id == projectId && invoice.year == year && invoice.month == month.toLowerCase())
