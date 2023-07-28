@@ -62,11 +62,12 @@
 <script setup>
 import { DateTime } from 'luxon'
 import { ChartPieIcon, CurrencyPoundIcon, PresentationChartLineIcon, DocumentTextIcon } from '@heroicons/vue/24/outline'
-import { useAssignmentsStore, useInvoicesStore, useProjectsStore } from '@/stores'
+import { useAssignmentsStore, useInvoicesStore, useProjectsStore, useTransactionsStore } from '@/stores'
 
 const assignmentsStore = useAssignmentsStore(),
       invoicesStore = useInvoicesStore(),
-      projectsStore = useProjectsStore()
+      projectsStore = useProjectsStore(),
+      transactionsStore = useTransactionsStore()
 
 /**
  * Invoice state counts
@@ -122,7 +123,8 @@ const yearCompleted = (100 - (diff.toObject().days / 365))
 /**
  * Transactions validity date
  */
-const upToDate = currentDate.minus({ days:19 }).toLocaleString()
-const daysPassed = Math.round(currentDate.diff(currentDate.minus({ days:19 }), ['days']).toObject().days)
+const summary = transactionsStore.getSummary(2022)
+const upToDate = summary.lastUpdated.toLocaleString()
+const daysPassed = Math.round(currentDate.diff(summary.lastUpdated, ['days']).toObject().days)
 
 </script>

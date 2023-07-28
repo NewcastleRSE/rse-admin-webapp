@@ -58,8 +58,6 @@ const columnTypes = {
 
 const transactions = transactionsStore.getByYear(2022)
 
-console.log(transactions)
-
 function convertRemToPixels(rem) {    
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
 }

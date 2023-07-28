@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { DateTime } from 'luxon'
 import { fetchObjects } from '../utils/orm'
 import { camelCase } from '../utils/strings'
 
@@ -47,6 +48,9 @@ export const useTransactionsStore = defineStore('transactions', () => {
             .filter(transaction => transaction.ieCategory === ieCategory)
             .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
         })
+
+        const postedDates = [...new Set(transactions.reduce(function (dates, transaction) { return [...dates, DateTime.fromISO(transaction.postedDate)] }, []))]
+        summary.lastUpdated = DateTime.max(...postedDates)
       
         return summary
     }
