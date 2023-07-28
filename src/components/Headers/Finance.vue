@@ -34,12 +34,15 @@
             </div>
             <p class="ml-24 truncate text-sm font-medium text-gray-500">Non-Staff Budget</p>
         </dt>
-        <dd class="ml-24 flex items-baseline relative">
-          <div class="my-4 overflow-hidden w-full rounded-full bg-gray-200">
+        <dd class="ml-24">
+          <p class="mt-1 font-bold text-sm">{{ spend }} of {{ budget }}</p>
+          <div class="relative">
+            <div class="mt-1 overflow-hidden w-full rounded-full bg-gray-200">
             <div class="h-6 rounded-full bg-cyan-600 text-white text-sm font-bold leading-6 text-right align-middle pr-3.5" :style="{'width': budgetUsed + '%'}">
               <span v-if="budgetUsed > 10">{{ budgetUsed.toFixed(2) }}%</span>
             </div>
-            <div class="absolute border-r-2 border-black h-10 top-2" :style="{'left': yearCompleted + '%'}"></div>
+            <div class="absolute border-r-2 border-black h-10 -top-2" :style="{'left': yearCompleted + '%'}"></div>
+          </div>
           </div>
         </dd>
       </div>
@@ -64,13 +67,15 @@
 <script setup>
 import { DateTime } from 'luxon'
 import { ChartPieIcon, CurrencyPoundIcon, PresentationChartLineIcon, DocumentTextIcon } from '@heroicons/vue/24/outline'
-import { useAssignmentsStore, useInvoicesStore, useProjectsStore, useTransactionsStore } from '@/stores'
+import { useAssignmentsStore, useFacilitiesStore, useInvoicesStore, useProjectsStore, useTransactionsStore } from '@/stores'
 
 const assignmentsStore = useAssignmentsStore(),
+      facilitiesStore = useFacilitiesStore(),
       invoicesStore = useInvoicesStore(),
       projectsStore = useProjectsStore(),
       transactionsStore = useTransactionsStore()
 
+const transactionsSummary = transactionsStore.getSummary(2022)
 /**
  * Invoice state counts
  */
@@ -118,15 +123,21 @@ const states = [
 /**
  * Budget progress bar
  */
+
+const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' })
+
+const facility = facilitiesStore.getByYear(2022)
 const diff = startDate.plus({year: 1}).minus({day: 1}).diff(currentDate, ['days'])
-const budgetUsed = 63.8
+const budget = formatter.format(facility.nonSalaryCosts)
+const spend = formatter.format((transactionsSummary.nonSalaryExpenditure.total * -1))
+const budgetUsed = (transactionsSummary.nonSalaryExpenditure.total * -1) / facility.nonSalaryCosts
 const yearCompleted = (100 - (diff.toObject().days / 365))
 
 /**
  * Transactions validity date
  */
-const summary = transactionsStore.getSummary(2022)
-const upToDate = summary.lastUpdated.toLocaleString()
-const daysPassed = Math.round(currentDate.diff(summary.lastUpdated, ['days']).toObject().days)
+
+const upToDate = transactionsSummary.lastUpdated.toLocaleString()
+const daysPassed = Math.round(currentDate.diff(transactionsSummary.lastUpdated, ['days']).toObject().days)
 
 </script>
