@@ -32,12 +32,14 @@
             <div class="absolute rounded-md bg-cyan-500 p-3">
                 <PresentationChartLineIcon class="h-12 w-12 text-white" aria-hidden="true" />
             </div>
-            <p class="ml-24 truncate text-sm font-medium text-gray-500">Budget</p>
+            <p class="ml-24 truncate text-sm font-medium text-gray-500">Non-Staff Budget</p>
         </dt>
         <dd class="ml-24 flex items-baseline relative">
           <div class="my-4 overflow-hidden w-full rounded-full bg-gray-200">
-            <div class="h-4 rounded-full bg-cyan-600" :style="{'width': budgetUsed + '%'}"></div>
-            <div class="absolute border-r-2 border-black h-8 top-2" :style="{'left': yearCompleted + '%'}"></div>
+            <div class="h-6 rounded-full bg-cyan-600 text-white text-sm font-bold leading-6 text-right align-middle pr-3.5" :style="{'width': budgetUsed + '%'}">
+              <span v-if="budgetUsed > 10">{{ budgetUsed.toFixed(2) }}%</span>
+            </div>
+            <div class="absolute border-r-2 border-black h-10 top-2" :style="{'left': yearCompleted + '%'}"></div>
           </div>
         </dd>
       </div>
