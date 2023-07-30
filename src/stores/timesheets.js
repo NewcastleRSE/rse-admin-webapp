@@ -1,34 +1,31 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { fetchObjects, fetchTimesheetsSummary } from '../utils/orm'
+import { fetchObjects } from '../utils/orm'
 
 export const useTimesheetsStore = defineStore('timesheets', () => {
     const timesheets = ref([])
-    const summary = ref([])
 
     function getTimesheets() {
-        return timesheets.value
-    }
-
-    function getSummary() {
-        return summary.value
+        return timesheets.value[0]
     }
 
     function getByID(id) {
         return timesheets.value.find(timesheet => timesheet.id == id)
     }
 
+    function getByRSE(name) {
+        return timesheets.value[0].team.find(rse => rse.name === name)
+    }
+
     async function fetchTimesheets () {
         timesheets.value = await fetchObjects('timesheets', 0, 100)
-        summary.value = await fetchTimesheetsSummary('last6months')
     }
 
     async function reset () {
-        timesheets.value = []
-        summary.value = []
+        timesheets.value = {}
     }
 
-    return { timesheets, summary, getTimesheets, getSummary, getByID, fetchTimesheets, reset }
+    return { timesheets, getTimesheets, getByID, getByRSE, fetchTimesheets, reset }
 },
 {
     persist: true
