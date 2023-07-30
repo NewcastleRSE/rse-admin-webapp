@@ -4,13 +4,13 @@
       <menu-bar :edited="edited" :selected="selected" :zoom="zoom" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
       <Timeline ref="timeline" :rses="rses" :projects="projects" @create="create" @selection="selection" @edit="edit" />
     </div>
-    <create-modal ref="createAssignment" :isOpen="createIsOpen" />
+    <assignment-modal ref="assignmentModal" />
     <unallocated-modal ref="unallocated" />
   </div>
 </template>
 <script setup>
 import Timeline from '@/components/Assignments/Timeline.vue'
-import CreateModal from '@/components/Assignments/CreateModal.vue'
+import AssignmentModal from '@/components/Assignments/AssignmentModal.vue'
 import UnallocatedModal from '@/components/Assignments/UnallocatedModal.vue'
 import MenuBar from '@/components/Assignments/MenuBar.vue'
 import { DateTime } from 'luxon'
@@ -20,7 +20,7 @@ import { ref, computed } from 'vue'
 const rsesStore = useRSEsStore()
 const projectsStore = useProjectsStore()
 
-const createAssignment = ref(),
+const assignmentModal = ref(),
       createIsOpen = ref(false)
 
 const timeline = ref(),
@@ -35,8 +35,8 @@ function zoom(level) {
   timeline.value.changeZoomLevel(level)
 }
 
-function selection(selected) {
-  this.selected = selected
+function selection(isSelected) {
+  selected.value = isSelected
 }
 
 function unallocated() {
@@ -46,7 +46,7 @@ function unallocated() {
 
 function create(rseID, projectID, dateRange, split) {
   createIsOpen.value = true
-  // createAssignment.value.toggleModal(rseID, projectID, dateRange, split)
+  assignmentModal.value.createAssignment(rseID, projectID, dateRange, split)
 }
 
 function edit(assignmentID, rseID, start, end) {
