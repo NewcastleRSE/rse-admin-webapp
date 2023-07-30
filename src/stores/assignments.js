@@ -1,9 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 import { DateTime } from 'luxon'
 import { fetchObjects } from '../utils/orm'
 
 export const useAssignmentsStore = defineStore('assignments', () => {
+    
+    const store = useAuthStore()
     const assignments = ref([])
 
     function getAssignments() {
@@ -59,11 +63,27 @@ export const useAssignmentsStore = defineStore('assignments', () => {
         assignments.value = await fetchObjects('assignments', 0, 100)
     }
 
+    async function createAssignment (assignment) {
+      return axios.post(`${import.meta.env.VITE_API_URL}/assignments`, 
+        { 
+          data: assignment
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${store.jwt}`
+          }
+      }).then(response => {
+        response.data.rse = assignment.rse
+        response.data.project = assignment.project
+        assignments.value.push(response.data)
+      })
+    }
+
     async function reset () {
       assignments.value = []
   }
 
-    return { assignments, getAssignments, setAssignments, getByID, getByRSE, getByPeriod, fetchAssignments, reset }
+    return { assignments, getAssignments, setAssignments, getByID, getByRSE, getByPeriod, fetchAssignments, createAssignment, reset }
 },
 {
     persist: true
