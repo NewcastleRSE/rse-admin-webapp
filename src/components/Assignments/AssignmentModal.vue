@@ -72,7 +72,7 @@
                   </div>
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                  <button type="button" class="inline-flex w-full justify-center rounded-md bg-cyan-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto" @click="toggleModal()">Save</button>
+                  <button type="button" class="inline-flex w-full justify-center rounded-md bg-cyan-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto" @click="save()">Save</button>
                   <button type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="toggleModal()" ref="cancelButtonRef">Cancel</button>
                 </div>
               </DialogPanel>
@@ -87,11 +87,12 @@
 import { ref, defineExpose } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import SimpleTypeahead from 'vue3-simple-typeahead'
-import { useRSEsStore, useProjectsStore } from '../../stores'
+import { useAssignmentsStore, useRSEsStore, useProjectsStore } from '../../stores'
 import { DateTime } from 'luxon'
 
-const rsesStore = useRSEsStore()
-const projectsStore = useProjectsStore()
+const assignmentsStore = useAssignmentsStore(),
+      projectsStore = useProjectsStore(),
+      rsesStore = useRSEsStore()
   
 const isOpen = ref(false),
       title = 'Create Assignment',
@@ -135,6 +136,24 @@ const start = DateTime.fromJSDate(dateRange[0].$d),
   endDate = dateRange ? end.toISODate() : null
   fte = split ? fte : 50
   isOpen.value = true
+}
+
+async function save() {
+  await assignmentsStore.createAssignment({
+    project: `${project.id}`,
+    rse: `${rse.id}`,
+    fte: fte,
+    start: startDate,
+    end: endDate
+  })
+
+  project = null,
+  rse = null,
+  fte = 50,
+  startDate = null,
+  endDate = null
+
+  isOpen.value = false
 }
 
 defineExpose({
