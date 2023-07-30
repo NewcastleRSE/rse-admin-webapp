@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-stretch flex-wrap">
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <div v-on:click="$router.push({path:`/finance`})" class="relative overflow-hidden rounded-lg bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
+      <div v-on:click="$router.push({path:`/finance`})" class="relative overflow-hidden rounded bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
         <dt>
             <div class="absolute rounded-md bg-cyan-500 p-3">
                 <ArrowTrendingUpIcon class="h-12 w-12 text-white" aria-hidden="true" />
@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <div v-on:click="$router.push({path:`/finance/invoices`})" class="relative overflow-hidden rounded-lg bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
+      <div v-on:click="$router.push({path:`/finance/invoices`})" class="relative overflow-hidden rounded bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
         <dt>
             <div class="absolute rounded-md bg-cyan-500 p-3">
                 <DocumentTextIcon class="h-12 w-12 text-white" aria-hidden="true" />
@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <div v-on:click="$router.push({path:`/finance/budget`})" class="relative overflow-hidden rounded-lg bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
+      <div v-on:click="$router.push({path:`/finance/budget`})" class="relative overflow-hidden rounded bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
         <dt>
             <div class="absolute rounded-md bg-cyan-500 p-3">
                 <CreditCardIcon class="h-12 w-12 text-white" aria-hidden="true" />
@@ -43,18 +43,18 @@
         <dd class="ml-24">
           <p class="mt-1 font-bold text-sm">{{ spend }} of {{ budget }}</p>
           <div class="relative">
-            <div class="mt-1 overflow-hidden w-full rounded-full bg-gray-200">
-            <div class="h-6 rounded-full bg-cyan-600 text-white text-sm font-bold leading-6 text-right align-middle pr-3.5" :style="{'width': budgetUsed + '%'}">
-              <span v-if="budgetUsed > 10">{{ budgetUsed.toFixed(2) }}%</span>
+            <div class="mt-1 overflow-hidden w-full rounded bg-gray-200">
+              <div class="h-6 rounded bg-cyan-600 text-white text-sm font-bold leading-6 text-right align-middle pr-3.5" :style="{'width': budgetUsed + '%'}">
+                <span v-if="budgetUsed > 10">{{ budgetUsed.toFixed(2) }}%</span>
+              </div>
+              <div class="absolute border-r-2 border-black h-10 -top-2" :style="{'left': yearCompleted + '%'}"></div>
             </div>
-            <div class="absolute border-r-2 border-black h-10 -top-2" :style="{'left': yearCompleted + '%'}"></div>
-          </div>
           </div>
         </dd>
       </div>
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <div v-on:click="$router.push({path:`/finance/transactions/2022`})" class="relative overflow-hidden rounded-lg bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
+      <div v-on:click="$router.push({path:`/finance/transactions/2022`})" class="relative overflow-hidden rounded bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
         <dt>
             <div class="absolute rounded-md bg-cyan-500 p-3">
                 <CurrencyPoundIcon class="h-12 w-12 text-white" aria-hidden="true" />

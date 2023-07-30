@@ -21,14 +21,14 @@ export const useCapacitiesStore = defineStore('capacities', () => {
     function getCapacityInPeriod(start, end, rse) {
         return capacities.value.filter(capacity =>
           (
-            capacity.rse.data.id === rse &&
+            capacity.rse === rse &&
             DateTime.fromISO(capacity.start) <= DateTime.fromISO(start) && 
             (
               DateTime.fromISO(capacity.end) >= DateTime.fromISO(start) || !capacity.end
             )
           ) ||
           (
-            capacity.rse.data.id === rse &&
+            capacity.rse === rse &&
             DateTime.fromISO(capacity.start) <= DateTime.fromISO(end) &&
             (
               DateTime.fromISO(capacity.end) >= DateTime.fromISO(end) || !capacity.end
