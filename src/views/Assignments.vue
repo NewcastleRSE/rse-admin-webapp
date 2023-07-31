@@ -15,6 +15,7 @@ import UnallocatedModal from '@/components/Assignments/UnallocatedModal.vue'
 import MenuBar from '@/components/Assignments/MenuBar.vue'
 import { useAssignmentsStore, useRSEsStore, useProjectsStore } from '../stores'
 import { ref, computed } from 'vue'
+import { DateTime } from 'luxon'
 
 const assignmentsStore = useAssignmentsStore(),
       rsesStore = useRSEsStore(),
@@ -48,9 +49,14 @@ function create(rseID, projectID, dateRange, split) {
   assignmentModal.value.createAssignment(null, rseID, projectID, dateRange, split)
 }
 
-function edit(assignmentID) {
+function edit(assignmentID, rseID, start, end) {
+
   let assignment = assignmentsStore.getByID(assignmentID)
-  //console.log(assignment)
+
+  assignment.rse = rseID !== assignment.rse ? rseID : assignment.rse
+  assignment.start = DateTime.fromMillis(start).toISODate() !== assignment.start ? DateTime.fromMillis(start).toISODate() : assignment.start
+  assignment.end = DateTime.fromMillis(end).toISODate() !== assignment.end ? DateTime.fromMillis(end).toISODate() : assignment.end
+
   const dateRange = [{$d: new Date(assignment.start)}, {$d: new Date(assignment.end)}]
   assignmentModal.value.createAssignment(assignment.id, assignment.rse, assignment.project.id, dateRange, assignment.fte)
 }
