@@ -4,8 +4,8 @@
       <menu-bar :edited="edited" :selected="selected" :zoom="zoom" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :save="save" :cancel="cancel" :remove="remove" :export="exportCSV"/>
       <Timeline ref="timeline" :rses="rses" :projects="projects" @create="create" @selection="selection" @edit="edit" />
     </div>
-    <assignment-modal ref="assignmentModal" />
-    <unallocated-modal ref="unallocated" />
+    <assignment-modal ref="assignmentModalRef" />
+    <unallocated-modal ref="unallocatedModalRef" @createAssignment="create" />
   </div>
 </template>
 <script setup>
@@ -21,7 +21,8 @@ const assignmentsStore = useAssignmentsStore(),
       rsesStore = useRSEsStore(),
       projectsStore = useProjectsStore()
 
-const assignmentModal = ref()
+const assignmentModalRef = ref(),
+      unallocatedModalRef = ref()
 
 const timeline = ref(),
       edited = ref(false),
@@ -41,12 +42,11 @@ function selection(isSelected) {
 }
 
 function unallocated() {
-  let projectIDs = this.projects.filter(project => project.dealstage === 'Awaiting Allocation').reduce(function (ids, project) { return [...ids, project.id] }, [])
-  this.$refs.unallocated.toggleModal(projectIDs)
+  unallocatedModalRef.value.toggleModal()
 }
 
 function create(rseID, projectID, dateRange, split) {
-  assignmentModal.value.createAssignment(null, rseID, projectID, dateRange, split)
+  assignmentModalRef.value.createAssignment(null, rseID, projectID, dateRange, split)
 }
 
 function edit(assignmentID, rseID, start, end) {
@@ -58,13 +58,7 @@ function edit(assignmentID, rseID, start, end) {
   assignment.end = DateTime.fromMillis(end).toISODate() !== assignment.end ? DateTime.fromMillis(end).toISODate() : assignment.end
 
   const dateRange = [{$d: new Date(assignment.start)}, {$d: new Date(assignment.end)}]
-  assignmentModal.value.createAssignment(assignment.id, assignment.rse, assignment.project.id, dateRange, assignment.fte)
-}
-
-function addAssignment(assignment) {
-  this.edited = true
-  this.$refs.timeline.addAssignment(assignment)
-  this.$store.commit('assignments/createAssignment', assignment)
+  assignmentModalRef.value.createAssignment(assignment.id, assignment.rse, assignment.project.id, dateRange, assignment.fte)
 }
 
 function save() {

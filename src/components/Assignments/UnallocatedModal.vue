@@ -1,50 +1,62 @@
 <template>
-    <div v-if="showModal" tabindex="-1" class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full h-screen md:inset-0 h-modal md:h-full">
-        <div class="flex flex-col justify-center relative p-4 w-full md:max-w-lg lg:max-w-4xl h-full mx-auto">
-            <!-- Modal content -->
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <!-- Modal header -->
-                <div class="flex justify-between items-center p-5 rounded-t border-b dark:border-gray-600">
-                    <h3 class="text-xl font-medium text-gray-900 dark:text-white">
-                        Unallocated Assignments
-                    </h3>
-                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" v-on:click="toggleModal()">
-                        <i class="fa-solid fa-xmark"></i>
-                        <span class="sr-only">Close modal</span> 
-                    </button>
-                </div>
-                <!-- Modal body -->
-                <div class="p-6 space-y-6 overflow-y-scroll max-h-96">
-                    <div v-for="project in projects" :key="project.id">
-                      <p class="text-lg font-bold">{{project.dealname}}</p>
-                      <p class="text-sm mb-4">{{project.contacts[0].firstname}} {{project.contacts[0].lastname}} - {{project.school}}</p>
+  <TransitionRoot as="template" :show="isOpen">
+    <Dialog as="div" class="relative z-10" @close="isOpen = false">
+      <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+      </TransitionChild>
+
+      <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+            <DialogPanel class="rounded-lg relative transform overflow-hidden text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl overflow-y-scroll" style="max-height: 80vh;">
+              <ul role="list" class="divide-y divide-gray-100 overflow-hidden bg-white shadow-sm ring-1 ring-gray-900/5">
+                <li v-for="project in projects" :key="project.id" @click="createAssignment(project.id)" class="relative flex justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6 cursor-pointer">
+                  <div class="flex gap-x-4">
+                    <div class="min-w-0 flex-auto">
+                      <p class="text-sm font-semibold leading-6 text-gray-900">
+                        {{ project.dealname }}
+                        <span v-if="project.status === 'Red'" class="ml-2 inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">Critical</span>
+                        <span v-else-if="project.status === 'Amber'" class="ml-2 inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">Warning</span>
+                      </p>
+                      <p class="mt-1 flex text-xs leading-5 text-gray-500">
+                        {{ project.contacts[0].firstname }} {{ project.contacts[0].lastname }} - {{ project.school }}
+                      </p>
                     </div>
-                </div>
-                <!-- Modal footer -->
-                <div class="flex items-center justify-end p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
-                    <button v-on:click="toggleModal()" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Close</button>
-                </div>
-            </div>
+                  </div>
+                  <div class="flex items-center gap-x-4">
+                    <ChevronRightIcon class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
+                  </div>
+                </li>
+              </ul>
+            </DialogPanel>
+          </TransitionChild>
         </div>
-    </div>
-    <div v-if="showModal" class="opacity-25 fixed inset-0 z-40 bg-black"></div>
+      </div>
+    </Dialog>
+  </TransitionRoot>
 </template>
 
-<script>
+<script setup>
+import { ref, defineExpose, defineEmits } from 'vue'
+import { useProjectsStore } from '../../stores'
+import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
+import { ChevronRightIcon } from '@heroicons/vue/20/solid'
 
-export default {
-  name: "Unallocated",
-  data() {
-    return {
-      showModal: false,
-      projects: []
-    }
-  },
-  methods: {
-    toggleModal: function(projectIDs){
-      this.projects = this.$store.getters["projects/getProjects"](projectIDs)
-      this.showModal = !this.showModal;
-    },
-  }
+const isOpen = ref(false)
+const emit = defineEmits(['createAssignment'])
+
+const projectsStore = useProjectsStore()
+const projects = projectsStore.getProjects().filter(project => project.dealstage === 'Awaiting Allocation')
+
+function toggleModal() {
+  isOpen.value = !isOpen.value
 }
+
+function createAssignment(projectId) {
+  emit('createAssignment', null, projectId)
+  toggleModal()
+}
+
+defineExpose({ toggleModal })
+
 </script>
