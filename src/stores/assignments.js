@@ -81,6 +81,24 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       })
     }
 
+    async function updateAssignment (assignment) {
+      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.assignmentId}?populate=*`, 
+        { 
+          data: assignment
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${store.jwt}`
+          }
+      }).then(response => {
+        let newAssignment = response.data.data
+        newAssignment.rse = response.data.data.rse.data.id
+        newAssignment.project = response.data.data.project.data
+        
+        assignments.value.push(newAssignment)
+      })
+    }
+
     async function deleteAssignment (assignmentId) {
       return axios.delete(`${import.meta.env.VITE_API_URL}/assignments/${assignmentId}`, 
         {
@@ -94,7 +112,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       assignments.value = []
   }
 
-    return { assignments, getAssignments, setAssignments, getByID, getByRSE, getByPeriod, fetchAssignments, createAssignment, deleteAssignment, reset }
+    return { assignments, getAssignments, setAssignments, getByID, getByRSE, getByPeriod, fetchAssignments, createAssignment, updateAssignment, deleteAssignment, reset }
 },
 {
     persist: true
