@@ -81,11 +81,20 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       })
     }
 
+    async function deleteAssignment (assignmentId) {
+      return axios.delete(`${import.meta.env.VITE_API_URL}/assignments/${assignmentId}`, 
+        {
+          headers: {
+            Authorization: `Bearer ${store.jwt}`
+          }
+      })
+    }
+
     async function reset () {
       assignments.value = []
   }
 
-    return { assignments, getAssignments, setAssignments, getByID, getByRSE, getByPeriod, fetchAssignments, createAssignment, reset }
+    return { assignments, getAssignments, setAssignments, getByID, getByRSE, getByPeriod, fetchAssignments, createAssignment, deleteAssignment, reset }
 },
 {
     persist: true
