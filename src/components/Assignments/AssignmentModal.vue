@@ -99,7 +99,8 @@ const isOpen = ref(false),
       rses = rsesStore.getRSEs(),
       projects = projectsStore.getProjects()
 
-let project = null,
+let assignmentId = null,
+    project = null,
     rse = null,
     fte = 50,
     startDate = null,
@@ -125,10 +126,14 @@ function toggleModal() {
   isOpen.value = !isOpen.value
 }
 
-function createAssignment(rseID, projectID, dateRange, split) {
+function createAssignment(assignmentID, rseID, projectID, dateRange, split) {
 
-const start = DateTime.fromJSDate(dateRange[0].$d),
-      end = DateTime.fromJSDate(dateRange[1].$d)
+  const start = dateRange ? DateTime.fromJSDate(dateRange[0].$d) : null,
+        end = dateRange ? DateTime.fromJSDate(dateRange[1].$d) : null
+
+  if(assignmentID) {
+    assignmentId = assignmentID
+  }
 
   project = projectID ? projectsStore.getByID(projectID) : null
   rse = rseID ? rsesStore.getByID(rseID) : null

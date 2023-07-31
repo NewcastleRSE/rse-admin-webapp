@@ -13,21 +13,21 @@ import Timeline from '@/components/Assignments/Timeline.vue'
 import AssignmentModal from '@/components/Assignments/AssignmentModal.vue'
 import UnallocatedModal from '@/components/Assignments/UnallocatedModal.vue'
 import MenuBar from '@/components/Assignments/MenuBar.vue'
-import { DateTime } from 'luxon'
-import { useRSEsStore, useProjectsStore } from '../stores'
+import { useAssignmentsStore, useRSEsStore, useProjectsStore } from '../stores'
 import { ref, computed } from 'vue'
 
-const rsesStore = useRSEsStore()
-const projectsStore = useProjectsStore()
+const assignmentsStore = useAssignmentsStore(),
+      rsesStore = useRSEsStore(),
+      projectsStore = useProjectsStore()
 
-const assignmentModal = ref(),
-      createIsOpen = ref(false)
+const assignmentModal = ref()
 
 const timeline = ref(),
       edited = ref(false),
-      selected = ref(false),
       rses = rsesStore.getRSEs(),
       projects = projectsStore.getProjects()
+
+let selected = false
 
 const unallocatedCount = computed(() => projects.filter(project => project.dealstage === 'Awaiting Allocation').length)
 
@@ -36,7 +36,7 @@ function zoom(level) {
 }
 
 function selection(isSelected) {
-  selected.value = isSelected
+  selected = isSelected
 }
 
 function unallocated() {
@@ -45,19 +45,14 @@ function unallocated() {
 }
 
 function create(rseID, projectID, dateRange, split) {
-  createIsOpen.value = true
-  assignmentModal.value.createAssignment(rseID, projectID, dateRange, split)
+  assignmentModal.value.createAssignment(null, rseID, projectID, dateRange, split)
 }
 
-function edit(assignmentID, rseID, start, end) {
-  let assignment = this.$store.getters['assignments/getAssignment'](assignmentID)
-
-  assignment.rse = rseID
-  assignment.start = DateTime.fromMillis(start).toISODate()
-  assignment.end = DateTime.fromMillis(end).toISODate()
-
-  this.$store.commit('assignments/editAssignment', assignment)
-  this.edited = true
+function edit(assignmentID) {
+  let assignment = assignmentsStore.getByID(assignmentID)
+  //console.log(assignment)
+  const dateRange = [{$d: new Date(assignment.start)}, {$d: new Date(assignment.end)}]
+  assignmentModal.value.createAssignment(assignment.id, assignment.rse, assignment.project.id, dateRange, assignment.fte)
 }
 
 function addAssignment(assignment) {
