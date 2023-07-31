@@ -64,7 +64,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     async function createAssignment (assignment) {
-      return axios.post(`${import.meta.env.VITE_API_URL}/assignments`, 
+      return axios.post(`${import.meta.env.VITE_API_URL}/assignments?populate=*`, 
         { 
           data: assignment
         },
@@ -73,9 +73,11 @@ export const useAssignmentsStore = defineStore('assignments', () => {
             Authorization: `Bearer ${store.jwt}`
           }
       }).then(response => {
-        response.data.rse = assignment.rse
-        response.data.project = assignment.project
-        assignments.value.push(response.data)
+        let newAssignment = response.data.data
+        newAssignment.rse = response.data.data.rse.data.id
+        newAssignment.project = response.data.data.project.data
+        
+        assignments.value.push(newAssignment)
       })
     }
 
