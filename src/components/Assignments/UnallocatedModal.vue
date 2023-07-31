@@ -15,8 +15,8 @@
                     <div class="min-w-0 flex-auto">
                       <p class="text-sm font-semibold leading-6 text-gray-900">
                         {{ project.dealname }}
-                        <span v-if="project.status === 'Red'" class="ml-2 inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">Critical</span>
-                        <span v-else-if="project.status === 'Amber'" class="ml-2 inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">Warning</span>
+                        <span v-if="project.status === 'red'" class="ml-2 inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">Critical</span>
+                        <span v-else-if="project.status === 'amber'" class="ml-2 inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">Warning</span>
                       </p>
                       <p class="mt-1 flex text-xs leading-5 text-gray-500">
                         {{ project.contacts[0].firstname }} {{ project.contacts[0].lastname }} - {{ project.school }}
