@@ -61,7 +61,13 @@ const summary = transactionsStore.getSummary(FYStart.year),
 
 const totalCosts = facility.salaryCosts + facility.nonSalaryCosts + facility.estatesCosts
 
-const costRecovery = ref((summary.income.total / totalCosts) * 100),
-      facultyContribution = ref((summary.indirectCostsAbsorbedRecovered.total * -1 / totalCosts) * 100),
-      nonStaffBudget = ref((summary.nonSalaryExpenditure.total * -1 / facility.nonSalaryCosts) * 100)
+let costRecovery = 0,
+    facultyContribution = 0,
+    nonStaffBudget = 0
+
+if(Object.keys(summary).length !== 0) {
+  costRecovery = ref((summary.income.total / totalCosts) * 100),
+  facultyContribution = ref((summary.indirectCostsAbsorbedRecovered.total * -1 / totalCosts) * 100),
+  nonStaffBudget = ref((summary.nonSalaryExpenditure.total * -1 / facility.nonSalaryCosts) * 100)
+}
 </script>

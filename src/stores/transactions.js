@@ -50,8 +50,11 @@ export const useTransactionsStore = defineStore('transactions', () => {
         })
 
         const postedDates = [...new Set(transactions.reduce(function (dates, transaction) { return [...dates, DateTime.fromISO(transaction.postedDate)] }, []))]
-        summary.lastUpdated = DateTime.max(...postedDates)
-      
+
+        if(postedDates.length) {
+            summary.lastUpdated = DateTime.max(...postedDates)
+        }
+
         return summary
     }
 
