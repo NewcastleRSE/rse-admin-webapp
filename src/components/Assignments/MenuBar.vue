@@ -40,21 +40,6 @@
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-bind:class="{ 'cursor-not-allowed': !edited }" v-on:click="edited? save() : null">
-                <i class="fas fa-save text-lg leading-lg opacity-75" v-bind:class="{ 'text-blueGray-700': edited, 'text-blueGray-300': !edited }"></i>
-              </button>
-            </li>
-            <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 text-blueGray-700" v-bind:class="{ 'cursor-not-allowed': !edited }" v-on:click="edited? cancel() : null">
-                <i class="fas fa-undo text-lg leading-lg opacity-75" v-bind:class="{ 'text-blueGray-700': edited, 'text-blueGray-300': !edited }"></i>
-              </button>
-            </li>
-            <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="selected? remove() : null">
-                <i class="fas fa-trash-alt text-lg leading-lg opacity-75" v-bind:class="{ 'text-blueGray-700': selected, 'text-blueGray-300': !selected }"></i>
-              </button>
-            </li>
-            <li class="nav-item">
               <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="exportCSV()">
                 <i class="fas fa-download text-lg leading-lg opacity-75 text-blueGray-700"></i>
               </button>
@@ -73,9 +58,6 @@ export default {
     unallocated: { type: Function },
     unallocatedCount: { type: Number },
     create: { type: Function },
-    save: { type: Function },
-    cancel: { type: Function },
-    remove: { type: Function },
     export: { type: Function },
   }
 }

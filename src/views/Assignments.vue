@@ -61,29 +61,6 @@ function edit(assignmentID, rseID, start, end) {
   assignmentModalRef.value.createAssignment(assignment.id, assignment.rse, assignment.project.id, dateRange, assignment.fte)
 }
 
-function save() {
-  this.$store.dispatch('assignments/commitAssignments').then(() => {
-    this.assignments = this.$store.getters['assignments/getAssignments']
-    this.edited = false
-  })
-}
-
-function cancel() {
-  this.assignments = this.$store.getters['assignments/getAssignments']
-  this.edited = false
-}
-
-function remove() {
-  this.edited = true
-  let deletedItems = this.$refs.timeline.deleteAssignments()
-  let assignmentIDs = deletedItems.map(item => Number(item.id.replace('gstcid-assignment-', '')))
-
-  assignmentIDs.forEach((assignmentID) => {
-    let assignment = this.assignments.filter(assignment => assignment.id === assignmentID)[0]
-    this.$store.commit('assignments/deleteAssignment', assignment)
-  })
-}
-
 function exportCSV() {
   const header = 'id,start,end,name,dealname' + '\r\n'
   let body = ''
