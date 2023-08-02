@@ -1,13 +1,14 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore, useRSEsStore } from '@/stores'
 import { DateTime } from 'luxon'
 import { fetchObjects } from '../utils/orm'
 
 export const useAssignmentsStore = defineStore('assignments', () => {
     
     const store = useAuthStore()
+    const rses = useRSEsStore()
     const assignments = ref([])
 
     function getAssignments() {
@@ -76,7 +77,8 @@ export const useAssignmentsStore = defineStore('assignments', () => {
         let newAssignment = response.data.data
         newAssignment.rse = response.data.data.rse.data.id
         newAssignment.project = response.data.data.project.data
-        
+
+        rses.addAssignment(newAssignment)
         assignments.value.push(newAssignment)
       })
     }
@@ -91,11 +93,12 @@ export const useAssignmentsStore = defineStore('assignments', () => {
             Authorization: `Bearer ${store.jwt}`
           }
       }).then(response => {
-        let newAssignment = response.data.data
-        newAssignment.rse = response.data.data.rse.data.id
-        newAssignment.project = response.data.data.project.data
+        let updatedAssignment = response.data.data
+        updatedAssignment.rse = response.data.data.rse.data.id
+        updatedAssignment.project = response.data.data.project.data
         
-        assignments.value.push(newAssignment)
+        const position = assignments.value.map(e => e.id).indexOf(assignment.assignmentId)
+        assignments.value[position] = updatedAssignment
       })
     }
 
@@ -105,6 +108,9 @@ export const useAssignmentsStore = defineStore('assignments', () => {
           headers: {
             Authorization: `Bearer ${store.jwt}`
           }
+      }).then(() => {
+          const position = assignments.value.map(e => e.id).indexOf(assignmentId)
+          assignments.value.splice(position, 1)
       })
     }
 

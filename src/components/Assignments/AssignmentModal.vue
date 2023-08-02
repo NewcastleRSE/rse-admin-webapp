@@ -115,7 +115,7 @@
   </template>
   
 <script setup>
-import { ref, defineExpose, computed } from 'vue'
+import { ref, defineExpose, defineEmits, computed } from 'vue'
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxLabel, ComboboxOption, ComboboxOptions, Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 import { useAssignmentsStore, useRSEsStore, useProjectsStore } from '../../stores'
@@ -183,7 +183,7 @@ function createAssignment(assignmentID, rseID, projectID, dateRange, split) {
 }
 
 async function save() {
-  await assignmentsStore.createAssignment({
+  const assignment = await assignmentsStore.createAssignment({
     project: project.id,
     rse: rse.id,
     fte: fte,
@@ -198,6 +198,8 @@ async function save() {
   endDate = defaultState.endDate
 
   isOpen.value = false
+
+  emits('createdAssignment', assignment)
 }
 
 async function update() {
@@ -234,6 +236,8 @@ async function remove() {
 defineExpose({
   createAssignment
 })
+
+const emits = defineEmits(['createdAssignment', 'editedAssignment', 'removedAssignment'])
 
 </script>
 <style scoped>

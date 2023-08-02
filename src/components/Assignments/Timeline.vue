@@ -16,6 +16,7 @@ import { Plugin as ProgressBar } from 'gantt-schedule-timeline-calendar/dist/plu
 import 'gantt-schedule-timeline-calendar/dist/style.css'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { DateTime } from 'luxon'
+import { useAssignmentsStore } from '../../stores'
 
 const globalthis = require('globalthis')
 
@@ -261,6 +262,15 @@ export default {
       })
       globalThis.gstc = gstc
       gstc.api.scrollToTime(DateTime.now().startOf('month').valueOf())
+
+      const assignmentsStore = useAssignmentsStore()
+
+      assignmentsStore.$subscribe((mutation) => {
+        console.log(mutation)
+        if(mutation.events.type === 'add') {
+          addAssignment(mutation.events.newValue)
+        }
+      })
     })
     onBeforeUnmount(() => {
       if (gstc) gstc.destroy()
@@ -294,23 +304,19 @@ export default {
       api.scrollToTime(start.toUTC(), false)
     }
     function addAssignment(assignment){
-
-      // Use timestamp as temporary ID
-      let newID = Date.now()
-
       let newItem = {
-        id: GSTC.api.GSTCID(newID),
-        rowId: GSTC.api.GSTCID(`rse-${assignment.rse.id}-assignments`),
-        label: assignment.project.dealname,
+        id: GSTC.api.GSTCID(assignment.id),
+        rowId: GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`),
+        label: assignment.project.data.name,
         time: {
-          start: DateTime.fromISO(assignment.startDate).startOf('day').valueOf(),
-          end: DateTime.fromISO(assignment.endDate).endOf('day').valueOf(),
+          start: DateTime.fromISO(assignment.start).startOf('day').valueOf(),
+          end: DateTime.fromISO(assignment.end).endOf('day').valueOf(),
         },
         progress: 100,
         classNames: ['bg-cyan-500', 'rounded']
       }
-
-      state.update(`config.chart.items.${GSTC.api.GSTCID(newID)}`, (item) => { item = newItem; return item } )
+      gstc.api.plugins.Selection.selectItems([])
+      state.update(`config.chart.items.${GSTC.api.GSTCID(assignment.id)}`, (item) => { item = newItem; return item } )
     }
     function deleteAssignments(){
       const selectedItems = gstc.api.plugins.Selection.getSelected()['chart-timeline-items-row-item']
