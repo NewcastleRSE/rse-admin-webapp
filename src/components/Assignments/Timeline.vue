@@ -266,9 +266,18 @@ export default {
       const assignmentsStore = useAssignmentsStore()
 
       assignmentsStore.$subscribe((mutation) => {
-        console.log(mutation)
+        // console.log(mutation)
+        // New assignment
         if(mutation.events.type === 'add') {
           addAssignment(mutation.events.newValue)
+        }
+        // Deleted assignment
+        else if(mutation.events.type === 'set' && mutation.events.key === 'length' && mutation.events.newValue < mutation.events.oldValue) {
+          deleteAssignments(mutation.events.newValue)
+        }
+        // Edited Assignment
+        else {
+          console.log(mutation.events)
         }
       })
     })

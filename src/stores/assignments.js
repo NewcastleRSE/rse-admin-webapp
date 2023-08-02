@@ -110,6 +110,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
           }
       }).then(() => {
           const position = assignments.value.map(e => e.id).indexOf(assignmentId)
+          rses.deleteAssignment(assignments.value[position])
           assignments.value.splice(position, 1)
       })
     }

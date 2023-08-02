@@ -53,6 +53,13 @@ export const useRSEsStore = defineStore('rses', () => {
         rses.value[position].assignments.push(assignment)
     }
 
+    function deleteAssignment (assignment) {
+        const rseIndex = rses.value.map(e => e.id).indexOf(assignment.rse)
+        const assignmentIndex = rses.value[rseIndex].assignments.map(e => e.id).indexOf(assignment.id)
+
+        rses.value[rseIndex].assignments.splice(assignmentIndex, 1)
+    }
+
     async function fetchRSEs () {
         let rseData = await fetchObjects('rses', 0, 100, ['assignments', 'assignments.project', 'capacities'])
 
@@ -92,7 +99,7 @@ export const useRSEsStore = defineStore('rses', () => {
         rses.value = []
     }
 
-    return { rses, getRSEs, getByName, getByID, getNext, addAssignment, fetchRSEs, reset }
+    return { rses, getRSEs, getByName, getByID, getNext, addAssignment, deleteAssignment, fetchRSEs, reset }
 },
 {
     persist: true
