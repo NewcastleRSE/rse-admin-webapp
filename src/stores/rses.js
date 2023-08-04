@@ -53,6 +53,13 @@ export const useRSEsStore = defineStore('rses', () => {
         rses.value[position].assignments.push(assignment)
     }
 
+    function updateAssignment (assignment) {
+        const rseIndex = rses.value.map(e => e.id).indexOf(assignment.rse)
+        const assignmentIndex = rses.value[rseIndex].assignments.map(e => e.id).indexOf(assignment.id)
+
+        rses.value[rseIndex].assignments[assignmentIndex] = assignment
+    }
+
     function deleteAssignment (assignment) {
         const rseIndex = rses.value.map(e => e.id).indexOf(assignment.rse)
         const assignmentIndex = rses.value[rseIndex].assignments.map(e => e.id).indexOf(assignment.id)
@@ -99,7 +106,7 @@ export const useRSEsStore = defineStore('rses', () => {
         rses.value = []
     }
 
-    return { rses, getRSEs, getByName, getByID, getNext, addAssignment, deleteAssignment, fetchRSEs, reset }
+    return { rses, getRSEs, getByName, getByID, getNext, addAssignment, updateAssignment, deleteAssignment, fetchRSEs, reset }
 },
 {
     persist: true

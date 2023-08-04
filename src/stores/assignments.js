@@ -98,6 +98,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
         updatedAssignment.project = response.data.data.project.data
         
         const position = assignments.value.map(e => e.id).indexOf(assignment.assignmentId)
+        rses.updateAssignment(updatedAssignment)
         assignments.value[position] = updatedAssignment
       })
     }

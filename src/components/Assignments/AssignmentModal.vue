@@ -1,6 +1,6 @@
 <template>
     <TransitionRoot as="template" :show="isOpen">
-      <Dialog as="div" class="relative z-10" @close="toggleModal()">
+      <Dialog as="div" class="relative z-10">
         <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
           <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </TransitionChild>
@@ -126,7 +126,6 @@ const assignmentsStore = useAssignmentsStore(),
       rsesStore = useRSEsStore()
   
 const isOpen = ref(false),
-      title = 'Create Assignment',
       projects = projectsStore.getProjects(),
       rses = rsesStore.getRSEs(),
       projectQuery = ref(''),
@@ -141,7 +140,8 @@ const defaultState = {
   endDate: null
 }
 
-let assignmentId = null,
+let title = '',
+    assignmentId = null,
     project = null,
     rse = null,
     fte = 50,
@@ -166,10 +166,13 @@ function toggleModal() {
 
 function createAssignment(assignmentID, rseID, projectID, dateRange, split) {
 
+  title = 'Create Assignment'
+
   const start = dateRange ? DateTime.fromJSDate(dateRange[0].$d) : null,
         end = dateRange ? DateTime.fromJSDate(dateRange[1].$d) : null
 
   if(assignmentID) {
+    title = 'Edit Assignment'
     assignmentId = assignmentID
   }
 

@@ -1,8 +1,8 @@
 <template>
   <div class="w-full mb-12 px-4">
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
-      <menu-bar :edited="edited" :selected="selected" :zoom="zoom" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :export="exportCSV"/>
-      <Timeline ref="timeline" :rses="rses" :projects="projects" @create="create" @selection="selection" @edit="edit" />
+      <menu-bar :edited="edited" :zoom="zoom" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :export="exportCSV"/>
+      <Timeline ref="timeline" :rses="rses" :projects="projects" @create="create" @edit="edit" @resize="resize" />
     </div>
     <assignment-modal ref="assignmentModalRef" />
     <unallocated-modal ref="unallocatedModalRef" @createAssignment="create" />
@@ -29,16 +29,10 @@ const timeline = ref(),
       rses = rsesStore.getRSEs(),
       projects = projectsStore.getProjects()
 
-let selected = false
-
 const unallocatedCount = computed(() => projects.filter(project => project.dealstage === 'Awaiting Allocation').length)
 
 function zoom(level) {
   timeline.value.changeZoomLevel(level)
-}
-
-function selection(isSelected) {
-  selected = isSelected
 }
 
 function unallocated() {
@@ -53,12 +47,28 @@ function edit(assignmentID, rseID, start, end) {
 
   let assignment = assignmentsStore.getByID(assignmentID)
 
+  if(rseID) {
+    assignment.rse = rseID !== assignment.rse ? rseID : assignment.rse
+  }
+  
+  if(start && end) {
+    assignment.start = DateTime.fromMillis(start).toISODate() !== assignment.start ? DateTime.fromMillis(start).toISODate() : assignment.start
+    assignment.end = DateTime.fromMillis(end).toISODate() !== assignment.end ? DateTime.fromMillis(end).toISODate() : assignment.end
+  }
+
+  const dateRange = [{$d: new Date(assignment.start)}, {$d: new Date(assignment.end)}]
+  assignmentModalRef.value.createAssignment(assignment.id, assignment.rse, assignment.project.id, dateRange, assignment.fte)
+}
+
+async function resize(assignmentID, rseID, start, end) {
+
+  let assignment = assignmentsStore.getByID(assignmentID)
+
   assignment.rse = rseID !== assignment.rse ? rseID : assignment.rse
   assignment.start = DateTime.fromMillis(start).toISODate() !== assignment.start ? DateTime.fromMillis(start).toISODate() : assignment.start
   assignment.end = DateTime.fromMillis(end).toISODate() !== assignment.end ? DateTime.fromMillis(end).toISODate() : assignment.end
 
-  const dateRange = [{$d: new Date(assignment.start)}, {$d: new Date(assignment.end)}]
-  assignmentModalRef.value.createAssignment(assignment.id, assignment.rse, assignment.project.id, dateRange, assignment.fte)
+  // await assignmentsStore.updateAssignment(assignment)
 }
 
 function exportCSV() {

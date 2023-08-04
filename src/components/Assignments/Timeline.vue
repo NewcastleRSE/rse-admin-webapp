@@ -128,7 +128,7 @@ function generateAssignments(rses) {
 export default {
   name: 'Timeline',
   props: ['rses', 'projects'],
-  emits: ['create', 'selection', 'edit'],
+  emits: ['create', 'selection', 'edit', 'resize'],
   setup(props, { emit }) {
     let gstc, state
     const gstcElement = ref(null)
@@ -148,14 +148,15 @@ export default {
                     cells[cells.length-1].time.rightGlobalDate
                   ]
               emit('create', rseID, null, range)
+              gstc.api.plugins.Selection.selectItems([])
             }
-            // Selection includes assignments
-            if (items.length) {
-              emit('selection', true)
+            // Selection includes assignment
+            if (items.length === 1) {
+              let assignmentID = items[0].id.split('-')[2]
+              emit('edit', assignmentID)
+              gstc.api.plugins.Selection.selectItems([])
             }
-            else {
-              emit('selection', false)
-            }
+
             return selected
           },
         },
@@ -177,7 +178,7 @@ export default {
             items.after.forEach(assignment => {
               const assignmentID = Number(assignment.id.split('-')[2]),
                     rseID = Number(assignment.rowId.split('-')[2])
-              emit('edit', assignmentID, rseID, assignment.time.start, assignment.time.end)
+              emit('resize', assignmentID, rseID, assignment.time.start, assignment.time.end)
             })
             return items.after
           }
@@ -205,7 +206,7 @@ export default {
             items.after.forEach(assignment => {
               const assignmentID = Number(assignment.id.split('-')[2]),
                     rseID = Number(assignment.rowId.split('-')[2])
-              emit('edit', assignmentID, rseID, assignment.time.start, assignment.time.end)
+              emit('resize', assignmentID, rseID, assignment.time.start, assignment.time.end)
             })
             return items.after
           }
@@ -252,7 +253,7 @@ export default {
           time: {
             zoom: 25.5
           }
-        },
+        }
       }
       state = GSTC.api.stateFromConfig(config)
       globalThis.state = state
