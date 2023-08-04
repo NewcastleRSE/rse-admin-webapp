@@ -15,7 +15,7 @@
                     <form class="my-6">
                       <div class="grid grid-cols-6 gap-x-6 gap-y-8">
                         <div class="sm:col-span-6">
-                          <Combobox as="div" v-model="project">
+                          <Combobox as="div" value="project">
                             <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">Project</ComboboxLabel>
                             <div class="relative mt-2">
                               <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" @change="projectQuery = $event.target.value" :display-value="(project) => project?.dealname" />
@@ -43,7 +43,7 @@
                         </div>
 
                         <div class="sm:col-span-4">
-                          <Combobox as="div" v-model="rse">
+                          <Combobox as="div" value="rse">
                             <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">RSE</ComboboxLabel>
                             <div class="relative mt-2">
                               <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" @change="rseQuery = $event.target.value" :display-value="(rse) => `${rse?.firstname} ${rse?.lastname}`" />
