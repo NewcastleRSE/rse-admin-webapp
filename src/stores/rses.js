@@ -57,6 +57,10 @@ export const useRSEsStore = defineStore('rses', () => {
         const rseIndex = rses.value.map(e => e.id).indexOf(assignment.rse)
         const assignmentIndex = rses.value[rseIndex].assignments.map(e => e.id).indexOf(assignment.id)
 
+        const project = { data: assignment.project }
+        delete assignment.project
+        assignment.project = project
+        
         rses.value[rseIndex].assignments[assignmentIndex] = assignment
     }
 
