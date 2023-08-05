@@ -52,7 +52,7 @@ function generateRows(RSEs) {
           assignments = GSTC.api.GSTCID(`rse-${rse.id}-assignments`)
           rows[id] = {
             id,
-            label: `${rse.firstname} ${rse.lastname}`,
+            label: `<img src="/src/assets/img/avatars/${rse.photo}" class="h-6 float-left rounded-full mr-2" style="margin-top: 8px" />${rse.firstname} ${rse.lastname}`,
           }
           rows[assignments] = {
             assignments,
