@@ -15,7 +15,7 @@
                       <DialogTitle as="h3" class="mb-6 text-base font-semibold leading-6 text-gray-900">{{ title }}</DialogTitle>
                         <div class="grid grid-cols-6 gap-x-6 gap-y-8">
                           <div class="sm:col-span-6">
-                            <Combobox as="div" v-model="project">
+                            <Combobox as="div" v-model="project" nullable>
                               <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">Project</ComboboxLabel>
                               <div class="relative mt-2">
                                 <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" required @change="projectQuery = $event.target.value" :display-value="(project) => project?.dealname" />
@@ -43,7 +43,7 @@
                           </div>
 
                           <div class="sm:col-span-4">
-                            <Combobox as="div" v-model="rse">
+                            <Combobox as="div" v-model="rse" nullable>
                               <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">RSE</ComboboxLabel>
                               <div class="relative mt-2">
                                 <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" required @change="rseQuery = $event.target.value" :display-value="(rse) => `${rse?.firstname} ${rse?.lastname}`" />
@@ -141,8 +141,8 @@ const defaultState = {
 
 let title = '',
     assignmentId = null,
-    project = null,
-    rse = null,
+    project = ref(null),
+    rse = ref(null),
     fte = 50,
     startDate = null,
     endDate = null
@@ -175,8 +175,8 @@ function createAssignment(assignmentID, rseID, projectID, dateRange, split) {
     assignmentId = assignmentID
   }
 
-  project = projectID ? projectsStore.getByID(projectID) : null
-  rse = rseID ? rsesStore.getByID(rseID) : null
+  project.value = projectID ? projectsStore.getByID(projectID) : null
+  rse.value = rseID ? rsesStore.getByID(rseID) : null
   startDate = dateRange ? start.toISODate() : null
   endDate = dateRange ? end.toISODate() : null
   fte = split ? split : 50
@@ -192,8 +192,8 @@ async function submit(event) {
   if(assignmentId) {
     assignment = await assignmentsStore.updateAssignment({
       assignmentId: assignmentId,
-      project: project.id,
-      rse: rse.id,
+      project: project.value.id,
+      rse: rse.value.id,
       fte: fte,
       start: startDate,
       end: endDate
@@ -201,8 +201,8 @@ async function submit(event) {
   }
   else {
     assignment = await assignmentsStore.createAssignment({
-      project: project.id,
-      rse: rse.id,
+      project: project.value.id,
+      rse: rse.value.id,
       fte: fte,
       start: startDate,
       end: endDate
@@ -211,8 +211,8 @@ async function submit(event) {
     emits('createdAssignment', assignment)
   }
 
-  project = defaultState.project
-  rse = defaultState.rse
+  project.value = defaultState.project
+  rse.value = defaultState.rse
   fte = defaultState.fte
   startDate = defaultState.startDate
   endDate = defaultState.endDate
@@ -224,8 +224,8 @@ async function submit(event) {
 async function remove() {
   await assignmentsStore.deleteAssignment(assignmentId)
 
-  project = defaultState.project
-  rse = defaultState.rse
+  project.value = defaultState.project
+  rse.value = defaultState.rse
   fte = defaultState.fte
   startDate = defaultState.startDate
   endDate = defaultState.endDate
