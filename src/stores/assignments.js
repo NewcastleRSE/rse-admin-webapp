@@ -20,11 +20,15 @@ export const useAssignmentsStore = defineStore('assignments', () => {
   }
 
     function getByID(id) {
-        return assignments.value.find(assignment => assignment.id == id)
+        return assignments.value.find(assignment => assignment.id === id)
     }
 
     function getByRSE(rse) {
-        return assignments.value.find(assignment => assignment.rse == rse)
+        return assignments.value.filter(assignment => assignment.rse === rse)
+    }
+
+    function getByProject(projectId) {
+      return assignments.value.filter(assignment => assignment.project.id === projectId)
     }
 
     function getByPeriod(start,end,rse = null) {
@@ -120,7 +124,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       assignments.value = []
   }
 
-    return { assignments, getAssignments, setAssignments, getByID, getByRSE, getByPeriod, fetchAssignments, createAssignment, updateAssignment, deleteAssignment, reset }
+    return { assignments, getAssignments, setAssignments, getByID, getByRSE, getByProject, getByPeriod, fetchAssignments, createAssignment, updateAssignment, deleteAssignment, reset }
 },
 {
     persist: true

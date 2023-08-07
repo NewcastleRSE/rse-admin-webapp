@@ -27,7 +27,7 @@
                 <circle cx="1" cy="1" r="1" />
               </svg>
               <p>
-                {{ project.contacts[0].department }}
+                {{ project.school }}
               </p>
             </div>
           </div>
