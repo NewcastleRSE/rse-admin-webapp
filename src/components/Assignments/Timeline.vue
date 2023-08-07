@@ -137,8 +137,7 @@ export default {
         events: {
           onEnd(selected) {
 
-            let cells = selected['chart-timeline-grid-row-cell'],
-                items = selected['chart-timeline-items-row-item']
+            let cells = selected['chart-timeline-grid-row-cell']
 
             // Selection includes cells
             if (cells.length) {
@@ -148,12 +147,6 @@ export default {
                     cells[cells.length-1].time.rightGlobalDate
                   ]
               emit('create', rseID, null, range)
-              gstc.api.plugins.Selection.selectItems([])
-            }
-            // Selection includes assignment
-            if (items.length === 1) {
-              let assignmentID = items[0].id.split('-')[2]
-              emit('edit', assignmentID)
               gstc.api.plugins.Selection.selectItems([])
             }
 
@@ -219,6 +212,29 @@ export default {
         },
       }
 
+      function eventClickHandler(event, data){
+          let assignmentID = data.item.id.split('-')[2]
+          emit('edit', assignmentID)
+          gstc.api.plugins.Selection.selectItems([])
+      }
+
+      function clickAction(element, data){
+        function onEventClick(event){
+            eventClickHandler(event, data)
+        }
+
+        element.addEventListener('dblclick', onEventClick)
+
+        return {
+          update(element, newData){
+            data = newData
+          },
+          destroy(element){
+            element.removeEventListener('dblclick', onEventClick)
+          }
+        }
+      }
+
       /**
        * @type { import('gantt-schedule-timeline-calendar').Config }
        */
@@ -253,6 +269,9 @@ export default {
           time: {
             zoom: 25.5
           }
+        },
+        actions: {
+          'chart-timeline-items-row-item':[clickAction]
         }
       }
       state = GSTC.api.stateFromConfig(config)
