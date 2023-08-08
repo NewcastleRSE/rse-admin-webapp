@@ -1,26 +1,33 @@
 <template>
     <ul role="list" class="divide-y divide-gray-100">
       <li v-for="project in projects" :key="project.id" class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap">
-        <div>
-          <div class="flex items-start gap-x-3">
-            <p class="text-sm font-semibold leading-6 text-gray-900">
-                {{ project.dealname }}
-            </p>
-            <p v-if="project.dealstage === 'Awaiting Allocation'" class="text-red-700 bg-red-50 ring-red-600/20 rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset">
-                {{ project.dealstage }}
-            </p>
+        <div class="flex flex-row items-center">
+          <div class="pr-6">
+            <ExclamationCircleIcon v-if="project.status === 'red'" class="h-8 w-8 text-red-600" aria-hidden="true" />
+            <ExclamationTriangleIcon v-else-if="project.status === 'amber'" class="h-8 w-8 text-yellow-600" aria-hidden="true" />
+            <CheckCircleIcon v-else class="h-8 w-8 text-gray-400" aria-hidden="true" />
           </div>
-          <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-            <p>
-              {{ `${project.contacts[0].firstname}  ${project.contacts[0].lastname}` }}
-            </p>
-            <svg viewBox="0 0 2 2" class="h-0.5 w-0.5 fill-current">
-              <circle cx="1" cy="1" r="1" />
-            </svg>
-            <p>
-              {{ project.school }}
-            </p>
-          </div>
+          <div class="flex flex-col">
+            <div class="flex items-start gap-x-3">
+                <p class="text-sm font-semibold leading-6 text-gray-900">
+                    {{ project.dealname }}
+                </p>
+                <p v-if="project.dealstage === 'Awaiting Allocation'" class="text-red-700 bg-red-50 ring-red-600/20 rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset">
+                    {{ project.dealstage }}
+                </p>
+            </div>
+            <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
+                <p>
+                {{ `${project.contacts[0].firstname}  ${project.contacts[0].lastname}` }}
+                </p>
+                <svg viewBox="0 0 2 2" class="h-0.5 w-0.5 fill-current">
+                <circle cx="1" cy="1" r="1" />
+                </svg>
+                <p>
+                {{ project.school }}
+                </p>
+            </div>
+          </div> 
         </div>
         <div class="flex w-full sm:w-auto">
           <div class="flex -space-x-0.5">
@@ -34,9 +41,6 @@
             </dd>
           </div>
           <div class="flex gap-x-2.5 ml-6">
-            <ExclamationCircleIcon v-if="project.status === 'red'" class="h-8 w-8 text-red-600" aria-hidden="true" />
-            <ExclamationTriangleIcon v-else-if="project.status === 'amber'" class="h-8 w-8 text-yellow-600" aria-hidden="true" />
-            <CheckCircleIcon v-else class="h-8 w-8 text-gray-400" aria-hidden="true" />
             <a :href="project.clockifyLink" target="_blank">
               <Clockify class="h-8 w-8 external-service-icon clockify-icon" />
             </a>
@@ -64,9 +68,6 @@ li:hover .external-service-icon.clockify-icon path:last-child {
 li:hover .external-service-icon.hubspot-icon path {
     fill: #F8761F;
 }
-
-
-
 </style>  
 <script setup>
 import { useAssignmentsStore, useProjectsStore, useRSEsStore } from '../../stores'
