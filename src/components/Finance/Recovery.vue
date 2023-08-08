@@ -84,7 +84,7 @@ rses.forEach(rse => {
     if(rse.lastname !== 'Horsfall' && rse.lastname !== 'Lozada') {
         const timesheets = timesheetsStore.getByRSE(rse.firstname + ' ' + rse.lastname)
 
-        timesheets.months.forEach(month => {
+        timesheets?.months.forEach(month => {
             month.projects.forEach(project => {
 
                 if(nonBillableProjects.indexOf(project.name) === -1) {

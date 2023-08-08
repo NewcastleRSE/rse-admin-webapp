@@ -3,7 +3,7 @@
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 px-4 py-12 shadow-lg rounded bg-white">
       <div class="mx-auto w-full">
         <div class="mx-auto divide-y divide-gray-900/10">
-          <h2 class="text-2xl font-bold leading-10 tracking-tight text-gray-900">2022/23 Invoices</h2>
+          <h2 class="text-2xl font-bold leading-10 tracking-tight text-gray-900">{{ yearTitle }} Invoices</h2>
           <dl class="mt-10 space-y-6 divide-y divide-gray-900/10">
             <Disclosure as="div" v-for="month in months" :key="month.name" class="pt-6" v-slot="{ open }">
               <dt>
@@ -87,6 +87,7 @@
 <script setup>
 import { ref } from 'vue'
 import { DateTime } from 'luxon'
+import { currentFY } from '../../utils/dates'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 import { useAssignmentsStore, useInvoicesStore, useProjectsStore } from '@/stores'
@@ -102,6 +103,9 @@ if(currentDate.month < 8) {
   startDate = startDate.minus({ year: 1 })
 } 
 
+const fyDates = currentFY()
+const yearTitle = `${fyDates.startDate.toFormat('yyyy')}/${fyDates.endDate.toFormat('yy')}`
+
 const invoices = invoicesStore.getByFinancialYear(startDate.year)
 
 const monthsToDate = Math.floor(currentDate.diff(startDate, ['months']).values.months)
@@ -109,11 +113,13 @@ const monthsToDate = Math.floor(currentDate.diff(startDate, ['months']).values.m
 const months = []
 const creating = ref(null)
 
-for (let i = 0; i < monthsToDate; i++) {
+for (let i = 0; i <= monthsToDate; i++) {
 
   const assignments = assignmentsStore.getByPeriod(startDate.toISODate(), currentDate.toISODate())
   const projectIDs = assignments.reduce(function (IDs, assignment) { return [...IDs, assignment.project.id] }, [])
   const projects = projectsStore.filterByIDs([...new Set(projectIDs)]).filter(project => project.costModel === 'Facility')
+
+  console.log(assignments)
 
   for (let y = 0; y < projects.length; y++) {
     projects[y].invoice = invoices.find(invoice => invoice.project.id == projects[y].id && invoice.year == startDate.year && invoice.month == startDate.monthLong.toLowerCase())
