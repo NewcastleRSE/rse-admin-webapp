@@ -16,11 +16,12 @@
         </div>
         <div class="flex items-center justify-between gap-x-4 sm:w-3/4 sm:flex-none">
             <div class="flex-grow sm:block">
-                <div class="mx-6" aria-hidden="true">
+                <div class="mx-6 relative" aria-hidden="true">
                     <div class="overflow-hidden rounded-full bg-gray-200 h-4 relative">
                         <div class="h-4 absolute rounded-l-full bg-cyan-600 left-0" :style="{ width: `${progress}%` }" />
                         <div class="h-4 absolute rounded-r-full bg-cyan-400" :style="{ left: `${progress}%`, width: `0%` }" />
                     </div>
+                    <div class="h-6 w-0.5 -top-1 absolute bg-black" :style="{ left: `${progressThroughCapacity}%` }" />
                 </div>
             </div>
             <ChevronRightIcon class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
@@ -48,9 +49,8 @@ const days =  timesheets?.days ? timesheets.days : 0,
 
 const progress = ((days / capacity) * 100).toFixed(2)
 
-const timeThroughYear = DateTime.fromISO(props.rse.capacityEnd).workingDiff(DateTime.now(), 'days')
+const workingDaysSoFar = DateTime.now().workingDiff(DateTime.fromISO(props.rse.capacityStart), 'days')
 
-console.log(timeThroughYear)
-// console.log(`${props.rse.displayName} - ${days}/${capacity} = ${progress}`)
+const progressThroughCapacity = ((workingDaysSoFar / capacity) * 100).toFixed(2)
 
 </script>
