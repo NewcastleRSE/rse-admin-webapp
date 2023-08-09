@@ -18,8 +18,8 @@
             <div class="flex-grow sm:block">
                 <div class="mx-6" aria-hidden="true">
                     <div class="overflow-hidden rounded-full bg-gray-200 h-4 relative">
-                        <div class="h-4 absolute rounded-l-full bg-cyan-600 left-0" :style="{ width: '50%' }" />
-                        <div class="h-4 absolute rounded-r-full bg-cyan-400" :style="{ left: '50%', width: '20%' }" />
+                        <div class="h-4 absolute rounded-l-full bg-cyan-600 left-0" :style="{ width: `${progress}%` }" />
+                        <div class="h-4 absolute rounded-r-full bg-cyan-400" :style="{ left: `${progress}%`, width: `0%` }" />
                     </div>
                 </div>
             </div>
@@ -28,10 +28,25 @@
     </li>
 </template>
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps, toRefs } from 'vue'
+import { useTimesheetsStore } from '../../stores'
 import { ChevronRightIcon } from '@heroicons/vue/20/solid'
 
-defineProps({
+const props = defineProps({
     rse: null
 })
+
+const timesheetStore = useTimesheetsStore()
+
+const timesheets = timesheetStore.getByRSE(props.rse.displayName)
+
+let { rse } = toRefs(props)
+
+const days =  timesheets?.days ? timesheets.days : 0,
+      capacity = props.rse.displayName === 'Mark Turner' ? 1 : rse.value.capacity
+
+const progress = ((days / capacity) * 100).toFixed(2)
+
+console.log(`${props.rse.displayName} - ${days}/${capacity} = ${progress}`)
+
 </script>

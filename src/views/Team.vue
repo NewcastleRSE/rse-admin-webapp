@@ -17,20 +17,13 @@
                 </div>
                 <div class="block w-full overflow-x-auto px-4">
                     <ul role="list" class="divide-y divide-gray-100">
-                        <list-item v-for="rse in rses" :key="rse.emaidil" :rse="rse" />
+                        <list-item v-for="rse in rses" :key="rse.id" :rse="rse" />
                     </ul>
                 </div>
             </div>
         </div>
       </div>
     </div>
-  <!-- <div class="w-full -mt-24">
-    <div class="flex flex-wrap mx-4 bg-white w-full p-4 shadow-lg rounded">
-        <ul role="list" class="divide-y divide-gray-100">
-            <list-item v-for="rse in rses" :key="rse.emaidil" :rse="rse" />
-        </ul>
-    </div>
-  </div> -->
 </template>
 <script setup>
 import ListItem from '../components/Team/ListItem.vue'
