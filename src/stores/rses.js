@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { DateTime } from 'luxon'
 import { fetchObjects } from '../utils/orm'
+import { currentFY } from '../utils/dates'
 import * as Stores from '@/stores'
 
 export const useRSEsStore = defineStore('rses', () => {
@@ -102,6 +103,42 @@ export const useRSEsStore = defineStore('rses', () => {
 
         const capacitiesStore = Stores.useCapacitiesStore()
         capacitiesStore.setCapacities(capacityData)
+
+        const currentYear = currentFY()
+
+        rseData.forEach((rse, index) => {
+            const capacities = capacitiesStore.getCapacityInPeriod(currentYear.startDate.toISODate(), currentYear.endDate.toISODate(), rse.id)
+
+            let annualCapacity = 0
+
+            capacities.forEach(capacity => {
+
+                let start = DateTime.fromISO(capacity.start),
+                    end = capacity.end ? DateTime.fromISO(capacity.end) : currentYear.endDate
+
+                // Capacity is the same all year
+                if(currentYear.startDate >= start && currentYear.endDate <= end) {
+                    annualCapacity += Math.round(Math.round(220 * (capacity.capacity/100)))
+                }
+                // Capacity started this year
+                else if (currentYear.startDate <= start && currentYear.endDate <= end) {
+                    const proRataRatio = Math.round(currentYear.endDate.diff(start, 'days').toObject().days) / 365
+                    annualCapacity += Math.round(Math.round(220 * (capacity.capacity/100)) * proRataRatio)
+                }
+                // Capacity ended this year
+                else if (currentYear.startDate >= start && currentYear.endDate >= end) {
+                    const proRataRatio = Math.round(end.diff(currentYear.startDate, 'days').toObject().days) / 365
+                    annualCapacity += Math.round(Math.round(220 * (capacity.capacity/100)) * proRataRatio)
+                }
+                // Capacity starts and ends in the same year
+                else {
+                    const proRataRatio = Math.round(end.diff(start, 'days').toObject().days) / 365
+                    annualCapacity += Math.round(Math.round(220 * (capacity.capacity/100)) * proRataRatio)
+                }
+            })
+
+            rseData[index].capacity = annualCapacity
+        })
 
         rses.value = rseData
     }
