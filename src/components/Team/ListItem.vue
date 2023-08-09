@@ -47,6 +47,6 @@ const days =  timesheets?.days ? timesheets.days : 0,
 
 const progress = ((days / capacity) * 100).toFixed(2)
 
-console.log(`${props.rse.displayName} - ${days}/${capacity} = ${progress}`)
+// console.log(`${props.rse.displayName} - ${days}/${capacity} = ${progress}`)
 
 </script>

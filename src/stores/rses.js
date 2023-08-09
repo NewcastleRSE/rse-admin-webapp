@@ -109,6 +109,22 @@ export const useRSEsStore = defineStore('rses', () => {
         rseData.forEach((rse, index) => {
             const capacities = capacitiesStore.getCapacityInPeriod(currentYear.startDate.toISODate(), currentYear.endDate.toISODate(), rse.id)
 
+            let capacityEndDates = capacities.reduce(function (dates, capacity) { return [...dates, capacity.end] }, [])
+
+            if(capacityEndDates.length && capacityEndDates.includes(null)) {
+                rseData[index].capacityStart = currentYear.startDate.toISODate()
+                rseData[index].capacityEnd = currentYear.endDate.toISODate()
+            }
+            else if(capacityEndDates.length) {
+                const maxDate = DateTime.max(...[...new Set(capacityEndDates.reduce(function (dates, date) { return [...dates, DateTime.fromISO(date)] }, []))])
+                rseData[index].capacityStart = currentYear.startDate.toISODate()
+                rseData[index].capacityEnd = maxDate.toISODate()
+            }
+            else {
+                rseData[index].capacityStart = null
+                rseData[index].capacityEnd = null
+            }
+
             let annualCapacity = 0
 
             capacities.forEach(capacity => {
