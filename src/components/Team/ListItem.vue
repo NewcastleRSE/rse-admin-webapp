@@ -31,6 +31,7 @@
 import { defineProps, toRefs } from 'vue'
 import { useTimesheetsStore } from '../../stores'
 import { ChevronRightIcon } from '@heroicons/vue/20/solid'
+import { DateTime } from 'luxon-business-days'
 
 const props = defineProps({
     rse: null
@@ -47,6 +48,9 @@ const days =  timesheets?.days ? timesheets.days : 0,
 
 const progress = ((days / capacity) * 100).toFixed(2)
 
+const timeThroughYear = DateTime.fromISO(props.rse.capacityEnd).workingDiff(DateTime.now(), 'days')
+
+console.log(timeThroughYear)
 // console.log(`${props.rse.displayName} - ${days}/${capacity} = ${progress}`)
 
 </script>

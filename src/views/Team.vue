@@ -27,8 +27,15 @@
 </template>
 <script setup>
 import ListItem from '../components/Team/ListItem.vue'
-import { useRSEsStore } from '../stores'
+import { useRSEsStore, useHolidaysStore } from '../stores'
 
 const rsesStore = useRSEsStore()
 const rses = rsesStore.getRSEs()
+
+const store = useHolidaysStore()
+
+store.fetchHolidays()
+
+// let events = store.getByAcademicYear()
+// console.log(events)
 </script>

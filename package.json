@@ -32,6 +32,7 @@
         "lodash.differencewith": "^4.5.0",
         "lodash.isequal": "^4.5.0",
         "luxon": "^3.0.1",
+        "luxon-business-days": "^3.0.1",
         "money-formatter": "^0.1.4",
         "pinia": "^2.1.4",
         "pinia-plugin-persistedstate": "^3.1.0",
