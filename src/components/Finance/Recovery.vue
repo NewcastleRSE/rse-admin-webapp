@@ -21,18 +21,16 @@
     </div>
 </template>
 <script setup>
-import { DateTime } from 'luxon';
-import { useCapacitiesStore, useInvoicesStore, useRSEsStore, useTimesheetsStore } from '@/stores'
+import { currentFY } from '../../utils/dates'
+import { useInvoicesStore, useRSEsStore, useTimesheetsStore } from '@/stores'
 
-const capacitiesStore = useCapacitiesStore(),
-      invoicesStore = useInvoicesStore(),
+const invoicesStore = useInvoicesStore(),
       rsesStore = useRSEsStore(),
       timesheetsStore = useTimesheetsStore()
 
 const rses = rsesStore.getRSEs()
 
-const yearStart = DateTime.fromISO('2022-08-01').startOf('day'),
-      yearEnd = DateTime.fromISO('2023-07-31').endOf('day')
+const currentYear = currentFY()
 
 const nonBillableProjects = ['RSE Team', 'Carpentries', 'Management', 'Non-Project Event', 'Volunteering']
 
@@ -42,7 +40,6 @@ let totalCapacity = 0,
 
 // Compute total team capacity in days this year
 rses.forEach(rse => {
-    const capacities = capacitiesStore.getCapacityInPeriod(yearStart.toISODate(), yearEnd.toISODate(), rse.id)
 
     let rseStats = {
         name: rse.firstname + ' ' + rse.lastname,
@@ -55,33 +52,10 @@ rses.forEach(rse => {
         nonBillableProjects: {}
     }
 
-    capacities.forEach(capacity => {
-
-        let start = DateTime.fromISO(capacity.start),
-            end = capacity.end ? DateTime.fromISO(capacity.end) : yearEnd
-
-        // Capacity is the same all year
-        if(yearStart >= start && yearEnd <= end) {
-            rseStats.capacity += Math.round(Math.round(220 * (capacity.capacity/100)))
-        }
-        // Capacity started this year
-        else if (yearStart <= start && yearEnd <= end) {
-            const proRataRatio = Math.round(yearEnd.diff(start, 'days').toObject().days) / 365
-            rseStats.capacity += Math.round(Math.round(220 * (capacity.capacity/100)) * proRataRatio)
-        }
-        // Capacity ended this year
-        else if (yearStart >= start && yearEnd >= end) {
-            const proRataRatio = Math.round(end.diff(yearStart, 'days').toObject().days) / 365
-            rseStats.capacity += Math.round(Math.round(220 * (capacity.capacity/100)) * proRataRatio)
-        }
-        // Capacity starts and ends in the same year
-        else {
-            const proRataRatio = Math.round(end.diff(start, 'days').toObject().days) / 365
-            rseStats.capacity += Math.round(Math.round(220 * (capacity.capacity/100)) * proRataRatio)
-        }
-    })
-
     if(rse.lastname !== 'Horsfall' && rse.lastname !== 'Lozada') {
+
+        rseStats.capacity = rse.capacity
+
         const timesheets = timesheetsStore.getByRSE(rse.firstname + ' ' + rse.lastname)
 
         timesheets?.months.forEach(month => {
@@ -111,14 +85,12 @@ rses.forEach(rse => {
     totalRecorded += rseStats.billable
 })
 
-// console.log(JSON.stringify(rseBreakdown))
-
 let invoicedDays = {
     sent: 0,
     processed: 0,
     paid: 0
 }
-const invoices = invoicesStore.getByFinancialYear(yearStart.year)
+const invoices = invoicesStore.getByFinancialYear(currentYear.startDate.startOf('day'))
 
 invoices.forEach(invoice => {
     if(invoice.paid) {

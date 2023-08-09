@@ -12,8 +12,8 @@ export function currentFY(){
     }
 
     return {
-        startDate: startDate,
-        endDate: endDate,
+        startDate: startDate.startOf('day'),
+        endDate: endDate.endOf('day'),
         currentDate: currentDate
     }
 }
