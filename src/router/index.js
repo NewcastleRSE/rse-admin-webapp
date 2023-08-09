@@ -106,7 +106,7 @@ const routes = [
           },
           {
             path: '/finance',
-            name: 'Finances',
+            name: 'Finance',
             components: {
               default: FinanceDashboard,
               header: FinanceHeader

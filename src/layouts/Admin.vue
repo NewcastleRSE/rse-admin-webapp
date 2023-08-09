@@ -90,20 +90,24 @@
 </template>
 
 <script setup>
+import { useRoute } from 'vue-router'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import BackgroundImage from '@/assets/img/header.jpeg'
 import { useAuthStore } from '../stores/auth'
 
+const route = useRoute()
 const store = useAuthStore()
 const user = store.getUser()
 
+const section = route.path.split('/')[1]
+
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', current: true },
-  { name: 'Team', href: '/team', current: false },
-  { name: 'Projects', href: '/projects', current: false },
-  { name: 'Finance', href: '/finance', current: false },
-  { name: 'Forecasting', href: '/forecasting', current: false },
+  { name: 'Dashboard', href: '/dashboard', current: section === 'dashboard' },
+  { name: 'Team', href: '/team', current: section === 'team' },
+  { name: 'Projects', href: '/projects', current: section === 'projects' },
+  { name: 'Finance', href: '/finance', current: section === 'finance' },
+  { name: 'Forecasting', href: '/forecasting', current: section === 'forecasting' },
 ]
 const userNavigation = [
   { name: 'Settings', href: '#' },
