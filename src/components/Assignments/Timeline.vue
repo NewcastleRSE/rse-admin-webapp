@@ -1,5 +1,5 @@
 <template>
-  <div class="gstc-wrapper" ref="gstcElement"></div>
+  <div @scroll.prevent class="gstc-wrapper" ref="gstcElement"></div>
 </template>
 
 <script>
@@ -14,7 +14,7 @@ import { Plugin as CalendarScroll } from 'gantt-schedule-timeline-calendar/dist/
 import { Plugin as ProgressBar } from 'gantt-schedule-timeline-calendar/dist/plugins/progress-bar.esm.min.js'
 
 import 'gantt-schedule-timeline-calendar/dist/style.css'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { DateTime } from 'luxon'
 import { useAssignmentsStore } from '../../stores'
 
@@ -299,6 +299,14 @@ export default {
         else {
           console.log(mutation.events)
         }
+      })
+
+      nextTick(()=>{
+        document.querySelectorAll('.gstc__chart-timeline').forEach(timeline => {
+          timeline.addEventListener('wheel', (event) => {
+            event.preventDefault()
+          }, false)
+        })
       })
     })
     onBeforeUnmount(() => {
