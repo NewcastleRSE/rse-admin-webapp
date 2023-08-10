@@ -9,7 +9,7 @@
       />
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <availability-card v-on:click="$router.push({path:`/rse/${(nextMiddleware.firstname + ' ' + nextMiddleware.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
+      <availability-card v-on:click="$router.push({path:`/team/${(nextMiddleware.firstname + ' ' + nextMiddleware.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
         :image="`/src/assets/img/avatars/${nextMiddleware.photo}`"
         label="MIDDLEWARE"
         :title="`${nextMiddleware.firstname} ${nextMiddleware.lastname}`"
@@ -18,7 +18,7 @@
       />
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <availability-card v-on:click="$router.push({path:`/rse/${(nextWebMobile.firstname + ' ' + nextWebMobile.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
+      <availability-card v-on:click="$router.push({path:`/team/${(nextWebMobile.firstname + ' ' + nextWebMobile.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
         :image="`/src/assets/img/avatars/${nextWebMobile.photo}`"
         label="WEB &amp; MOBILE"
         :title="`${nextWebMobile.firstname} ${nextWebMobile.lastname}`"
@@ -27,7 +27,7 @@
       />
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <availability-card v-on:click="$router.push({path:`/rse/${(nextDataScience.firstname + ' ' + nextDataScience.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
+      <availability-card v-on:click="$router.push({path:`/team/${(nextDataScience.firstname + ' ' + nextDataScience.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
       :image="`/src/assets/img/avatars/${nextDataScience.photo}`"
         label="DATA SCIENCE"
         :title="`${nextDataScience.firstname} ${nextDataScience.lastname}`"
