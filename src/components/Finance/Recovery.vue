@@ -42,7 +42,7 @@ let totalCapacity = 0,
 rses.forEach(rse => {
 
     let rseStats = {
-        name: rse.firstname + ' ' + rse.lastname,
+        name: rse.displayName,
         capacity: 0,
         recorded: 0,
         billable: 0,
@@ -83,6 +83,8 @@ rses.forEach(rse => {
 
     totalCapacity += rseStats.capacity
     totalRecorded += rseStats.billable
+
+    console.log(rseStats)
 })
 
 let invoicedDays = {

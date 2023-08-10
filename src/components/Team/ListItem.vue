@@ -18,8 +18,9 @@
             <div class="flex-grow sm:block">
                 <div class="mx-6 relative" aria-hidden="true">
                     <div class="overflow-hidden rounded-full bg-gray-200 h-4 relative">
-                        <div class="h-4 absolute rounded-l-full bg-cyan-600 left-0" :style="{ width: `${progress}%` }" />
-                        <div class="h-4 absolute rounded-r-full bg-cyan-400" :style="{ left: `${progress}%`, width: `0%` }" />
+                        <div class="h-4 absolute rounded-l-full bg-cyan-600 left-0" :style="{ width: `${billable}%` }" />
+                        <div class="h-4 absolute bg-yellow-400" :style="{ left: `${billable}%`, width: `${nonBillable}%` }" />
+                        <div class="h-4 absolute rounded-r-full bg-red-400" :style="{ left: `${recorded}%`, width: `${missing}%` }" />
                     </div>
                     <div class="h-6 w-0.5 -top-1 absolute bg-black" :style="{ left: `${progressThroughCapacity}%` }" />
                 </div>
@@ -40,14 +41,16 @@ const props = defineProps({
 
 const timesheetStore = useTimesheetsStore()
 
-const timesheets = timesheetStore.getByRSE(props.rse.displayName)
-
 let { rse } = toRefs(props)
 
-const days =  timesheets?.days ? timesheets.days : 0,
-      capacity = props.rse.displayName === 'Mark Turner' ? 1 : rse.value.capacity
+const summary = timesheetStore.getRSESummary(props.rse)
 
-const progress = ((days / capacity) * 100).toFixed(2)
+const recorded = ((summary.recorded / summary.capacity) * 100).toFixed(2),
+      billable = ((summary.billable / summary.capacity) * 100).toFixed(2),
+      nonBillable = ((summary.nonBillable / summary.capacity) * 100).toFixed(2),
+      missing = ((summary.missing / summary.capacity) * 100).toFixed(2)
+
+const capacity = props.rse.displayName === 'Mark Turner' ? 1 : rse.value.capacity
 
 const workingDaysSoFar = DateTime.now().workingDiff(DateTime.fromISO(props.rse.capacityStart), 'days')
 
