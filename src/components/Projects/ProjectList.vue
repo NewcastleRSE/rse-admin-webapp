@@ -5,7 +5,7 @@
           <div class="pr-6">
             <ExclamationCircleIcon v-if="project.status === 'red'" class="h-8 w-8 text-red-600" aria-hidden="true" />
             <ExclamationTriangleIcon v-else-if="project.status === 'amber'" class="h-8 w-8 text-yellow-600" aria-hidden="true" />
-            <CheckCircleIcon v-else class="h-8 w-8 text-gray-400" aria-hidden="true" />
+            <CheckCircleIcon v-else class="h-8 w-8 text-green-600" aria-hidden="true" />
           </div>
           <div class="flex flex-col">
             <div class="flex items-start gap-x-3">

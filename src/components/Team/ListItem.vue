@@ -16,7 +16,7 @@
         </div>
         <div class="flex items-center justify-between gap-x-4 sm:w-3/4 sm:flex-none">
             <div class="flex-grow sm:block">
-                <div class="mx-6 relative" aria-hidden="true">
+                <div class="mx-6 relative" aria-hidden="true" v-if="rse.lastname !== 'Horsfall' && rse.lastname !== 'Lozada'">
                     <div class="overflow-hidden rounded-full bg-gray-200 h-4 relative">
                         <div class="h-4 absolute rounded-l-full bg-cyan-600 left-0" :style="{ width: `${billable}%` }" />
                         <div class="h-4 absolute bg-yellow-400" :style="{ left: `${billable}%`, width: `${nonBillable}%` }" />
@@ -54,6 +54,6 @@ const capacity = props.rse.displayName === 'Mark Turner' ? 1 : rse.value.capacit
 
 const workingDaysSoFar = DateTime.now().workingDiff(DateTime.fromISO(props.rse.capacityStart), 'days')
 
-const progressThroughCapacity = ((workingDaysSoFar / capacity) * 100).toFixed(2)
+const progressThroughCapacity = workingDaysSoFar > 0 ? ((workingDaysSoFar / capacity) * 100).toFixed(2) : 0
 
 </script>
