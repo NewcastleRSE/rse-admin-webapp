@@ -31,17 +31,14 @@
     </div>
   </div>
   <div class="flex flex-wrap mt-4">
-    <div class="w-full xl:w-1/2 mb-12 xl:mb-0 px-4">
-      <project-status />
-    </div>
-    <div class="w-full xl:w-1/2 px-4">
-      <!-- <card-time-split /> -->
+    <div class="w-full mb-12 xl:mb-0 px-4">
+      <assignment-list :assignments="rse.assignments" />
     </div>
   </div>
 </template>
 <script setup>
 import TimeSummary from '@/components/Dashboard/TimeSummary.vue'
-import ProjectStatus from '../components/Dashboard/ProjectStatus.vue'
+import AssignmentList from '@/components/Team/AssignmentList.vue'
 import { useRoute } from 'vue-router'
 import { useRSEsStore } from '../stores'
 
@@ -49,4 +46,6 @@ const route = useRoute()
 const rsesStore = useRSEsStore()
 
 const rse = rsesStore.getByName(route.path.split('/')[2])
+
+rse.assignments = rse.assignments.reverse()
 </script>
