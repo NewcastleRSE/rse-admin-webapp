@@ -5,7 +5,8 @@
         :image="`/src/assets/img/avatars/${rse.photo}`"
         :name="rse.displayName"
         :team="rse.team"
-        :joined=formatDate(rse.contractStart)
+        :availableDate=formatDate(rse.nextAvailableDate)
+        :availablePercentage="rse.nextAvailableFTE"
         :email="rse.email"
         :timesheetURL="timesheetURL"
         :githubURL="`https://github.com/${rse.github}`"

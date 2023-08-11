@@ -11,8 +11,8 @@
           <h2 class="font-semibold text-blueGray-400">
             {{ team }} Team
           </h2>
-          <h2 class="font-semibold text-blueGray-100 mt-2">
-            Joined: {{ joined }}
+          <h2 class="text-blueGray-100 mt-2">
+            Next Available {{ availableDate }} at {{ availablePercentage }}%
           </h2>
       </div>
       <div class="grid grid-cols-3 items-center gap-x-4 mr-2 text-blueGray-400">
@@ -49,8 +49,11 @@ defineProps({
     team: {
       type: String,
     },
-    joined: {
+    availableDate: {
       type: String,
+    },
+    availablePercentage: {
+      type: Number,
     },
     email: {
       type: String,
