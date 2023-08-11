@@ -60,7 +60,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       }
 
       return response.sort(function(a, b) {
-        return DateTime.fromISO(b.end) - DateTime.fromISO(a.end)
+        return DateTime.fromISO(a.start) - DateTime.fromISO(b.start)
       })
     }
 

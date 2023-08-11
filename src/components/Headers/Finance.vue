@@ -62,7 +62,7 @@
             <p class="ml-24 truncate text-sm font-medium text-gray-500">Transactions</p>
         </dt>
         <dd class="ml-24 items-baseline">
-            <p class="text-2xl font-semibold text-gray-900">Until {{ upToDate }}</p>
+            <p class="text-2xl font-semibold text-gray-900">{{ upToDate }}</p>
             <p class="text-sm text-gray-900">{{ daysPassed }} days ago</p>
         </dd>
       </div>

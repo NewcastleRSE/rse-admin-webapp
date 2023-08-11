@@ -24,6 +24,7 @@ import Transactions from '../views/finances/Transactions.vue'
 // Headers
 import AvailabilityHeader from '../components/Headers/Availability.vue'
 import FinanceHeader from '../components/Headers/Finance.vue'
+import ProfileHeader from '../components/Headers/Profile.vue'
 
 /**
  * isTokenValid:
@@ -100,7 +101,7 @@ const routes = [
             name: 'RSE',
             components: {
               default: RSE,
-              header: AvailabilityHeader
+              header: ProfileHeader
             },
             meta: { title: 'RSE Admin - RSE' }
           },

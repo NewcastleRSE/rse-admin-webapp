@@ -1,8 +1,8 @@
 <template>
-  <div class="h-full relative flex flex-col min-w-0 break-words bg-blueGray-700 rounded mb-6 xl:mb-0 shadow-lg">
+  <div :class="`bg-${backgroundColour}`" class="h-full relative flex flex-col min-w-0 break-words rounded mb-6 xl:mb-0 shadow-lg">
     <div class="flex p-4">
       <div class="relative w-auto pr-4 flex flex-col justify-center">
-        <i class="align-middle m-2 fas fa-bars-staggered text-cyan-400 text-6xl"></i>
+        <component :is="icon" :class="`text-${iconColour}`" class="align-middle m-2 text-6xl"></component>
       </div>
       <div class="flex-1">
           <h5 class="text-blueGray-400 uppercase font-bold text-xs">
@@ -14,7 +14,7 @@
           <h1 class="text-blueGray-400 uppercase font-bold text-xs">
             {{ subLabel }}
           </h1>
-          <span class="mr-2 font-bold text-blueGray-100">
+          <span :class="`text-${fontColour}`" class="mr-2 font-bold">
             {{ subTitle }}
           </span>
       </div>
@@ -39,10 +39,25 @@ export default {
     subTitle: {
       type: String,
       required: true
+    },
+    icon: {
+      required: true
+    },
+    iconColour: {
+      type: String,
+      required: true
+    },
+    backgroundColour: {
+      type: String,
+      required: true
+    },
+    fontColour: {
+      type: String,
+      required: true
     }
   },
-  setup() {
-
+  setup(props) {
+    console.log(props)
   }
 };
 </script>
