@@ -1,17 +1,17 @@
 <template>
-  <div :class="`bg-white`" class="h-full relative flex flex-col min-w-0 break-words rounded mb-6 xl:mb-0 shadow-lg">
-    <div class="flex p-4">
-      <div class="flex-1">
+  <div :class="`bg-white`" class="h-full relative flex flex-col min-w-0 break-words rounded xl:mb-0 shadow-lg">
+    <div class="h-full flex p-4">
+      <div class="flex-1" v-if="assignment">
           <h3 class="font-semibold text-ellipsis overflow-hidden">
-            {{ projectName }}
+            {{ assignment.project.dealname }}
           </h3>
           <h5 class="text-blueGray-400 uppercase font-bold text-xs">
-            {{ projectPI }}
+            {{ assignment.project.contacts[0].firstname }} {{ assignment.project.contacts[0].lastname }}
           </h5>
           <div class="flex flex-row mt-4">
             <div class="grow">
               <h3 class="text-blueGray-900 uppercase font-bold">
-                {{ start }}
+                {{ assignment.start }}
               </h3>
               <h6 class="text-blueGray-400 mr-2 uppercase font-bold text-xs">
                 Start
@@ -19,7 +19,7 @@
             </div>
             <div class="grow">
               <h3 class="text-blueGray-900 uppercase font-bold">
-                {{ end }}
+                {{ assignment.end }}
               </h3>
               <h6 class="text-blueGray-400 mr-2 uppercase font-bold text-xs">
                 End
@@ -27,29 +27,15 @@
             </div>
           </div>
       </div>
+      <a href="/assignments" v-else class="block flex flex-initial w-full text-center font-semibold border-dashed border-4 justify-items-center items-center text-gray-400">
+        <h3 class="w-full">Create Assignment</h3>
+      </a>
     </div>
   </div>
 </template>
 <script>
 export default {
-  props: {
-    projectName: {
-      type: String,
-      required: true
-    },
-    projectPI: {
-      type: String,
-      required: true
-    },
-    start: {
-      type: String,
-      required: true
-    },
-    end: {
-      type: String,
-      required: true
-    }
-  },
+  props: ['assignment'],
   setup() {
 
   }

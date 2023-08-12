@@ -13,20 +13,10 @@
       />
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
-      <Assignment 
-        :projectName="assignments[0].project.dealname"
-        :projectPI="assignments[0].project.contacts[0].firstname + ' ' + assignments[0].project.contacts[0].lastname"
-        :start=formatDate(assignments[0].start)
-        :end=formatDate(assignments[0].end)
-      />
+      <Assignment :assignment="assignments[0]" />
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
-      <Assignment 
-      :projectName="assignments[1].project.dealname"
-        :projectPI="assignments[1].project.contacts[0].firstname + ' ' + assignments[1].project.contacts[0].lastname"
-        :start=formatDate(assignments[1].start)
-        :end=formatDate(assignments[1].end)
-      />
+      <Assignment :assignment="assignments[1]" />
     </div>
   </div>
 </template>
