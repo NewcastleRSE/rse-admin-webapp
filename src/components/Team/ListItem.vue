@@ -12,7 +12,7 @@
                 <p class="mt-1 flex text-xs leading-5 text-gray-500">{{ rse.team }}</p>
             </div>
         </div>
-        <div class="sm:w-3/4 justify-between">
+        <div class="sm:w-3/4 flex flex-col flex-grow place-content-center">
             <TimeSummary :rse="rse" />
         </div>
     </li>

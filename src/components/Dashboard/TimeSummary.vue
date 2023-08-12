@@ -1,15 +1,11 @@
 <template>
-    <div class="flex items-center justify-between gap-x-4 sm:flex-none">
-        <div class="flex-grow sm:block">
-            <div class="relative" aria-hidden="true" v-if="rse.lastname !== 'Horsfall' && rse.lastname !== 'Lozada'">
-                <div class="overflow-hidden rounded-full bg-gray-200 h-4 relative">
-                    <div class="h-4 absolute bg-cyan-600 left-0" :style="{ width: `${billable}%` }" />
-                    <div class="h-4 absolute bg-yellow-400" :style="{ left: `${billable}%`, width: `${nonBillable}%` }" />
-                    <div class="h-4 absolute bg-red-400" :style="{ left: `${recorded}%`, width: `${missing}%` }" />
-                </div>
-                <div class="h-6 w-0.5 -top-1 absolute bg-black" :style="{ left: `${progressThroughCapacity}%` }" />
-            </div>
+    <div class="relative" aria-hidden="true" v-if="rse.lastname !== 'Horsfall' && rse.lastname !== 'Lozada'">
+        <div class="overflow-hidden rounded-full bg-gray-200 h-4 relative">
+            <div class="h-4 absolute bg-cyan-600 left-0" :style="{ width: `${billable}%` }" />
+            <div class="h-4 absolute bg-yellow-400" :style="{ left: `${billable}%`, width: `${nonBillable}%` }" />
+            <div class="h-4 absolute bg-red-400" :style="{ left: `${recorded}%`, width: `${missing}%` }" />
         </div>
+        <div class="h-6 w-0.5 -top-1 absolute bg-black" :style="{ left: `${progressThroughCapacity}%` }" />
     </div>
 </template>
 <script setup>
