@@ -9,28 +9,28 @@
       />
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <availability-card v-on:click="$router.push({path:`/team/${(nextMiddleware.firstname + ' ' + nextMiddleware.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
+      <availability-card v-on:click="$router.push({path:`/team/${(nextMiddleware.displayName).replace(/\s+/g, '-').toLowerCase()}`})"
         :image="`/src/assets/img/avatars/${nextMiddleware.photo}`"
         label="MIDDLEWARE"
-        :title="`${nextMiddleware.firstname} ${nextMiddleware.lastname}`"
+        :title="`${nextMiddleware.displayName}`"
         :subTitle=formatDate(nextMiddleware.nextAvailableDate)
         :value="`${Math.floor(nextMiddleware.wait.months) > 0 ? Math.floor(nextMiddleware.wait.months) : 0} Months ${Math.floor(nextMiddleware.wait.days) > 0 ? Math.floor(nextMiddleware.wait.days) : 0 } Days`"            
       />
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <availability-card v-on:click="$router.push({path:`/team/${(nextWebMobile.firstname + ' ' + nextWebMobile.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
+      <availability-card v-on:click="$router.push({path:`/team/${(nextWebMobile.displayName).replace(/\s+/g, '-').toLowerCase()}`})"
         :image="`/src/assets/img/avatars/${nextWebMobile.photo}`"
         label="WEB &amp; MOBILE"
-        :title="`${nextWebMobile.firstname} ${nextWebMobile.lastname}`"
+        :title="`${nextWebMobile.displayName}`"
         :subTitle=formatDate(nextWebMobile.nextAvailableDate)
         :value="`${Math.floor(nextWebMobile.wait.months) > 0 ? Math.floor(nextWebMobile.wait.months) : 0} Months ${Math.floor(nextWebMobile.wait.days) > 0 ? Math.floor(nextWebMobile.wait.days) : 0 } Days`"
       />
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <availability-card v-on:click="$router.push({path:`/team/${(nextDataScience.firstname + ' ' + nextDataScience.lastname).replace(/\s+/g, '-').toLowerCase()}`})"
+      <availability-card v-on:click="$router.push({path:`/team/${(nextDataScience.displayName).replace(/\s+/g, '-').toLowerCase()}`})"
       :image="`/src/assets/img/avatars/${nextDataScience.photo}`"
         label="DATA SCIENCE"
-        :title="`${nextDataScience.firstname} ${nextDataScience.lastname}`"
+        :title="`${nextDataScience.displayName}`"
         :subTitle=formatDate(nextDataScience.nextAvailableDate)
         :value="`${Math.floor(nextDataScience.wait.months) > 0 ? Math.floor(nextDataScience.wait.months) : 0} Months ${Math.floor(nextDataScience.wait.days) > 0 ? Math.floor(nextDataScience.wait.days) : 0 } Days`"
       />
