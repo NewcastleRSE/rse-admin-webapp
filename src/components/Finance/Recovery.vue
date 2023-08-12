@@ -11,105 +11,60 @@
                     </h2>
                 </div>
             </div>
-            <div class="relative py-4">
-                <div class="my-4 overflow-hidden w-full rounded bg-gray-200">
-                    <div class="h-10 rounded bg-cyan-600 text-white text-sm font-bold leading-6 text-right align-middle pr-3.5" :style="{'width': budgetUsed + '%'}"></div>
-                    <div class="absolute border-r-4 border-black h-20 top-3" :style="{'left': yearCompleted + '%'}"></div>
+            <div class="relative my-4" aria-hidden="true">
+                <div class="overflow-hidden rounded-full bg-gray-200 h-8 relative">
+                    <div class="h-8 absolute bg-cyan-600 left-0" :style="{ width: `${billable}%` }" />
+                    <div class="h-8 absolute bg-yellow-400" :style="{ left: `${billable}%`, width: `${nonBillable}%` }" />
+                    <div class="h-8 absolute bg-red-400" :style="{ left: `${recorded}%`, width: `${missing}%` }" />
                 </div>
-          </div>
+                <div class="h-12 w-0.5 -top-2 absolute bg-black" :style="{ left: `${progressThroughCapacity}%` }" />
+            </div>
+            <div class="flex px-4 py-3">
+                <ul class="py-2">
+                    <li class="float-left">
+                        <i class="fa-solid fa-square text-cyan-600"></i>
+                        <span class="pl-2 pr-6">Billable</span>
+                    </li>
+                    <li class="float-left">
+                        <i class="fa-solid fa-square text-yellow-400"></i>
+                        <span class="pl-2 pr-6">Non-Billable</span>
+                    </li>
+                    <li class="float-left">
+                        <i class="fa-solid fa-square text-red-400"></i>
+                        <span class="pl-2 pr-6">Missing</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </template>
 <script setup>
+import { useRSEsStore, useTimesheetsStore } from '../../stores'
+import { DateTime } from 'luxon-business-days'
 import { currentFY } from '../../utils/dates'
-import { useInvoicesStore, useRSEsStore, useTimesheetsStore } from '@/stores'
 
-const invoicesStore = useInvoicesStore(),
+const timesheetStore = useTimesheetsStore(),
       rsesStore = useRSEsStore(),
-      timesheetsStore = useTimesheetsStore()
+      dates = currentFY()
 
-const rses = rsesStore.getRSEs()
+const teamSummary = []
 
-const currentYear = currentFY()
+rsesStore.getRSEs().forEach(rse => teamSummary.push(timesheetStore.getRSESummary(rse)))
 
-const nonBillableProjects = ['RSE Team', 'Carpentries', 'Management', 'Non-Project Event', 'Volunteering']
+const totalCapacity = teamSummary.reduce((capacity, summary) => capacity + summary.capacity, 0),
+      totalRecorded = teamSummary.reduce((recorded, summary) => recorded + summary.recorded, 0),
+      totalBillable = teamSummary.reduce((billable, summary) => billable + summary.billable, 0),
+      totalNonBillable = teamSummary.reduce((nonBillable, summary) => nonBillable + summary.nonBillable, 0),
+      totalMissing = teamSummary.reduce((missing, summary) => missing + summary.missing, 0),
+      averageProRata = totalCapacity / (220 * teamSummary.length)
 
-let totalCapacity = 0,
-    totalRecorded = 0,
-    rseBreakdown = []
+const recorded = ((totalRecorded / totalCapacity) * 100).toFixed(2),
+      billable = ((totalBillable / totalCapacity) * 100).toFixed(2),
+      nonBillable = ((totalNonBillable / totalCapacity) * 100).toFixed(2),
+      missing = ((totalMissing / totalCapacity) * 100).toFixed(2)
 
-// Compute total team capacity in days this year
-rses.forEach(rse => {
+const workingDaysSoFar = DateTime.now().workingDiff(dates.startDate, 'days') * (teamSummary.length * averageProRata)
 
-    let rseStats = {
-        name: rse.displayName,
-        capacity: 0,
-        recorded: 0,
-        billable: 0,
-        nonBillable: 0,
-        missing: 0,
-        recoveryRate: 0,
-        nonBillableProjects: {}
-    }
+const progressThroughCapacity = workingDaysSoFar > 0 ? ((workingDaysSoFar / totalCapacity) * 100).toFixed(2) : 0
 
-    if(rse.lastname !== 'Horsfall' && rse.lastname !== 'Lozada') {
-
-        rseStats.capacity = rse.capacity
-
-        const timesheets = timesheetsStore.getByRSE(rse.firstname + ' ' + rse.lastname)
-
-        timesheets?.months.forEach(month => {
-            month.projects.forEach(project => {
-
-                if(nonBillableProjects.indexOf(project.name) === -1) {
-                    rseStats.billable += project.days
-                }
-                else {
-                    if(!rseStats.nonBillableProjects[project.name]) {
-                        rseStats.nonBillableProjects[project.name] = 0
-                    }
-                    rseStats.nonBillable += project.days
-                    rseStats.nonBillableProjects[project.name] += project.days
-                }
-
-                rseStats.recorded += project.days
-            })
-        })
-
-        rseStats.missing = rseStats.capacity - rseStats.recorded
-        rseStats.recoveryRate = ((rseStats.billable/rseStats.capacity) * 100).toFixed(2) + '%'
-        rseBreakdown.push(rseStats)
-    }
-
-    totalCapacity += rseStats.capacity
-    totalRecorded += rseStats.billable
-
-    console.log(rseStats)
-})
-
-let invoicedDays = {
-    sent: 0,
-    processed: 0,
-    paid: 0
-}
-const invoices = invoicesStore.getByFinancialYear(currentYear.startDate.startOf('day'))
-
-invoices.forEach(invoice => {
-    if(invoice.paid) {
-        invoicedDays.paid += invoice.units
-    }
-    else if(invoice.processed) {
-        invoicedDays.processed += invoice.units
-    }
-    else if(invoice.sent) {
-        invoicedDays.sent += invoice.units
-    }
-})
-
-console.log(totalRecorded)
-console.log(invoicedDays)
-console.log(totalCapacity)
-
-const budgetUsed = (totalRecorded / totalCapacity) * 100
-const yearCompleted = 85
 </script>

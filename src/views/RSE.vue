@@ -10,7 +10,9 @@
             </div>
           </div>
         </div>
-        <time-summary :rse="rse" class="px-4 py-3"/>
+        <div class="px-4 py-3 flex flex-col flex-grow place-content-center">
+          <TimeSummary :rse="rse" />
+        </div>
         <div class="flex px-4 py-3">
           <ul class="py-2">
             <li class="float-left">
