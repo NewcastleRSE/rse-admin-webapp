@@ -20,7 +20,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
   }
 
     function getByID(id) {
-        return assignments.value.find(assignment => assignment.id === id)
+        return assignments.value.find(assignment => assignment.id === Number(id))
     }
 
     function getByRSE(rse) {
@@ -28,7 +28,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     function getByProject(projectId) {
-      return assignments.value.filter(assignment => assignment.project.id === projectId)
+      return assignments.value.filter(assignment => assignment.project.id === Number(projectId))
     }
 
     function getByPeriod(start,end,rse = null) {

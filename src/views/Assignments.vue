@@ -44,7 +44,7 @@ function create(rseID, projectID, dateRange, split) {
 }
 
 function edit(assignmentID, rseID, start, end) {
-  let assignment = assignmentsStore.getByID(Number(assignmentID))
+  let assignment = assignmentsStore.getByID(assignmentID)
 
   if(rseID) {
     assignment.rse = rseID !== assignment.rse ? rseID : assignment.rse

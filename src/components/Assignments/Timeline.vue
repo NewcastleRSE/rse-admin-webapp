@@ -168,10 +168,13 @@ export default {
         },
         events: {
           onEnd({ items }) {
-            items.after.forEach(assignment => {
+            items.after.forEach((assignment, index) => {
               const assignmentID = Number(assignment.id.split('-')[2]),
                     rseID = Number(assignment.rowId.split('-')[2])
-              emit('resize', assignmentID, rseID, assignment.time.start, assignment.time.end)
+              
+              if(assignment.time.start !== items.initial[index].time.start || assignment.time.end !== items.initial[index].time.end) {
+                emit('resize', assignmentID, rseID, assignment.time.start, assignment.time.end)
+              }
             })
             return items.after
           }
@@ -196,10 +199,13 @@ export default {
             })
           },
           onEnd({ items }) {
-            items.after.forEach(assignment => {
+            items.after.forEach((assignment, index) => {
               const assignmentID = Number(assignment.id.split('-')[2]),
                     rseID = Number(assignment.rowId.split('-')[2])
-              emit('resize', assignmentID, rseID, assignment.time.start, assignment.time.end)
+
+              if(assignment.time.start !== items.initial[index].time.start || assignment.time.end !== items.initial[index].time.end) {
+                emit('resize', assignmentID, rseID, assignment.time.start, assignment.time.end)
+              }
             })
             return items.after
           }
@@ -215,7 +221,8 @@ export default {
       function eventClickHandler(event, data){
           let assignmentID = data.item.id.split('-')[2]
           emit('edit', assignmentID)
-          gstc.api.plugins.Selection.selectItems([])
+          console.log(gstc.api.plugins.Selection.getSelected()['chart-timeline-items-row-item'])
+          // gstc.api.plugins.Selection.selectItems([])
       }
 
       function clickAction(element, data){
@@ -293,7 +300,7 @@ export default {
         }
         // Deleted assignment
         else if(mutation.events.type === 'set' && mutation.events.key === 'length' && mutation.events.newValue < mutation.events.oldValue) {
-          deleteAssignments(mutation.events.newValue)
+          deleteAssignments()
         }
         // Edited Assignment
         else {
