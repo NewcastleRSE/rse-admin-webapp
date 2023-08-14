@@ -219,9 +219,12 @@ export default {
       }
 
       function eventClickHandler(event, data){
-          let assignmentID = data.item.id.split('-')[2]
-          console.log(data.item)
-          emit('edit', assignmentID)
+          let itemData = data.item.id.split('-')
+          // Only allow edit on assignment items
+          if(itemData[1] === 'assignment') {
+            let assignmentID = itemData[2]
+            emit('edit', assignmentID)
+          }
       }
 
       function clickAction(element, data){
