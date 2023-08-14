@@ -44,8 +44,7 @@ function create(rseID, projectID, dateRange, split) {
 }
 
 function edit(assignmentID, rseID, start, end) {
-
-  let assignment = assignmentsStore.getByID(assignmentID)
+  let assignment = assignmentsStore.getByID(Number(assignmentID))
 
   if(rseID) {
     assignment.rse = rseID !== assignment.rse ? rseID : assignment.rse
@@ -57,7 +56,7 @@ function edit(assignmentID, rseID, start, end) {
   }
 
   const dateRange = [{$d: new Date(assignment.start)}, {$d: new Date(assignment.end)}]
-  assignmentModalRef.value.createAssignment(assignment.id, assignment.rse, assignment.project.id, dateRange, assignment.fte)
+  assignmentModalRef.value.createAssignment(assignment.id, assignment.rse, assignment.project.data.id, dateRange, assignment.fte)
 }
 
 async function resize(assignmentID, rseID, start, end) {
