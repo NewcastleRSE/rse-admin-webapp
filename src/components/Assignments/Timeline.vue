@@ -220,9 +220,8 @@ export default {
 
       function eventClickHandler(event, data){
           let assignmentID = data.item.id.split('-')[2]
+          console.log(data.item)
           emit('edit', assignmentID)
-          console.log(gstc.api.plugins.Selection.getSelected()['chart-timeline-items-row-item'])
-          // gstc.api.plugins.Selection.selectItems([])
       }
 
       function clickAction(element, data){
@@ -349,7 +348,7 @@ export default {
     }
     function addAssignment(assignment){
       let newItem = {
-        id: GSTC.api.GSTCID(assignment.id),
+        id: GSTC.api.GSTCID(`assignment-${assignment.id}`),
         rowId: GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`),
         label: assignment.project.data.name,
         time: {
@@ -360,7 +359,7 @@ export default {
         classNames: ['bg-cyan-500', 'rounded']
       }
       gstc.api.plugins.Selection.selectItems([])
-      state.update(`config.chart.items.${GSTC.api.GSTCID(assignment.id)}`, (item) => { item = newItem; return item } )
+      state.update(`config.chart.items.${GSTC.api.GSTCID(`assignment-${assignment.id}`)}`, (item) => { item = newItem; return item } )
     }
     function deleteAssignments(){
       const selectedItems = gstc.api.plugins.Selection.getSelected()['chart-timeline-items-row-item']
