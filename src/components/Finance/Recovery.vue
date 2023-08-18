@@ -1,6 +1,6 @@
 <template>
     <div class="w-full mb-12">
-        <div class="relative flex flex-col min-w-0 break-words w-full mb-6 p-4 shadow-lg rounded bg-white h-full">
+        <div class="relative flex flex-col min-w-0 break-words w-full mb-6 px-4 pt-4 shadow-lg rounded bg-white h-full">
             <div class="flex flex-wrap items-center">
                 <div class="relative w-full max-w-full flex-grow flex-1">
                     <h6 class="uppercase text-blueGray-400 mb-1 text-xs font-semibold">
@@ -35,6 +35,13 @@
                     </li>
                 </ul>
             </div>
+            <dl class="grow grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-4">
+                <div v-for="stat in stats" :key="stat.name" class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white p-4 sm:px-6 xl:px-8">
+                <dt class="text-sm font-medium leading-6 text-gray-500">{{ stat.name }}</dt>
+                <dd class="text-gray-700 text-xs font-medium">{{ stat.ratio }}</dd>
+                <dd class="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">{{ stat.value }}</dd>
+                </div>
+            </dl>
         </div>
     </div>
 </template>
@@ -67,4 +74,10 @@ const workingDaysSoFar = DateTime.now().workingDiff(dates.startDate, 'days') * (
 
 const progressThroughCapacity = workingDaysSoFar > 0 ? ((workingDaysSoFar / totalCapacity) * 100).toFixed(2) : 0
 
+const stats = [
+  { name: 'Revenue', value: '£0', ratio: '0%' },
+  { name: 'Invoiced', value: '£0', ratio: '0%' },
+  { name: 'Secured', value: '£0', ratio: '0%' },
+  { name: 'Expenses', value: '£0', ratio: '0%' },
+]
 </script>

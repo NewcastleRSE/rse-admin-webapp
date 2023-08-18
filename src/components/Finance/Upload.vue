@@ -1,7 +1,7 @@
 <template>
     <div class="w-full">
         <div class="relative flex flex-col min-w-0 break-words w-full h-full mb-6 p-4 shadow-lg rounded bg-white">
-            <div class="flex flex-wrap items-center">
+            <div class="flex flex-wrap items-center mb-4">
                 <div class="relative w-full max-w-full flex-grow flex-1">
                     <h6 class="uppercase text-blueGray-400 mb-1 text-xs font-semibold">
                         SAP Report
@@ -11,8 +11,8 @@
                     </h2>
                 </div>
             </div>
-            <form class="col-span-full" v-on:submit="uploadFile">
-                <div class="h-full mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+            <form class="grow col-span-full" v-on:submit="uploadFile">
+                <div class="h-full flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                     <div class="text-center">
                         <TableCellsIcon class="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
                         <div v-if="showFileSelect === true">
