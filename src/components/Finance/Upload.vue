@@ -1,6 +1,6 @@
 <template>
-    <div class="w-full mb-12">
-        <div class="relative flex flex-col min-w-0 break-words w-full mb-6 p-4 shadow-lg rounded bg-white">
+    <div class="w-full">
+        <div class="relative flex flex-col min-w-0 break-words w-full h-full mb-6 p-4 shadow-lg rounded bg-white">
             <div class="flex flex-wrap items-center">
                 <div class="relative w-full max-w-full flex-grow flex-1">
                     <h6 class="uppercase text-blueGray-400 mb-1 text-xs font-semibold">
@@ -12,7 +12,7 @@
                 </div>
             </div>
             <form class="col-span-full" v-on:submit="uploadFile">
-                <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                <div class="h-full mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                     <div class="text-center">
                         <TableCellsIcon class="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
                         <div v-if="showFileSelect === true">
