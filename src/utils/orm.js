@@ -86,3 +86,16 @@ export const fetchObject = async function (object, id, populate) {
 
   return response.data.data
 }
+
+export const uploadTransactions = async function (formData) {
+
+  const store = useAuthStore()
+
+  return axios.post(`${import.meta.env.VITE_API_URL}/transactions/upload`, formData,
+    {
+      headers: {
+        Authorization: `Bearer ${store.jwt}`
+      }
+    }
+  )
+}
