@@ -3,7 +3,7 @@
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
       <div v-on:click="$router.push({path:`/finance`})" class="relative overflow-hidden rounded bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
         <dt>
-            <div class="absolute rounded-md bg-cyan-500 p-3">
+            <div class="absolute rounded-md bg-cyan-600 p-3">
                 <ArrowTrendingUpIcon class="h-12 w-12 text-white" aria-hidden="true" />
             </div>
             <p class="ml-24 truncate text-sm font-medium text-gray-500">Cost Recovery</p>
@@ -22,7 +22,7 @@
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
       <div v-on:click="$router.push({path:`/finance/invoices`})" class="relative overflow-hidden rounded bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
         <dt>
-            <div class="absolute rounded-md bg-cyan-500 p-3">
+            <div class="absolute rounded-md bg-cyan-600 p-3">
                 <DocumentTextIcon class="h-12 w-12 text-white" aria-hidden="true" />
             </div>
             <p class="ml-24 truncate text-sm font-medium text-gray-500">Invoices</p>
@@ -35,7 +35,7 @@
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
       <div v-on:click="$router.push({path:`/finance/budget`})" class="relative overflow-hidden rounded bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
         <dt>
-            <div class="absolute rounded-md bg-cyan-500 p-3">
+            <div class="absolute rounded-md bg-cyan-600 p-3">
                 <CreditCardIcon class="h-12 w-12 text-white" aria-hidden="true" />
             </div>
             <p class="ml-24 truncate text-sm font-medium text-gray-500">Non-Staff Budget</p>
@@ -44,10 +44,10 @@
           <p class="mt-1 font-bold text-sm">{{ spend }} of {{ budget }}</p>
           <div class="relative">
             <div class="mt-1 overflow-hidden w-full rounded bg-gray-200">
-              <div class="h-6 rounded bg-cyan-600 text-white text-sm font-bold leading-6 text-right align-middle pr-3.5" :style="{'width': budgetUsed + '%'}">
+              <div class="h-6 bg-cyan-600 text-white text-sm font-bold leading-6 text-right align-middle pr-3.5" :style="{'width': budgetUsed + '%'}">
                 <span v-if="budgetUsed > 10">{{ budgetUsed.toFixed(2) }}%</span>
               </div>
-              <div class="absolute border-r-2 border-black h-10 -top-2" :style="{'left': yearCompleted + '%'}"></div>
+              <div class="absolute border-r-2 border-black h-8 -top-1" :style="{'left': progressThroughYear + '%'}"></div>
             </div>
           </div>
         </dd>
@@ -56,14 +56,14 @@
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
       <div v-on:click="$router.push({path:`/finance/transactions/2022`})" class="relative overflow-hidden rounded bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
         <dt>
-            <div class="absolute rounded-md bg-cyan-500 p-3">
+            <div class="absolute rounded-md bg-cyan-600 p-3">
                 <CurrencyPoundIcon class="h-12 w-12 text-white" aria-hidden="true" />
             </div>
-            <p class="ml-24 truncate text-sm font-medium text-gray-500">Transactions</p>
+            <p class="ml-24 truncate text-sm font-medium text-gray-500">Transactions Up To</p>
         </dt>
         <dd class="ml-24 items-baseline">
             <p class="text-2xl font-semibold text-gray-900">{{ upToDate }}</p>
-            <p class="text-sm text-gray-900">{{ daysPassed }} days ago</p>
+            <p class="text-sm font-medium text-gray-500">{{ daysPassed }} days ago</p>
         </dd>
       </div>
     </div>
@@ -71,10 +71,13 @@
 </template>
 
 <script setup>
-import { DateTime } from 'luxon'
+import { DateTime } from 'luxon-business-days'
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/vue/20/solid'
 import { ArrowTrendingUpIcon, CreditCardIcon, CurrencyPoundIcon, DocumentTextIcon } from '@heroicons/vue/24/outline'
 import { useAssignmentsStore, useFacilitiesStore, useInvoicesStore, useProjectsStore, useTransactionsStore } from '@/stores'
+import { currentFY } from '../../utils/dates'
+
+const dates = currentFY()
 
 const assignmentsStore = useAssignmentsStore(),
       facilitiesStore = useFacilitiesStore(),
@@ -140,13 +143,12 @@ const states = [
  * Budget progress bar
  */
 
+const progressThroughYear = ((DateTime.now().workingDiff(dates.startDate, 'days') / 365) * 100).toFixed(0)
 const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' })
 
-const diff = startDate.plus({year: 1}).minus({day: 1}).diff(currentDate, ['days'])
 const budget = formatter.format(facility.nonSalaryCosts)
 const spend = formatter.format((transactionsSummary.nonSalaryExpenditure.total * -1))
-const budgetUsed = (transactionsSummary.nonSalaryExpenditure.total * -1) / facility.nonSalaryCosts
-const yearCompleted = (100 - (diff.toObject().days / 365))
+const budgetUsed = ((transactionsSummary.nonSalaryExpenditure.total * -1) / facility.nonSalaryCosts) * 100
 
 /**
  * Transactions validity date
