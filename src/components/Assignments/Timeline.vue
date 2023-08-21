@@ -17,8 +17,9 @@ import 'gantt-schedule-timeline-calendar/dist/style.css'
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { DateTime } from 'luxon'
 import { useAssignmentsStore } from '../../stores'
+import globalthis from 'globalthis'
 
-const globalthis = require('globalthis')
+// const globalthis = require('globalthis')
 
 let globalThis = globalthis(),
     canChangeRow = true,
