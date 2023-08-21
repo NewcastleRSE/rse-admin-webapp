@@ -10,7 +10,7 @@
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
       <availability-card v-on:click="$router.push({path:`/team/${(nextMiddleware.displayName).replace(/\s+/g, '-').toLowerCase()}`})"
-        :image="`/src/assets/img/avatars/${nextMiddleware.photo}`"
+        :image="getImageUrl(nextMiddleware.photo)"
         label="MIDDLEWARE"
         :title="`${nextMiddleware.displayName}`"
         :subTitle=formatDate(nextMiddleware.nextAvailableDate)
@@ -19,7 +19,7 @@
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
       <availability-card v-on:click="$router.push({path:`/team/${(nextWebMobile.displayName).replace(/\s+/g, '-').toLowerCase()}`})"
-        :image="`/src/assets/img/avatars/${nextWebMobile.photo}`"
+        :image="getImageUrl(nextWebMobile.photo)"
         label="WEB &amp; MOBILE"
         :title="`${nextWebMobile.displayName}`"
         :subTitle=formatDate(nextWebMobile.nextAvailableDate)
@@ -28,7 +28,7 @@
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
       <availability-card v-on:click="$router.push({path:`/team/${(nextDataScience.displayName).replace(/\s+/g, '-').toLowerCase()}`})"
-      :image="`/src/assets/img/avatars/${nextDataScience.photo}`"
+      :image="getImageUrl(nextDataScience.photo)"
         label="DATA SCIENCE"
         :title="`${nextDataScience.displayName}`"
         :subTitle=formatDate(nextDataScience.nextAvailableDate)
@@ -53,6 +53,10 @@ const nextRSE = ref(rsesStore.getNext()),
 
 function formatDate(date) {
   return new Date(date).toLocaleDateString()
+}
+
+function getImageUrl(name) {
+  return new URL(`../../assets/img/avatars/${name}`, import.meta.url).href
 }
 
 </script>
