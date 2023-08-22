@@ -2,7 +2,7 @@
   <div class="flex items-stretch flex-wrap">
     <div class="w-full lg:w-full xl:w-1/2 px-4">
       <profile-card
-        :image="`/src/assets/img/avatars/${rse.photo}`"
+        :image=getImageUrl(rse.photo)
         :name="rse.displayName"
         :team="rse.team"
         :availableDate=formatDate(rse.nextAvailableDate)
@@ -44,6 +44,8 @@ function formatDate(date) {
   return new Date(date).toLocaleDateString()
 }
 
-console.log(rse)
+function getImageUrl(name) {
+  return new URL(`../../assets/img/avatars/${name}`, import.meta.url).href
+}
 
 </script>

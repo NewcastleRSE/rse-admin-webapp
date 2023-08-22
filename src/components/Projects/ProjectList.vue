@@ -34,7 +34,7 @@
             <dt class="sr-only">RSEs</dt>
             <dd v-for="rse in project.rses" :key="rse.id">
               <div class="group flex relative">
-              <img class="h-8 w-8 rounded-full shadow-md bg-gray-50 ring-2 ring-white" :src="`/src/assets/img/avatars/${rse.photo}`" :alt="`${rse.firstname} ${rse.lastname}`" />
+              <img class="h-8 w-8 rounded-full shadow-md bg-gray-50 ring-2 ring-white" :src="getImageUrl(rse.photo)" :alt="`${rse.firstname} ${rse.lastname}`" />
                 <span class="z-10 group-hover:opacity-100 transition-opacity bg-gray-800 p-2 text-sm text-gray-100 rounded-md absolute left-1/2 
                 -translate-x-1/2 translate-y-full opacity-0 mt-1 mx-auto whitespace-nowrap">{{rse.firstname}} {{rse.lastname}}</span>
               </div>
@@ -98,5 +98,9 @@ projects.forEach((project, index) => {
     projects[index].hubspotLink = 'https://app.hubspot.com/contacts/5251042/deal/' + project.hubspotId
     projects[index].clockifyLink = `https://app.clockify.me/reports/summary?start=${dates.startDate.toISO()}&end=${dates.currentDate.toISO()}&filterValuesData=%7B%22projects%22:%5B%22${project.clockifyID}%22%5D%7D&filterOptions=%7B%22projects%22:%7B%22status%22:%22ALL%22%7D%7D`
 })
+
+function getImageUrl(name) {
+  return new URL(`../../assets/img/avatars/${name}`, import.meta.url).href
+}
 
 </script>

@@ -1,7 +1,7 @@
 <template>
     <li class="relative flex justify-between py-5">
         <div class="flex gap-x-4 pr-6 sm:w-1/4 sm:flex-none">
-            <img class="h-12 w-12 flex-none rounded-full bg-gray-50" :src="'/src/assets/img/avatars/' + rse.photo" :alt="rse.displayName" />
+            <img class="h-12 w-12 flex-none rounded-full bg-gray-50" :src="getImageUrl(rse.photo)" :alt="rse.displayName" />
             <div class="min-w-0 flex-auto">
                 <p class="text-sm font-semibold leading-6 text-gray-900">
                     <a :href="`/team/${(rse.displayName).replace(/\s+/g, '-').toLowerCase()}`">
@@ -26,5 +26,9 @@ const props = defineProps({
 })
 
 let { rse } = toRefs(props)
+
+function getImageUrl(name) {
+  return new URL(`../../assets/img/avatars/${name}`, import.meta.url).href
+}
 
 </script>

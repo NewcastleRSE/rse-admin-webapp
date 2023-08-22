@@ -55,7 +55,7 @@
                                   <ComboboxOption v-for="rse in filteredRSEs" :key="rse.id" :value="rse" as="template" v-slot="{ active, selected }">
                                     <li :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-cyan-600 text-white' : 'text-gray-900']">
                                       <div class="flex items-center">
-                                        <img :src="`/src/assets/img/avatars/${rse.photo}`" alt="" class="h-6 w-6 flex-shrink-0 rounded-full" />
+                                        <img :src="getImageUrl(rse.photo)" alt="" class="h-6 w-6 flex-shrink-0 rounded-full" />
                                         <span :class="['ml-3 truncate', selected && 'font-semibold']">
                                           {{ rse.firstname }} {{ rse.lastname }}
                                         </span>
@@ -231,6 +231,10 @@ async function remove() {
   endDate = defaultState.endDate
 
   isOpen.value = false
+}
+
+function getImageUrl(name) {
+  return new URL(`../../assets/img/avatars/${name}`, import.meta.url).href
 }
 
 defineExpose({
