@@ -46,13 +46,13 @@ export const useInvoicesStore = defineStore('invoices', () => {
         invoices.value = await fetchObjects('invoices', 0, 100, ['project', 'transaction'])
     }
 
-    async function createInvoice (clockifyID, year, month) {
+    async function createInvoice (projectId, year, month) {
         return axios.post(`${import.meta.env.VITE_API_URL}/invoices`, {
             headers: {
               Authorization: `Bearer ${store.jwt}`
             },
             data: {
-                project: clockifyID,
+                project: projectId,
                 year: year,
                 month: month.toLowerCase()
             }
