@@ -1,12 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { currentFY } from '../utils/dates'
-import { fetchObject } from '../utils/orm'
 import { DateTime } from 'luxon-business-days'
 
 export const useHolidaysStore = defineStore('holidays', () => {
     const holidays = ref([])
-    const leave = ref([])
 
     const isHoliday = function(inst) {
         const closureDates = holidays.value.map(holiday => DateTime.fromISO(holiday.date))
@@ -59,15 +57,11 @@ export const useHolidaysStore = defineStore('holidays', () => {
         holidays.value = [...bankHolidays, ...closures].sort((a,b) => DateTime.fromISO(a.date) - DateTime.fromISO(b.date))
     }
 
-    async function fetchLeave () {
-        leave.value = await fetchObject('timesheets', 'leave', '*')
-    }
-
     async function reset () {
         holidays.value = []
     }
 
-    return { holidays, leave, getHolidays, getByYear, getByAcademicYear, fetchHolidays, fetchLeave, reset }
+    return { holidays, getHolidays, getByYear, getByAcademicYear, fetchHolidays, reset }
 },
 {
     persist: true

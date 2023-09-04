@@ -10,6 +10,7 @@ export const useAuthStore = defineStore('auth', () => {
     const holidaysStore = Stores.useHolidaysStore(), 
           facilitiesStore = Stores.useFacilitiesStore(),
           invoicesStore = Stores.useInvoicesStore(),
+          leaveStore = Stores.useLeaveStore(),
           projectsStore = Stores.useProjectsStore(),
           rsesStore = Stores.useRSEsStore(),
           timesheetsStore = Stores.useTimesheetsStore(),
@@ -52,8 +53,8 @@ export const useAuthStore = defineStore('auth', () => {
             Promise.all([
                 facilitiesStore.fetchFacilities(),
                 holidaysStore.fetchHolidays(),
-                holidaysStore.fetchLeave(),
                 invoicesStore.fetchInvoices(),
+                leaveStore.fetchLeave(),
                 projectsStore.fetchProjects(),
                 rsesStore.fetchRSEs(),
                 timesheetsStore.fetchTimesheets(),
