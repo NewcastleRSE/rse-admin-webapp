@@ -20,6 +20,11 @@ export const useLeaveStore = defineStore('leave', () => {
         return leave.value.filter(leave => currentYear.startDate <= DateTime.fromISO(leave.DATE) && currentYear.endDate >= DateTime.fromISO(leave.DATE))
     }
 
+    function getByRSE(name) {
+        const currentYear = currentFY()
+        return leave.value.filter(leave => currentYear.startDate <= DateTime.fromISO(leave.DATE) && currentYear.endDate >= DateTime.fromISO(leave.DATE) && leave.NAME === name)
+    }
+
     async function fetchLeave () {
         leave.value = await fetchObject('timesheets', 'leave', '*')
     }
@@ -28,7 +33,7 @@ export const useLeaveStore = defineStore('leave', () => {
         leave.value = []
     }
 
-    return { leave, getLeave, getByYear, getByAcademicYear, fetchLeave, reset }
+    return { leave, getLeave, getByYear, getByAcademicYear, getByRSE, fetchLeave, reset }
 },
 {
     persist: true

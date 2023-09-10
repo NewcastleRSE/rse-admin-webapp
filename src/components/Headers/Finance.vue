@@ -54,7 +54,7 @@
       </div>
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4 cursor-pointer">
-      <div v-on:click="$router.push({path:`/finance/transactions/2022`})" class="relative overflow-hidden rounded bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
+      <div v-on:click="$router.push({path:`/finance/transactions/${startDate.year}`})" class="relative overflow-hidden rounded bg-white px-4 py-5 shadow-lg sm:px-6 sm:pt-6 h-full">
         <dt>
             <div class="absolute rounded-md bg-cyan-600 p-3">
                 <CurrencyPoundIcon class="h-12 w-12 text-white" aria-hidden="true" />
@@ -85,17 +85,17 @@ const assignmentsStore = useAssignmentsStore(),
       projectsStore = useProjectsStore(),
       transactionsStore = useTransactionsStore()
 
-let currentDate = DateTime.utc(),
-    startDate = DateTime.utc(currentDate.year, 8)
+// let currentDate = DateTime.utc(),
+//     startDate = DateTime.utc(currentDate.year, 8)
 
-if(currentDate.month < 8) {
-  startDate = startDate.minus({ year: 1 })
-}
+// if(currentDate.month < 8) {
+//   startDate = startDate.minus({ year: 1 })
+// }
 
-const assignments = assignmentsStore.getByPeriod(startDate.toISODate(), currentDate.toISODate())
-const facility = facilitiesStore.getByYear(2022)
-const invoices = invoicesStore.getByFinancialYear(startDate.year)
-const transactionsSummary = transactionsStore.getSummary(2022)
+const assignments = assignmentsStore.getByPeriod(dates.startDate.toISODate(), dates.currentDate.toISODate())
+const facility = facilitiesStore.getByYear(dates.startDate.year)
+const invoices = invoicesStore.getByFinancialYear(dates.startDate.year)
+const transactionsSummary = transactionsStore.getSummary(dates.startDate.year)
 
 /**
  * Cost Recovery
@@ -107,7 +107,7 @@ const costRecoveryRate = 68.44357
  * Invoice state counts
  */
 
-const monthsToDate = Math.floor(currentDate.diff(startDate, ['months']).values.months)
+const monthsToDate = Math.floor(dates.currentDate.diff(dates.startDate, ['months']).values.months)
 
 let expectedInvoices = 0
 
@@ -115,7 +115,7 @@ for (let i = 0; i < monthsToDate; i++) {
   const projectIDs = assignments.reduce(function (IDs, assignment) { return [...IDs, assignment.project.id] }, [])
   const projects = projectsStore.filterByIDs([...new Set(projectIDs)]).filter(project => project.costModel === 'Facility')
   expectedInvoices = expectedInvoices + projects.length
-  startDate = startDate.plus({ month: 1 })
+  dates.startDate = dates.startDate.plus({ month: 1 })
 }
 
 const states = [
@@ -155,6 +155,6 @@ const budgetUsed = ((transactionsSummary.nonSalaryExpenditure.total * -1) / faci
  */
 
 const upToDate = transactionsSummary.lastUpdated.toLocaleString()
-const daysPassed = Math.round(currentDate.diff(transactionsSummary.lastUpdated, ['days']).toObject().days)
+const daysPassed = Math.round(dates.currentDate.diff(transactionsSummary.lastUpdated, ['days']).toObject().days)
 
 </script>

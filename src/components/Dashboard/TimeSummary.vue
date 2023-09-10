@@ -10,18 +10,22 @@
 </template>
 <script setup>
 import { defineProps, toRefs } from 'vue'
-import { useTimesheetsStore } from '../../stores'
+import { useLeaveStore, useTimesheetsStore } from '../../stores'
 import { DateTime } from 'luxon-business-days'
 
 const props = defineProps({
     rse: null
 })
 
-const timesheetStore = useTimesheetsStore()
+const leaveStore = useLeaveStore(),
+      timesheetStore = useTimesheetsStore()
 
 let { rse } = toRefs(props)
 
+const leave = leaveStore.getByRSE(props.rse.displayName)
 const summary = timesheetStore.getRSESummary(props.rse)
+
+console.log(leave)
 
 const recorded = ((summary.recorded / summary.capacity) * 100).toFixed(2),
       billable = ((summary.billable / summary.capacity) * 100).toFixed(2),

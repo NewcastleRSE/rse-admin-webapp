@@ -20,7 +20,9 @@
 import VGrid from '@revolist/vue3-datagrid'
 import NumberColumnType from '@revolist/revogrid-column-numeral'
 import { useTransactionsStore } from '@/stores'
+import { currentFY } from '../../utils/dates'
 
+const dates = currentFY()
 const transactionsStore = useTransactionsStore()
 const numeral = NumberColumnType.getNumeralInstance()
 
@@ -56,7 +58,7 @@ const columnTypes = {
   currency: new NumberColumnType('($0,0.00)')
 }
 
-const transactions = transactionsStore.getByYear(2022)
+const transactions = transactionsStore.getByYear(dates.startDate.year)
 
 function convertRemToPixels(rem) {    
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
