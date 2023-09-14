@@ -28,7 +28,6 @@ export const useTimesheetsStore = defineStore('timesheets', () => {
             recorded: 0,
             billable: 0,
             nonBillable: 0,
-            missing: 0,
             recoveryRate: 0,
             nonBillableProjects: {}
         }
@@ -55,7 +54,6 @@ export const useTimesheetsStore = defineStore('timesheets', () => {
             })
         })
 
-        summary.missing = DateTime.now().workingDiff(DateTime.fromISO(rse.capacityStart), 'days') - summary.recorded
         summary.recoveryRate = ((summary.billable/summary.capacity) * 100).toFixed(2) + '%'
     
         return summary

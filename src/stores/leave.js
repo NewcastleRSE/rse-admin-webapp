@@ -20,9 +20,9 @@ export const useLeaveStore = defineStore('leave', () => {
         return leave.value.filter(leave => currentYear.startDate <= DateTime.fromISO(leave.DATE) && currentYear.endDate >= DateTime.fromISO(leave.DATE))
     }
 
-    function getByRSE(name) {
+    function getByRSE(username) {
         const currentYear = currentFY()
-        return leave.value.filter(leave => currentYear.startDate <= DateTime.fromISO(leave.DATE) && currentYear.endDate >= DateTime.fromISO(leave.DATE) && leave.NAME === name)
+        return leave.value.filter(leave => currentYear.startDate <= DateTime.fromISO(leave.DATE) && currentYear.endDate >= DateTime.fromISO(leave.DATE) && leave.ID === username)
     }
 
     async function fetchLeave () {

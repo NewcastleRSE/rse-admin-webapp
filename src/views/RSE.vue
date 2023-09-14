@@ -24,6 +24,10 @@
               <span class="pl-2 pr-6">Non-Billable</span>
             </li>
             <li class="float-left">
+              <i class="fa-solid fa-square text-emerald-400"></i>
+              <span class="pl-2 pr-6">Leave</span>
+            </li>
+            <li class="float-left">
               <i class="fa-solid fa-square text-red-400"></i>
               <span class="pl-2 pr-6">Missing</span>
             </li>
