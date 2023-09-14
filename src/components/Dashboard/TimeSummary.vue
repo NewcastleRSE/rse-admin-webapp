@@ -29,14 +29,15 @@ let summary = timesheetStore.getRSESummary(props.rse)
 summary.leave = 0
 
 leaveRequests.forEach(leave => {
-    if(DateTime.fromISO(leave.DATE) <= DateTime.now()) {
+    const leaveDate = DateTime.fromISO(leave.DATE)
+    if(leaveDate <= DateTime.now() && leaveDate >= DateTime.fromISO(props.rse.contractStart)) {
         summary.leave += leave.DURATION === 'Y' ? 1 : 0.5
     }  
 })
 
-const capacity = props.rse.displayName === 'Mark Turner' ? 1 : rse.value.capacity
+const capacity = props.rse.displayName === 'Mark Turner' ? 220 : rse.value.capacity
 
-const workingDaysSoFar = DateTime.now().workingDiff(DateTime.fromISO(props.rse.capacityStart), 'days') * (capacity / 220)
+const workingDaysSoFar = (DateTime.now().workingDiff(DateTime.fromISO(props.rse.capacityStart), 'days') * (capacity / 220)).toFixed(0)
 
 const progressThroughCapacity = workingDaysSoFar > 0 ? ((workingDaysSoFar / capacity) * 100).toFixed(2) : 0
 
@@ -51,8 +52,8 @@ const recorded = ((summary.recorded / summary.capacity) * 100).toFixed(2),
       accountedFor = (((summary.recorded + summary.leave) / summary.capacity) * 100).toFixed(2),
       missing = ((missingDays / summary.capacity) * 100).toFixed(2)
 
-console.log(summary)
-console.log(`${missingDays} of ${workingDaysSoFar}`)
+// console.log(summary)
+console.log(`${summary.name}, billable: ${summary.billable}, nonBillable: ${summary.nonBillable}, leave: ${summary.leave} of ${workingDaysSoFar}`)
 console.log(' ')
 
 </script>
