@@ -99,9 +99,9 @@ const assignmentsStore = useAssignmentsStore(),
 let currentDate = DateTime.utc(),
     startDate = DateTime.utc(currentDate.year, 8)
 
-//if(currentDate.month < 8) {
+if(currentDate.month < 8) {
   startDate = startDate.minus({ year: 1 })
-//} 
+} 
 
 const fyDates = currentFY()
 const yearTitle = `${fyDates.startDate.toFormat('yyyy')}/${fyDates.endDate.toFormat('yy')}`
