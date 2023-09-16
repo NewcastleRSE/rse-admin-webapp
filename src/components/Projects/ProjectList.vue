@@ -1,5 +1,5 @@
 <template>
-    <ul role="list" class="divide-y divide-gray-100">
+    <ul v-if="projects.length" role="list" class="divide-y divide-gray-100">
       <li v-for="project in projects" :key="project.id" class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap">
         <div class="flex flex-row items-center">
           <div class="pr-6">
@@ -51,6 +51,9 @@
         </div>
       </li>
     </ul>
+    <div v-else>
+      <p class="text-center my-8 font-semibold">There are no projects with this status.</p>
+    </div>
 </template>
 <style>
 li .external-service-icon path {
@@ -70,17 +73,25 @@ li:hover .external-service-icon.hubspot-icon path {
 }
 </style>  
 <script setup>
+import { useRoute } from 'vue-router'
 import { useAssignmentsStore, useProjectsStore, useRSEsStore } from '../../stores'
 import { currentFY } from '../../utils/dates'
 import { CheckCircleIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
 import Clockify from '../../assets/icons/clockify.svg'
 import HubSpot from '../../assets/icons/hubspot.svg'
 
+const route = useRoute()
+const status = route.path.split('/')[2]
+
 const assignmentsStore = useAssignmentsStore(),
       projectsStore = useProjectsStore(),
       rsesStore = useRSEsStore()
 
-const projects = projectsStore.getProjects().filter(project => project.dealstage === 'Awaiting Allocation' || project.dealstage === 'Allocated')
+let projects = projectsStore.getProjects().filter(project => project.dealstage === 'Awaiting Allocation' || project.dealstage === 'Allocated')
+
+if(status) {
+  projects = projects.filter(project => project.status === status)
+}
 
 const dates = currentFY()
 

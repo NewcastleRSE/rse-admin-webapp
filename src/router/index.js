@@ -25,6 +25,7 @@ import Transactions from '../views/finances/Transactions.vue'
 import AvailabilityHeader from '../components/Headers/Availability.vue'
 import FinanceHeader from '../components/Headers/Finance.vue'
 import ProfileHeader from '../components/Headers/Profile.vue'
+import ProjectsHeader from '../components/Headers/Projects.vue'
 
 /**
  * isTokenValid:
@@ -74,7 +75,16 @@ const routes = [
             name: 'Projects',
             components: {
               default: Projects,
-              header: AvailabilityHeader
+              header: ProjectsHeader
+            },
+            meta: { title: 'RSE Admin - Projects' }
+          },
+          {
+            path: '/projects/:status',
+            name: 'Status',
+            components: {
+              default: Projects,
+              header: ProjectsHeader
             },
             meta: { title: 'RSE Admin - Projects' }
           },
