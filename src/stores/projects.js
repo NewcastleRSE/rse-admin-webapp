@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { fetchObjects } from '../utils/orm'
+import { fetchObjects, updateObject } from '../utils/orm'
 
 export const useProjectsStore = defineStore('projects', () => {
     const projects = ref([])
@@ -25,6 +25,13 @@ export const useProjectsStore = defineStore('projects', () => {
         return projects.value.filter(project => ids.includes(project.id))
     }
 
+    async function changeStatus(id, status) {
+        const response = await updateObject('projects', id, { status: status})
+        const index = projects.value.findIndex((project) => project.id === response.id)
+
+        projects.value[index].status = response.status
+    }
+
     async function fetchProjects () {
         projects.value = await fetchObjects('projects', 0, 100)
     }
@@ -33,7 +40,7 @@ export const useProjectsStore = defineStore('projects', () => {
         projects.value = []
     }
 
-    return { projects, getProjects, getByID, getByHubspotID, filterByIDs, fetchProjects, reset }
+    return { projects, getProjects, getByID, getByHubspotID, filterByIDs, changeStatus, fetchProjects, reset }
 },
 {
     persist: true

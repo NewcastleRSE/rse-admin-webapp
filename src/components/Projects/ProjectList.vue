@@ -40,45 +40,66 @@
               </div>
             </dd>
           </div>
-          <div class="flex gap-x-2.5 ml-6">
+          <!-- <div class="flex gap-x-2.5 ml-6">
             <a :href="project.clockifyLink" target="_blank">
               <Clockify class="h-8 w-8 external-service-icon clockify-icon" />
             </a>
             <a :href="project.hubspotLink" target="_blank">
               <HubSpot class="h-8 w-8 external-service-icon hubspot-icon" />
             </a>
-          </div>
+          </div> -->
+          <Menu as="div" class="relative flex gap-x-2.5 ml-6">
+            <MenuButton class="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900">
+              <span class="sr-only">Open options</span>
+              <EllipsisVerticalIcon class="h-5 w-5" aria-hidden="true" />
+            </MenuButton>
+            <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
+              <MenuItems class="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white py-2 divide-y divide-gray-100 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+                <div class="py-1">
+                  <MenuItem v-slot="{ active }">
+                    <div v-on:click="changeStatus(project, 'green')" :class="[active ? 'bg-gray-50' : '', 'flex items-center px-4 py-1 text-sm font leading-6 text-gray-900']">
+                      <span class="grow">Stable</span>
+                      <CheckIcon v-if="project.status === 'green'" class="h-5 w-5 text-gray-700" />
+                    </div>
+                  </MenuItem>
+                  <MenuItem v-slot="{ active }">
+                    <div v-on:click="changeStatus(project, 'amber')" :class="[active ? 'bg-gray-50' : '', 'flex items-center px-4 py-1 text-sm leading-6 text-gray-900']">
+                      <span class="grow">At Risk</span>
+                      <CheckIcon v-if="project.status === 'amber'" class="h-5 w-5 text-gray-700" />
+                    </div>
+                  </MenuItem>
+                  <MenuItem v-slot="{ active }">
+                    <div v-on:click="changeStatus(project, 'red')" :class="[active ? 'bg-gray-50' : '', 'flex items-center px-4 py-1 text-sm leading-6 text-gray-900']">
+                      <span class="grow">Critical</span>
+                      <CheckIcon v-if="project.status === 'red'" class="h-5 w-5 text-gray-700" />
+                    </div>
+                  </MenuItem>
+                </div>
+                <div class="py-1">
+                  <MenuItem v-slot="{ active }">
+                    <a target="_blank" :href="project.hubspotLink" :class="[active ? 'bg-gray-50' : '', 'block px-4 py-1 text-sm leading-6 text-gray-900']">Hubspot</a>
+                  </MenuItem>
+                  <MenuItem v-slot="{ active }">
+                    <a target="_blank" :href="project.clockifyLink" :class="[active ? 'bg-gray-50' : '', 'block px-4 py-1 text-sm leading-6 text-gray-900']">Clockify</a >
+                  </MenuItem>
+                </div>
+              </MenuItems>
+            </transition>
+          </Menu>
         </div>
       </li>
     </ul>
     <div v-else>
       <p class="text-center my-8 font-semibold">There are no projects with this status.</p>
     </div>
-</template>
-<style>
-li .external-service-icon path {
-    fill: #f3f4f6;
-}
-
-li:hover .external-service-icon.clockify-icon path:first-child {
-    fill: #222222;
-}
-
-li:hover .external-service-icon.clockify-icon path:last-child {
-    fill: #03a9f4;
-}
-
-li:hover .external-service-icon.hubspot-icon path {
-    fill: #F8761F;
-}
-</style>  
+</template> 
 <script setup>
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import { EllipsisVerticalIcon } from '@heroicons/vue/20/solid'
 import { useRoute } from 'vue-router'
 import { useAssignmentsStore, useProjectsStore, useRSEsStore } from '../../stores'
 import { currentFY } from '../../utils/dates'
-import { CheckCircleIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
-import Clockify from '../../assets/icons/clockify.svg'
-import HubSpot from '../../assets/icons/hubspot.svg'
+import { CheckIcon, CheckCircleIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
 
 const route = useRoute()
 const status = route.path.split('/')[2]
@@ -112,6 +133,10 @@ projects.forEach((project, index) => {
 
 function getImageUrl(name) {
   return new URL(`../../assets/img/avatars/${name}`, import.meta.url).href
+}
+
+function changeStatus(project, status) {
+  projectsStore.changeStatus(project.id, status)
 }
 
 </script>

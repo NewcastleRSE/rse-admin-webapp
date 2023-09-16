@@ -87,6 +87,22 @@ export const fetchObject = async function (object, id, populate) {
   return response.data.data
 }
 
+export const updateObject = async function (object, id, payload) {
+
+  const store = useAuthStore()
+
+  let response = await axios.put(`${import.meta.env.VITE_API_URL}/${object}/${id}`, 
+    { data: payload },
+    {
+      headers: {
+        Authorization: `Bearer ${store.jwt}`,
+      }
+    }
+  )
+
+  return response.data.data
+}
+
 export const uploadTransactions = async function (formData) {
 
   const store = useAuthStore()
