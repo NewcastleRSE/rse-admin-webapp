@@ -52,8 +52,6 @@ const recorded = ((summary.recorded / summary.capacity) * 100).toFixed(2),
       accountedFor = (((summary.recorded + summary.leave) / summary.capacity) * 100).toFixed(2),
       missing = ((missingDays / summary.capacity) * 100).toFixed(2)
 
-// console.log(summary)
-console.log(`${summary.name}, billable: ${summary.billable}, nonBillable: ${summary.nonBillable}, leave: ${summary.leave} of ${workingDaysSoFar}`)
-console.log(' ')
+console.log(`${summary.name}, billable: ${summary.billable}, nonBillable: ${summary.nonBillable}, leave: ${summary.leave}, missing: ${missingDays} of ${workingDaysSoFar}`)
 
 </script>
