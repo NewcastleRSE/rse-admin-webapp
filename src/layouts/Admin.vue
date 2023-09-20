@@ -107,7 +107,7 @@ const navigation = [
   { name: 'Team', href: '/team', current: section === 'team' },
   { name: 'Projects', href: '/projects', current: section === 'projects' },
   { name: 'Finance', href: '/finance', current: section === 'finance' },
-  { name: 'Forecasting', href: '/forecasting', current: section === 'forecasting' },
+  // { name: 'Forecasting', href: '/forecasting', current: section === 'forecasting' },
 ]
 const userNavigation = [
   { name: 'Settings', href: '#' },
