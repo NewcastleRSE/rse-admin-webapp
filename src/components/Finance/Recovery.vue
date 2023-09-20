@@ -56,13 +56,14 @@
     </div>
 </template>
 <script setup>
-import { useRSEsStore, useTimesheetsStore } from '../../stores'
+import { useLeaveStore, useRSEsStore, useTimesheetsStore } from '../../stores'
 import { DateTime } from 'luxon-business-days'
 import { createPopper } from '@popperjs/core'
 import { ref } from 'vue'
 import { currentFY } from '../../utils/dates'
 
-const timesheetStore = useTimesheetsStore(),
+const leaveStore = useLeaveStore(),
+      timesheetStore = useTimesheetsStore(),
       rsesStore = useRSEsStore(),
       dates = currentFY(),
       popoverShow = ref(false)
@@ -80,7 +81,11 @@ let popoverTitle = '',
 
 const teamSummary = []
 
+const leaveDays = leaveStore.getByAcademicYear().filter(request => DateTime.fromISO(request.DATE) <= DateTime.now()).length
+
 rsesStore.getRSEs().forEach(rse => teamSummary.push(timesheetStore.getRSESummary(rse)))
+
+console.log(teamSummary)
 
 const totalCapacity = teamSummary.reduce((capacity, summary) => capacity + summary.capacity, 0),
       totalRecorded = teamSummary.reduce((recorded, summary) => recorded + summary.recorded, 0),
@@ -94,7 +99,7 @@ const recorded = ((totalRecorded / totalCapacity) * 100).toFixed(2),
       nonBillable = ((totalNonBillable / totalCapacity) * 100).toFixed(2),
       missing = ((totalMissing / totalCapacity) * 100).toFixed(2)
 
-const workingDaysSoFar = DateTime.now().workingDiff(dates.startDate, 'days') * (teamSummary.length * averageProRata)
+const workingDaysSoFar = (DateTime.now().workingDiff(dates.startDate, 'days') * (teamSummary.length * averageProRata)) - leaveDays
 
 const progressThroughCapacity = workingDaysSoFar > 0 ? ((workingDaysSoFar / totalCapacity) * 100).toFixed(2) : 0
 
@@ -138,10 +143,7 @@ function togglePopover(reference, classification) {
       }
     }
 
-// console.log(totalCapacity)
-// console.log(totalCapacity * 0.85)
-// console.log(totalBillable)
-// console.log(totalNonBillable)
+console.log(missing)
 
 const stats = [
   { name: 'Revenue', value: '£0', ratio: '0%' },

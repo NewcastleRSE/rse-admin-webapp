@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { DateTime } from 'luxon-business-days'
+import { useLeaveStore } from './leave'
 import { fetchObjects } from '../utils/orm'
 
 export const useTimesheetsStore = defineStore('timesheets', () => {
@@ -20,19 +21,31 @@ export const useTimesheetsStore = defineStore('timesheets', () => {
 
     function getRSESummary(rse) {
 
+        const leaveStore = useLeaveStore(),
+              leaveRequests = leaveStore.getByRSE(rse.username)
+
         const nonBillableProjects = ['RSE Team', 'Carpentries', 'Management', 'Non-Project Event', 'Volunteering']
 
         let summary = {
             name: rse.displayName,
-            capacity: 0,
+            capacity: rse.capacity,
             recorded: 0,
             billable: 0,
             nonBillable: 0,
+            leave: 0,
+            missing: 0,
             recoveryRate: 0,
             nonBillableProjects: {}
         }
+
+        leaveRequests.forEach(leave => {
+            const leaveDate = DateTime.fromISO(leave.DATE)
+            if(leaveDate <= DateTime.now() && leaveDate >= DateTime.fromISO(rse.contractStart)) {
+                summary.leave += leave.DURATION === 'Y' ? 1 : 0.5
+            }  
+        })
     
-        summary.capacity = rse.capacity
+        const workingDaysSoFar = (DateTime.now().workingDiff(DateTime.fromISO(rse.capacityStart), 'days') * (rse.capacity / 220)).toFixed(0)
 
         const timesheets = getByRSE(rse.displayName)
 
@@ -54,6 +67,7 @@ export const useTimesheetsStore = defineStore('timesheets', () => {
             })
         })
 
+        summary.missing = workingDaysSoFar - (summary.recorded + summary.leave)
         summary.recoveryRate = ((summary.billable/summary.capacity) * 100).toFixed(2) + '%'
     
         return summary

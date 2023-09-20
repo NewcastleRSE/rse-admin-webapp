@@ -11,29 +11,18 @@
 </template>
 <script setup>
 import { defineProps, toRefs } from 'vue'
-import { useLeaveStore, useTimesheetsStore } from '../../stores'
+import { useTimesheetsStore } from '../../stores'
 import { DateTime } from 'luxon-business-days'
 
 const props = defineProps({
     rse: null
 })
 
-const leaveStore = useLeaveStore(),
-      timesheetStore = useTimesheetsStore()
+const timesheetStore = useTimesheetsStore()
 
 let { rse } = toRefs(props)
 
-const leaveRequests = leaveStore.getByRSE(props.rse.username)
 let summary = timesheetStore.getRSESummary(props.rse)
-
-summary.leave = 0
-
-leaveRequests.forEach(leave => {
-    const leaveDate = DateTime.fromISO(leave.DATE)
-    if(leaveDate <= DateTime.now() && leaveDate >= DateTime.fromISO(props.rse.contractStart)) {
-        summary.leave += leave.DURATION === 'Y' ? 1 : 0.5
-    }  
-})
 
 const capacity = props.rse.displayName === 'Mark Turner' ? 220 : rse.value.capacity
 
@@ -41,17 +30,13 @@ const workingDaysSoFar = (DateTime.now().workingDiff(DateTime.fromISO(props.rse.
 
 const progressThroughCapacity = workingDaysSoFar > 0 ? ((workingDaysSoFar / capacity) * 100).toFixed(2) : 0
 
-let missingDays = workingDaysSoFar - (summary.recorded + summary.leave)
-
-missingDays = missingDays < 0 ? 0 : missingDays
-
 const recorded = ((summary.recorded / summary.capacity) * 100).toFixed(2),
       billable = ((summary.billable / summary.capacity) * 100).toFixed(2),
       nonBillable = ((summary.nonBillable / summary.capacity) * 100).toFixed(2),
       leave = ((summary.leave / summary.capacity) * 100).toFixed(2),
       accountedFor = (((summary.recorded + summary.leave) / summary.capacity) * 100).toFixed(2),
-      missing = ((missingDays / summary.capacity) * 100).toFixed(2)
+      missing = ((summary.missing / summary.capacity) * 100).toFixed(2)
 
-console.log(`${summary.name}, billable: ${summary.billable}, nonBillable: ${summary.nonBillable}, leave: ${summary.leave}, missing: ${missingDays} of ${workingDaysSoFar}`)
+console.log(`${summary.name}, billable: ${summary.billable}, nonBillable: ${summary.nonBillable}, leave: ${summary.leave}, missing: ${summary.missing} of ${workingDaysSoFar}`)
 
 </script>
