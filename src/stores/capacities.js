@@ -62,7 +62,12 @@ export const useCapacitiesStore = defineStore('capacities', () => {
 
         // Expand assignments to include full HubSpot project details
         assignments.forEach((assignment, index) => {
-          assignments[index].project = projectsStore.getByID(assignment.project.id)
+          if(assignment.project.name === 'Management') {
+            assignment.project.costModel = 'Facility'
+          }
+          else {
+            assignments[index].project = projectsStore.getByID(assignment.project.id)
+          }      
         })
 
         let monthlyUtilisation = {
