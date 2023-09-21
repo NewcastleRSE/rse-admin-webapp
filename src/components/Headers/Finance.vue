@@ -44,7 +44,7 @@
           <p class="mt-1 font-bold text-sm">{{ spend }} of {{ budget }}</p>
           <div class="relative">
             <div class="mt-1 overflow-hidden w-full rounded bg-gray-200">
-              <div class="h-6 bg-cyan-600 text-white text-sm font-bold leading-6 text-right align-middle pr-3.5" :style="{'width': budgetUsed + '%'}">
+              <div class="h-6 bg-cyan-600 text-white text-xs font-bold leading-6 text-right align-middle pr-3.5" :style="{'width': budgetUsed + '%'}">
                 <span class="absolute" :class="budgetUsed < 50 ? 'text-black pl-2' : 'text-white'" :style="{'left': budgetUsed + '%'}" v-if="budgetUsed > 0">{{ budgetUsed.toFixed(2) }}%</span>
               </div>
               <div class="absolute border-r-2 border-black h-8 -top-1" :style="{'left': progressThroughYear + '%'}"></div>
