@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import { fetchObjects } from '../utils/orm'
-import { DateTime } from 'luxon'
+import { DateTime, Interval } from 'luxon'
 
 const titleCase = str => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
 
@@ -25,9 +25,11 @@ export const useInvoicesStore = defineStore('invoices', () => {
         const yearStart = DateTime.utc(year, 8),
               yearEnd = yearStart.plus({years: 1}).minus({days: 1})
 
+        const financialYear = Interval.fromDateTimes(yearStart, yearEnd)
+
         const results = invoices.value.filter(invoice => {
             const period = DateTime.fromFormat(`${invoice.year} ${titleCase(invoice.month)}`, 'yyyy MMMM')
-            return yearStart <= period && period <= yearEnd
+            return financialYear.contains(period.endOf('day'))
         })
         return results ? results : []
     }

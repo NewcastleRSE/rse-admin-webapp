@@ -15,7 +15,8 @@
                 <div class="overflow-hidden rounded-full bg-gray-200 h-8 relative">
                     <div ref="billableBar" v-on:mouseover="togglePopover(billableBar, 'billable')" v-on:mouseleave="togglePopover(billableBar, 'billable')" class="h-8 absolute bg-cyan-600 left-0" :style="{ width: `${billable}%` }" />
                     <div ref="nonBillableBar" v-on:mouseover="togglePopover(nonBillableBar, 'nonBillable')" v-on:mouseleave="togglePopover(nonBillableBar, 'nonBillable')" class="h-8 absolute bg-yellow-400" :style="{ left: `${billable}%`, width: `${nonBillable}%` }" />
-                    <div ref="missingBar" v-on:mouseover="togglePopover(missingBar, 'missing')" v-on:mouseleave="togglePopover(missingBar, 'missing')" class="h-8 absolute bg-red-400" :style="{ left: `${recorded}%`, width: `${missing}%` }" />
+                    <div ref="leaveBar" v-on:mouseover="togglePopover(leaveBar, 'leave')" v-on:mouseleave="togglePopover(leaveBar, 'leave')" class="h-8 absolute bg-emerald-400" :style="{ left: `${recorded}%`, width: `${leave}%` }" />
+                    <div ref="missingBar" v-on:mouseover="togglePopover(missingBar, 'missing')" v-on:mouseleave="togglePopover(missingBar, 'missing')" class="h-8 absolute bg-red-400" :style="{ left: `${accountedFor}%`, width: `${missing}%` }" />
                 </div>
                 <div class="h-12 w-0.5 -top-2 absolute bg-black" :style="{ left: `${progressThroughCapacity}%` }" />
                 <div ref="popoverRef" :class="{'hidden': !popoverShow, 'block': popoverShow}" :style="{ 'left': popoverX +'px', 'top': popoverY +'px' }" class="bg-blueGray-700 border-0 mb-3 fixed block z-50 font-normal leading-normal text-sm max-w-xs text-left no-underline break-words rounded-lg">
@@ -40,6 +41,10 @@
                         <span class="pl-2 pr-6">Non-Billable</span>
                     </li>
                     <li class="float-left">
+                        <i class="fa-solid fa-square text-emerald-400"></i>
+                        <span class="pl-2 pr-6">Leave</span>
+                    </li>
+                    <li class="float-left">
                         <i class="fa-solid fa-square text-red-400"></i>
                         <span class="pl-2 pr-6">Missing</span>
                     </li>
@@ -56,14 +61,15 @@
     </div>
 </template>
 <script setup>
-import { useLeaveStore, useRSEsStore, useTimesheetsStore } from '../../stores'
+import { useInvoicesStore, useRSEsStore, useTimesheetsStore, useTransactionsStore } from '../../stores'
 import { DateTime } from 'luxon-business-days'
 import { createPopper } from '@popperjs/core'
 import { ref } from 'vue'
 import { currentFY } from '../../utils/dates'
 
-const leaveStore = useLeaveStore(),
+const invoicesStore = useInvoicesStore(),
       timesheetStore = useTimesheetsStore(),
+      transactionsStore = useTransactionsStore(),
       rsesStore = useRSEsStore(),
       dates = currentFY(),
       popoverShow = ref(false)
@@ -71,7 +77,10 @@ const leaveStore = useLeaveStore(),
 const popover = ref(),
       billableBar = ref(),
       nonBillableBar = ref(),
+      leaveBar = ref(),
       missingBar = ref()
+
+const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' })
 
 let popoverTitle = '',
     popoverRatio = 0,
@@ -81,34 +90,40 @@ let popoverTitle = '',
 
 const teamSummary = []
 
-const leaveDays = leaveStore.getByAcademicYear().filter(request => DateTime.fromISO(request.DATE) <= DateTime.now()).length
-
 rsesStore.getRSEs().forEach(rse => teamSummary.push(timesheetStore.getRSESummary(rse)))
 
-console.log(teamSummary)
+let invoicedTotal = 0
+
+invoicesStore.getByFinancialYear(dates.startDate.year)
+.filter(invoice => invoice.paid === null)
+.forEach(invoice => invoicedTotal += Number(invoice.price * invoice.units))
+
+const transactionsSummary = transactionsStore.getSummary(dates.startDate.year)
 
 const totalCapacity = teamSummary.reduce((capacity, summary) => capacity + summary.capacity, 0),
       totalRecorded = teamSummary.reduce((recorded, summary) => recorded + summary.recorded, 0),
       totalBillable = teamSummary.reduce((billable, summary) => billable + summary.billable, 0),
       totalNonBillable = teamSummary.reduce((nonBillable, summary) => nonBillable + summary.nonBillable, 0),
+      totalLeave = teamSummary.reduce((leave, summary) => leave + summary.leave, 0),
       totalMissing = teamSummary.reduce((missing, summary) => missing + summary.missing, 0),
-      averageProRata = totalCapacity / (220 * teamSummary.length)
+      averageProRata = totalCapacity / (250 * teamSummary.length)
 
 const recorded = ((totalRecorded / totalCapacity) * 100).toFixed(2),
       billable = ((totalBillable / totalCapacity) * 100).toFixed(2),
       nonBillable = ((totalNonBillable / totalCapacity) * 100).toFixed(2),
+      leave = ((totalLeave / totalCapacity) * 100).toFixed(2),
+      accountedFor = (Number(recorded) + Number(leave)).toFixed(2),
       missing = ((totalMissing / totalCapacity) * 100).toFixed(2)
 
-const workingDaysSoFar = (DateTime.now().workingDiff(dates.startDate, 'days') * (teamSummary.length * averageProRata)) - leaveDays
+const workingDaysSoFar = (DateTime.now().workingDiff(dates.startDate, 'days') * (teamSummary.length * averageProRata))
 
 const progressThroughCapacity = workingDaysSoFar > 0 ? ((workingDaysSoFar / totalCapacity) * 100).toFixed(2) : 0
 
 function togglePopover(reference, classification) {
-      if(popoverShow.value){
+    if(popoverShow.value){
         popoverShow.value = false
-      }
-      else {
-
+    }
+    else {
         const position = reference.getBoundingClientRect()
 
         if(classification === 'billable') {
@@ -127,6 +142,14 @@ function togglePopover(reference, classification) {
             popoverY = position.y + (position.height * 1.5)
             popoverShow.value = true
         }
+        else if(classification === 'leave') {
+            popoverTitle = 'Annual Leave'
+            popoverRatio = leave
+            popoverDays = totalLeave
+            popoverX = position.x + (position.width / 2)
+            popoverY = position.y + (position.height * 1.5)
+            popoverShow.value = true
+        }
         else if(classification === 'missing') {
             popoverTitle = 'Missing Time'
             popoverRatio = missing
@@ -137,18 +160,17 @@ function togglePopover(reference, classification) {
         }
         
         createPopper(reference, popover, {
-          placement: 'right'
+            placement: 'right'
         })
-
-      }
     }
+}
 
-console.log(missing)
+console.log(transactionsSummary)
 
 const stats = [
-  { name: 'Revenue', value: '£0', ratio: '0%' },
-  { name: 'Invoiced', value: '£0', ratio: '0%' },
+  { name: 'Revenue', value: formatter.format((transactionsSummary.income.total)), ratio: '0%' },
+  { name: 'Invoiced', value: formatter.format(invoicedTotal.toFixed(2)), ratio: '0%' },
   { name: 'Secured', value: '£0', ratio: '0%' },
-  { name: 'Expenses', value: '£0', ratio: '0%' },
+  { name: 'Expenses', value: formatter.format((transactionsSummary.nonSalaryExpenditure.total * -1)), ratio: '0%' },
 ]
 </script>
