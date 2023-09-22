@@ -14,7 +14,7 @@
             <div>S</div>
           </div>
           <div class="isolate mt-2 grid grid-cols-7 gap-px rounded-lg bg-gray-200 text-sm shadow ring-1 ring-gray-200">
-            <div v-for="(day, dayIdx) in month.days" :key="day.date" :class="[day.isCurrentMonth ? 'bg-white text-gray-800' : 'bg-gray-50 text-gray-400', dayIdx === 0 && 'rounded-tl-lg', dayIdx === 6 && 'rounded-tr-lg', dayIdx === month.days.length - 7 && 'rounded-bl-lg', dayIdx === month.days.length - 1 && 'rounded-br-lg', 'py-1.5 focus:z-10']">
+            <div v-for="(day, dayIdx) in month.days" :key="day.date" :class="[day.isCurrentMonth ? 'bg-white text-gray-800' : 'bg-gray-50 text-gray-400', day.status === 'leave' && day.isCurrentMonth && '!bg-emerald-500 !text-white', dayIdx === 0 && 'rounded-tl-lg', dayIdx === 6 && 'rounded-tr-lg', dayIdx === month.days.length - 7 && 'rounded-bl-lg', dayIdx === month.days.length - 1 && 'rounded-br-lg', 'py-1.5 focus:z-10']">
               <time :datetime="day.date" class="mx-auto flex h-7 w-7 items-center justify-center rounded-full">{{ day.date.split('-').pop().replace(/^0/, '') }}</time>
             </div>
           </div>
@@ -25,7 +25,12 @@
 </template>
 
 <script setup>
+import { defineProps } from 'vue';
 import { currentFY } from '../../utils/dates'
+
+const props = defineProps({
+  leave: null
+})
 
 const dates = currentFY()
 
@@ -40,9 +45,17 @@ for(let i = 0; i < 12; i++) {
     const days = []
 
     for(let d = 0; d < 42; d++) {
+
+        let status = 'missing'
+
+        if(props.leave.find(request => request.DATE === startPoint.toISODate())) {
+            status = 'leave'
+        }
+
         days.push({
             date: startPoint.toISODate(),
-            isCurrentMonth: startPoint.month === date.month
+            isCurrentMonth: startPoint.month === date.month,
+            status: status
         })
         startPoint = startPoint.plus({days: 1})
     }

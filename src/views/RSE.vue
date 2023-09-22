@@ -44,7 +44,7 @@
           <span aria-hidden="true" :class="[currentTabIdx == tabIdx ? 'bg-cyan-600' : 'bg-gray-200', 'absolute inset-x-0 bottom-0 h-0.5']" />
         </div>
       </nav>
-      <calendar v-if="currentTabIdx === 0" />
+      <calendar v-if="currentTabIdx === 0" :leave="leave" />
       <div v-if="currentTabIdx === 1">
         Skills
       </div>
@@ -58,14 +58,18 @@ import Calendar from '../components/Team/Calendar.vue'
 import TimeSummary from '@/components/Dashboard/TimeSummary.vue'
 import AssignmentList from '@/components/Team/AssignmentList.vue'
 import { useRoute } from 'vue-router'
-import { useRSEsStore } from '../stores'
+import { useRSEsStore, useLeaveStore } from '../stores'
 
 const route = useRoute()
-const rsesStore = useRSEsStore()
+
+const rsesStore = useRSEsStore(),
+      leaveStore = useLeaveStore()
 
 const rse = rsesStore.getByName(route.path.split('/')[2])
 
 rse.assignments = rse.assignments.reverse()
+
+const leave = leaveStore.getByRSE(rse.username)
 
 let currentTabIdx = ref(2)
 
