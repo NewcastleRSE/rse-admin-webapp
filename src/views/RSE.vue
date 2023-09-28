@@ -44,11 +44,13 @@
           <span aria-hidden="true" :class="[currentTabIdx == tabIdx ? 'bg-cyan-600' : 'bg-gray-200', 'absolute inset-x-0 bottom-0 h-0.5']" />
         </div>
       </nav>
-      <calendar v-if="currentTabIdx === 0" :leave="leave" />
-      <div v-if="currentTabIdx === 1">
+      <Suspense>
+        <calendar v-if="currentTabIdx === 0" :rse="rse" />
+      </Suspense>
+      <assignment-list v-if="currentTabIdx === 1" :assignments="rse.assignments" />
+      <div v-if="currentTabIdx === 2">
         Skills
       </div>
-      <assignment-list v-if="currentTabIdx === 2" :assignments="rse.assignments" />
     </div>
   </div>
 </template>
@@ -58,25 +60,22 @@ import Calendar from '../components/Team/Calendar.vue'
 import TimeSummary from '@/components/Dashboard/TimeSummary.vue'
 import AssignmentList from '@/components/Team/AssignmentList.vue'
 import { useRoute } from 'vue-router'
-import { useRSEsStore, useLeaveStore } from '../stores'
+import { useRSEsStore } from '../stores'
 
 const route = useRoute()
 
-const rsesStore = useRSEsStore(),
-      leaveStore = useLeaveStore()
+const rsesStore = useRSEsStore()
 
 const rse = rsesStore.getByName(route.path.split('/')[2])
 
 rse.assignments = rse.assignments.reverse()
 
-const leave = leaveStore.getByRSE(rse.username)
-
-let currentTabIdx = ref(2)
+let currentTabIdx = ref(0)
 
 function setTab(index) {
   currentTabIdx.value = index
 }
 
-const tabs = ['Timesheets', 'Skills',  'Assignments']
+const tabs = ['Timesheets', 'Assignments', 'Skills']
 
 </script>
