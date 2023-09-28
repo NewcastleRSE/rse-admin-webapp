@@ -38,6 +38,13 @@ const assignmentsStore = useAssignmentsStore(),
 const rse = rseStore.getByName(route.path.split('/')[2]),
       assignments = assignmentsStore.getByPeriod(DateTime.now().toISODate(), dates.startDate.toISODate(), rse.id)
 
+assignments.forEach((assignment, index) => {
+  if(assignment.project.name && assignment.project.name === 'Management') {
+    assignments[index].project.dealname = assignment.project.name
+    assignments[index].project.contacts = [{ firstname: 'Mark', lastname: 'Turner' }]
+  }
+})
+
 const timesheetURL = `https://app.clockify.me/reports/summary?start=${dates.startDate.toISO()}&end=${dates.currentDate.toISO()}&filterValuesData=%7B%22users%22:%5B%22${rse.clockifyID}%22%5D%7D`
 
 function formatDate(date) {
