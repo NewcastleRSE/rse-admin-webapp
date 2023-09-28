@@ -163,7 +163,6 @@ for(let i = 0; i < 12; i++) {
               }
               else if(leaveRequest.DURATION === 'P') { 
                   type[1] = 'leave'
-                  console.log(leaveRequest)
               }
               else {
                   type = ['leave','leave']
