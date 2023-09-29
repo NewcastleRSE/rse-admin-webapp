@@ -39,7 +39,7 @@ const rse = rseStore.getByName(route.path.split('/')[2]),
       assignments = assignmentsStore.getByPeriod(DateTime.now().toISODate(), dates.startDate.toISODate(), rse.id)
 
 assignments.forEach((assignment, index) => {
-  if(assignment.project.name && assignment.project.name === 'Management') {
+  if(assignment.project.name && (assignment.project.name === 'Management' || assignment.project.name === 'Carpentries Training')) {
     assignments[index].project.dealname = assignment.project.name
     assignments[index].project.contacts = [{ firstname: 'Mark', lastname: 'Turner' }]
   }
