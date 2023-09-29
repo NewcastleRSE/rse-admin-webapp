@@ -115,11 +115,9 @@ const creating = ref(null)
 
 for (let i = 0; i <= monthsToDate; i++) {
 
-  const assignments = assignmentsStore.getByPeriod(startDate.toISODate(), currentDate.toISODate())
+  const assignments = assignmentsStore.getByPeriod(startDate.toISODate(), startDate.endOf('month').minus({days: 1}))
   const projectIDs = assignments.reduce(function (IDs, assignment) { return [...IDs, assignment.project.id] }, [])
   const projects = projectsStore.filterByIDs([...new Set(projectIDs)]).filter(project => project.costModel === 'Facility')
-
-  console.log(projects)
 
   for (let y = 0; y < projects.length; y++) {
     projects[y].invoice = invoices.find(invoice => invoice.project.id == projects[y].id && invoice.year == startDate.year && invoice.month == startDate.monthLong.toLowerCase())

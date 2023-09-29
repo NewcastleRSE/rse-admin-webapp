@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
 import { useAuthStore, useRSEsStore } from '@/stores'
-import { DateTime } from 'luxon'
+import { DateTime, Interval } from 'luxon'
 import { fetchObjects } from '../utils/orm'
 
 export const useAssignmentsStore = defineStore('assignments', () => {
@@ -33,6 +33,8 @@ export const useAssignmentsStore = defineStore('assignments', () => {
 
     function getByPeriod(start,end,rse = null) {
       let response
+
+      const period = Interval.fromDateTimes(DateTime.fromISO(start).startOf('day'), DateTime.fromISO(end).endOf('day'))
       
       if(rse) {
         response = assignments.value.filter(assignment =>
@@ -52,10 +54,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       }
       else {
         response = assignments.value.filter(assignment =>
-          (DateTime.fromISO(assignment.start) <= DateTime.fromISO(start)
-          && DateTime.fromISO(assignment.end) >= DateTime.fromISO(start)) ||
-          (DateTime.fromISO(assignment.start) <= DateTime.fromISO(end)
-            && DateTime.fromISO(assignment.end) >= DateTime.fromISO(end))
+          period.overlaps(Interval.fromDateTimes(DateTime.fromISO(assignment.start), DateTime.fromISO(assignment.end)))
         )
       }
 
