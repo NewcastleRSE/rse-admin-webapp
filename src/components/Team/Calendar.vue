@@ -2,7 +2,7 @@
   <div>
     <div class="bg-white">
       <div class="mx-auto grid max-w-3xl grid-cols-1 gap-x-8 gap-y-16 px-4 py-16 sm:grid-cols-2 sm:px-6 xl:max-w-none xl:grid-cols-3 xl:px-8 2xl:grid-cols-4">
-        <section v-for="month in months" :key="month.name" class="text-center">
+        <section v-for="(month, monthIdx) in months" :key="month.name" class="text-center">
           <h2 class="text-sm font-semibold text-gray-900">{{ month.name }}</h2>
           <div class="mt-6 grid grid-cols-7 text-xs leading-6 text-gray-500">
             <div>M</div>
@@ -14,7 +14,7 @@
             <div>S</div>
           </div>
           <div class="isolate mt-2 grid grid-cols-7 gap-px rounded-lg bg-gray-200 text-sm shadow ring-1 ring-gray-200">
-            <div v-for="(day, dayIdx) in month.days" :key="day.date"
+            <div v-for="(day, dayIdx) in month.days" :key="day.date" :ref="el => { calendarDates.push(el) }" v-on:mouseover="togglePopover($event, day)"
             
             :class="[
                 day.isCurrentMonth ? day.type : 'bg-gray-50 text-gray-400',
@@ -25,6 +25,28 @@
                 'aspect-square flex items-center justify-center'
             ]">
               <time :datetime="day.date">{{ day.date.split('-').pop().replace(/^0/, '') }}</time>
+            </div>
+            <div ref="popoverRef" :class="{'hidden': !popoverShow, 'block': popoverShow}" :style="{ 'left': popoverX +'px', 'top': popoverY +'px' }" class="bg-blueGray-700 text-white border-0 mb-3 fixed block z-50 font-normal leading-normal text-sm max-w-xs text-left no-underline break-words rounded">
+              <div class="font-semibold p-3 mb-0 border-b border-solid border-slate-100 uppercase rounded-t-lg">
+                  {{ popoverTitle }}
+              </div>
+              <div class="p-3">
+                  <div v-for="entry in popoverContent" class="group relative flex justify-between gap-x-6 mb-2">
+                    <div>
+                      <div class="font-semibold">
+                        {{ entry.project }}
+                        <span class="absolute inset-0" />
+                      </div>
+                      <p>{{ entry.client }}</p>
+                    </div>
+                    <div>
+                      <div class="font-semibold">
+                        {{ entry.duration }}
+                        <span class="absolute inset-0" />
+                      </div>
+                    </div>
+                  </div>
+              </div>
             </div>
           </div>
         </section>
@@ -104,17 +126,20 @@
 </style>
 <!-- class="bg-gradient-to-tl from-emerald-600 from-50% via-amber-600 via-50% to-amber-600" -->
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps, ref } from 'vue'
 import { useLeaveStore } from '../../stores'
 import { currentFY } from '../../utils/dates'
 import { fetchObject } from '../../utils/orm'
-import { DateTime } from 'luxon';
+import { DateTime, Duration } from 'luxon';
 
 const props = defineProps({
   rse: null
 })
 
 const dates = currentFY()
+
+const calendarDates = ref([]),
+      popoverShow = ref(false)
 
 const leaveStore = useLeaveStore()
 
@@ -178,6 +203,8 @@ for(let i = 0; i < 12; i++) {
         days.push({
             date: startPoint.toISODate(),
             isCurrentMonth: startPoint.month === date.month,
+            leave: leaveRequest,
+            timesheet: timesheet,
             type: !type[0] && !type[1] ? 'bg-white' : type.join('-')
         })
 
@@ -186,9 +213,71 @@ for(let i = 0; i < 12; i++) {
 
     months.push({
         name: date.toFormat('MMMM yyyy'),
+        id: date.toFormat('MMMyy'),
         days: days
     })
 
     date = date.plus({months: 1})
 }
+
+let popoverTitle = '',
+    popoverContent  = '',
+    popoverX = 0,
+    popoverY = 0
+
+    function togglePopover(event, day) {
+
+      const idx = calendarDates.value.findIndex((element) => {  return element.contains(event.target) })                 
+      const reference = calendarDates.value[idx]
+
+      popoverShow.value = false
+
+      if (!day.isCurrentMonth || day.type === 'bg-white' || day.type === 'missing-missing') {
+          popoverShow.value = false
+      }
+      else {
+        const position = reference.getBoundingClientRect()
+
+        let entries = []
+
+        if(day.leave) {
+          if(day.leave.DURATION === 'A') {
+            entries.push({
+              project: 'Annual Leave',
+              client: 'Half Day (AM)',
+              duration: '03:42:00'
+            })
+          }
+          else if(day.leave.DURATION === 'P') {
+            entries.push({
+              project: 'Annual Leave',
+              client: 'Half Day (PM)',
+              duration: '03:42:00'
+            })
+          }
+          else {
+            entries.push({
+              project: 'Annual Leave',
+              client: 'Full Day',
+              duration: '07:24:00'
+            })
+          }
+        }
+
+        if(day.timesheet) {
+          day.timesheet.forEach(entry => entries.push({
+            project: entry.projectName,
+            client: entry.clientName,
+            duration: Duration.fromObject({ seconds: entry.timeInterval.duration }).toFormat('hh:mm:ss')
+          }))
+        }
+
+        popoverTitle = DateTime.fromISO(day.date).toFormat('MMMM dd')
+        popoverContent = entries
+        popoverX = position.x + (position.width / 2)
+        popoverY = position.y + (position.height * 1.5)
+        popoverShow.value = true
+      }
+  }
+
 </script>
