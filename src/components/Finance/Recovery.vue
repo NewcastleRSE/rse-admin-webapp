@@ -63,7 +63,7 @@ invoicesStore.getByFinancialYear(dates.startDate.year)
 const revenue = ((revenueTotal / facility.incomeTarget) * 100).toFixed(2),
       invoiced = ((invoicedTotal / facility.incomeTarget) * 100).toFixed(2)
 
-const progressThroughYear = (((dates.startDate.diffNow('days').days * -1) / 365) * 100).toFixed(2)
+const progressThroughYear = ((Math.floor(dates.currentDate.diff(dates.startDate, ['months']).months) / 12) * 100).toFixed(2)
 
 const stats = [
   { name: 'Revenue', value: formatter.format(revenueTotal), ratio: revenue + '%' },
