@@ -2,7 +2,7 @@
   <div :class="`bg-white`" class="h-full relative flex flex-col min-w-0 break-words rounded xl:mb-0 shadow-lg">
     <div class="h-full flex p-4">
       <div class="flex-1" v-if="assignment">
-          <h3 class="font-semibold text-ellipsis overflow-hidden">
+          <h3 class="font-semibold text-ellipsis line-clamp-1">
             {{ assignment.project.dealname }}
           </h3>
           <h5 class="text-blueGray-400 uppercase font-bold text-xs">
