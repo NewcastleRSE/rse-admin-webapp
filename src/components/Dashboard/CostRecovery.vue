@@ -16,58 +16,55 @@
       <div class="pb-8">
         <h4 class="sr-only">Cost Recovery</h4>
         <p class="text-sm font-medium text-gray-900">Cost Recovery</p>
-        <div class="mt-2" aria-hidden="true">
+        <div class="mt-2 relative" aria-hidden="true">
           <div class="overflow-hidden rounded-full bg-gray-200">
-            <div class="h-4 rounded-full bg-cyan-600" :style="{ width: costRecovery + '%' }" />
-          </div>
-        </div>
-      </div>
-      <div class="pb-8">
-        <h4 class="sr-only">Faculty Contribution</h4>
-        <p class="text-sm font-medium text-gray-900">Faculty Contribution</p>
-        <div class="mt-2" aria-hidden="true">
-          <div class="overflow-hidden rounded-full bg-gray-200">
-            <div class="h-4 rounded-full bg-cyan-600" :style="{ width: facultyContribution + '%' }" />
+            <div class="h-4 rounded-full bg-cyan-600" :style="{ width: costRecoveryRate + '%' }" />
+            <div class="absolute border-r-2 border-black h-6 -top-1" :style="{'left': progressThroughYear + '%'}"></div>
           </div>
         </div>
       </div>
       <div>
         <h4 class="sr-only">Non-Staff Budget</h4>
         <p class="text-sm font-medium text-gray-900">Non-Staff Budget</p>
-        <div class="mt-2" aria-hidden="true">
+        <div class="mt-2 relative" aria-hidden="true">
           <div class="overflow-hidden rounded-full bg-gray-200">
-            <div class="h-4 rounded-full bg-cyan-600" :style="{ width: nonStaffBudget + '%' }" />
+            <div class="h-4 rounded-full bg-cyan-600" :style="{ width: budgetUsed + '%' }" />
+            <div class="absolute border-r-2 border-black h-6 -top-1" :style="{'left': progressThroughYear + '%'}"></div>
           </div>
         </div>
       </div>
+      <dl class="mt-10 grow grid grid-cols-1 gap-y-6 sm:grid-cols-1 lg:grid-cols-1">
+        <div v-for="stat in stats" :key="stat.name" class="flex flex-wrap items-baseline gap-x-4 gap-y-2 bg-white">
+          <dt class="text-sm font-medium leading-6 text-gray-500">{{ stat.name }}</dt>
+          <dd class="text-gray-700 text-xs font-medium">{{ stat.ratio }}</dd>
+          <dd class="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">{{ stat.value }}</dd>
+        </div>
+      </dl>
     </div>
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
-import { DateTime } from 'luxon'
 import { useFacilitiesStore, useTransactionsStore } from '@/stores'
+import { currentFY } from '../../utils/dates'
 
 const facilitiesStore = useFacilitiesStore(),
       transactionsStore = useTransactionsStore()
 
-const FY = DateTime.local().month > 7 ? DateTime.local().year : DateTime.local().year - 1,
-      FYStart = DateTime.fromObject({ year: FY, month: 8, day: 1})
+const dates = currentFY()
+const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' })
 
-const currentYear = ref(`${FYStart.year - 2000}/${FYStart.year - 1999}`)
+const transactionsSummary = transactionsStore.getSummary(dates.startDate.year),
+      facility = facilitiesStore.getByYear(dates.startDate.year)
 
-const summary = transactionsStore.getSummary(FYStart.year),
-      facility = facilitiesStore.getByYear(FYStart.year)
+const monthsToDate = Math.floor(dates.currentDate.diff(dates.startDate, ['months']).months),
+      progressThroughYear = ((monthsToDate / 12) * 100).toFixed(2)
 
-const totalCosts = facility.salaryCosts + facility.nonSalaryCosts + facility.estatesCosts
+const costRecoveryRate = ((transactionsSummary.income.total / facility.incomeTarget) * 100).toFixed(2)
+      
+const budgetUsed = (((transactionsSummary.nonSalaryExpenditure.total * -1) / facility.nonSalaryCosts) * 100).toFixed(2)
 
-let costRecovery = 0,
-    facultyContribution = 0,
-    nonStaffBudget = 0
-
-if(Object.keys(summary).length !== 0) {
-  costRecovery = ref((summary.income.total / totalCosts) * 100),
-  facultyContribution = ref((summary.indirectCostsAbsorbedRecovered.total * -1 / totalCosts) * 100),
-  nonStaffBudget = ref((summary.nonSalaryExpenditure.total * -1 / facility.nonSalaryCosts) * 100)
-}
+const stats = [
+  { name: 'Revenue', value: formatter.format(transactionsSummary.income.total), ratio: costRecoveryRate + '%' },
+  { name: 'Expenses', value: formatter.format((transactionsSummary.nonSalaryExpenditure.total * -1)), ratio: budgetUsed + '%' },
+]
 </script>
