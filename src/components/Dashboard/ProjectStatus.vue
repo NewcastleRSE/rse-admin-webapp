@@ -54,9 +54,9 @@ import { ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/2
 const projectsStore = useProjectsStore()
 
 const active = projectsStore.getProjects().filter(project => project.dealstage === 'Awaiting Allocation' || project.dealstage === 'Allocated'),
-      red = active.filter(project => project.status === 'red'),
-      amber = active.filter(project => project.status === 'amber')
+      red = active.filter(project => project.status === 'red')
+      // amber = active.filter(project => project.status === 'amber')
 
-const projects = ref([...red, ...amber])
+const projects = ref([...red])
 
 </script>
