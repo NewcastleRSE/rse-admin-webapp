@@ -5,15 +5,15 @@
         <div class="mx-auto divide-y divide-gray-900/10">
           <h2 class="text-2xl font-bold leading-10 tracking-tight text-gray-900">{{ yearTitle }} Invoices</h2>
           <dl class="mt-10 space-y-6 divide-y divide-gray-900/10">
-            <Disclosure as="div" v-for="month in months" :key="month.name" class="pt-6" v-slot="{ open }">
+            <Disclosure as="div" v-for="(month, index) in months" :key="month.name" class="pt-6" v-slot="{ open }">
               <dt>
                 <DisclosureButton class="flex w-full items-start justify-between text-left text-gray-900">
                   <div>
                     <span class="text-base font-semibold leading-7">{{ month.name }} {{ month.year }}</span>
-                    <span v-if="month.total" class="inline-flex items-center rounded-md bg-red-100 ml-4 px-2 py-1 text-xs font-medium text-red-700">{{ month.total }} Due</span>
-                    <span v-if="month.sent" class="inline-flex items-center rounded-md bg-yellow-100 ml-4 px-2 py-1 text-xs font-medium text-yellow-800">{{ month.sent }} Sent</span>
-                    <span v-if="month.processed" class="inline-flex items-center rounded-md bg-blue-100 ml-4 px-2 py-1 text-xs font-medium text-blue-700">{{ month.processed }} Processed</span>
-                    <span v-if="month.paid" class="inline-flex items-center rounded-md bg-green-100 ml-4 px-2 py-1 text-xs font-medium text-green-700">{{ month.paid }} Paid</span>
+                    <span v-if="month.total && index > 0" class="inline-flex items-center rounded-md bg-red-100 ml-4 px-2 py-1 text-xs font-medium text-red-700">{{ month.total }} Due</span>
+                    <span v-if="month.sent && index > 0" class="inline-flex items-center rounded-md bg-yellow-100 ml-4 px-2 py-1 text-xs font-medium text-yellow-800">{{ month.sent }} Sent</span>
+                    <span v-if="month.processed && index > 0" class="inline-flex items-center rounded-md bg-blue-100 ml-4 px-2 py-1 text-xs font-medium text-blue-700">{{ month.processed }} Processed</span>
+                    <span v-if="month.paid && index > 0" class="inline-flex items-center rounded-md bg-green-100 ml-4 px-2 py-1 text-xs font-medium text-green-700">{{ month.paid }} Paid</span>
                   </div>
                   <span class="ml-6 flex h-7 items-center">
                     <ChevronRightIcon v-if="!open" class="h-6 w-6" aria-hidden="true" />
@@ -86,7 +86,6 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import { DateTime } from 'luxon'
 import { currentFY } from '../../utils/dates'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
@@ -96,45 +95,39 @@ const assignmentsStore = useAssignmentsStore(),
       invoicesStore = useInvoicesStore(),
       projectsStore = useProjectsStore()
 
-let currentDate = DateTime.utc(),
-    startDate = DateTime.utc(currentDate.year, 8)
-
-if(currentDate.month < 8) {
-  startDate = startDate.minus({ year: 1 })
-} 
-
 const fyDates = currentFY()
 const yearTitle = `${fyDates.startDate.toFormat('yyyy')}/${fyDates.endDate.toFormat('yy')}`
 
-const invoices = invoicesStore.getByFinancialYear(startDate.year)
+const invoices = invoicesStore.getByFinancialYear(fyDates.startDate.year)
 
-const monthsToDate = Math.floor(currentDate.diff(startDate, ['months']).values.months)
+const monthsToDate = Math.floor(fyDates.currentDate.diff(fyDates.startDate, ['months']).months)
 
 const months = []
 const creating = ref(null)
 
 for (let i = 0; i <= monthsToDate; i++) {
 
-  const assignments = assignmentsStore.getByPeriod(startDate.toISODate(), startDate.endOf('month').minus({days: 1}))
+  const assignments = assignmentsStore.getByPeriod(fyDates.startDate.toISODate(), fyDates.startDate.endOf('month').minus({days: 1}))
   const projectIDs = assignments.reduce(function (IDs, assignment) { return [...IDs, assignment.project.id] }, [])
   const projects = projectsStore.filterByIDs([...new Set(projectIDs)]).filter(project => project.costModel === 'Facility')
 
   for (let y = 0; y < projects.length; y++) {
-    projects[y].invoice = invoices.find(invoice => invoice.project.id == projects[y].id && invoice.year == startDate.year && invoice.month == startDate.monthLong.toLowerCase())
+    projects[y].invoice = invoices.find(invoice => invoice.project.id == projects[y].id && invoice.year == fyDates.startDate.year && invoice.month == fyDates.startDate.monthLong.toLowerCase())
   }
 
-  const monthlyInvoices = invoices.filter(invoice => invoice.month === startDate.monthLong.toLowerCase())
+  const monthlyInvoices = invoices.filter(invoice => invoice.month === fyDates.startDate.monthLong.toLowerCase())
 
   months.push({
-    name: startDate.monthLong,
-    year: startDate.year,
+    name: fyDates.startDate.monthLong,
+    year: fyDates.startDate.year,
     total: projects.length - monthlyInvoices.filter(invoice => invoice.sent).length,
     sent: monthlyInvoices.filter(invoice => invoice.sent && !invoice.processed).length,
     processed: monthlyInvoices.filter(invoice => invoice.processed && !invoice.paid).length,
     paid: monthlyInvoices.filter(invoice => invoice.paid).length,
     projects: projects
   })
-  startDate = startDate.plus({ month: 1 })
+
+  fyDates.startDate = fyDates.startDate.plus({ month: 1 })
 }
 
 months.reverse()

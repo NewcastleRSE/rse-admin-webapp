@@ -84,20 +84,11 @@ const assignmentsStore = useAssignmentsStore(),
       projectsStore = useProjectsStore(),
       transactionsStore = useTransactionsStore()
 
-// let currentDate = DateTime.utc(),
-//     startDate = DateTime.utc(currentDate.year, 8)
-
-// if(currentDate.month < 8) {
-//   startDate = startDate.minus({ year: 1 })
-// }
-
-const assignments = assignmentsStore.getByPeriod(dates.startDate.toISODate(), dates.currentDate.toISODate())
 const facility = facilitiesStore.getByYear(dates.startDate.year)
 const invoices = invoicesStore.getByFinancialYear(dates.startDate.year)
 const transactionsSummary = transactionsStore.getSummary(dates.startDate.year)
 
 const monthsToDate = Math.floor(dates.currentDate.diff(dates.startDate, ['months']).months)
-
 
 /**
  * Cost Recovery
@@ -111,31 +102,49 @@ const costRecoveryRate = ((transactionsSummary.income.total / facility.incomeTar
  * Invoice state counts
  */
 
-let expectedInvoices = 0
+let invoiceCounts = {
+  due: 0,
+  sent: 0,
+  processed: 0,
+  paid: 0
+}
 
 for (let i = 0; i < monthsToDate; i++) {
+
+  const assignments = assignmentsStore.getByPeriod(dates.startDate.toISODate(), dates.startDate.endOf('month').minus({days: 1}))
   const projectIDs = assignments.reduce(function (IDs, assignment) { return [...IDs, assignment.project.id] }, [])
   const projects = projectsStore.filterByIDs([...new Set(projectIDs)]).filter(project => project.costModel === 'Facility')
-  expectedInvoices = expectedInvoices + projects.length
+
+  for (let y = 0; y < projects.length; y++) {
+    projects[y].invoice = invoices.find(invoice => invoice.project.id == projects[y].id && invoice.year == dates.startDate.year && invoice.month == dates.startDate.monthLong.toLowerCase())
+  }
+
+  const monthlyInvoices = invoices.filter(invoice => invoice.month === dates.startDate.monthLong.toLowerCase())
+
+  invoiceCounts.due += projects.length - monthlyInvoices.filter(invoice => invoice.sent).length,
+  invoiceCounts.sent += monthlyInvoices.filter(invoice => invoice.sent && !invoice.processed).length,
+  invoiceCounts.processed += monthlyInvoices.filter(invoice => invoice.processed && !invoice.paid).length,
+  invoiceCounts.paid += monthlyInvoices.filter(invoice => invoice.paid).length,
+
   dates.startDate = dates.startDate.plus({ month: 1 })
 }
 
 const states = [
   { 
     name: 'Due',
-    count: expectedInvoices - invoices.filter(invoice => invoice.sent).length,
+    count: invoiceCounts.due,
     bgColor: 'bg-red-100',
     textColor: 'text-red-700'
   },
   { 
     name: 'Sent',
-    count: invoices.filter(invoice => invoice.sent && !invoice.processed).length,
+    count: invoiceCounts.sent,
     bgColor: 'bg-yellow-100',
     textColor: 'text-yellow-700'
   },
   { 
     name: 'Processed',
-    count: invoices.filter(invoice => invoice.processed && !invoice.paid).length,
+    count: invoiceCounts.processed,
     bgColor: 'bg-blue-100',
     textColor: 'text-blue-700'
   },
