@@ -4,10 +4,10 @@
         <div class="flex flex-wrap items-center">
           <div class="relative w-full max-w-full flex-grow flex-1">
             <h6 class="uppercase text-blueGray-900 mb-1 text-xs font-semibold">
-              Monthly
+              Monthly Spend
             </h6>
             <h2 class="text-blueGray-900 text-xl font-semibold">
-              Cloud Spend
+              {{ props.title }}
             </h2>
           </div>
         </div>
@@ -15,78 +15,28 @@
       <div class="p-4 flex-auto">
         <!-- Chart -->
         <div class="relative h-350-px">
-          <canvas id="cloud-spend"></canvas>
+          <canvas :id="props.id"></canvas>
         </div>
       </div>
     </div>
-  </template>
-  <script setup>
-  import { onMounted, defineOptions, defineProps } from 'vue'
-  import Chart from 'chart.js/auto'
-  import annotationPlugin from 'chartjs-plugin-annotation'
-  import { currentFY } from '../../utils/dates'
+</template>
+<script setup>
+import { onMounted, defineOptions, defineProps } from 'vue'
+import Chart from 'chart.js/auto'
+import annotationPlugin from 'chartjs-plugin-annotation'
+
+defineOptions({
+  name: 'capacity'
+})
+
+const props = defineProps(['data', 'id', 'title', 'yTitle', 'xTitle'])
   
-  defineOptions({
-    name: 'capacity'
-  })
+Chart.register(annotationPlugin)
 
-  const props = defineProps(['data'])
-
-  const dates = currentFY()
-  
-  Chart.register(annotationPlugin)
-  
-  onMounted(async () => {
-
-    let labels = [],
-        azure = new Array(12).fill(0),
-        aws = new Array(12).fill(0),
-        google = new Array(12).fill(0)
-
-    let month = dates.startDate
-
-    for(let i=0; i < 12; i++) {
-        month = dates.startDate.plus({months: i})
-        labels.push(month.toFormat('LLL'))
-    }
-
-    props.data.forEach(transaction => {
-        if(transaction.name.toLowerCase().includes('azure')) {
-            azure[transaction.fiscalPeriod - 1] += (transaction.value * -1)
-        }
-        else if(transaction.name.toLowerCase().includes('google')) {
-            google[transaction.fiscalPeriod - 1] += (transaction.value * -1)
-        }
-        else {
-            console.log(transaction)
-        }
-    })
-  
+onMounted(async () => {
     let config = {
       type: "bar",
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Azure',
-            backgroundColor: "#0175BC",
-            borderColor: "#0175BC",
-            data: azure,
-          },
-          {
-            label: 'AWS',
-            backgroundColor: "#0284c7",
-            borderColor: "#0284c7",
-            data: aws,
-          },
-          {
-            label: 'Google',
-            backgroundColor: "#DB4437",
-            borderColor: "#DB4437",
-            data: google,
-          }
-        ],
-      },
+      data: props.data,
       options: {
         maintainAspectRatio: false,
         responsive: true,
@@ -120,7 +70,7 @@
               },
               display: true,
               title: {
-                text: 'Month',
+                text: props.xTitle,
                 display: false,
                 color:"#090909"
               },
@@ -142,7 +92,7 @@
             },
             display: true,
             title: {
-              text: 'Spend',
+              text: props.yTitle,
               display: true,
               color:"#090909"
             },
@@ -159,7 +109,7 @@
         },
       },
     }
-    var ctx = document.getElementById("cloud-spend").getContext("2d")
+    var ctx = document.getElementById(props.id).getContext('2d')
     window.myLine = new Chart(ctx, config)
   })
   </script>
