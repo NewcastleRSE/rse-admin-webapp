@@ -127,7 +127,7 @@
 <!-- class="bg-gradient-to-tl from-emerald-600 from-50% via-amber-600 via-50% to-amber-600" -->
 <script setup>
 import { defineProps, ref } from 'vue'
-import { useLeaveStore } from '../../stores'
+import { useCapacitiesStore, useLeaveStore } from '../../stores'
 import { currentFY } from '../../utils/dates'
 import { fetchObject } from '../../utils/orm'
 import { DateTime, Duration } from 'luxon';
@@ -141,12 +141,20 @@ const dates = currentFY()
 const calendarDates = ref([]),
       popoverShow = ref(false)
 
-const leaveStore = useLeaveStore()
+const leaveStore = useLeaveStore(),
+      capacitiesStore = useCapacitiesStore()
 
 const leave = leaveStore.getByRSE(props.rse.username),
       timesheets = await fetchObject('timesheets', props.rse.clockifyID)
 
 let months = []
+
+console.log(props.rse)
+
+const contractStart = DateTime.fromISO(props.rse.contractStart)
+const capacities = capacitiesStore.getCapacityInPeriod(dates.startDate.toISODate(), dates.endDate.toISODate(), props.rse.username)
+
+console.log(capacities)
 
 let date = dates.startDate
 
@@ -170,19 +178,19 @@ for(let i = 0; i < 12; i++) {
 
             let types = timesheet.reduce((billable, entry) => [...billable, entry.billable], [])
 
-            if(types.every(Boolean)) {
+            if(types.every(type => type)) {
               type = ['billable','billable']
             }
-            else if(!types.every(Boolean)) {
+            else if(types.every(type => !type)) {
               type = ['nonbillable','nonbillable']
             }
             else {
-              console.log(timesheet)
               type = ['billable','nonbillable']
             }
           }
 
           if(leaveRequest) {
+
               if(leaveRequest.DURATION === 'A') {
                   type[0] = 'leave'
               }
@@ -194,7 +202,7 @@ for(let i = 0; i < 12; i++) {
               }
           }
 
-          if(startPoint < DateTime.now() && startPoint.weekday < 6) {
+          if(startPoint < DateTime.now() && startPoint.weekday < 6 && startPoint > contractStart) {
             type[0] = type[0] ? type[0] : 'missing'
             type[1] = type[1] ? type[1] : 'missing'
           }
