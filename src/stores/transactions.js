@@ -45,7 +45,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
             })
     
             summary[camelCase(ieCategory)].total = transactions
-            .filter(transaction => transaction.ieCategory === ieCategory)
+            .filter(transaction => transaction.ieCategory === ieCategory && transaction.documentHeader !== 'Catalyst internal tenant')
             .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
         })
 
