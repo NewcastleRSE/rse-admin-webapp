@@ -45,8 +45,8 @@
     "devDependencies": {
         "@originjs/vite-plugin-commonjs": "^1.0.3",
         "@vitejs/plugin-vue": "^1.6.1",
-        "eslint": "^6.7.2",
-        "eslint-plugin-vue": "^7.0.0",
+        "eslint": "^8.50.0",
+        "eslint-plugin-vue": "^9.17.0",
         "sass": "^1.35.2",
         "vite": "^2.5.4",
         "vite-svg-loader": "4.0.0"
