@@ -122,8 +122,8 @@ for (let i = 0; i <= monthsToDate; i++) {
     year: fyDates.startDate.year,
     total: projects.length - monthlyInvoices.filter(invoice => invoice.sent).length,
     sent: monthlyInvoices.filter(invoice => invoice.sent && !invoice.processed).length,
-    processed: monthlyInvoices.filter(invoice => invoice.processed && !invoice.paid).length,
-    paid: monthlyInvoices.filter(invoice => invoice.paid).length,
+    processed: monthlyInvoices.filter(invoice => invoice.processed && !invoice.transaction).length,
+    paid: monthlyInvoices.filter(invoice => invoice.transaction).length,
     projects: projects
   })
 
