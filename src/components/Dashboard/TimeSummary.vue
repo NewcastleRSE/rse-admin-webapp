@@ -52,9 +52,9 @@ const recorded = ((summary.recorded / summary.capacity) * 100).toFixed(2),
       accountedFor = (((summary.recorded + summary.leave) / summary.capacity) * 100).toFixed(2),
       missing = ((summary.missing / summary.capacity) * 100).toFixed(2)
 
-// if(summary.name === 'Frances Turner') {
+// if(summary.name === 'Ben Daly') {
 //     console.log(props.rse)
-//     console.log(currentCapacity)
+//     console.log(summary)
 //     console.log(proRata)
 //     console.log(DateTime.fromISO(currentCapacity.start).diff(DateTime.fromISO(props.rse.capacityStart), ['days']).toObject())
 //     console.log(workingDaysSoFar)

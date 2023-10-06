@@ -24,7 +24,7 @@ export const useTimesheetsStore = defineStore('timesheets', () => {
         const leaveStore = useLeaveStore(),
               leaveRequests = leaveStore.getByRSE(rse.username)
 
-        const nonBillableProjects = ['RSE Team', 'Carpentries', 'Management', 'Non-Project Event', 'Volunteering']
+        const nonBillableProjects = ['RSE Team', 'Carpentries', 'Management', 'Non-Project Event', 'Volunteering', 'Induction']
 
         let summary = {
             name: rse.displayName,
@@ -47,7 +47,7 @@ export const useTimesheetsStore = defineStore('timesheets', () => {
     
         const workingDaysSoFar = (DateTime.now().workingDiff(DateTime.fromISO(rse.capacityStart), 'days') * (rse.capacity / 220)).toFixed(0)
 
-        const timesheets = getByRSE(rse.displayName)
+        const timesheets = getByRSE(rse.displayName === 'Ben Daly' ? 'Ben' : rse.displayName)
 
         timesheets?.months.forEach(month => {
             month.projects.forEach(project => {
