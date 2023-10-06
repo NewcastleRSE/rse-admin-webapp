@@ -57,7 +57,7 @@ let revenueTotal = transactionsSummary.income.total,
     invoicedTotal = 0
 
 invoicesStore.getByFinancialYear(dates.startDate.year)
-             .filter(invoice => invoice.paid === null)
+             .filter(invoice => invoice.transaction === null)
              .forEach(invoice => invoicedTotal += Number(invoice.price * invoice.units))
 
 const revenue = ((revenueTotal / facility.incomeTarget) * 100).toFixed(2),

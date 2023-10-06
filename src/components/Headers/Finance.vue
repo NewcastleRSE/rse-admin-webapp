@@ -123,8 +123,8 @@ for (let i = 0; i < monthsToDate; i++) {
 
   invoiceCounts.due += projects.length - monthlyInvoices.filter(invoice => invoice.sent).length,
   invoiceCounts.sent += monthlyInvoices.filter(invoice => invoice.sent && !invoice.processed).length,
-  invoiceCounts.processed += monthlyInvoices.filter(invoice => invoice.processed && !invoice.paid).length,
-  invoiceCounts.paid += monthlyInvoices.filter(invoice => invoice.paid).length,
+  invoiceCounts.processed += monthlyInvoices.filter(invoice => invoice.processed && !invoice.transaction).length,
+  invoiceCounts.paid += monthlyInvoices.filter(invoice => invoice.transaction).length,
 
   dates.startDate = dates.startDate.plus({ month: 1 })
 }
