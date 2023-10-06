@@ -52,6 +52,7 @@ const facilitiesStore = useFacilitiesStore(),
 const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' })
 const facility = facilitiesStore.getByYear(dates.startDate.year)
 const transactionsSummary = transactionsStore.getSummary(dates.startDate.year)
+const budgetUsed = (((transactionsSummary.nonSalaryExpenditure.total * -1) / facility.nonSalaryCosts) * 100).toFixed(2)
 
 let revenueTotal = transactionsSummary.income.total,
     invoicedTotal = 0
@@ -69,6 +70,6 @@ const stats = [
   { name: 'Revenue', value: formatter.format(revenueTotal), ratio: revenue + '%' },
   { name: 'Invoiced', value: formatter.format(invoicedTotal.toFixed(2)), ratio: invoiced + '%' },
   { name: 'Secured', value: '£0', ratio: '0%' },
-  { name: 'Expenses', value: formatter.format((transactionsSummary.nonSalaryExpenditure.total * -1)), ratio: '0%' },
+  { name: 'Expenses', value: formatter.format((transactionsSummary.nonSalaryExpenditure.total * -1)), ratio: budgetUsed + '%' },
 ]
 </script>
