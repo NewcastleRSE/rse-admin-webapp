@@ -14,43 +14,29 @@
         <div class="flex lg:flex-grow items-center">
           <ul class="flex flex-col lg:flex-row list-none ml-auto">
             <li class="nav-item">
-              <button class="px-3 flex h-full inline-block align-middle items-center text-sm uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(0)">
-                3m
+              <button class="px-3 flex h-full inline-block align-middle items-center text-sm uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom('days')">
+                Days
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex h-full inline-block align-middle items-center text-sm uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(1)">
-                6m
+              <button class="px-3 flex h-full inline-block align-middle items-center text-sm uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom('months')">
+                Months
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex h-full inline-block align-middle items-center text-sm uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(2)">
-                12m
+              <button class="px-3 flex h-full inline-block align-middle items-center text-sm uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom('years')">
+                Years
               </button>
             </li>
             <li class="nav-item">
-              <button class="px-3 flex h-full inline-block align-middle items-center text-sm uppercase font-bold leading-snug hover:opacity-75" v-on:click="zoom(3)">
-                All
+              <button class="px-3 -mr-4 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="unallocated()">
+                <i class="fas fa-bars text-lg leading-lg opacity-75 text-blueGray-700"></i>
+                <span class="text-sm bg-red-600 py-0.5 px-1 rounded rounded-full text-white relative -left-2 -top-2">{{unallocatedCount}}</span>
               </button>
             </li>
             <li class="nav-item">
               <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="create()">
                 <i class="fas fa-plus text-lg leading-lg opacity-75 text-blueGray-700"></i>
-              </button>
-            </li>
-            <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-bind:class="{ 'cursor-not-allowed': !edited }" v-on:click="edited? save() : null">
-                <i class="fas fa-save text-lg leading-lg opacity-75" v-bind:class="{ 'text-blueGray-700': edited, 'text-blueGray-300': !edited }"></i>
-              </button>
-            </li>
-            <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 text-blueGray-700" v-bind:class="{ 'cursor-not-allowed': !edited }" v-on:click="edited? cancel() : null">
-                <i class="fas fa-undo text-lg leading-lg opacity-75" v-bind:class="{ 'text-blueGray-700': edited, 'text-blueGray-300': !edited }"></i>
-              </button>
-            </li>
-            <li class="nav-item">
-              <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="remove()">
-                <i class="fas fa-trash-alt text-lg leading-lg opacity-75 text-blueGray-700"></i>
               </button>
             </li>
             <li class="nav-item">
@@ -66,12 +52,12 @@
 <script>
 export default {
   props: {
+    selected: { type: Boolean },
     edited: { type: Boolean },
     zoom: { type: Function },
+    unallocated: { type: Function },
+    unallocatedCount: { type: Number },
     create: { type: Function },
-    save: { type: Function },
-    cancel: { type: Function },
-    remove: { type: Function },
     export: { type: Function },
   }
 }

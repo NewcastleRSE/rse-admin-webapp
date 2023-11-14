@@ -152,8 +152,8 @@
 
     .cost-recovery-threshold {
         border-left: 2px dashed;
-        height: 40px;
-        top: 20px;
+        height: 30px;
+        top: 60px;
     }
 
     .simple-typeahead {
@@ -189,10 +189,10 @@
         position: absolute;
 		width: 100%;
 		border: none;
-		max-height: 400px;
+		max-height: 150px;
 		overflow-y: auto;
 		z-index: 100;
-        top: calc(1.5rem + 1.25rem - 2px);
+        top: calc(1.5rem + 1.25rem - 8px);
         background-color: rgb(255, 255, 255);
         border-left: 1px solid rgb(203, 213, 225);
         border-right: 1px solid rgb(203, 213, 225);
@@ -201,16 +201,19 @@
     }
 
     .simple-typeahead-list-item {
-        padding: 0.75rem;
         cursor: pointer;
     }
 
     .simple-typeahead-list-item-active {
-        background-color: rgb(16, 185, 129);
+        background-color: rgb(8, 145, 178);
         color: rgb(255, 255, 255);
     }
 
     .dp__main {
         width: 100%
+    }
+
+    revo-grid .rgHeaderCell .rv-filter {
+        margin-left: 10px;
     }
 }

@@ -62,7 +62,7 @@
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
-              {{ project.project_lead  }}
+              {{ project.lead  }}
             </td>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
@@ -87,31 +87,14 @@
 </template>
 <script>
   export default {
-    computed: {
-      projects() {
-        let projects = this.$store.state.projects.projects,
-            red = projects.filter(project => project.status === 'Red'),
-            amber = projects.filter(project => project.status === 'Amber')
-
-        return [...red, ...amber]
-      }
-    },
-    watch: {
-      '$store.state.projects.projects': function(projects) {
-        let red = projects.filter(project => project.status === 'Red'),
-            amber = projects.filter(project => project.status === 'Amber')
-
-        return [...red, ...amber]
-      }  
-    },
-    props: {
-      color: {
-        default: "light",
-        validator: function (value) {
-          // The value must match one of these strings
-          return ["light", "dark"].indexOf(value) !== -1;
-        },
-      },
+    data() {
+        let projects = this.$store.getters["projects/getProjects"](),
+            active = projects.filter(project => project.dealstage === 'Awaiting Allocation' || project.dealstage === 'Allocated'),
+            red = active.filter(project => project.status === 'Red'),
+            amber = active.filter(project => project.status === 'Amber')
+        return {
+          projects: [...red, ...amber]
+        };
     }
   };
 </script>

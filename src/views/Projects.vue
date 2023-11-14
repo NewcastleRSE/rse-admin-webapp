@@ -1,23 +1,11 @@
 <template>
-  <div class="flex flex-wrap mt-4">
-    <div class="w-full mb-12 px-4">
-      <card-projects />
+  <div class="w-full mb-12 px-4">
+    <div class="relative flex flex-col min-w-0 break-words w-full mb-6 px-6 shadow-lg rounded bg-white">
+      <project-list />
     </div>
   </div>
 </template>
 
-<script>
-import CardProjects from "@/components/Cards/CardProjects.vue";
-
-export default {
-  name: "projects",
-  components: { 
-    CardProjects
-  },
-  data() {
-    return {};
-  },
-
-  methods: {},
-};
+<script setup>
+import ProjectList from '@/components/Projects/ProjectList.vue'
 </script>

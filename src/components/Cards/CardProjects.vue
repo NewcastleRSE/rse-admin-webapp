@@ -96,7 +96,7 @@
   </div>
 </template>
 <script>
-  import defaultAvatar from "@/assets/img/team-1-800x800.jpg";
+  import defaultAvatar from "@/assets/img/avatars/mark-turner.png"
 
   export default {
     data() {
