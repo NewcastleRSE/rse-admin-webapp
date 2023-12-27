@@ -33,11 +33,12 @@
     </div>
   </div>
 </template>
-<script>
-export default {
-  props: ['assignment'],
-  setup() {
+<script setup>
+import { defineProps } from 'vue'
 
-  }
-};
+const props = defineProps({
+  assignment: null
+})
+
+console.log(props.assignment)
 </script>
