@@ -64,7 +64,7 @@ function formatDate(date) {
 
 props.assignments.forEach((assignment, index) => {
   if('data' in assignment.project) {
-    const projectID = assignment.project.data.id
+    const projectID = assignment.project.id
     props.assignments[index].project = projectsStore.getByID(projectID)
   }
 })
