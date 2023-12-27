@@ -28,7 +28,43 @@
 <script setup>
 import ListItem from '../components/Team/ListItem.vue'
 import { useRSEsStore } from '../stores'
+import { useCapacitiesStore } from '@/stores/capacities'
 
 const rsesStore = useRSEsStore()
+const capacitiesStore = useCapacitiesStore()
 const rses = rsesStore.getRSEs()
+
+let totals = []
+
+rses.forEach(rse => {
+    console.log(rse.displayName)
+    const monthlyCapacities = []
+    for(let i = 1; i < 13; i++) {
+
+        if(i < 10) {
+            i = `0${i}`
+        }
+
+        const capacity = capacitiesStore.getCapacityInPeriod(`2023-${i}-01`, `2023-${i}-31`, rse.id)
+
+        if(capacity.length > 1) {
+            console.log('Multiple capacities found for month ' + i)
+        }
+
+        let days = capacity.length > 0 ? (18.3333 * (capacity[0].capacity / 100)) : 0
+
+        if(rse.displayName === 'Mark Turner') {
+            days = 0
+        }
+        else if(rse.displayName === 'Kate Court' || rse.displayName === 'Becky Osselton') {
+            days = days * 0.5
+        }
+
+        monthlyCapacities.push(days)
+    }
+    totals.push(monthlyCapacities)
+})
+
+let result = totals.reduce((r, a) => a.map((b, i) => (r[i] || 0) + b), [])
+console.log(result.toString())
 </script>
