@@ -40,5 +40,4 @@ const props = defineProps({
   assignment: null
 })
 
-console.log(props.assignment)
 </script>

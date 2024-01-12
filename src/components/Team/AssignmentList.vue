@@ -27,10 +27,10 @@
           </div>
           <div class="flex-1 items-center gap-x-4">
             <div>
-              <p class="leading-6 text-gray-900">
+              <!-- <p class="leading-6 text-gray-900">
                 {{ assignment.project.contacts[0].firstname }}&nbsp;
                 {{ assignment.project.contacts[0].lastname }}
-              </p>
+              </p> -->
               <p class="mt-1 text-sm leading-5 text-gray-600">{{ assignment.project.school }}</p>
             </div>
           </div>
@@ -49,10 +49,7 @@
 </template>
 <script setup>
 
-import { useProjectsStore } from '../../stores'
 import { defineProps } from 'vue'
-
-const projectsStore = useProjectsStore()
 
 const props = defineProps({
   assignments: null
@@ -61,12 +58,5 @@ const props = defineProps({
 function formatDate(date) {
   return new Date(date).toLocaleDateString()
 }
-
-props.assignments.forEach((assignment, index) => {
-  if('data' in assignment.project) {
-    const projectID = assignment.project.id
-    props.assignments[index].project = projectsStore.getByID(projectID)
-  }
-})
 
 </script>

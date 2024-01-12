@@ -149,12 +149,8 @@ const leave = leaveStore.getByRSE(props.rse.username),
 
 let months = []
 
-console.log(props.rse)
-
 const contractStart = DateTime.fromISO(props.rse.contractStart)
 const capacities = capacitiesStore.getCapacityInPeriod(dates.startDate.toISODate(), dates.endDate.toISODate(), props.rse.username)
-
-console.log(capacities)
 
 let date = dates.startDate
 

@@ -24,7 +24,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     function getByRSE(rse) {
-        return assignments.value.filter(assignment => assignment.rse === rse)
+        return assignments.value.filter(assignment => assignment.rse.id === rse)
     }
 
     function getByProject(projectId) {
@@ -64,7 +64,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     async function fetchAssignments () {
-        assignments.value = await fetchObjects('assignments', 0, 100)
+        assignments.value = await fetchObjects('assignments', 0, 100, ['project', 'rse'])
     }
 
     async function createAssignment (assignment) {

@@ -7,7 +7,8 @@ import * as Stores from '@/stores'
 
 export const useAuthStore = defineStore('auth', () => {
 
-    const holidaysStore = Stores.useHolidaysStore(), 
+    const assignmentsStore = Stores.useAssignmentsStore(),
+          holidaysStore = Stores.useHolidaysStore(), 
           facilitiesStore = Stores.useFacilitiesStore(),
           invoicesStore = Stores.useInvoicesStore(),
           leaveStore = Stores.useLeaveStore(),
@@ -50,17 +51,21 @@ export const useAuthStore = defineStore('auth', () => {
             jwt.value = values[0].data.jwt
             user.value = profile
 
-            Promise.all([
-                facilitiesStore.fetchFacilities(),
-                holidaysStore.fetchHolidays(),
-                invoicesStore.fetchInvoices(),
-                leaveStore.fetchLeave(),
-                projectsStore.fetchProjects(),
-                rsesStore.fetchRSEs(),
-                timesheetsStore.fetchTimesheets(),
-                transactionsStore.fetchTransactions()
-            ]).then(() => {
-            router.push({ name: "Dashboard" })
+            projectsStore.fetchProjects().then(() => {
+                Promise.all([
+                    assignmentsStore.fetchAssignments(),
+                    facilitiesStore.fetchFacilities(),
+                    holidaysStore.fetchHolidays(),
+                    invoicesStore.fetchInvoices(),
+                    leaveStore.fetchLeave(),
+                    rsesStore.fetchRSEs(),
+                    timesheetsStore.fetchTimesheets(),
+                    transactionsStore.fetchTransactions()
+                ]).then(() => {
+                    router.push({ name: "Dashboard" })
+                }).catch(error => {
+                    console.error(error)
+                })
             }).catch(error => {
             console.error(error)
             })
