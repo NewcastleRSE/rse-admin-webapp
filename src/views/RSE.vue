@@ -47,7 +47,7 @@
       <Suspense>
         <calendar v-if="currentTabIdx === 0" :rse="rse" />
       </Suspense>
-      <assignment-list v-if="currentTabIdx === 1" :assignments="rse.assignments" />
+      <assignment-list v-if="currentTabIdx === 1" :assignments="assignments" />
       <div v-if="currentTabIdx === 2">
         Skills
       </div>
@@ -60,15 +60,31 @@ import Calendar from '../components/Team/Calendar.vue'
 import TimeSummary from '@/components/Dashboard/TimeSummary.vue'
 import AssignmentList from '@/components/Team/AssignmentList.vue'
 import { useRoute } from 'vue-router'
-import { useRSEsStore } from '../stores'
+import { useAssignmentsStore, useProjectsStore, useRSEsStore } from '../stores'
 
 const route = useRoute()
 
-const rsesStore = useRSEsStore()
+const assignmentsStore = useAssignmentsStore(),
+      projectsStore = useProjectsStore(),
+      rsesStore = useRSEsStore()
 
 const rse = rsesStore.getByName(route.path.split('/')[2])
 
-rse.assignments = rse.assignments.reverse()
+const assignments = assignmentsStore.getByRSE(rse.id).reverse()
+
+assignments.forEach((assignment, index) => {
+  try {
+    if(!!Object.hasOwn(assignment.project, 'dealname')) {
+      assignments[index].project = projectsStore.getByID(assignment.project.id)
+    }
+  }
+  catch(e) {
+    console.log(assignment.id)
+  }
+
+})
+
+console.log(assignments)
 
 let currentTabIdx = ref(0)
 

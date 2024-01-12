@@ -49,10 +49,7 @@
 </template>
 <script setup>
 
-import { useProjectsStore } from '../../stores'
 import { defineProps } from 'vue'
-
-const projectsStore = useProjectsStore()
 
 const props = defineProps({
   assignments: null
@@ -61,12 +58,5 @@ const props = defineProps({
 function formatDate(date) {
   return new Date(date).toLocaleDateString()
 }
-
-props.assignments.forEach((assignment, index) => {
-  if('data' in assignment.project) {
-    const projectID = assignment.project.id
-    props.assignments[index].project = projectsStore.getByID(projectID)
-  }
-})
 
 </script>

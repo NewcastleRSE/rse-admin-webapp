@@ -86,20 +86,11 @@ export const useRSEsStore = defineStore('rses', () => {
             rseData[rseIndex].displayName = `${rseData[rseIndex].firstname} ${rseData[rseIndex].lastname}`
         })
 
-        let assignmentData = []
         let capacityData = []
 
         rseData.forEach((rse) => {
-            assignmentData = [...assignmentData, ...rse.assignments.map(assignment => ({...assignment, rse: rse.id}))]
             capacityData = [...capacityData, ...rse.capacities.map(capacity => ({...capacity, rse: rse.id}))]
         })
-
-        assignmentData.forEach((assignment, index) => {
-            assignmentData[index].project = assignment.project.data
-        })
-
-        const assignmentsStore = Stores.useAssignmentsStore()
-        assignmentsStore.setAssignments(assignmentData)
 
         const capacitiesStore = Stores.useCapacitiesStore()
         capacitiesStore.setCapacities(capacityData)

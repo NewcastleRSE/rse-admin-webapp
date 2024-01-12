@@ -24,7 +24,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     function getByRSE(rse) {
-        return assignments.value.filter(assignment => assignment.rse === rse)
+        return assignments.value.filter(assignment => assignment.rse.id === rse)
     }
 
     function getByProject(projectId) {
@@ -38,7 +38,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       
       if(rse) {
         response = assignments.value.filter(assignment =>
-          (assignment.rse === rse
+          (assignment.rse.id === rse
           // assignment crosses start date provided
           && DateTime.fromISO(assignment.start) <= DateTime.fromISO(start)
           && DateTime.fromISO(assignment.end) >= DateTime.fromISO(start)) ||
@@ -64,7 +64,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     async function fetchAssignments () {
-        assignments.value = await fetchObjects('assignments', 0, 100)
+        assignments.value = await fetchObjects('assignments', 0, 100, ['project', 'rse'])
     }
 
     async function createAssignment (assignment) {
