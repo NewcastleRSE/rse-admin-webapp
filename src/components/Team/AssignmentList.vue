@@ -27,10 +27,10 @@
           </div>
           <div class="flex-1 items-center gap-x-4">
             <div>
-              <!-- <p class="leading-6 text-gray-900">
+              <p class="leading-6 text-gray-900">
                 {{ assignment.project.contacts[0].firstname }}&nbsp;
                 {{ assignment.project.contacts[0].lastname }}
-              </p> -->
+              </p>
               <p class="mt-1 text-sm leading-5 text-gray-600">{{ assignment.project.school }}</p>
             </div>
           </div>

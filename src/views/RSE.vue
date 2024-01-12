@@ -74,17 +74,14 @@ const assignments = assignmentsStore.getByRSE(rse.id).reverse()
 
 assignments.forEach((assignment, index) => {
   try {
-    if(!Object.hasOwn(assignment.project, 'dealname')) {
+    if(!!Object.hasOwn(assignment.project, 'dealname')) {
       assignments[index].project = projectsStore.getByID(assignment.project.id)
     }
-    else {
-      console.log(assignment.project.dealname)
-    }  
   }
   catch(e) {
     console.log(assignment.id)
   }
-  
+
 })
 
 console.log(assignments)
