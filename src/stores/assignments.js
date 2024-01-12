@@ -38,7 +38,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       
       if(rse) {
         response = assignments.value.filter(assignment =>
-          (assignment.rse === rse
+          (assignment.rse.id === rse
           // assignment crosses start date provided
           && DateTime.fromISO(assignment.start) <= DateTime.fromISO(start)
           && DateTime.fromISO(assignment.end) >= DateTime.fromISO(start)) ||
