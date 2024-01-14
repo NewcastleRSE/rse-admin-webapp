@@ -123,7 +123,7 @@ projects.forEach((project, index) => {
     projects[index].rses = []
 
     if(assignments && assignments.length) {
-        rseIDs = new Set(assignments.map(assignment => assignment.rse))
+        rseIDs = new Set(assignments.map(assignment => assignment.rse.id))
         rseIDs.forEach(id => projects[index].rses.push(rsesStore.getByID(id)))
     }
     
