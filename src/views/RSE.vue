@@ -84,8 +84,6 @@ assignments.forEach((assignment, index) => {
 
 })
 
-console.log(assignments)
-
 let currentTabIdx = ref(0)
 
 function setTab(index) {
