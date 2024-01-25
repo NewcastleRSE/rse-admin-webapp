@@ -27,7 +27,7 @@
           </div>
           <div class="flex-1 items-center gap-x-4">
             <div>
-              <p class="leading-6 text-gray-900">
+              <p class="leading-6 text-gray-900" v-if="assignment.project.contacts && assignment.project.contacts.length > 0">
                 {{ assignment.project.contacts[0].firstname }}&nbsp;
                 {{ assignment.project.contacts[0].lastname }}
               </p>
