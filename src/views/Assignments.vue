@@ -29,7 +29,7 @@ const timeline = ref(),
       rses = rsesStore.getRSEs(),
       projects = projectsStore.getProjects()
 
-const unallocatedCount = computed(() => projects.filter(project => project.dealstage === 'Awaiting Allocation').length)
+const unallocatedCount = computed(() => projects.filter(project => project.stage === 'Awaiting Allocation').length)
 
 function zoom(level) {
   timeline.value.changeZoomLevel(level)

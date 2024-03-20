@@ -89,7 +89,7 @@
   export default {
     data() {
         let projects = this.$store.getters["projects/getProjects"](),
-            active = projects.filter(project => project.dealstage === 'Awaiting Allocation' || project.dealstage === 'Allocated'),
+            active = projects.filter(project => project.stage === 'Awaiting Allocation' || project.stage === 'Allocated'),
             red = active.filter(project => project.status === 'Red'),
             amber = active.filter(project => project.status === 'Amber')
         return {

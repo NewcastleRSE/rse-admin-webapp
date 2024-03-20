@@ -46,7 +46,7 @@ const isOpen = ref(false)
 const emit = defineEmits(['createAssignment'])
 
 const projectsStore = useProjectsStore()
-const projects = projectsStore.getProjects().filter(project => project.dealstage === 'Awaiting Allocation')
+const projects = projectsStore.getProjects().filter(project => project.stage === 'Awaiting Allocation')
 
 function toggleModal() {
   isOpen.value = !isOpen.value
