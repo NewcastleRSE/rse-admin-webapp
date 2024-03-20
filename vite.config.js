@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
 import svgLoader from 'vite-svg-loader'
 const path = require("path")
 
@@ -8,7 +7,6 @@ const path = require("path")
 export default defineConfig({
   plugins: [
     vue(),
-    viteCommonjs(),
     svgLoader()
   ],
   resolve: {
