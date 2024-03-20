@@ -18,7 +18,7 @@
           <div class="flex-1 gap-x-4 pr-6">
             <div class="min-w-0 flex-auto">
               <p class="text-sm font-semibold leading-6 text-gray-900">
-                {{ assignment.project.dealname }}
+                {{ assignment.project.name }}
               </p>
               <p class="mt-1 flex text-sm leading-5 text-gray-500">
                 {{ assignment.project.fundingBody }}

@@ -10,7 +10,7 @@
           <div class="flex flex-col">
             <div class="flex items-start gap-x-3">
                 <p class="text-sm font-semibold leading-6 text-gray-900">
-                    {{ project.dealname }}
+                    {{ project.name }}
                 </p>
                 <p v-if="project.dealstage === 'Awaiting Allocation'" class="text-red-700 bg-red-50 ring-red-600/20 rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset">
                     {{ project.dealstage }}

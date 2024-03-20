@@ -7,8 +7,8 @@ export const useProjectsStore = defineStore('projects', () => {
 
     function getProjects() {
         return projects.value.sort(function(a, b) {
-            let textA = a.dealname.toUpperCase();
-            let textB = b.dealname.toUpperCase();
+            let textA = a.name.toUpperCase();
+            let textB = b.name.toUpperCase();
             return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
         })
     }

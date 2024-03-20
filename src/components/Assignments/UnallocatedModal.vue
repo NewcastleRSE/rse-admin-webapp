@@ -14,7 +14,7 @@
                   <div class="flex gap-x-4">
                     <div class="min-w-0 flex-auto">
                       <p class="text-sm font-semibold leading-6 text-gray-900">
-                        {{ project.dealname }}
+                        {{ project.name }}
                         <span v-if="project.status === 'red'" class="ml-2 inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">Critical</span>
                         <span v-else-if="project.status === 'amber'" class="ml-2 inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">Warning</span>
                       </p>

@@ -3,7 +3,7 @@
     <div class="h-full flex p-4">
       <div class="flex-1" v-if="assignment">
           <h3 class="font-semibold text-ellipsis line-clamp-1">
-            {{ assignment.project.dealname }}
+            {{ assignment.project.name }}
           </h3>
           <h5 class="text-blueGray-400 uppercase font-bold text-xs">
             {{ assignment.project.contacts[0].firstname }} {{ assignment.project.contacts[0].lastname }}

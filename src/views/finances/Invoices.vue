@@ -26,7 +26,7 @@
                   <li v-for="project in month.projects" :key="project.id" class="flex items-center justify-between gap-x-6 py-5">
                     <div class="min-w-0">
                       <div class="flex items-start gap-x-3">
-                        <p class="text-sm font-semibold leading-6 text-gray-900">{{ project.dealname }}</p>
+                        <p class="text-sm font-semibold leading-6 text-gray-900">{{ project.name }}</p>
                         <p v-if="hasState(getInvoice(project.id, month.year, month.name), 'transaction')" :class="[statuses['paid'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Paid {{ getInvoice(project.id, month.year, month.name).transaction.postedDate }}</p>
                         <p v-else-if="hasState(getInvoice(project.id, month.year, month.name), 'processed')" :class="[statuses['processed'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Processed {{ getInvoice(project.id, month.year, month.name).processed }}</p>
                         <p v-else-if="hasState(getInvoice(project.id, month.year, month.name), 'sent')" :class="[statuses['sent'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Sent {{ getInvoice(project.id, month.year, month.name).sent }}</p>

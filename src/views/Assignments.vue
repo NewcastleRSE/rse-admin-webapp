@@ -71,7 +71,7 @@ async function resize(assignmentID, rseID, start, end) {
 }
 
 function exportCSV() {
-  const header = 'id,start,end,name,dealname' + '\r\n'
+  const header = 'id,start,end,name,name' + '\r\n'
   let body = ''
   let chart = this.$store.getters[
     'assignments/getAssignments'
