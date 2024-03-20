@@ -32,7 +32,7 @@
                         <p v-else-if="hasState(getInvoice(project.id, month.year, month.name), 'sent')" :class="[statuses['sent'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Sent {{ getInvoice(project.id, month.year, month.name).sent }}</p>
                       </div>
                       <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-                        <p class="whitespace-nowrap">
+                        <p v-if="project.contacts" class="whitespace-nowrap">
                           {{ project.contacts[0].firstname }} {{ project.contacts[0].lastname}}
                         </p>
                         <svg viewBox="0 0 2 2" class="h-0.5 w-0.5 fill-current">

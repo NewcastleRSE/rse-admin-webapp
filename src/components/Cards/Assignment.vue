@@ -5,7 +5,7 @@
           <h3 class="font-semibold text-ellipsis line-clamp-1">
             {{ assignment.project.name }}
           </h3>
-          <h5 class="text-blueGray-400 uppercase font-bold text-xs">
+          <h5 v-if="assignment.project.contacts" class="text-blueGray-400 uppercase font-bold text-xs">
             {{ assignment.project.contacts[0].firstname }} {{ assignment.project.contacts[0].lastname }}
           </h5>
           <div class="flex flex-row mt-4">
