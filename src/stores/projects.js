@@ -33,7 +33,7 @@ export const useProjectsStore = defineStore('projects', () => {
     }
 
     async function fetchProjects () {
-        projects.value = await fetchObjects('projects', 0, 100)
+        projects.value = await fetchObjects('projects', 0, 100, ['contacts'])
     }
 
     async function reset () {
