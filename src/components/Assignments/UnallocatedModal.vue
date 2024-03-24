@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, defineExpose, defineEmits } from 'vue'
+import { ref } from 'vue'
 import { useProjectsStore } from '../../stores'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { ChevronRightIcon } from '@heroicons/vue/20/solid'

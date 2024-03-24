@@ -114,7 +114,7 @@
   </template>
   
 <script setup>
-import { ref, defineExpose, defineEmits, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxLabel, ComboboxOption, ComboboxOptions, Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 import { useAssignmentsStore, useRSEsStore, useProjectsStore } from '../../stores'
