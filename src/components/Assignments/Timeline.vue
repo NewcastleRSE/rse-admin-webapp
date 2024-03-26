@@ -1,7 +1,5 @@
 <template>
-  <div class="gstc-wrapper" ref="gstcElement" @wheel="$event.target.blur()">
-    <div id="scroll-trap"></div>
-  </div>
+  <div class="gstc-wrapper" ref="gstcElement"></div>
 </template>
 
 <script>
@@ -317,12 +315,6 @@ export default {
         else {
           console.log(mutation.events)
         }
-      })
-
-      nextTick(()=>{
-        // document.querySelectorAll('.gstc__chart-timeline').forEach(timeline => {
-        //   timeline.addEventListener('wheel', (event) => { console.log('wheel'); event.preventDefault() }, false)
-        // })
       })
     })
     onBeforeUnmount(() => {
