@@ -126,7 +126,7 @@
 </style>
 <!-- class="bg-gradient-to-tl from-emerald-600 from-50% via-amber-600 via-50% to-amber-600" -->
 <script setup>
-import { defineProps, ref } from 'vue'
+import { ref } from 'vue'
 import { useCapacitiesStore, useLeaveStore, useHolidaysStore } from '../../stores'
 import { currentFY } from '../../utils/dates'
 import { fetchObject } from '../../utils/orm'

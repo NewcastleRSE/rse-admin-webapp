@@ -1,7 +1,7 @@
 <template>
   <div class="w-full mb-12 px-4">
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
-      <menu-bar :edited="edited" :zoom="zoom" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :export="exportCSV"/>
+      <menu-bar :edited="edited" :changeFY="changeFY" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :export="exportCSV"/>
       <Timeline ref="timeline" :rses="rses" :projects="projects" @create="create" @edit="edit" @resize="resize" />
     </div>
     <assignment-modal ref="assignmentModalRef" />
@@ -31,8 +31,8 @@ const timeline = ref(),
 
 const unallocatedCount = computed(() => projects.filter(project => project.stage === 'Awaiting Allocation').length)
 
-function zoom(level) {
-  timeline.value.changeZoomLevel(level)
+function changeFY(year) {
+  timeline.value.changeFY(year)
 }
 
 function unallocated() {
