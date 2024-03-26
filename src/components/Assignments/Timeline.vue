@@ -1,5 +1,7 @@
 <template>
-  <div @scroll.prevent class="gstc-wrapper" ref="gstcElement"></div>
+  <div class="gstc-wrapper" ref="gstcElement" @wheel="$event.target.blur()">
+    <div id="scroll-trap"></div>
+  </div>
 </template>
 
 <script>
@@ -277,7 +279,9 @@ export default {
             ...generateAvailability(props.rses)
           },
           time: {
-            zoom: 25.5
+            calculatedZoomMode: true,
+            from: GSTC.api.date('2024-01-01').valueOf(),
+            to: GSTC.api.date('2024-01-01').endOf('year').valueOf()
           }
         },
         actions: {
@@ -312,11 +316,9 @@ export default {
       })
 
       nextTick(()=>{
-        document.querySelectorAll('.gstc__chart-timeline').forEach(timeline => {
-          timeline.addEventListener('wheel', (event) => {
-            event.preventDefault()
-          }, false)
-        })
+        // document.querySelectorAll('.gstc__chart-timeline').forEach(timeline => {
+        //   timeline.addEventListener('wheel', (event) => { console.log('wheel'); event.preventDefault() }, false)
+        // })
       })
     })
     onBeforeUnmount(() => {
@@ -328,27 +330,17 @@ export default {
         return row
       })
     }
-    function changeZoomLevel(period) {
-      let zoom = null,
-          start = null
-      switch (period) {
-        case 'days':
-          zoom = 20
-          start = DateTime.now().startOf('day').minus({ days: 7 })
-          break
-        case 'months':
-          zoom = 25.5
-          start = DateTime.now().startOf('month').minus({ months: 6 })
-          break
-        case 'years':
-          zoom = 26.5
-          start = DateTime.now().startOf('month').minus({ months: 6 })
-          break
-      }
+    function changeFY(period) {
+      let year = period.name.split('/')[0],
+          from = DateTime.fromISO(`${year}-08-01`).startOf('day'),
+          to = from.plus({ years: 1 }).minus({ days:1 }).endOf('day')
 
-      state.update('config.chart.time.zoom', zoom)
+      console.log(from, to)
+
+      state.update('config.chart.time.from', from.valueOf())
+      state.update('config.chart.time.to', to.valueOf())
       const api = gstc.api
-      api.scrollToTime(start.toUTC(), false)
+      api.scrollToTime(from.toUTC(), false)
     }
     function addAssignment(assignment){
       let newItem = {
@@ -401,7 +393,7 @@ export default {
     return {
       gstcElement,
       updateFirstRow,
-      changeZoomLevel,
+      changeFY,
       addAssignment,
       deleteAssignments,
       getSelectedAssignments,
