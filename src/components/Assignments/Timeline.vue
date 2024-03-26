@@ -18,7 +18,7 @@ import { Plugin as ProgressBar } from 'gantt-schedule-timeline-calendar/dist/plu
 import 'gantt-schedule-timeline-calendar/dist/style.css'
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { DateTime } from 'luxon'
-import { useAssignmentsStore } from '../../stores'
+import { useAssignmentsStore, useFacilitiesStore } from '../../stores'
 import globalthis from 'globalthis'
 
 // const globalthis = require('globalthis')
@@ -247,6 +247,10 @@ export default {
         }
       }
 
+      let FY = DateTime.local().month > 7 ? DateTime.local().year : DateTime.local().year - 1,
+          FYStart = DateTime.fromObject({ year: FY, month: 8, day: 1}),
+          FYEnd = DateTime.fromObject({ year: FY + 1, month: 7, day: 31})
+
       /**
        * @type { import('gantt-schedule-timeline-calendar').Config }
        */
@@ -280,8 +284,8 @@ export default {
           },
           time: {
             calculatedZoomMode: true,
-            from: GSTC.api.date('2024-01-01').valueOf(),
-            to: GSTC.api.date('2024-01-01').endOf('year').valueOf()
+            from: FYStart.valueOf(),
+            to: FYEnd.valueOf()
           }
         },
         actions: {
@@ -335,12 +339,13 @@ export default {
           from = DateTime.fromISO(`${year}-08-01`).startOf('day'),
           to = from.plus({ years: 1 }).minus({ days:1 }).endOf('day')
 
-      console.log(from, to)
-
-      state.update('config.chart.time.from', from.valueOf())
-      state.update('config.chart.time.to', to.valueOf())
-      const api = gstc.api
-      api.scrollToTime(from.toUTC(), false)
+      setTimeout(() => {
+        state.update('config.chart.time', (time) => {
+          time.from = from.valueOf()
+          time.to = to.valueOf()
+          return time;
+        })
+      }, 250)      
     }
     function addAssignment(assignment){
       let newItem = {
