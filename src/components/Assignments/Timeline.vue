@@ -14,9 +14,9 @@ import { Plugin as CalendarScroll } from 'gantt-schedule-timeline-calendar/dist/
 import { Plugin as ProgressBar } from 'gantt-schedule-timeline-calendar/dist/plugins/progress-bar.esm.min.js'
 
 import 'gantt-schedule-timeline-calendar/dist/style.css'
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { DateTime } from 'luxon'
-import { useAssignmentsStore, useFacilitiesStore } from '../../stores'
+import { useAssignmentsStore } from '../../stores'
 import globalthis from 'globalthis'
 
 // const globalthis = require('globalthis')
@@ -326,6 +326,36 @@ export default {
         return row
       })
     }
+    function changeTeam(team) {
+
+      if(team.key == 'All') {
+        state.update('config.list.rows', generateRows(props.rses))
+        state.update('config.chart.items', generateAssignments(props.rses))
+      }
+      else {
+        const filteredIDs = props.rses.filter(rse => rse.team === team.key).map(rse => rse.id)
+
+        state.update('config', config=>{
+          const filteredRows = {}
+          for(const rowId in config.list.rows){
+            const rseID = Number(rowId.split('-')[2])
+            if(filteredIDs.includes(rseID)) {
+              filteredRows[rowId] = config.list.rows[rowId]   
+            }
+          }
+          // clean up items
+          const filteredItems = {}
+          for(const itemId in config.chart.items){
+            const item = config.chart.items[itemId]
+            if(filteredRows[item.rowId])filteredItems[itemId] = item
+          }
+          config.list.rows = filteredRows
+          config.chart.items = filteredItems
+          return config
+        })
+      }
+
+    }
     function changeFY(period) {
       let year = period.name.split('/')[0],
           from = DateTime.fromISO(`${year}-08-01`).startOf('day'),
@@ -390,6 +420,7 @@ export default {
     return {
       gstcElement,
       updateFirstRow,
+      changeTeam,
       changeFY,
       addAssignment,
       deleteAssignments,

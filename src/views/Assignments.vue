@@ -1,7 +1,7 @@
 <template>
   <div class="w-full mb-12 px-4">
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
-      <menu-bar :edited="edited" :changeFY="changeFY" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :export="exportCSV"/>
+      <menu-bar :edited="edited" :changeTeam="changeTeam" :changeFY="changeFY" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :export="exportCSV"/>
       <Timeline ref="timeline" :rses="rses" :projects="projects" @create="create" @edit="edit" @resize="resize" />
     </div>
     <assignment-modal ref="assignmentModalRef" />
@@ -30,6 +30,10 @@ const timeline = ref(),
       projects = projectsStore.getProjects()
 
 const unallocatedCount = computed(() => projects.filter(project => project.stage === 'Awaiting Allocation').length)
+
+function changeTeam(team) {
+  timeline.value.changeTeam(team)
+}
 
 function changeFY(year) {
   timeline.value.changeFY(year)

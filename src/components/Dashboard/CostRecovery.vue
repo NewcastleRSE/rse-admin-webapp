@@ -7,7 +7,7 @@
             Finance
           </h6>
           <h2 class="text-blueGray-700 text-xl font-semibold">
-            Financial Year {{currentYear}}
+            Financial Year {{dates.startDate.year}}/{{dates.endDate.year}}
           </h2>
         </div>
       </div>
