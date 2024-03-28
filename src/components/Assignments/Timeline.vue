@@ -327,34 +327,19 @@ export default {
       })
     }
     function changeTeam(team) {
-
       if(team.key == 'All') {
         state.update('config.list.rows', generateRows(props.rses))
-        state.update('config.chart.items', generateAssignments(props.rses))
+        state.update('config.chart.items', {...generateAssignments(props.rses), ...generateAvailability(props.rses)})
       }
       else {
-        const filteredIDs = props.rses.filter(rse => rse.team === team.key).map(rse => rse.id)
+        const filteredRSEs = props.rses.filter(rse => rse.team === team.key)
 
-        state.update('config', config=>{
-          const filteredRows = {}
-          for(const rowId in config.list.rows){
-            const rseID = Number(rowId.split('-')[2])
-            if(filteredIDs.includes(rseID)) {
-              filteredRows[rowId] = config.list.rows[rowId]   
-            }
-          }
-          // clean up items
-          const filteredItems = {}
-          for(const itemId in config.chart.items){
-            const item = config.chart.items[itemId]
-            if(filteredRows[item.rowId])filteredItems[itemId] = item
-          }
-          config.list.rows = filteredRows
-          config.chart.items = filteredItems
+        state.update('config', config => {
+          config.list.rows = generateRows(filteredRSEs)
+          config.chart.items = {...generateAssignments(filteredRSEs), ...generateAvailability(filteredRSEs)}
           return config
         })
       }
-
     }
     function changeFY(period) {
       let year = period.name.split('/')[0],
