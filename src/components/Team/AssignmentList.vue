@@ -21,7 +21,7 @@
                 {{ assignment.project.name }}
               </p>
               <p class="mt-1 flex text-sm leading-5 text-gray-500">
-                {{ assignment.project.fundingBody }}
+                {{ assignment.project.funder }}
               </p>
             </div>
           </div>
