@@ -74,7 +74,7 @@ const assignments = assignmentsStore.getByRSE(rse.id).reverse()
 
 assignments.forEach((assignment, index) => {
   try {
-    if(!!Object.hasOwn(assignment.project, 'dealname')) {
+    if(!!Object.hasOwn(assignment.project, 'name')) {
       assignments[index].project = projectsStore.getByID(assignment.project.id)
     }
   }
@@ -83,8 +83,6 @@ assignments.forEach((assignment, index) => {
   }
 
 })
-
-console.log(assignments)
 
 let currentTabIdx = ref(0)
 

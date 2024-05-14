@@ -1,5 +1,5 @@
 <template>
-  <div @scroll.prevent class="gstc-wrapper" ref="gstcElement"></div>
+  <div class="gstc-wrapper" ref="gstcElement"></div>
 </template>
 
 <script>
@@ -10,11 +10,10 @@ import { Plugin as ItemResizing } from 'gantt-schedule-timeline-calendar/dist/pl
 import { Plugin as ItemMovement } from 'gantt-schedule-timeline-calendar/dist/plugins/item-movement.esm.min.js'
 import { Plugin as Bookmarks } from 'gantt-schedule-timeline-calendar/dist/plugins/time-bookmarks.esm.min.js'
 import { Plugin as HighlightWeekends } from 'gantt-schedule-timeline-calendar/dist/plugins/highlight-weekends.esm.min.js'
-import { Plugin as CalendarScroll } from 'gantt-schedule-timeline-calendar/dist/plugins/calendar-scroll.esm.min.js'
 import { Plugin as ProgressBar } from 'gantt-schedule-timeline-calendar/dist/plugins/progress-bar.esm.min.js'
 
 import 'gantt-schedule-timeline-calendar/dist/style.css'
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { DateTime } from 'luxon'
 import { useAssignmentsStore } from '../../stores'
 import globalthis from 'globalthis'
@@ -245,13 +244,17 @@ export default {
         }
       }
 
+      let FY = DateTime.local().month > 7 ? DateTime.local().year : DateTime.local().year - 1,
+          FYStart = DateTime.fromObject({ year: FY, month: 8, day: 1}),
+          FYEnd = DateTime.fromObject({ year: FY + 1, month: 7, day: 31})
+
       /**
        * @type { import('gantt-schedule-timeline-calendar').Config }
        */
       const config = {
         licenseKey:
           `${import.meta.env.VITE_GANTT_KEY}`,
-        plugins: [ProgressBar(), HighlightWeekends(), TimelinePointer(), Selection(selectionOptions), ItemResizing(resizingPluginConfig), ItemMovement(movementPluginConfig), Bookmarks(), CalendarScroll()],
+        plugins: [ProgressBar(), HighlightWeekends(), TimelinePointer(), Selection(selectionOptions), ItemResizing(resizingPluginConfig), ItemMovement(movementPluginConfig), Bookmarks()],
         innerHeight: (props.rses.length * 40) + 72,
         list: {
           columns: {
@@ -277,7 +280,9 @@ export default {
             ...generateAvailability(props.rses)
           },
           time: {
-            zoom: 25.5
+            calculatedZoomMode: true,
+            from: FYStart.valueOf(),
+            to: FYEnd.valueOf()
           }
         },
         actions: {
@@ -310,14 +315,6 @@ export default {
           console.log(mutation.events)
         }
       })
-
-      nextTick(()=>{
-        document.querySelectorAll('.gstc__chart-timeline').forEach(timeline => {
-          timeline.addEventListener('wheel', (event) => {
-            event.preventDefault()
-          }, false)
-        })
-      })
     })
     onBeforeUnmount(() => {
       if (gstc) gstc.destroy()
@@ -328,27 +325,33 @@ export default {
         return row
       })
     }
-    function changeZoomLevel(period) {
-      let zoom = null,
-          start = null
-      switch (period) {
-        case 'days':
-          zoom = 20
-          start = DateTime.now().startOf('day').minus({ days: 7 })
-          break
-        case 'months':
-          zoom = 25.5
-          start = DateTime.now().startOf('month').minus({ months: 6 })
-          break
-        case 'years':
-          zoom = 26.5
-          start = DateTime.now().startOf('month').minus({ months: 6 })
-          break
+    function changeTeam(team) {
+      if(team.key == 'All') {
+        state.update('config.list.rows', generateRows(props.rses))
+        state.update('config.chart.items', {...generateAssignments(props.rses), ...generateAvailability(props.rses)})
       }
+      else {
+        const filteredRSEs = props.rses.filter(rse => rse.team === team.key)
 
-      state.update('config.chart.time.zoom', zoom)
-      const api = gstc.api
-      api.scrollToTime(start.toUTC(), false)
+        state.update('config', config => {
+          config.list.rows = generateRows(filteredRSEs)
+          config.chart.items = {...generateAssignments(filteredRSEs), ...generateAvailability(filteredRSEs)}
+          return config
+        })
+      }
+    }
+    function changeFY(period) {
+      let year = period.name.split('/')[0],
+          from = DateTime.fromISO(`${year}-08-01`).startOf('day'),
+          to = from.plus({ years: 1 }).minus({ days:1 }).endOf('day')
+
+      setTimeout(() => {
+        state.update('config.chart.time', (time) => {
+          time.from = from.valueOf()
+          time.to = to.valueOf()
+          return time;
+        })
+      }, 250)      
     }
     function addAssignment(assignment){
       let newItem = {
@@ -401,7 +404,8 @@ export default {
     return {
       gstcElement,
       updateFirstRow,
-      changeZoomLevel,
+      changeTeam,
+      changeFY,
       addAssignment,
       deleteAssignments,
       getSelectedAssignments,

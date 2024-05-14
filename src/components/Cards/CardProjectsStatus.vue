@@ -57,7 +57,7 @@
             <th
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left"
             >
-              {{ project.dealname }}
+              {{ project.name }}
             </th>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
@@ -89,7 +89,7 @@
   export default {
     data() {
         let projects = this.$store.getters["projects/getProjects"](),
-            active = projects.filter(project => project.dealstage === 'Awaiting Allocation' || project.dealstage === 'Allocated'),
+            active = projects.filter(project => project.stage === 'Awaiting Allocation' || project.stage === 'Allocated'),
             red = active.filter(project => project.status === 'Red'),
             amber = active.filter(project => project.status === 'Amber')
         return {

@@ -40,7 +40,7 @@ const rse = rseStore.getByName(route.path.split('/')[2]),
 
 assignments.forEach((assignment, index) => {
   if(assignment.project.name && (assignment.project.name === 'Management' || assignment.project.name === 'Carpentries Training')) {
-    assignments[index].project.dealname = assignment.project.name
+    assignments[index].project.name = assignment.project.name
     assignments[index].project.contacts = [{ firstname: 'Mark', lastname: 'Turner' }]
   }
 })

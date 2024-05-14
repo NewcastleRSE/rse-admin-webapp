@@ -10,14 +10,14 @@
           <div class="flex flex-col">
             <div class="flex items-start gap-x-3">
                 <p class="text-sm font-semibold leading-6 text-gray-900">
-                    {{ project.dealname }}
+                    {{ project.name }}
                 </p>
-                <p v-if="project.dealstage === 'Awaiting Allocation'" class="text-red-700 bg-red-50 ring-red-600/20 rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset">
-                    {{ project.dealstage }}
+                <p v-if="project.stage === 'Awaiting Allocation'" class="text-red-700 bg-red-50 ring-red-600/20 rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset">
+                    {{ project.stage }}
                 </p>
             </div>
             <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-                <p>
+                <p v-if="project.contacts">
                 {{ `${project.contacts[0].firstname}  ${project.contacts[0].lastname}` }}
                 </p>
                 <svg viewBox="0 0 2 2" class="h-0.5 w-0.5 fill-current">
@@ -108,7 +108,7 @@ const assignmentsStore = useAssignmentsStore(),
       projectsStore = useProjectsStore(),
       rsesStore = useRSEsStore()
 
-let projects = projectsStore.getProjects().filter(project => project.dealstage === 'Awaiting Allocation' || project.dealstage === 'Allocated')
+let projects = projectsStore.getProjects().filter(project => project.stage === 'Awaiting Allocation' || project.stage === 'Allocated')
 
 if(status) {
   projects = projects.filter(project => project.status === status)
@@ -123,7 +123,7 @@ projects.forEach((project, index) => {
     projects[index].rses = []
 
     if(assignments && assignments.length) {
-        rseIDs = new Set(assignments.map(assignment => assignment.rse))
+        rseIDs = new Set(assignments.map(assignment => assignment.rse.id))
         rseIDs.forEach(id => projects[index].rses.push(rsesStore.getByID(id)))
     }
     

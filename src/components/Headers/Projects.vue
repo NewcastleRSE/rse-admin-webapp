@@ -22,7 +22,7 @@ import { useProjectsStore } from '../../stores'
 
 const projectsStore = useProjectsStore()
 
-let projects = projectsStore.getProjects().filter(project => project.dealstage === 'Awaiting Allocation' || project.dealstage === 'Allocated')
+let projects = projectsStore.getProjects().filter(project => project.stage === 'Awaiting Allocation' || project.stage === 'Allocated')
 
 const occurrences = projects.reduce(function (statuses, project) {
   return statuses[project.status] ? ++statuses[project.status] : statuses[project.status] = 1, statuses

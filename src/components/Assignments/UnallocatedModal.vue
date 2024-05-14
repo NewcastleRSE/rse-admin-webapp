@@ -14,11 +14,11 @@
                   <div class="flex gap-x-4">
                     <div class="min-w-0 flex-auto">
                       <p class="text-sm font-semibold leading-6 text-gray-900">
-                        {{ project.dealname }}
+                        {{ project.name }}
                         <span v-if="project.status === 'red'" class="ml-2 inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">Critical</span>
                         <span v-else-if="project.status === 'amber'" class="ml-2 inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">Warning</span>
                       </p>
-                      <p class="mt-1 flex text-xs leading-5 text-gray-500">
+                      <p v-if="project.contacts" class="mt-1 flex text-xs leading-5 text-gray-500">
                         {{ project.contacts[0].firstname }} {{ project.contacts[0].lastname }} - {{ project.school }}
                       </p>
                     </div>
@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, defineExpose, defineEmits } from 'vue'
+import { ref } from 'vue'
 import { useProjectsStore } from '../../stores'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { ChevronRightIcon } from '@heroicons/vue/20/solid'
@@ -46,7 +46,7 @@ const isOpen = ref(false)
 const emit = defineEmits(['createAssignment'])
 
 const projectsStore = useProjectsStore()
-const projects = projectsStore.getProjects().filter(project => project.dealstage === 'Awaiting Allocation')
+const projects = projectsStore.getProjects().filter(project => project.stage === 'Awaiting Allocation')
 
 function toggleModal() {
   isOpen.value = !isOpen.value

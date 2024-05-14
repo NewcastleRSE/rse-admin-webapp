@@ -17,10 +17,10 @@
         <li v-for="project in projects" :key="project.id" class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap">
           <div>
             <p class="text-sm font-semibold leading-6 text-gray-900">
-              <a :href="`/projects/${project.id}`" class="hover:underline">{{ project.dealname }}</a>
+              <a :href="`/projects/${project.id}`" class="hover:underline">{{ project.name }}</a>
             </p>
             <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-              <p>
+              <p v-if="project.contacts">
                 {{ `${project.contacts[0].firstname}  ${project.contacts[0].lastname}` }}
               </p>
               <svg viewBox="0 0 2 2" class="h-0.5 w-0.5 fill-current">
@@ -53,7 +53,7 @@ import { ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/2
 
 const projectsStore = useProjectsStore()
 
-const active = projectsStore.getProjects().filter(project => project.dealstage === 'Awaiting Allocation' || project.dealstage === 'Allocated'),
+const active = projectsStore.getProjects().filter(project => project.stage === 'Awaiting Allocation' || project.stage === 'Allocated'),
       red = active.filter(project => project.status === 'red')
       // amber = active.filter(project => project.status === 'amber')
 

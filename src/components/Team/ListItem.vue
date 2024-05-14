@@ -18,7 +18,7 @@
     </li>
 </template>
 <script setup>
-import { defineProps, toRefs } from 'vue'
+import { toRefs } from 'vue'
 import TimeSummary from '@/components/Dashboard/TimeSummary.vue'
 
 const props = defineProps({

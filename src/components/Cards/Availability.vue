@@ -23,7 +23,6 @@
   </div>
 </template>
 <script setup>
-import { defineOptions, defineProps } from 'vue'
 
 defineOptions({
   name: 'availability-card'

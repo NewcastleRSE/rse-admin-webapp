@@ -18,7 +18,7 @@
                             <Combobox as="div" v-model="project" nullable>
                               <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">Project</ComboboxLabel>
                               <div class="relative mt-2">
-                                <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" required @change="projectQuery = $event.target.value" :display-value="(project) => project?.dealname" />
+                                <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" required @change="projectQuery = $event.target.value" :display-value="(project) => project?.name" />
                                 <ComboboxButton class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
                                   <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                                 </ComboboxButton>
@@ -28,7 +28,7 @@
                                     <li :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-cyan-600 text-white' : 'text-gray-900']">
                                       <div class="flex items-center">
                                         <span :class="['ml-3 truncate', selected && 'font-semibold']">
-                                          {{ project.dealname }}
+                                          {{ project.name }}
                                         </span>
                                       </div>
 
@@ -114,7 +114,7 @@
   </template>
   
 <script setup>
-import { ref, defineExpose, defineEmits, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxLabel, ComboboxOption, ComboboxOptions, Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 import { useAssignmentsStore, useRSEsStore, useProjectsStore } from '../../stores'
@@ -149,7 +149,7 @@ let title = '',
 
 const filteredProjects = computed(() =>
   projectQuery.value === '' ? projects : projects.filter((project) => {
-    return project.dealname.toLowerCase().includes(projectQuery.value.toLowerCase())
+    return project.name.toLowerCase().includes(projectQuery.value.toLowerCase())
   })
 )
 

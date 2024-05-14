@@ -10,7 +10,7 @@
     </div>
 </template>
 <script setup>
-import { defineProps, toRefs } from 'vue'
+import { toRefs } from 'vue'
 import { useTimesheetsStore } from '../../stores'
 import { Interval } from 'luxon'
 import { DateTime } from 'luxon-business-days'

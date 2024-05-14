@@ -1,7 +1,7 @@
 <template>
   <div class="w-full mb-12 px-4">
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
-      <menu-bar :edited="edited" :zoom="zoom" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :export="exportCSV"/>
+      <menu-bar :edited="edited" :changeTeam="changeTeam" :changeFY="changeFY" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :export="exportCSV"/>
       <Timeline ref="timeline" :rses="rses" :projects="projects" @create="create" @edit="edit" @resize="resize" />
     </div>
     <assignment-modal ref="assignmentModalRef" />
@@ -29,10 +29,14 @@ const timeline = ref(),
       rses = rsesStore.getRSEs(),
       projects = projectsStore.getProjects()
 
-const unallocatedCount = computed(() => projects.filter(project => project.dealstage === 'Awaiting Allocation').length)
+const unallocatedCount = computed(() => projects.filter(project => project.stage === 'Awaiting Allocation').length)
 
-function zoom(level) {
-  timeline.value.changeZoomLevel(level)
+function changeTeam(team) {
+  timeline.value.changeTeam(team)
+}
+
+function changeFY(year) {
+  timeline.value.changeFY(year)
 }
 
 function unallocated() {
@@ -71,7 +75,7 @@ async function resize(assignmentID, rseID, start, end) {
 }
 
 function exportCSV() {
-  const header = 'id,start,end,name,dealname' + '\r\n'
+  const header = 'id,start,end,name,name' + '\r\n'
   let body = ''
   let chart = this.$store.getters[
     'assignments/getAssignments'
