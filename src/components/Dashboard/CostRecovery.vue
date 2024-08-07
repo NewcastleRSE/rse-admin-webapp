@@ -66,8 +66,6 @@ const transactionsSummary = transactionsStore.getSummary(dates.startDate.year),
 const monthsToDate = Math.floor(dates.currentDate.diff(dates.startDate, ['months']).months),
       progressThroughYear = ((monthsToDate / 12) * 100).toFixed(2)
 
-console.log(transactionsSummary)
-
 if(transactionsSummary.income && transactionsSummary.nonSalaryExpenditure) {
   costRecoveryRate = ((transactionsSummary.income.total / facility.incomeTarget) * 100).toFixed(2)
   budgetUsed = (((transactionsSummary.nonSalaryExpenditure.total * -1) / facility.nonSalaryCosts) * 100).toFixed(2)
