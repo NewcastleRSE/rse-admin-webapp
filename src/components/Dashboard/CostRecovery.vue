@@ -50,6 +50,13 @@ import { currentFY } from '../../utils/dates'
 const facilitiesStore = useFacilitiesStore(),
       transactionsStore = useTransactionsStore()
 
+let costRecoveryRate = 0,
+    budgetUsed = 0,
+    stats = [
+      { name: 'Revenue', value: 0, ratio: '0%' },
+      { name: 'Expenses', value: 0, ratio: '0%' },
+    ]
+
 const dates = currentFY()
 const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' })
 
@@ -59,12 +66,17 @@ const transactionsSummary = transactionsStore.getSummary(dates.startDate.year),
 const monthsToDate = Math.floor(dates.currentDate.diff(dates.startDate, ['months']).months),
       progressThroughYear = ((monthsToDate / 12) * 100).toFixed(2)
 
-const costRecoveryRate = ((transactionsSummary.income.total / facility.incomeTarget) * 100).toFixed(2)
-      
-const budgetUsed = (((transactionsSummary.nonSalaryExpenditure.total * -1) / facility.nonSalaryCosts) * 100).toFixed(2)
+console.log(transactionsSummary)
 
-const stats = [
-  { name: 'Revenue', value: formatter.format(transactionsSummary.income.total), ratio: costRecoveryRate + '%' },
-  { name: 'Expenses', value: formatter.format((transactionsSummary.nonSalaryExpenditure.total * -1)), ratio: budgetUsed + '%' },
-]
+if(transactionsSummary.income && transactionsSummary.nonSalaryExpenditure) {
+  costRecoveryRate = ((transactionsSummary.income.total / facility.incomeTarget) * 100).toFixed(2)
+  budgetUsed = (((transactionsSummary.nonSalaryExpenditure.total * -1) / facility.nonSalaryCosts) * 100).toFixed(2)
+
+  stats = [
+    { name: 'Revenue', value: formatter.format(transactionsSummary.income.total), ratio: costRecoveryRate + '%' },
+    { name: 'Expenses', value: formatter.format((transactionsSummary.nonSalaryExpenditure.total * -1)), ratio: budgetUsed + '%' },
+  ]
+}
+
+
 </script>
