@@ -191,13 +191,15 @@ async function submit(event) {
 
   if(assignmentId) {
     assignment = await assignmentsStore.updateAssignment({
-      assignmentId: assignmentId,
+      id: assignmentId,
       project: project.value.id,
       rse: rse.value.id,
       fte: fte,
       start: startDate,
       end: endDate
     })
+
+    emits('editedAssignment', assignment)
   }
   else {
     assignment = await assignmentsStore.createAssignment({

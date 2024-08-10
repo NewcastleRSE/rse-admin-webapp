@@ -87,7 +87,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     async function updateAssignment (assignment) {
-      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.assignmentId}?populate=*`, 
+      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.id}?populate=*`, 
         { 
           data: assignment
         },
@@ -100,7 +100,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
         updatedAssignment.rse = response.data.data.rse.data.id
         updatedAssignment.project = response.data.data.project.data
         
-        const position = assignments.value.map(e => e.id).indexOf(assignment.assignmentId)
+        const position = assignments.value.map(e => e.id).indexOf(assignment.id)
         rses.updateAssignment(updatedAssignment)
         assignments.value[position] = updatedAssignment
       })

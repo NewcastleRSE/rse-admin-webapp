@@ -301,7 +301,6 @@ export default {
       const assignmentsStore = useAssignmentsStore()
 
       assignmentsStore.$subscribe((mutation) => {
-        // console.log(mutation)
         // New assignment
         if(mutation.events.type === 'add') {
           addAssignment(mutation.events.newValue)
@@ -312,7 +311,7 @@ export default {
         }
         // Edited Assignment
         else {
-          console.log(mutation.events)
+          updateAssignment(mutation.events.newValue)
         }
       })
     })
@@ -368,6 +367,16 @@ export default {
       gstc.api.plugins.Selection.selectItems([])
       state.update(`config.chart.items.${GSTC.api.GSTCID(`assignment-${assignment.id}`)}`, (item) => { item = newItem; return item } )
     }
+    function updateAssignment(assignment){
+      state.update(`config.chart.items.${GSTC.api.GSTCID(`assignment-${assignment.id}`)}`, item=>{
+        item.label = assignment.project.data.name
+        item.time = {
+          start: DateTime.fromISO(assignment.start).startOf('day').valueOf(),
+          end: DateTime.fromISO(assignment.end).endOf('day').valueOf(),
+        }
+        return item
+      })
+    }
     function deleteAssignments(){
       const selectedItems = gstc.api.plugins.Selection.getSelected()['chart-timeline-items-row-item']
       state.update('config.plugin.Selection.lastSelecting.chart-timeline-items-row-item',[])
@@ -407,6 +416,7 @@ export default {
       changeTeam,
       changeFY,
       addAssignment,
+      updateAssignment,
       deleteAssignments,
       getSelectedAssignments,
     }
