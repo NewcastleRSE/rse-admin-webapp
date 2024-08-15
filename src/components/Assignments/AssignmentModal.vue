@@ -177,8 +177,6 @@ function createAssignment(assignment, rse, start, end) {
     selectedRSE.value = rse
     startDate = DateTime.fromJSDate(start).toISODate()
     endDate = DateTime.fromJSDate(end).toISODate()
-
-    console.log(startDate, endDate)
   }
   
   isOpen.value = true

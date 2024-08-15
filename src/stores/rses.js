@@ -52,13 +52,13 @@ export const useRSEsStore = defineStore('rses', () => {
     }
 
     function updateAssignment (assignment) {
-        const rseIndex = rses.value.map(e => e.id).indexOf(assignment.rse)
+        const rseIndex = rses.value.map(e => e.id).indexOf(assignment.rse.id)
         const assignmentIndex = rses.value[rseIndex].assignments.map(e => e.id).indexOf(assignment.id)
         rses.value[rseIndex].assignments[assignmentIndex] = assignment
     }
 
     function deleteAssignment (assignment) {
-        const rseIndex = rses.value.map(e => e.id).indexOf(assignment.rse)
+        const rseIndex = rses.value.map(e => e.id).indexOf(assignment.rse.id)
         const assignmentIndex = rses.value[rseIndex].assignments.map(e => e.id).indexOf(assignment.id)
 
         rses.value[rseIndex].assignments.splice(assignmentIndex, 1)
