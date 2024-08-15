@@ -110,7 +110,7 @@ function generateAssignments(rses) {
 
       items[id] = {
         id,
-        label: assignment.project.data.name,
+        label: assignment.project.name,
         rowId,
         time: {
           start: assignmentStart.toMillis(),
@@ -311,7 +311,9 @@ export default {
         }
         // Edited Assignment
         else {
-          updateAssignment(mutation.events.newValue)
+          // console.log('mutation.events.newValue')
+          // console.log(mutation.events)
+          // updateAssignment(mutation.events.newValue)
         }
       })
     })
@@ -355,8 +357,8 @@ export default {
     function addAssignment(assignment){
       let newItem = {
         id: GSTC.api.GSTCID(`assignment-${assignment.id}`),
-        rowId: GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`),
-        label: assignment.project.data.name,
+        rowId: GSTC.api.GSTCID(`rse-${assignment.rse.id}-assignments`),
+        label: assignment.project.name,
         time: {
           start: DateTime.fromISO(assignment.start).startOf('day').valueOf(),
           end: DateTime.fromISO(assignment.end).endOf('day').valueOf(),
@@ -369,7 +371,7 @@ export default {
     }
     function updateAssignment(assignment){
       state.update(`config.chart.items.${GSTC.api.GSTCID(`assignment-${assignment.id}`)}`, item=>{
-        item.label = assignment.project.data.name
+        item.label = assignment.project.name
         item.time = {
           start: DateTime.fromISO(assignment.start).startOf('day').valueOf(),
           end: DateTime.fromISO(assignment.end).endOf('day').valueOf(),

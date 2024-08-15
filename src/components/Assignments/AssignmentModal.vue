@@ -15,7 +15,7 @@
                       <DialogTitle as="h3" class="mb-6 text-base font-semibold leading-6 text-gray-900">{{ title }}</DialogTitle>
                         <div class="grid grid-cols-6 gap-x-6 gap-y-8">
                           <div class="sm:col-span-6">
-                            <Combobox as="div" v-model="project" nullable>
+                            <Combobox as="div" v-model="selectedProject" nullable>
                               <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">Project</ComboboxLabel>
                               <div class="relative mt-2">
                                 <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" required @change="projectQuery = $event.target.value" :display-value="(project) => project?.name" />
@@ -41,9 +41,8 @@
                               </div>
                             </Combobox>
                           </div>
-
                           <div class="sm:col-span-4">
-                            <Combobox as="div" v-model="rse" nullable>
+                            <Combobox as="div" v-model="selectedRSE" nullable>
                               <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">RSE</ComboboxLabel>
                               <div class="relative mt-2">
                                 <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" required @change="rseQuery = $event.target.value" :display-value="(rse) => `${rse?.firstname} ${rse?.lastname}`" />
@@ -141,8 +140,8 @@ const defaultState = {
 
 let title = '',
     assignmentId = null,
-    project = ref(null),
-    rse = ref(null),
+    selectedProject = ref(null),
+    selectedRSE = ref(null),
     fte = 50,
     startDate = null,
     endDate = null
@@ -163,23 +162,19 @@ function toggleModal() {
   isOpen.value = !isOpen.value
 }
 
-function createAssignment(assignmentID, rseID, projectID, dateRange, split) {
+function createAssignment(assignment) {
 
   title = 'Create Assignment'
 
-  const start = dateRange ? DateTime.fromJSDate(dateRange[0].$d) : null,
-        end = dateRange ? DateTime.fromJSDate(dateRange[1].$d) : null
-
-  if(assignmentID) {
+  if(assignment) {
     title = 'Edit Assignment'
-    assignmentId = assignmentID
+    assignmentId = assignment.id,
+    selectedProject.value = assignment.project
+    selectedRSE.value = assignment.rse
+    startDate = DateTime.fromISO(assignment.start).toISODate()
+    endDate = DateTime.fromISO(assignment.end).toISODate()
+    fte = assignment.fte
   }
-
-  project.value = projectID ? projectsStore.getByID(projectID) : null
-  rse.value = rseID ? rsesStore.getByID(rseID) : null
-  startDate = dateRange ? start.toISODate() : null
-  endDate = dateRange ? end.toISODate() : null
-  fte = split ? split : 50
   
   isOpen.value = true
 }
@@ -231,6 +226,8 @@ async function remove() {
   fte = defaultState.fte
   startDate = defaultState.startDate
   endDate = defaultState.endDate
+
+  emits('removedAssignment')
 
   isOpen.value = false
 }
