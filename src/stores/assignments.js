@@ -77,9 +77,8 @@ export const useAssignmentsStore = defineStore('assignments', () => {
             Authorization: `Bearer ${store.jwt}`
           }
       }).then(response => {
-        let newAssignment = response.data.data
-        newAssignment.rse = response.data.data.rse.data.id
-        newAssignment.project = response.data.data.project.data
+
+        const newAssignment = response.data.data
 
         rses.addAssignment(newAssignment)
         assignments.value.push(newAssignment)
@@ -97,8 +96,8 @@ export const useAssignmentsStore = defineStore('assignments', () => {
           }
       }).then(response => {
         let updatedAssignment = response.data.data
-        updatedAssignment.rse = response.data.data.rse.data.id
-        updatedAssignment.project = response.data.data.project.data
+        updatedAssignment.rse = response.data.data.rse.id
+        updatedAssignment.project = response.data.data.project
         
         const position = assignments.value.map(e => e.id).indexOf(assignment.id)
         rses.updateAssignment(updatedAssignment)

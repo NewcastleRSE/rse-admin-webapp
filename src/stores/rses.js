@@ -47,21 +47,13 @@ export const useRSEsStore = defineStore('rses', () => {
     }
 
     function addAssignment (assignment) {
-        const position = rses.value.map(e => e.id).indexOf(assignment.rse)
-        const project = { data: assignment.project }
-        delete assignment.project
-        assignment.project = project
+        const position = rses.value.map(e => e.id).indexOf(assignment.rse.id)
         rses.value[position].assignments.push(assignment)
     }
 
     function updateAssignment (assignment) {
         const rseIndex = rses.value.map(e => e.id).indexOf(assignment.rse)
         const assignmentIndex = rses.value[rseIndex].assignments.map(e => e.id).indexOf(assignment.id)
-
-        const project = { data: assignment.project }
-        delete assignment.project
-        assignment.project = project
-        
         rses.value[rseIndex].assignments[assignmentIndex] = assignment
     }
 
