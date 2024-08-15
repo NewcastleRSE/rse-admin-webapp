@@ -25,7 +25,7 @@ let { rse } = toRefs(props)
 
 let summary = timesheetStore.getRSESummary(props.rse)
 
-const capacity = props.rse.displayName === 'Mark Turner' ? 220 : rse.value.capacity
+const capacity = rse.value.capacity
 
 let currentCapacity
 
@@ -33,7 +33,8 @@ props.rse.capacities.forEach(capacity => {
 
     const period = Interval.fromDateTimes(DateTime.fromISO(capacity.start), DateTime.fromISO(capacity.end ? capacity.end : props.rse.capacityEnd))
     
-    if(period.contains(DateTime.now())) {
+    // Is today either in the capacity period or before the capacity period starts?
+    if(period.contains(DateTime.now()) || DateTime.now() < period.start) {
         currentCapacity = capacity
     }
 })
