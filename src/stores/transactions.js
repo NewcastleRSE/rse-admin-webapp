@@ -21,7 +21,15 @@ export const useTransactionsStore = defineStore('transactions', () => {
 
     function getSummary(year) {
         let transactions = getByYear(year),
-            summary = {}
+            summary = {
+                income: {
+                    total: 0
+                },
+                nonSalaryExpenditure: {
+                    total: 0
+                },
+                lastUpdated: DateTime.now().startOf('month').minus({ days: 1 })
+            }
 
         const ieCategories = [...new Set(transactions.map(transaction => transaction.ieCategory))]
 
