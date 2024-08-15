@@ -103,8 +103,9 @@ const dates = currentFY()
 const teams = [
   { id: 1, key: 'All', name: 'All' },
   { id: 2, key: 'DataScience', name: 'Data Science' },
-  { id: 3, key: 'Middleware', name: 'Middleware' },
-  { id: 4, key: 'WebMobile', name: 'Web & Mobile' }
+  { id: 3, key: 'HPC', name: 'HPC' },
+  { id: 4, key: 'Middleware', name: 'Middleware' },
+  { id: 5, key: 'WebMobile', name: 'Web & Mobile' }
 ]
 
 const years = []
