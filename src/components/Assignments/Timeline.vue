@@ -142,11 +142,8 @@ export default {
             // Selection includes cells
             if (cells.length) {
               let rseID = cells[0].row.id.split('-')[2],
-                  range = [
-                    cells[0].time.leftGlobalDate,
-                    cells[cells.length-1].time.rightGlobalDate
-                  ]
-              emit('create', rseID, null, range)
+                  rse = props.rses.find(rse => rse.id == rseID)
+              emit('create', rse, cells[0].time.leftGlobalDate.$d, cells[cells.length-1].time.rightGlobalDate.$d)
               gstc.api.plugins.Selection.selectItems([])
             }
 
@@ -301,6 +298,8 @@ export default {
       const assignmentsStore = useAssignmentsStore()
 
       assignmentsStore.$subscribe((mutation) => {
+        console.log(mutation.events)
+
         // New assignment
         if(mutation.events.type === 'add') {
           addAssignment(mutation.events.newValue)

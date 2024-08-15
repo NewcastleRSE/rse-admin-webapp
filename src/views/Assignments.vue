@@ -43,8 +43,8 @@ function unallocated() {
   unallocatedModalRef.value.toggleModal()
 }
 
-function create() {
-  assignmentModalRef.value.createAssignment(null)
+function create(rse, start, end) {
+  assignmentModalRef.value.createAssignment(null, rse, start, end)
 }
 
 function edit(assignmentID, rseID, start, end) {
@@ -58,7 +58,7 @@ function edit(assignmentID, rseID, start, end) {
     assignment.start = DateTime.fromMillis(start).toISODate() !== assignment.start ? DateTime.fromMillis(start).toISODate() : assignment.start
     assignment.end = DateTime.fromMillis(end).toISODate() !== assignment.end ? DateTime.fromMillis(end).toISODate() : assignment.end
   }
-  
+
   assignmentModalRef.value.createAssignment(assignment)
 }
 

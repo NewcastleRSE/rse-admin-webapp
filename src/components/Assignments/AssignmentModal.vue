@@ -162,10 +162,7 @@ function toggleModal() {
   isOpen.value = !isOpen.value
 }
 
-function createAssignment(assignment) {
-
-  title = 'Create Assignment'
-
+function createAssignment(assignment, rse, start, end) {
   if(assignment) {
     title = 'Edit Assignment'
     assignmentId = assignment.id,
@@ -174,6 +171,14 @@ function createAssignment(assignment) {
     startDate = DateTime.fromISO(assignment.start).toISODate()
     endDate = DateTime.fromISO(assignment.end).toISODate()
     fte = assignment.fte
+  }
+  else {
+    title = 'Create Assignment'
+    selectedRSE.value = rse
+    startDate = DateTime.fromJSDate(start).toISODate()
+    endDate = DateTime.fromJSDate(end).toISODate()
+
+    console.log(startDate, endDate)
   }
   
   isOpen.value = true
@@ -198,8 +203,8 @@ async function submit(event) {
   }
   else {
     assignment = await assignmentsStore.createAssignment({
-      project: project.value.id,
-      rse: rse.value.id,
+      project: selectedProject.value,
+      rse: selectedRSE.value,
       fte: fte,
       start: startDate,
       end: endDate
@@ -221,8 +226,8 @@ async function submit(event) {
 async function remove() {
   await assignmentsStore.deleteAssignment(assignmentId)
 
-  project.value = defaultState.project
-  rse.value = defaultState.rse
+  selectedProject.value = defaultState.project
+  selectedRSE.value = defaultState.rse
   fte = defaultState.fte
   startDate = defaultState.startDate
   endDate = defaultState.endDate
