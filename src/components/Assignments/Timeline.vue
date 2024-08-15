@@ -313,7 +313,7 @@ export default {
         else {
           // console.log('mutation.events.newValue')
           // console.log(mutation.events)
-          // updateAssignment(mutation.events.newValue)
+          updateAssignment(mutation.events.newValue)
         }
       })
     })

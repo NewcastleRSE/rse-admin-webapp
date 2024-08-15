@@ -187,8 +187,8 @@ async function submit(event) {
   if(assignmentId) {
     assignment = await assignmentsStore.updateAssignment({
       id: assignmentId,
-      project: project.value.id,
-      rse: rse.value.id,
+      project: selectedProject.value,
+      rse: selectedRSE.value,
       fte: fte,
       start: startDate,
       end: endDate
@@ -208,8 +208,8 @@ async function submit(event) {
     emits('createdAssignment', assignment)
   }
 
-  project.value = defaultState.project
-  rse.value = defaultState.rse
+  selectedProject.value = defaultState.project
+  selectedRSE.value = defaultState.rse
   fte = defaultState.fte
   startDate = defaultState.startDate
   endDate = defaultState.endDate
