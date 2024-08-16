@@ -56,6 +56,10 @@
 </template>
 <style>
 
+    .holiday-holiday {
+        background: linear-gradient(135deg, theme('colors.teal.400'), theme('colors.teal.400') 50%, theme('colors.teal.400') 50%, theme('colors.teal.400'))
+    }
+
     .billable-billable {
         background: linear-gradient(135deg, theme('colors.cyan.600'), theme('colors.cyan.600') 50%, theme('colors.cyan.600') 50%, theme('colors.cyan.600'));
         color: white
@@ -171,7 +175,11 @@ for(let i = 0; i < 12; i++) {
             holiday = holidays.find(holiday => holiday.date === startPoint.toISODate())
 
         // If is a date in this month
-        if(startPoint.month === date.month && !holiday) {
+        if(startPoint.month === date.month) {
+
+          if(holiday) {
+            type = ['holiday','holiday']
+          }
           
           if(timesheet) {
 

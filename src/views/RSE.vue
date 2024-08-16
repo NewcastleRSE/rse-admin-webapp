@@ -28,6 +28,10 @@
               <span class="pl-2 pr-6">Leave</span>
             </li>
             <li class="float-left">
+              <i class="fa-solid fa-square text-teal-400"></i>
+              <span class="pl-2 pr-6">Public Holiday</span>
+            </li>
+            <li class="float-left">
               <i class="fa-solid fa-square text-red-400"></i>
               <span class="pl-2 pr-6">Missing</span>
             </li>
