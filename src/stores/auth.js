@@ -8,7 +8,7 @@ import * as Stores from '@/stores'
 export const useAuthStore = defineStore('auth', () => {
 
     const assignmentsStore = Stores.useAssignmentsStore(),
-          holidaysStore = Stores.useHolidaysStore(), 
+          calendarStore = Stores.useCalendarStore(), 
           facilitiesStore = Stores.useFacilitiesStore(),
           invoicesStore = Stores.useInvoicesStore(),
           leaveStore = Stores.useLeaveStore(),
@@ -55,7 +55,7 @@ export const useAuthStore = defineStore('auth', () => {
                 Promise.all([
                     assignmentsStore.fetchAssignments(),
                     facilitiesStore.fetchFacilities(),
-                    holidaysStore.fetchHolidays(),
+                    calendarStore.fetchHolidays(),
                     invoicesStore.fetchInvoices(),
                     leaveStore.fetchLeave(),
                     rsesStore.fetchRSEs(),

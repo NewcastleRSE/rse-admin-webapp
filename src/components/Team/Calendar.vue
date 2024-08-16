@@ -131,7 +131,7 @@
 <!-- class="bg-gradient-to-tl from-emerald-600 from-50% via-amber-600 via-50% to-amber-600" -->
 <script setup>
 import { ref } from 'vue'
-import { useCapacitiesStore, useLeaveStore, useHolidaysStore } from '../../stores'
+import { useCapacitiesStore, useLeaveStore, useCalendarStore } from '../../stores'
 import { currentFY } from '../../utils/dates'
 import { fetchObject } from '../../utils/orm'
 import { DateTime, Duration } from 'luxon';
@@ -147,10 +147,10 @@ const calendarDates = ref([]),
 
 const leaveStore = useLeaveStore(),
       capacitiesStore = useCapacitiesStore(),
-      holidaysStore = useHolidaysStore()
+      calendarStore = useCalendarStore()
 
 const leave = leaveStore.getByRSE(props.rse.username),
-      holidays = holidaysStore.getByAcademicYear(),
+      calendar = calendarStore.getByAcademicYear(),
       timesheets = await fetchObject('timesheets', props.rse.clockifyID)
 
 let months = []
@@ -172,7 +172,7 @@ for(let i = 0; i < 12; i++) {
 
         let leaveRequest = leave.find(request => request.DATE === startPoint.toISODate()),
             timesheet = timesheets.dates[startPoint.toISODate()],
-            holiday = holidays.find(holiday => holiday.date === startPoint.toISODate())
+            holiday = calendar.find(holiday => holiday.date === startPoint.toISODate())
 
         // If is a date in this month
         if(startPoint.month === date.month) {

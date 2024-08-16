@@ -2,7 +2,7 @@ import { DateTime } from 'luxon-business-days'
 
 DateTime.prototype.workingDiff = function(d2, relative) {
 
-    const holidays = JSON.parse(localStorage.getItem('holidays')).holidays
+    const holidays = JSON.parse(localStorage.getItem('calendar')).holidays
     const closureDates = holidays.map(holiday => holiday.date)
 
     let d1 = this

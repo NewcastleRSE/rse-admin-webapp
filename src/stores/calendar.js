@@ -3,7 +3,8 @@ import { ref } from 'vue'
 import { currentFY } from '../utils/dates'
 import { DateTime } from 'luxon-business-days'
 
-export const useHolidaysStore = defineStore('holidays', () => {
+export const useCalendarStore = defineStore('calendar', () => {
+
     const holidays = ref([])
 
     const isHoliday = function(inst) {
@@ -51,6 +52,16 @@ export const useHolidaysStore = defineStore('holidays', () => {
                         bunting: false
                     })
                 } 
+            }
+
+            // If Christmas Eve is a Tuesday, the closure will start the day before
+            if(christmasEve.weekday === 2) {
+                closures.push({
+                    title: 'University Closure',
+                    date: christmasEve.minus({days: 1}).toISODate(),
+                    notes: '',
+                    bunting: false
+                })
             }
         })
 
