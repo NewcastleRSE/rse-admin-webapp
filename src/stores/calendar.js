@@ -7,6 +7,8 @@ export const useCalendarStore = defineStore('calendar', () => {
 
     const holidays = ref([])
 
+    const workingDays = ref([])
+
     const isHoliday = function(inst) {
         const closureDates = holidays.value.map(holiday => DateTime.fromISO(holiday.date))
         console.log(closureDates)
@@ -20,13 +22,26 @@ export const useCalendarStore = defineStore('calendar', () => {
         return holidays.value
     }
 
-    function getByYear(year) {
+    function getWorkingDays() {
+        return workingDays.value
+    }
+
+    function getHolidaysByYear(year) {
         return holidays.value.filter(holiday => holiday.date.split('-')[0] === year )
     }
 
-    function getByAcademicYear() {
+    function getWorkingDaysByYear(year) {
+        return workingDays.value.filter(workingDay => workingDay.date.split('-')[0] === year )
+    }
+
+    function getHolidaysByAcademicYear() {
         const currentYear = currentFY()
         return holidays.value.filter(holiday => currentYear.startDate <= DateTime.fromISO(holiday.date) && currentYear.endDate >= DateTime.fromISO(holiday.date))
+    }
+
+    function getWorkingDaysByAcademicYear() {
+        const currentYear = currentFY()
+        return workingDays.value.filter(workingDay => currentYear.startDate <= DateTime.fromISO(workingDay.date) && currentYear.endDate >= DateTime.fromISO(workingDay.date))
     }
 
     async function fetchHolidays () {
@@ -66,13 +81,29 @@ export const useCalendarStore = defineStore('calendar', () => {
         })
 
         holidays.value = [...bankHolidays, ...closures].sort((a,b) => DateTime.fromISO(a.date) - DateTime.fromISO(b.date))
+
+        const currentYear = currentFY()
+
+        let startPoint = currentYear.startDate
+
+        while (startPoint <= currentYear.endDate) {
+            
+            let holiday = holidays.value.find(holiday => holiday.date === startPoint.toISODate())
+
+            // If day is not a holiday or a weekend
+            if(!holiday && startPoint.weekday !== 5 && startPoint.weekday !== 6) {
+               workingDays.value.push(startPoint.toISODate())
+            }
+
+            startPoint = startPoint.plus({ days: 1 })
+        }
     }
 
     async function reset () {
         holidays.value = []
     }
 
-    return { holidays, getHolidays, getByYear, getByAcademicYear, fetchHolidays, reset }
+    return { holidays, workingDays, getHolidays, getWorkingDays, getHolidaysByYear, getWorkingDaysByYear, getHolidaysByAcademicYear, getWorkingDaysByAcademicYear, fetchHolidays, reset }
 },
 {
     persist: true

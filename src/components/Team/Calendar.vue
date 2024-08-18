@@ -150,7 +150,7 @@ const leaveStore = useLeaveStore(),
       calendarStore = useCalendarStore()
 
 const leave = leaveStore.getByRSE(props.rse.username),
-      calendar = calendarStore.getByAcademicYear(),
+      holidays = calendarStore.getHolidaysByAcademicYear(),
       timesheets = await fetchObject('timesheets', props.rse.clockifyID)
 
 let months = []
@@ -172,7 +172,7 @@ for(let i = 0; i < 12; i++) {
 
         let leaveRequest = leave.find(request => request.DATE === startPoint.toISODate()),
             timesheet = timesheets.dates[startPoint.toISODate()],
-            holiday = calendar.find(holiday => holiday.date === startPoint.toISODate())
+            holiday = holidays.find(holiday => holiday.date === startPoint.toISODate())
 
         // If is a date in this month
         if(startPoint.month === date.month) {
