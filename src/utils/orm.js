@@ -1,6 +1,6 @@
 import axios from 'axios'
 import * as qs from 'qs'
-import { useAuthStore } from '@/stores/auth'
+import { useUserStore } from '@/stores/user'
 
 /**
  * 
@@ -13,7 +13,7 @@ import { useAuthStore } from '@/stores/auth'
 export const fetchObjects = async function (object, page, pageSize, populate) {
 
     let objects = []
-    const store = useAuthStore()
+    const store = useUserStore()
     
     const recursiveFetch = async function (object, page, pageSize, populate) {
 
@@ -70,7 +70,7 @@ export const fetchObjects = async function (object, page, pageSize, populate) {
  */
 export const fetchObject = async function (object, id, populate) {
 
-  const store = useAuthStore()
+  const store = useUserStore()
 
   const query = qs.stringify({
     populate: populate
@@ -89,7 +89,7 @@ export const fetchObject = async function (object, id, populate) {
 
 export const updateObject = async function (object, id, payload) {
 
-  const store = useAuthStore()
+  const store = useUserStore()
 
   let response = await axios.put(`${import.meta.env.VITE_API_URL}/${object}/${id}`, 
     { data: payload },
@@ -105,7 +105,7 @@ export const updateObject = async function (object, id, payload) {
 
 export const uploadTransactions = async function (formData) {
 
-  const store = useAuthStore()
+  const store = useUserStore()
 
   return axios.post(`${import.meta.env.VITE_API_URL}/transactions/upload`, formData,
     {

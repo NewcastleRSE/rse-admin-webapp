@@ -34,9 +34,9 @@ import ProjectsHeader from '../components/Headers/Projects.vue'
  * @return true : if the token is not expired
  */
 function isTokenValid() {
-  const authStore = Store.useAuthStore()
+  const userStore = Store.useUserStore()
   // move to auth getter so can be used on components (navbar)
-  var token = authStore.jwt
+  var token = userStore.jwt
   if (token) {
     var decoded = jwt_decode(token)
     var exp = decoded.exp
@@ -181,8 +181,8 @@ const routes = [
           const assignmentsStore = Store.useAssignmentsStore()
           assignmentsStore.reset()
 
-          const authStore = Store.useAuthStore()
-          authStore.reset()
+          const userStore = Store.useUserStore()
+          userStore.reset()
 
           const capacitiesStore = Store.useCapacitiesStore()
           capacitiesStore.reset()

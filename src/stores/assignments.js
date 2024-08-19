@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
-import { useAuthStore, useRSEsStore } from '@/stores'
+import { useUserStore, useRSEsStore } from '@/stores'
 import { DateTime, Interval } from 'luxon'
 import { fetchObjects } from '../utils/orm'
 
 export const useAssignmentsStore = defineStore('assignments', () => {
     
-    const store = useAuthStore()
+    const store = useUserStore()
     const rses = useRSEsStore()
     const assignments = ref([])
 

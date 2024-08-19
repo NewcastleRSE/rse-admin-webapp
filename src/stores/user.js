@@ -5,7 +5,7 @@ import { Buffer } from 'buffer'
 import router from '../router'
 import * as Stores from '@/stores'
 
-export const useAuthStore = defineStore('auth', () => {
+export const useUserStore = defineStore('user', () => {
 
     const assignmentsStore = Stores.useAssignmentsStore(),
           calendarStore = Stores.useCalendarStore(), 
@@ -20,6 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
     const accessToken = ref('')
     const jwt = ref('')
     const user = ref({})
+    const settings = ref({})
 
     function getAccessToken() {
         return accessToken
@@ -31,6 +32,10 @@ export const useAuthStore = defineStore('auth', () => {
 
     function getUser() {
         return user
+    }
+
+    function getSettings() {
+        return settings
     }
 
     function login(token) {
@@ -81,7 +86,7 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = null
       }
 
-    return { accessToken, jwt, user, getAccessToken, getJWT, getUser, login, reset }
+    return { accessToken, jwt, user, settings, getAccessToken, getJWT, getUser, getSettings, login, reset }
 },
 { 
     persist: true

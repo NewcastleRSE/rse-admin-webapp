@@ -1,5 +1,5 @@
 export { useAssignmentsStore } from './assignments'
-export { useAuthStore } from './auth'
+export { useUserStore } from './user'
 export { useCapacitiesStore } from './capacities'
 export { useFacilitiesStore } from './facilities'
 export { useCalendarStore } from './calendar'

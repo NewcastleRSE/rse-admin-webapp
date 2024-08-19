@@ -44,7 +44,7 @@ import * as Stores from '@/stores'
 import nclLogo from '@/assets/img/ncl-logo.svg'
 
 const assignmentsStore = Stores.useAssignmentsStore(),
-      authStore = Stores.useAuthStore(),
+      userStore = Stores.useUserStore(),
       capacitiesStore = Stores.useCapacitiesStore(),
       facilitiesStore = Stores.useFacilitiesStore(),
       projectsStore = Stores.useProjectsStore(),
@@ -66,6 +66,6 @@ let accessToken = null
 
 onBeforeMount(() => {
   accessToken = new URLSearchParams(window.location.search).get('access_token')
-  if (accessToken) { authStore.login(accessToken) }
+  if (accessToken) { userStore.login(accessToken) }
 })
 </script>

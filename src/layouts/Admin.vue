@@ -16,6 +16,33 @@
           </div>
           <div class="hidden md:block">
             <div class="ml-4 flex items-center md:ml-6">
+              <Listbox as="div" class="px-3" v-model="selectedYear">
+                <div class="relative">
+                  <ListboxButton class="relative w-full cursor-default py-1.5 pl-3 pr-10 text-left text-white shadow-sm ring-inset focus:outline-none focus:ring-2 focus:ring-cyan-600 sm:text-sm sm:leading-6">
+                    <div class="flex flex-col pr-3 text-white">
+                      <span class="font-bold text-right">Financial Year</span>
+                      <span>{{selectedYear.name}}</span>
+                    </div>
+                    <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <ChevronUpDownIcon class="h-5 w-5 text-gray-100" aria-hidden="true" />
+                    </span>
+                  </ListboxButton>
+
+                  <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
+                    <ListboxOptions class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                      <ListboxOption as="template" v-for="year in years" :key="year.id" :value="year" v-slot="{ active, selected }">
+                        <li :class="[active ? 'bg-cyan-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-3 pr-9']">
+                          <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{ year.name }}</span>
+
+                          <span v-if="selected" :class="[active ? 'text-white' : 'text-cyan-600', 'absolute inset-y-0 right-0 flex items-center pr-4']">
+                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        </li>
+                      </ListboxOption>
+                    </ListboxOptions>
+                  </transition>
+                </div>
+              </Listbox>
               <!-- Profile dropdown -->
               <Menu as="div" class="relative">
                 <div>
@@ -87,18 +114,22 @@
       </div>
     </main>
   </div>
-</template>
+</template>../stores/user
 
 <script setup>
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 import BackgroundImage from '@/assets/img/header.jpeg'
-import { useAuthStore } from '../stores/auth'
+import { useUserStore } from '../stores/user'
+import { currentFY } from '../utils/dates'
 
 const route = useRoute()
-const store = useAuthStore()
+const store = useUserStore()
 const user = store.getUser()
+const settings = store.getSettings()
 
 const section = route.path.split('/')[1]
 
@@ -113,4 +144,19 @@ const userNavigation = [
   { name: 'Settings', href: '#' },
   { name: 'Sign Out', href: '/auth/logout' },
 ]
+
+const dates = currentFY()
+
+const years = []
+
+for (let i = 2018; i <= (dates.startDate.year + 1); i++) {
+  years.push({ id: i, name: `${i}/${i + 1}` })
+}
+
+const selectedYear = ref(years[years.map(y => y.id).indexOf(dates.startDate.year)])
+
+watch(selectedYear, async () => {
+  console.log('Selected Year:', selectedYear.value)
+})
+
 </script>

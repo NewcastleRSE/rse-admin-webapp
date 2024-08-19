@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
-import { useAuthStore } from '@/stores/auth'
+import { useUserStore } from '@/stores/user'
 import { fetchObjects } from '../utils/orm'
 import { DateTime, Interval } from 'luxon'
 
@@ -9,7 +9,7 @@ const titleCase = str => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
 
 export const useInvoicesStore = defineStore('invoices', () => {
 
-    const store = useAuthStore()
+    const store = useUserStore()
     const invoices = ref([])
 
     function getFacilities() {
