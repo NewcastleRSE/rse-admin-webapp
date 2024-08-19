@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { Buffer } from 'buffer'
 import router from '../router'
+import { currentFY } from '../utils/dates'
 import * as Stores from '@/stores'
 
 export const useUserStore = defineStore('user', () => {
@@ -41,6 +42,7 @@ export const useUserStore = defineStore('user', () => {
     function login(token) {
         const loginUrl = import.meta.env.VITE_API_URL + '/auth/microsoft/callback/?access_token=' + token
         const azureConfig = { headers: { Authorization: `Bearer ${token}` }}
+        const currentYear = currentFY()
 
         let fetchJWT = axios.get(loginUrl)
         let fetchProfile = axios.get('https://graph.microsoft.com/v1.0/me', azureConfig)
@@ -55,6 +57,10 @@ export const useUserStore = defineStore('user', () => {
             accessToken.value = token
             jwt.value = values[0].data.jwt
             user.value = profile
+            settings.value = {
+                financialYear: currentYear.startDate.year,
+                defaultTeam: 'all'
+            }
 
             projectsStore.fetchProjects().then(() => {
                 Promise.all([

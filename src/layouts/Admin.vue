@@ -16,7 +16,7 @@
           </div>
           <div class="hidden md:block">
             <div class="ml-4 flex items-center md:ml-6">
-              <Listbox as="div" class="px-3" v-model="selectedYear">
+              <Listbox as="div" class="px-3" v-model="selectedYear" v-if="!isDashboard">
                 <div class="relative">
                   <ListboxButton class="relative w-full cursor-default py-1.5 pl-3 pr-10 text-left text-white shadow-sm ring-inset focus:outline-none focus:ring-2 focus:ring-cyan-600 sm:text-sm sm:leading-6">
                     <div class="flex flex-col pr-3 text-white">
@@ -145,6 +145,8 @@ const userNavigation = [
   { name: 'Sign Out', href: '/auth/logout' },
 ]
 
+const isDashboard = section === 'dashboard'
+
 const dates = currentFY()
 
 const years = []
@@ -153,10 +155,10 @@ for (let i = 2018; i <= (dates.startDate.year + 1); i++) {
   years.push({ id: i, name: `${i}/${i + 1}` })
 }
 
-const selectedYear = ref(years[years.map(y => y.id).indexOf(dates.startDate.year)])
+const selectedYear = ref(years[years.map(y => y.id).indexOf(settings.value.financialYear)])
 
 watch(selectedYear, async () => {
-  console.log('Selected Year:', selectedYear.value)
+  store.settings.financialYear = selectedYear.value.id
 })
 
 </script>
