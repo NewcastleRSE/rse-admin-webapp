@@ -123,13 +123,15 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 import BackgroundImage from '@/assets/img/header.jpeg'
-import { useUserStore } from '../stores/user'
+import { useUserStore, useTimesheetsStore } from '../stores'
 import { currentFY } from '../utils/dates'
 
 const route = useRoute()
-const store = useUserStore()
-const user = store.getUser()
-const settings = store.getSettings()
+const userStore = useUserStore()
+const timesheetsStore = useTimesheetsStore()
+
+const user = userStore.user
+const settings = userStore.settings
 
 const section = route.path.split('/')[1]
 
@@ -155,10 +157,11 @@ for (let i = 2018; i <= (dates.startDate.year + 1); i++) {
   years.push({ id: i, name: `${i}/${i + 1}` })
 }
 
-const selectedYear = ref(years[years.map(y => y.id).indexOf(settings.value.financialYear)])
+const selectedYear = ref(years[years.map(y => y.id).indexOf(settings.financialYear)])
 
 watch(selectedYear, async () => {
-  store.settings.financialYear = selectedYear.value.id
+  userStore.settings.financialYear = selectedYear.value.id
+  timesheetsStore.fetchTimesheets(selectedYear.value.id)
 })
 
 </script>

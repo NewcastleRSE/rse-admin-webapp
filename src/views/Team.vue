@@ -27,17 +27,17 @@
 </template>
 <script setup>
 import ListItem from '../components/Team/ListItem.vue'
-import { useRSEsStore } from '../stores'
+import { useRSEsStore, useUserStore } from '../stores'
 import { useCapacitiesStore } from '@/stores/capacities'
 
 const rsesStore = useRSEsStore()
+const userStore = useUserStore()
 const capacitiesStore = useCapacitiesStore()
 const rses = rsesStore.getRSEs()
 
 let totals = []
 
 rses.forEach(rse => {
-    console.log(rse.displayName)
     const monthlyCapacities = []
     for(let i = 1; i < 13; i++) {
 
@@ -66,5 +66,5 @@ rses.forEach(rse => {
 })
 
 let result = totals.reduce((r, a) => a.map((b, i) => (r[i] || 0) + b), [])
-console.log(result.toString())
+
 </script>

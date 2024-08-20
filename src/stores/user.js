@@ -23,22 +23,6 @@ export const useUserStore = defineStore('user', () => {
     const user = ref({})
     const settings = ref({})
 
-    function getAccessToken() {
-        return accessToken
-    }
-
-    function getJWT() {
-        return jwt
-    }
-
-    function getUser() {
-        return user
-    }
-
-    function getSettings() {
-        return settings
-    }
-
     function login(token) {
         const loginUrl = import.meta.env.VITE_API_URL + '/auth/microsoft/callback/?access_token=' + token
         const azureConfig = { headers: { Authorization: `Bearer ${token}` }}
@@ -70,7 +54,7 @@ export const useUserStore = defineStore('user', () => {
                     invoicesStore.fetchInvoices(),
                     leaveStore.fetchLeave(),
                     rsesStore.fetchRSEs(),
-                    timesheetsStore.fetchTimesheets(),
+                    timesheetsStore.fetchTimesheets(currentYear.startDate.year),
                     transactionsStore.fetchTransactions()
                 ]).then(() => {
                     router.push({ name: "Dashboard" })
@@ -92,7 +76,7 @@ export const useUserStore = defineStore('user', () => {
         user.value = null
       }
 
-    return { accessToken, jwt, user, settings, getAccessToken, getJWT, getUser, getSettings, login, reset }
+    return { accessToken, jwt, user, settings, login, reset }
 },
 { 
     persist: true

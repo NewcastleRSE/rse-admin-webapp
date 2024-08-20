@@ -10,19 +10,20 @@ import { useUserStore } from '@/stores/user'
  * @param {Array.<string>} populate an array of properties for Strapi to populate
  * @returns 
  */
-export const fetchObjects = async function (object, page, pageSize, populate) {
+export const fetchObjects = async function (object, page, pageSize, populate, filters) {
 
     let objects = []
     const store = useUserStore()
     
-    const recursiveFetch = async function (object, page, pageSize, populate) {
+    const recursiveFetch = async function (object, page, pageSize, populate, filters) {
 
         const query = qs.stringify({
             pagination: {
               page: page,
               pageSize: pageSize,
             },
-            populate: populate
+            populate: populate,
+            filters: filters
           },{
             encodeValuesOnly: true,
           });
@@ -37,7 +38,7 @@ export const fetchObjects = async function (object, page, pageSize, populate) {
         const pagination = response.data.meta.pagination
 
         if(pagination && pagination.page < pagination.pageCount) {
-          return await recursiveFetch(object, pagination.page + 1, pageSize, populate)
+          return await recursiveFetch(object, pagination.page + 1, pageSize, populate, filters)
         }
         else {
           objects.forEach((object, index) => {
@@ -58,7 +59,7 @@ export const fetchObjects = async function (object, page, pageSize, populate) {
         }
     }
 
-    return await recursiveFetch(object, 0, 100, populate)
+    return await recursiveFetch(object, page, pageSize, populate, filters)
 }
 
 /**
@@ -68,12 +69,13 @@ export const fetchObjects = async function (object, page, pageSize, populate) {
  * @param {Array.<string>} populate an array of properties for Strapi to populate
  * @returns 
  */
-export const fetchObject = async function (object, id, populate) {
+export const fetchObject = async function (object, id, populate, filters) {
 
   const store = useUserStore()
 
   const query = qs.stringify({
-    populate: populate
+    populate: populate,
+    filters: filters
   },{
     encodeValuesOnly: true,
   });

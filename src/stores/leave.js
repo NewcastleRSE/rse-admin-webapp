@@ -26,7 +26,7 @@ export const useLeaveStore = defineStore('leave', () => {
     }
 
     async function fetchLeave () {
-        leave.value = await fetchObject('timesheets', 'leave', '*')
+        //leave.value = await fetchObject('timesheets', 'leave', '*')
     }
 
     async function reset () {

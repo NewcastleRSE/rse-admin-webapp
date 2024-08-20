@@ -34,14 +34,20 @@ export const useCalendarStore = defineStore('calendar', () => {
         return workingDays.value.filter(workingDay => workingDay.date.split('-')[0] === year )
     }
 
-    function getHolidaysByAcademicYear() {
-        const currentYear = currentFY()
-        return holidays.value.filter(holiday => currentYear.startDate <= DateTime.fromISO(holiday.date) && currentYear.endDate >= DateTime.fromISO(holiday.date))
+    function getHolidaysByAcademicYear(year) {
+        const dates = {
+            startDate: DateTime.fromISO(`${year}-08-01`),
+            endDate: DateTime.fromISO(`${(year + 1)}-07-31`)
+        }
+        return holidays.value.filter(holiday => dates.startDate <= DateTime.fromISO(holiday.date) && dates.endDate >= DateTime.fromISO(holiday.date))
     }
 
-    function getWorkingDaysByAcademicYear() {
-        const currentYear = currentFY()
-        return workingDays.value.filter(workingDay => currentYear.startDate <= DateTime.fromISO(workingDay.date) && currentYear.endDate >= DateTime.fromISO(workingDay.date))
+    function getWorkingDaysByAcademicYear(year) {
+        const dates = {
+            startDate: DateTime.fromISO(`${year}-08-01`),
+            endDate: DateTime.fromISO(`${(year + 1)}-07-31`)
+        }
+        return workingDays.value.filter(workingDay => dates.startDate <= DateTime.fromISO(workingDay.date) && dates.endDate >= DateTime.fromISO(workingDay.date))
     }
 
     async function fetchHolidays () {

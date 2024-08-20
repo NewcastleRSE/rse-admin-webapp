@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { DateTime } from 'luxon-business-days'
 import { useLeaveStore } from './leave'
-import { fetchObjects } from '../utils/orm'
+import { fetchObjects, fetchObject } from '../utils/orm'
 
 export const useTimesheetsStore = defineStore('timesheets', () => {
     const timesheets = ref([])
@@ -73,15 +73,21 @@ export const useTimesheetsStore = defineStore('timesheets', () => {
         return summary
     }
 
-    async function fetchTimesheets () {
-        timesheets.value = await fetchObjects('timesheets', 0, 100)
+    async function fetchTimesheets (year) {
+        if(year) {
+            timesheets.value = await fetchObjects('timesheets', 0, 100, null, { year: { $eq: year }})
+        }
+    }
+
+    async function fetchTimesheetsByRSE (rse, year) {
+        return await fetchObject('timesheets', rse.clockifyID, null, { year: { $eq: year }})
     }
 
     async function reset () {
         timesheets.value = {}
     }
 
-    return { timesheets, getTimesheets, getByID, getByRSE, getRSESummary, fetchTimesheets, reset }
+    return { timesheets, getTimesheets, getByID, getByRSE, getRSESummary, fetchTimesheets, fetchTimesheetsByRSE, reset }
 },
 {
     persist: true
