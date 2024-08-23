@@ -132,7 +132,7 @@
 <!-- class="bg-gradient-to-tl from-emerald-600 from-50% via-amber-600 via-50% to-amber-600" -->
 <script setup>
 import { ref, watch } from 'vue'
-import { useUserStore, useCapacitiesStore, useLeaveStore, useCalendarStore, useTimesheetsStore } from '../../stores'
+import { useCalendarStore, useUserStore } from '../../stores'
 import { DateTime, Duration } from 'luxon'
 import { storeToRefs } from 'pinia'
 
@@ -143,16 +143,11 @@ const props = defineProps({
 const popoverShow = ref(false)
 
 const userStore = useUserStore(),
-  leaveStore = useLeaveStore(),
-  capacitiesStore = useCapacitiesStore(),
-  calendarStore = useCalendarStore(),
-  timesheetsStore = useTimesheetsStore()
+      calendarStore = useCalendarStore()
 
 const { settings } = storeToRefs(userStore)
 
-let leave = leaveStore.getByRSE(props.rse.username),
-    holidays = calendarStore.getHolidaysByAcademicYear(),
-    timesheets = await timesheetsStore.fetchTimesheetsByRSE(props.rse, settings.value.financialYear)
+let calendar = await calendarStore.fetchCalendar(props.rse, settings.value.financialYear)
 
 let months = ref([])
 
@@ -171,7 +166,6 @@ function renderCalendar() {
   }
 
   const contractStart = DateTime.fromISO(props.rse.contractStart)
-  const capacities = capacitiesStore.getCapacityInPeriod(dates.startDate.toISODate(), dates.endDate.toISODate(), props.rse.username)
 
   let date = dates.startDate
 
@@ -185,42 +179,41 @@ function renderCalendar() {
 
       let type = [null, null]
 
-      let leaveRequest = leave.find(request => request.DATE === startPoint.toISODate()),
-        timesheet = timesheets.dates[startPoint.toISODate()],
-        holiday = holidays.find(holiday => holiday.date === startPoint.toISODate())
+      const calendarEntry = calendar.find(entry => entry.date === startPoint.toISODate())
 
       // If is a date in this month
       if (startPoint.month === date.month) {
 
-        if (holiday) {
+        if (calendarEntry.holiday) {
           type = ['holiday', 'holiday']
         }
+        else {
+          if (calendarEntry.timesheet.length > 0) {
 
-        if (timesheet) {
+            let types = calendarEntry.timesheet.reduce((billable, entry) => [...billable, entry.billable], [])
 
-          let types = timesheet.reduce((billable, entry) => [...billable, entry.billable], [])
+            if (types.every(type => type)) {
+              type = ['billable', 'billable']
+            }
+            else if (types.every(type => !type)) {
+              type = ['nonbillable', 'nonbillable']
+            }
+            else {
+              type = ['billable', 'nonbillable']
+            }
+          }
 
-          if (types.every(type => type)) {
-            type = ['billable', 'billable']
-          }
-          else if (types.every(type => !type)) {
-            type = ['nonbillable', 'nonbillable']
-          }
-          else {
-            type = ['billable', 'nonbillable']
-          }
-        }
+          if (calendarEntry.leave) {
 
-        if (leaveRequest) {
-
-          if (leaveRequest.DURATION === 'A') {
-            type[0] = 'leave'
-          }
-          else if (leaveRequest.DURATION === 'P') {
-            type[1] = 'leave'
-          }
-          else {
-            type = ['leave', 'leave']
+            if (calendarEntry.leave.duration === 'A') {
+              type[0] = 'leave'
+            }
+            else if (calendarEntry.leave.duration === 'P') {
+              type[1] = 'leave'
+            }
+            else {
+              type = ['leave', 'leave']
+            }
           }
         }
 
@@ -233,9 +226,7 @@ function renderCalendar() {
       days.push({
         date: startPoint.toISODate(),
         isCurrentMonth: startPoint.month === date.month,
-        leave: leaveRequest,
-        timesheet: timesheet,
-        holiday: holiday,
+        calendarEntry: calendarEntry,
         type: !type[0] && !type[1] ? 'bg-white' : type.join('-')
       })
 
@@ -263,39 +254,6 @@ else {
   const position = event.currentTarget.getBoundingClientRect()
 
   let entries = []
-
-  if (day.leave) {
-    if (day.leave.DURATION === 'A') {
-      entries.push({
-        project: 'Annual Leave',
-        client: 'Half Day (AM)',
-        duration: '03:42:00'
-      })
-    }
-    else if (day.leave.DURATION === 'P') {
-      entries.push({
-        project: 'Annual Leave',
-        client: 'Half Day (PM)',
-        duration: '03:42:00'
-      })
-    }
-    else {
-      entries.push({
-        project: 'Annual Leave',
-        client: 'Full Day',
-        duration: '07:24:00'
-      })
-    }
-  }
-
-  if (day.timesheet) {
-    day.timesheet.forEach(entry => entries.push({
-      project: entry.projectName,
-      client: entry.clientName,
-      duration: Duration.fromObject({ seconds: entry.timeInterval.duration }).toFormat('hh:mm:ss')
-    }))
-  }
-
   if(day.holiday) {
     entries.push({
       project: 'Public Holiday',
@@ -303,19 +261,49 @@ else {
       duration: '07:24:00'
     })
   }
+  else {
+    if (day.calendarEntry.leave) {
+      if (day.calendarEntry.leave.duration === 'A') {
+        entries.push({
+          project: 'Annual Leave',
+          client: 'Half Day (AM)',
+          duration: '03:42:00'
+        })
+      }
+      else if (day.calendarEntry.leave.duration === 'P') {
+        entries.push({
+          project: 'Annual Leave',
+          client: 'Half Day (PM)',
+          duration: '03:42:00'
+        })
+      }
+      else {
+        entries.push({
+          project: 'Annual Leave',
+          client: 'Full Day',
+          duration: '07:24:00'
+        })
+      }
+    }
+  }
+
+  if (day.calendarEntry.timesheet) {
+    day.calendarEntry.timesheet.forEach(entry => entries.push({
+      project: entry.project,
+      duration: Duration.fromObject({ seconds: entry.duration }).toFormat('hh:mm:ss')
+    }))
+  }
 
   popoverTitle = DateTime.fromISO(day.date).toFormat('MMMM dd')
   popoverContent = entries
   popoverX = position.x + (position.width / 2)
   popoverY = position.y + (position.height * 1.5)
   popoverShow.value = true
-}
+  }
 }
 
 watch(settings, async () => {
-  leave = leaveStore.getByRSE(props.rse.username)
-  holidays = calendarStore.getHolidaysByAcademicYear(settings.value.financialYear)
-  timesheets = await timesheetsStore.fetchTimesheetsByRSE(props.rse, settings.value.financialYear)
+  calendar = await calendarStore.fetchCalendar(props.rse, settings.value.financialYear)
   renderCalendar()
 },
 { deep: true })

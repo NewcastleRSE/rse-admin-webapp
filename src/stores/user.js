@@ -52,7 +52,7 @@ export const useUserStore = defineStore('user', () => {
                     facilitiesStore.fetchFacilities(),
                     calendarStore.fetchHolidays(),
                     invoicesStore.fetchInvoices(),
-                    leaveStore.fetchLeave(),
+                    leaveStore.fetchLeave(currentYear.startDate.year),
                     rsesStore.fetchRSEs(),
                     timesheetsStore.fetchTimesheets(currentYear.startDate.year),
                     transactionsStore.fetchTransactions()

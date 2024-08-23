@@ -86,7 +86,7 @@ export const fetchObject = async function (object, id, populate, filters) {
     }
   })
 
-  return response.data.data
+  return response.data
 }
 
 export const updateObject = async function (object, id, payload) {

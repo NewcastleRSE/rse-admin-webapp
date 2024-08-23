@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { currentFY } from '../utils/dates'
 import { DateTime } from 'luxon-business-days'
+import { fetchObject } from '../utils/orm'
 
 export const useCalendarStore = defineStore('calendar', () => {
 
@@ -11,7 +12,6 @@ export const useCalendarStore = defineStore('calendar', () => {
 
     const isHoliday = function(inst) {
         const closureDates = holidays.value.map(holiday => DateTime.fromISO(holiday.date))
-        console.log(closureDates)
         return closureDates.includes(inst)
     }
       
@@ -48,6 +48,10 @@ export const useCalendarStore = defineStore('calendar', () => {
             endDate: DateTime.fromISO(`${(year + 1)}-07-31`)
         }
         return workingDays.value.filter(workingDay => dates.startDate <= DateTime.fromISO(workingDay.date) && dates.endDate >= DateTime.fromISO(workingDay.date))
+    }
+
+    async function fetchCalendar (rse, year) {
+        return await fetchObject('rse', `${rse.id}/calendar`, '*', { year: { $eq: year }})
     }
 
     async function fetchHolidays () {
@@ -109,7 +113,7 @@ export const useCalendarStore = defineStore('calendar', () => {
         holidays.value = []
     }
 
-    return { holidays, workingDays, getHolidays, getWorkingDays, getHolidaysByYear, getWorkingDaysByYear, getHolidaysByAcademicYear, getWorkingDaysByAcademicYear, fetchHolidays, reset }
+    return { holidays, workingDays, getHolidays, getWorkingDays, getHolidaysByYear, getWorkingDaysByYear, getHolidaysByAcademicYear, getWorkingDaysByAcademicYear, fetchHolidays, fetchCalendar, reset }
 },
 {
     persist: true

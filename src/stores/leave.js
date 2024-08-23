@@ -25,8 +25,8 @@ export const useLeaveStore = defineStore('leave', () => {
         return leave.value.filter(leave => currentYear.startDate <= DateTime.fromISO(leave.DATE) && currentYear.endDate >= DateTime.fromISO(leave.DATE) && leave.ID === username)
     }
 
-    async function fetchLeave () {
-        //leave.value = await fetchObject('timesheets', 'leave', '*')
+    async function fetchLeave (year) {
+        leave.value = await fetchObject('timesheets', 'leave', '*', { year: { $eq: year }})
     }
 
     async function reset () {
