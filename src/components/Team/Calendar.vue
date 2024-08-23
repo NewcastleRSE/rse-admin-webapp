@@ -57,10 +57,6 @@
   </div>
 </template>
 <style>
-.holiday-holiday {
-  background: linear-gradient(135deg, theme('colors.teal.400'), theme('colors.teal.400') 50%, theme('colors.teal.400') 50%, theme('colors.teal.400'))
-}
-
 .billable-billable {
   background: linear-gradient(135deg, theme('colors.cyan.600'), theme('colors.cyan.600') 50%, theme('colors.cyan.600') 50%, theme('colors.cyan.600'));
   color: white
@@ -111,6 +107,14 @@
 
 .leave-missing {
   background: linear-gradient(135deg, theme('colors.emerald.400'), theme('colors.emerald.400') 50%, theme('colors.red.400') 50%, theme('colors.red.400'))
+}
+
+.leave-white {
+  background: linear-gradient(135deg, theme('colors.emerald.400'), theme('colors.emerald.400') 50%, theme('colors.white') 50%, theme('colors.white'))
+}
+
+.white-leave {
+  background: linear-gradient(135deg, theme('colors.white'), theme('colors.white') 50%, theme('colors.emerald.400') 50%, theme('colors.emerald.400'))
 }
 
 .missing-billable {
@@ -185,7 +189,7 @@ function renderCalendar() {
       if (startPoint.month === date.month) {
 
         if (calendarEntry.holiday) {
-          type = ['holiday', 'holiday']
+          type = ['leave', 'leave']
         }
         else {
           if (calendarEntry.timesheet.length > 0) {
@@ -207,8 +211,10 @@ function renderCalendar() {
 
             if (calendarEntry.leave.duration === 'A') {
               type[0] = 'leave'
+              type[1] = type[1] ? type[1] : 'white'
             }
             else if (calendarEntry.leave.duration === 'P') {
+              type[0] = type[0] ? type[0] : 'white'
               type[1] = 'leave'
             }
             else {
@@ -254,10 +260,10 @@ else {
   const position = event.currentTarget.getBoundingClientRect()
 
   let entries = []
-  if(day.holiday) {
+  if(day.calendarEntry.holiday) {
     entries.push({
       project: 'Public Holiday',
-      client: day.holiday.title,
+      client: day.calendarEntry.holiday.title,
       duration: '07:24:00'
     })
   }
