@@ -136,7 +136,7 @@
 <!-- class="bg-gradient-to-tl from-emerald-600 from-50% via-amber-600 via-50% to-amber-600" -->
 <script setup>
 import { ref, watch } from 'vue'
-import { useCalendarStore, useUserStore } from '../../stores'
+import { useUserStore } from '../../stores'
 import { DateTime, Duration } from 'luxon'
 import { storeToRefs } from 'pinia'
 
@@ -146,12 +146,11 @@ const props = defineProps({
 
 const popoverShow = ref(false)
 
-const userStore = useUserStore(),
-      calendarStore = useCalendarStore()
+const userStore = useUserStore()
 
 const { settings } = storeToRefs(userStore)
 
-let calendar = await calendarStore.fetchCalendar(props.rse, settings.value.financialYear)
+let calendar = props.rse.calendar
 
 let months = ref([])
 
@@ -309,7 +308,6 @@ else {
 }
 
 watch(settings, async () => {
-  calendar = await calendarStore.fetchCalendar(props.rse, settings.value.financialYear)
   renderCalendar()
 },
 { deep: true })

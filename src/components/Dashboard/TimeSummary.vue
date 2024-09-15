@@ -10,58 +10,67 @@
     </div>
 </template>
 <script setup>
-import { toRefs } from 'vue'
-import { useTimesheetsStore } from '../../stores'
+import { toRefs, ref, watch } from 'vue'
+import { useUserStore } from '../../stores'
 import { Interval } from 'luxon'
 import { DateTime } from 'luxon-business-days'
+import { storeToRefs } from 'pinia'
 
 const props = defineProps({
     rse: null
 })
 
-const timesheetStore = useTimesheetsStore()
+const userStore = useUserStore()
+
+const { settings } = storeToRefs(userStore)
+
+let startDate = DateTime.fromISO(`${settings.value.financialYear}-08-01`),
+    endDate = DateTime.fromISO(`${(settings.value.financialYear + 1)}-07-31`)
 
 let { rse } = toRefs(props)
 
-let summary = timesheetStore.getRSESummary(props.rse)
+const calendar = rse.value.calendar
 
-const capacity = rse.value.capacity
+let billable = ref(0),
+    nonBillable = ref(0),
+    leave = ref(0),
+    accountedFor = ref(0),
+    missing = ref(0),
+    recorded = ref(0),
+    progressThroughCapacity = ref(0)
 
-let currentCapacity
+const nextCapacity = calendar.find(entry => DateTime.fromISO(entry.date) >= DateTime.now() && entry.utilisation.capacity > 0),
+      workingDaysToDate = calendar.filter(entry => DateTime.fromISO(entry.date) <= DateTime.now() && entry.metadata.isWorkingDay).length
 
-props.rse.capacities.forEach(capacity => {
+function renderSummary() {
+    // Calculate average capacity for the year
+    const averageFTECapacity = calendar.reduce((total, entry) => total + entry.utilisation.capacity, 0) / (calendar.length - 1),
+        averageCapacity = 220 * (averageFTECapacity / 100),
+        proRata = averageCapacity / 220
 
-    const period = Interval.fromDateTimes(DateTime.fromISO(capacity.start), DateTime.fromISO(capacity.end ? capacity.end : props.rse.capacityEnd))
-    
-    // Is today either in the capacity period or before the capacity period starts?
-    if(period.contains(DateTime.now()) || DateTime.now() < period.start) {
-        currentCapacity = capacity
-    }
-})
+    // Calculate days from seconds (3600 seconds per hour * 7.4 hours per day)
+    billable.value = calendar.reduce((total, entry) => total + entry.utilisation.recorded.billable, 0) / 26640,
+    nonBillable.value = calendar.reduce((total, entry) => total + entry.utilisation.recorded.nonBillable, 0) / 26640,
+    // leave returned in hours not seconds
+    leave.value = calendar.reduce((total, entry) => total + (entry.leave ? entry.leave.duration : 0), 0) / 7.4
 
-const workingDaysTarget = currentCapacity.capacity > 0 ? DateTime.now() : DateTime.fromISO(currentCapacity.start).minus({days: 1})
-const proRata =  capacity / (currentCapacity.capacity > 0 ? 220 : DateTime.fromISO(currentCapacity.start).diff(DateTime.fromISO(props.rse.capacityStart), ['days']).toObject().days)
+    recorded.value = billable.value + nonBillable.value
+    accountedFor.value = recorded.value + leave.value
 
-const workingDaysSoFar = (workingDaysTarget.workingDiff(DateTime.fromISO(props.rse.capacityStart), 'days') * proRata).toFixed(0)
 
-const progressThroughCapacity = workingDaysSoFar > 0 ? ((workingDaysSoFar / capacity) * 100).toFixed(2) : 0
+    //const workingDaysTarget = DateTime.fromISO(nextCapacity.date).minus({days: 1})
+    const workingDaysSoFar = (workingDaysToDate * proRata).toFixed(0)
 
-const recorded = ((summary.recorded / summary.capacity) * 100).toFixed(2),
-      billable = ((summary.billable / summary.capacity) * 100).toFixed(2),
-      nonBillable = ((summary.nonBillable / summary.capacity) * 100).toFixed(2),
-      leave = ((summary.leave / summary.capacity) * 100).toFixed(2),
-      accountedFor = (((summary.recorded + summary.leave) / summary.capacity) * 100).toFixed(2),
-      missing = ((summary.missing / summary.capacity) * 100).toFixed(2)
+    progressThroughCapacity.value = Number(workingDaysSoFar > 0 ? ((workingDaysSoFar / averageCapacity) * 100).toFixed(2) : 0)
 
-// if(summary.name === 'Ben Daly') {
-//     console.log(props.rse)
-//     console.log(summary)
-//     console.log(proRata)
-//     console.log(DateTime.fromISO(currentCapacity.start).diff(DateTime.fromISO(props.rse.capacityStart), ['days']).toObject())
-//     console.log(workingDaysSoFar)
-//     console.log(progressThroughCapacity)
-// }
+    console.log(billable.value, nonBillable.value, leave.value, progressThroughCapacity.value)
+}
 
-// console.log(`${summary.name}, billable: ${summary.billable}, nonBillable: ${summary.nonBillable}, leave: ${summary.leave}, missing: ${summary.missing} of ${workingDaysSoFar}`)
+watch(settings, async () => {
+  renderSummary()
+},
+{ deep: true })
+
+renderSummary()
 
 </script>

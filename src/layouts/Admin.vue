@@ -114,7 +114,7 @@
       </div>
     </main>
   </div>
-</template>../stores/user
+</template>
 
 <script setup>
 import { ref, watch } from 'vue'
@@ -123,12 +123,11 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 import BackgroundImage from '@/assets/img/header.jpeg'
-import { useUserStore, useTimesheetsStore } from '../stores'
+import { useUserStore } from '../stores'
 import { currentFY } from '../utils/dates'
 
 const route = useRoute()
 const userStore = useUserStore()
-const timesheetsStore = useTimesheetsStore()
 
 const user = userStore.user
 const settings = userStore.settings
@@ -161,7 +160,6 @@ const selectedYear = ref(years[years.map(y => y.id).indexOf(settings.financialYe
 
 watch(selectedYear, async () => {
   userStore.settings.financialYear = selectedYear.value.id
-  timesheetsStore.fetchTimesheets(selectedYear.value.id)
 })
 
 </script>

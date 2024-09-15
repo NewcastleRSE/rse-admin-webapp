@@ -16,8 +16,37 @@
                     </div>
                 </div>
                 <div class="block w-full overflow-x-auto px-4">
-                    <ul role="list" class="divide-y divide-gray-100">
-                        <list-item v-for="rse in rses" :key="rse.id" :rse="rse" />
+                    <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                        <li v-for="rse in rses" :key="rse.id" class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow">
+                            <a :href="`/team/${(rse.displayName).replace(/\s+/g, '-').toLowerCase()}`" class="flex flex-1 flex-col p-8">
+                                <img class="mx-auto h-32 w-32 flex-shrink-0 rounded-full" :src="getImageUrl(rse.photo)" :alt="rse.displayName" />
+                                <h3 class="mt-6 text-sm font-medium text-gray-900">{{ rse.displayName }}</h3>
+                                <dl class="mt-1 flex flex-grow flex-col justify-between">
+                                    <dt class="sr-only">Team</dt>
+                                    <dd class="text-sm text-gray-500">{{ rse.team }}</dd>
+                                    <dt class="sr-only">Role</dt>
+                                    <dd class="mt-3">
+                                        <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">{{ rse.team }}</span>
+                                    </dd>
+                                </dl>
+                            </a>
+                            <div>
+                                <div class="-mt-px flex divide-x divide-gray-200">
+                                <div class="flex w-0 flex-1">
+                                    <a :href="`/team/${(rse.displayName).replace(/\s+/g, '-').toLowerCase()}`" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                                        <CalendarDaysIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                        Timesheets
+                                    </a>
+                                </div>
+                                <div class="-ml-px flex w-0 flex-1">
+                                    <a :href="`/team/${(rse.displayName).replace(/\s+/g, '-').toLowerCase()}`" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                                        <ListBulletIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                        Assignments
+                                    </a>
+                                </div>
+                                </div>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -26,45 +55,15 @@
     </div>
 </template>
 <script setup>
-import ListItem from '../components/Team/ListItem.vue'
-import { useRSEsStore, useUserStore } from '../stores'
-import { useCapacitiesStore } from '@/stores/capacities'
+import { useRSEsStore } from '../stores'
+import { CalendarDaysIcon, ListBulletIcon } from '@heroicons/vue/24/outline';
 
 const rsesStore = useRSEsStore()
-const userStore = useUserStore()
-const capacitiesStore = useCapacitiesStore()
+
 const rses = rsesStore.getRSEs()
 
-let totals = []
-
-rses.forEach(rse => {
-    const monthlyCapacities = []
-    for(let i = 1; i < 13; i++) {
-
-        if(i < 10) {
-            i = `0${i}`
-        }
-
-        const capacity = capacitiesStore.getCapacityInPeriod(`2023-${i}-01`, `2023-${i}-31`, rse.id)
-
-        if(capacity.length > 1) {
-            console.log('Multiple capacities found for month ' + i)
-        }
-
-        let days = capacity.length > 0 ? (18.3333 * (capacity[0].capacity / 100)) : 0
-
-        if(rse.displayName === 'Mark Turner') {
-            days = 0
-        }
-        else if(rse.displayName === 'Kate Court' || rse.displayName === 'Becky Osselton') {
-            days = days * 0.5
-        }
-
-        monthlyCapacities.push(days)
-    }
-    totals.push(monthlyCapacities)
-})
-
-let result = totals.reduce((r, a) => a.map((b, i) => (r[i] || 0) + b), [])
+function getImageUrl(name) {
+  return new URL(`../assets/img/avatars/${name}`, import.meta.url).href
+}
 
 </script>

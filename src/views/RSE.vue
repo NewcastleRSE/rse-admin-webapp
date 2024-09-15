@@ -55,22 +55,37 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, onBeforeMount } from 'vue'
+import { DateTime } from 'luxon'
+import { storeToRefs } from 'pinia'
 import Calendar from '../components/Team/Calendar.vue'
 import TimeSummary from '@/components/Dashboard/TimeSummary.vue'
 import AssignmentList from '@/components/Team/AssignmentList.vue'
 import { useRoute } from 'vue-router'
-import { useAssignmentsStore, useProjectsStore, useRSEsStore } from '../stores'
+import { useAssignmentsStore, useProjectsStore, useRSEsStore, useUserStore } from '../stores'
+import { fetchObject } from '../utils/orm'
 
 const route = useRoute()
 
 const assignmentsStore = useAssignmentsStore(),
       projectsStore = useProjectsStore(),
-      rsesStore = useRSEsStore()
+      rsesStore = useRSEsStore(),
+      userStore = useUserStore()
 
-const rse = rsesStore.getByName(route.path.split('/')[2])
+const { settings } = storeToRefs(userStore)
 
-const assignments = assignmentsStore.getByRSE(rse.id).reverse()
+      const dates = {
+        startDate: DateTime.fromISO(`${settings.value.financialYear}-08-01`),
+        endDate: DateTime.fromISO(`${(settings.value.financialYear + 1)}-07-31`)
+      }
+
+      let rse = rsesStore.getByName(route.path.split('/')[2])
+      let assignments = assignmentsStore.getByRSE(rse.id).reverse()
+
+onBeforeMount(async() => {
+  const calendar = await fetchObject('rses', `${rse.id}/calendar`, null, { year: { '$eq': dates.startDate.year } })
+  rse.calendar = calendar.data
+})
 
 assignments.forEach((assignment, index) => {
   try {
@@ -81,8 +96,8 @@ assignments.forEach((assignment, index) => {
   catch(e) {
     console.log(assignment.id)
   }
-
 })
+
 
 let currentTabIdx = ref(0)
 
