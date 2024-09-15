@@ -44,8 +44,8 @@ export const useInvoicesStore = defineStore('invoices', () => {
         return results ? results : []
     }
 
-    async function fetchInvoices () {
-        invoices.value = await fetchObjects('invoices', 0, 100, ['project', 'transaction'])
+    async function fetchInvoices (year) {
+        invoices.value = await fetchObjects('invoices', 0, 100, ['project', 'transaction'], { year: { $eq: year }})
     }
 
     async function createInvoice (projectId, year, month) {

@@ -13,7 +13,7 @@
       <h2 class="mb-6 font-semibold text-blueGray-700 dark:text-white">Loading...</h2>
       <ul class="max-w-md space-y-1 text-blueGray-700 font-semibold list-inside dark:text-gray-400">
         <li class="flex items-center">
-            <svg v-if="rses.length > 0 && capacities.length > 0 && timesheets.length > 0" class="w-4 h-4 mr-1.5 text-cyan-500 dark:text-cyan-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            <svg v-if="rses.length > 0" class="w-4 h-4 mr-1.5 text-cyan-500 dark:text-cyan-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
             <svg v-else class="w-4 h-4 mr-1.5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <component :is="'style'" type="text/css">.spinner_ajPY{transform-origin:center;animation:spinner_AtaB .75s infinite linear}@keyframes spinner_AtaB{100%{transform:rotate(360deg)}}</component><path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" class="spinner_ajPY"/>
             </svg>
@@ -45,19 +45,15 @@ import nclLogo from '@/assets/img/ncl-logo.svg'
 
 const assignmentsStore = Stores.useAssignmentsStore(),
       userStore = Stores.useUserStore(),
-      capacitiesStore = Stores.useCapacitiesStore(),
       facilitiesStore = Stores.useFacilitiesStore(),
       projectsStore = Stores.useProjectsStore(),
       rsesStore = Stores.useRSEsStore(),
-      timesheetsStore = Stores.useTimesheetsStore(),
       transactionsStore = Stores.useTransactionsStore()
 
 const { assignments } = storeToRefs(assignmentsStore)
-const { capacities } = storeToRefs(capacitiesStore)
 const { facilities } = storeToRefs(facilitiesStore)
 const { projects } = storeToRefs(projectsStore)
 const { rses } = storeToRefs(rsesStore)
-const { timesheets } = storeToRefs(timesheetsStore)
 const { transactions } = storeToRefs(transactionsStore)
 
 const apiUrl = ref(import.meta.env.VITE_API_URL)

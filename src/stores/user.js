@@ -9,13 +9,10 @@ import * as Stores from '@/stores'
 export const useUserStore = defineStore('user', () => {
 
     const assignmentsStore = Stores.useAssignmentsStore(),
-          calendarStore = Stores.useCalendarStore(), 
           facilitiesStore = Stores.useFacilitiesStore(),
           invoicesStore = Stores.useInvoicesStore(),
-          leaveStore = Stores.useLeaveStore(),
           projectsStore = Stores.useProjectsStore(),
           rsesStore = Stores.useRSEsStore(),
-          timesheetsStore = Stores.useTimesheetsStore(),
           transactionsStore = Stores.useTransactionsStore()
 
     const accessToken = ref('')
@@ -50,12 +47,9 @@ export const useUserStore = defineStore('user', () => {
                 Promise.all([
                     assignmentsStore.fetchAssignments(),
                     facilitiesStore.fetchFacilities(),
-                    calendarStore.fetchHolidays(),
-                    invoicesStore.fetchInvoices(),
-                    leaveStore.fetchLeave(currentYear.startDate.year),
-                    rsesStore.fetchRSEs(),
-                    timesheetsStore.fetchTimesheets(currentYear.startDate.year),
-                    transactionsStore.fetchTransactions()
+                    invoicesStore.fetchInvoices(currentYear.startDate.year),
+                    rsesStore.fetchRSEs(currentYear.startDate.year),
+                    transactionsStore.fetchTransactions(currentYear.startDate.year)
                 ]).then(() => {
                     router.push({ name: "Dashboard" })
                 }).catch(error => {

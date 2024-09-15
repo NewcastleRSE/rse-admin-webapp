@@ -184,9 +184,6 @@ const routes = [
           const userStore = Store.useUserStore()
           userStore.reset()
 
-          const capacitiesStore = Store.useCapacitiesStore()
-          capacitiesStore.reset()
-
           const facilitiesStore = Store.useFacilitiesStore()
           facilitiesStore.reset()
 
@@ -195,9 +192,6 @@ const routes = [
 
           const rsesStore = Store.useRSEsStore()
           rsesStore.reset()
-
-          const timesheetsStore = Store.useTimesheetsStore()
-          timesheetsStore.reset()
 
           const transactionsStore = Store.useTransactionsStore()
           transactionsStore.reset()

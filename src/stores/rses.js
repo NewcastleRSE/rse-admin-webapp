@@ -2,8 +2,6 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { DateTime } from 'luxon'
 import { fetchObjects } from '../utils/orm'
-import { currentFY } from '../utils/dates'
-import * as Stores from '@/stores'
 
 export const useRSEsStore = defineStore('rses', () => {
     const rses = ref([])
@@ -64,8 +62,8 @@ export const useRSEsStore = defineStore('rses', () => {
         rses.value[rseIndex].assignments.splice(assignmentIndex, 1)
     }
 
-    async function fetchRSEs () {
-        let rseData = await fetchObjects('rses', 0, 100, ['assignments', 'assignments.project', 'capacities'])
+    async function fetchRSEs (year) {
+        let rseData = await fetchObjects('rses', 0, 100, null, { active: true, year: { $eq: year }})
 
         Object.keys(import.meta.glob('@/assets/img/avatars/*.*')).forEach(key => {
 
@@ -74,11 +72,13 @@ export const useRSEsStore = defineStore('rses', () => {
                 return name.toLowerCase() === key.replace(/^.*[\\/]/, '').split('.')[0].split('-').join(' ')
             })
 
-            rseData[rseIndex].photo = key.replace(/^.*[\\/]/, '')
-            rseData[rseIndex].displayName = `${rseData[rseIndex].firstname} ${rseData[rseIndex].lastname}`
+            if(rseIndex > -1) {
+                delete rseData[rseIndex].calendar
+                rseData[rseIndex].photo = key.replace(/^.*[\\/]/, '')
+            }
         })
 
-        let capacityData = []
+        /*let capacityData = []
 
         rseData.forEach((rse) => {
             capacityData = [...capacityData, ...rse.capacities.map(capacity => ({...capacity, rse: rse.id}))]
@@ -142,7 +142,7 @@ export const useRSEsStore = defineStore('rses', () => {
             })
 
             rseData[index].capacity = annualCapacity
-        })
+        })*/
 
         rses.value = rseData
     }
