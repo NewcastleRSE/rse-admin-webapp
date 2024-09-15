@@ -22,65 +22,154 @@
 </template>
 <script setup>
 import { onMounted, defineOptions } from 'vue'
-import { useCapacitiesStore } from '@/stores/capacities'
 import Chart from 'chart.js/auto'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import { DateTime } from 'luxon'
-
+import { currentFY } from '../../utils/dates'
+import { fetchObject } from '../../utils/orm'
 defineOptions({
   name: 'capacity'
 })
 
 Chart.register(annotationPlugin)
 
+function groupBy(data, keyFn) {
+    let m = new Map();
+
+    for (let x of data) {
+        let k = keyFn(x);
+        if (!m.has(k))
+            m.set(k, []);
+        m.get(k).push(x);
+    }
+
+    return m;
+}
+
 onMounted(async () => {
 
-  const capacitiesStore = useCapacitiesStore()
+  const dates = currentFY()
 
-  let startDate = DateTime.utc().startOf('month').minus({months: 12}),
-      endDate = DateTime.utc().startOf('month').plus({month: 13})
+  let startDate = dates.startDate,
+      endDate = dates.endDate
 
-  let utilisationData = capacitiesStore.getUtilisation(startDate, endDate)
+  const summary = await fetchObject('timesheets', 'summary', null, { year: { '$eq': startDate.year } })
 
-  const labels = utilisationData.reduce(function (dates, month) {
-        let date = DateTime.fromISO(month.date)
-          return [...dates, date.toFormat('LLL yy')]
-        }, [])
+  let date = startDate,
+      dateLabels = [],
+      targetDays = summary.data.days.capacity.map(function(c) { return c ? c * 0.85 : null })
+
+  while (date <= endDate) {
+    dateLabels.push(date.toISODate())
+    date = date.plus({ days: 1 })
+  }
 
   let config = {
-    type: "line",
     data: {
-      labels: labels,
+      labels: dateLabels,
       datasets: [
-        {
-          label: 'Target',
-          backgroundColor: "#38bdf8",
-          borderColor: "#38bdf8",
-          data: utilisationData.reduce(function (targets, month) { return [...targets, month.targetDays] }, []),
-          fill: false,
-          stepped: 'middle',
-        },
         {
           label: 'Capacity',
           backgroundColor: "#0284c7",
           borderColor: "#0284c7",
-          data: utilisationData.reduce(function (capacity, month) { return [...capacity, month.capacityDays] }, []),
+          data: summary.data.days.capacity,
           fill: false,
           stepped: 'middle',
+          pointRadius: 0,
+          type: 'line',
+          stack: 'capacity'
         },
         {
-          label: 'Actual',
-          backgroundColor: "#f472b6",
-          borderColor: "#f472b6",
-          data: utilisationData.reduce(function (actual, month) { return [...actual, month.actualDays] }, []),
+          label: 'Target',
+          backgroundColor: "#38bdf8",
+          borderColor: "#38bdf8",
+          data: targetDays,
           fill: false,
           stepped: 'middle',
+          pointRadius: 0,
+          type: 'line',
+          spanGaps: true,
+          stack: 'target'
+        },
+        {
+          label: 'Assigned',
+          backgroundColor: "#f472b6",
+          borderColor: "#f472b6",
+          data: summary.data.days.assigned,
+          fill: false,
+          stepped: 'middle',
+          pointRadius: 0,
+          type: 'line',
+          spanGaps: true,
+          stack: 'assigned'
+        },
+        {
+          label: 'Billable',
+          backgroundColor: "rgba(8,145,178,1)",
+          borderColor: "rgba(8,145,178,0)",
+          data: summary.data.days.billable,
+          stepped: 'middle',
+          pointRadius: 0,
+          order: 4,
+          type: 'line',
+          fill: true,
+          stack: 'data'
+        },
+        {
+          label: 'Non-Billable',
+          backgroundColor: "rgba(250,204,21,1)",
+          borderColor: "rgba(250,204,21,0)",
+          data: summary.data.days.nonBillable,
+          stepped: 'middle',
+          pointRadius: 0,
+          order: 3,
+          type: 'line',
+          fill: true,
+          stack: 'data'
+        },
+        {
+          label: 'Volunteering',
+          backgroundColor: "rgba(192,132,252,1)",
+          borderColor: "rgba(192,132,252,0)",
+          data: summary.data.days.volunteered,
+          stepped: 'middle',
+          pointRadius: 0,
+          order: 2,
+          type: 'line',
+          fill: true,
+          stack: 'data'
+        },
+        {
+          label: 'Leave',
+          backgroundColor: "rgba(52,211,153,1)",
+          borderColor: "rgba(52,211,153,0)",
+          data: summary.data.days.leave,
+          stepped: 'middle',
+          pointRadius: 0,
+          order: 0,
+          spanGaps: true,
+          type: 'line',
+          fill: true,
+          stack: 'data'
+        },
+        {
+          label: 'Sickness',
+          backgroundColor: "rgba(244,63,94,1)",
+          borderColor: "rgba(244,63,94,0)",
+          data: summary.data.days.sickness,
+          stepped: 'middle',
+          pointRadius: 0,
+          order: 1,
+          type: 'line',
+          fill: true,
+          stack: 'data'
         }
       ],
     },
     options: {
       maintainAspectRatio: false,
       responsive: true,
+      spanGaps: true,
       title: {
         display: false,
         text: "Utilisation",
@@ -90,27 +179,36 @@ onMounted(async () => {
         legend: {
           labels: {
             color: "#cbd5e1",
+            filter: function(legendItem, data) {
+              let label = data.datasets[legendItem.datasetIndex].label || '';
+              if (typeof(label) !== 'undefined') {
+                if (legendItem.datasetIndex < 3){
+                  return false;
+                }
+              }
+              return label;
+            }
           },
           align: "end",
           position: "bottom"
         },
-        annotation: {
-          annotations: {
-            today: {
-              type: 'line',
-              xMin: DateTime.utc().toFormat('LLL yy'),
-              xMax: DateTime.utc().toFormat('LLL yy'),
-              borderColor: '#cbd5e1',
-              borderWidth: 1,
-              label: {
-                content: 'Today',
-                display: true,
-                position: 'end',
-                yAdjust: -6
-              }
-            }
-          }
-        }
+        // annotation: {
+        //   annotations: {
+        //     today: {
+        //       type: 'line',
+        //       xMin: DateTime.utc().toFormat('LLL yy'),
+        //       xMax: DateTime.utc().toFormat('LLL yy'),
+        //       borderColor: '#cbd5e1',
+        //       borderWidth: 1,
+        //       label: {
+        //         content: 'Today',
+        //         display: true,
+        //         position: 'end',
+        //         yAdjust: -6
+        //       }
+        //     }
+        //   }
+        // }
       },
       tooltips: {
         mode: "index",
@@ -127,7 +225,7 @@ onMounted(async () => {
             },
             display: true,
             title: {
-              text: 'Month',
+              text: 'Day',
               display: false,
               color:"#cbd5e1"
             },
@@ -142,6 +240,7 @@ onMounted(async () => {
             },
         },
         y: {
+          stacked: true,
           min: 0,
           ticks: {
             color: "#cbd5e1",

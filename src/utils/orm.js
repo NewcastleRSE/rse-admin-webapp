@@ -28,34 +28,42 @@ export const fetchObjects = async function (object, page, pageSize, populate, fi
             encodeValuesOnly: true,
           });
 
-        let response = await axios.get(`${import.meta.env.VITE_API_URL}/${object}?${query}`, {
-          headers: {
-            Authorization: `Bearer ${store.jwt}`,
-          }
-        })
-        
-        objects = objects.concat(response.data.data)
-        const pagination = response.data.meta.pagination
+        try {
 
-        if(pagination && pagination.page < pagination.pageCount) {
-          return await recursiveFetch(object, pagination.page + 1, pageSize, populate, filters)
-        }
-        else {
-          objects.forEach((object, index) => {
-            const keys = Object.keys(object)
-            keys.forEach(key => {
-              try {
-                if(object[key] !== null && typeof object[key] === 'object' && 'data' in object[key]) {
-                  objects[index][key] = object[key].data
-                }
+          let response = await axios.get(`${import.meta.env.VITE_API_URL}/${object}?${query}`, {
+            headers: {
+              Authorization: `Bearer ${store.jwt}`,
             }
-            catch(err) {
-              console.log(keys)
-              console.error(err)
-            }
-            })
           })
-          return objects
+          
+          objects = objects.concat(response.data.data)
+          const pagination = response.data.meta.pagination
+          
+
+          if(pagination && pagination.page < pagination.pageCount) {
+            return await recursiveFetch(object, pagination.page + 1, pageSize, populate, filters)
+          }
+          else {
+            objects.forEach((object, index) => {
+              const keys = Object.keys(object)
+              keys.forEach(key => {
+                try {
+                  if(object[key] !== null && typeof object[key] === 'object' && 'data' in object[key]) {
+                    objects[index][key] = object[key].data
+                  }
+              }
+              catch(err) {
+                console.log(keys)
+                console.error(err)
+              }
+              })
+            })
+            return objects
+          }
+        }
+        catch(err) {
+          console.error(err)
+          //console.error(object, query)
         }
     }
 
@@ -79,6 +87,8 @@ export const fetchObject = async function (object, id, populate, filters) {
   },{
     encodeValuesOnly: true,
   });
+
+  console.log(`${import.meta.env.VITE_API_URL}/${object}/${id}?${query}`)
 
   let response = await axios.get(`${import.meta.env.VITE_API_URL}/${object}/${id}?${query}`, {
     headers: {
