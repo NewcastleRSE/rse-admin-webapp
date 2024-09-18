@@ -88,8 +88,6 @@ export const fetchObject = async function (object, id, populate, filters) {
     encodeValuesOnly: true,
   });
 
-  console.log(`${import.meta.env.VITE_API_URL}/${object}/${id}?${query}`)
-
   let response = await axios.get(`${import.meta.env.VITE_API_URL}/${object}/${id}?${query}`, {
     headers: {
       Authorization: `Bearer ${store.jwt}`,

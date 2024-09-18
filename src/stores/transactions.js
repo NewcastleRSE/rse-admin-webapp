@@ -67,7 +67,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
     }
 
     async function fetchTransactions (year) {
-        transactions.value = await fetchObjects('transactions', 0, 100)
+        transactions.value = await fetchObjects('transactions', 0, 100, null, { fiscalYear: year })
     }
 
     async function reset () {

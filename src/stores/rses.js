@@ -63,7 +63,7 @@ export const useRSEsStore = defineStore('rses', () => {
     }
 
     async function fetchRSEs (year) {
-        let rseData = await fetchObjects('rses', 0, 100, null, { active: true, year: { $eq: year }})
+        let rseData = await fetchObjects('rses', 0, 100, null, { active: true })
 
         Object.keys(import.meta.glob('@/assets/img/avatars/*.*')).forEach(key => {
 
