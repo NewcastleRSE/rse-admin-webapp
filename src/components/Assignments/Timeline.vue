@@ -64,11 +64,13 @@ function generateRows(RSEs) {
   return rows
 }
 
-function generateAvailability(RSEs) {
+function generateAvailability(RSEs, assignments) {
   const items = {}
 
+  let rseAssignments = Object.groupBy(assignments, (assignment) => assignment.rse.id)
+
   RSEs.forEach(rse => {
-      let assignmentEndDates = rse.assignments.reduce(function (dates, assignment) { return [...dates, assignment.end] }, [])
+      let assignmentEndDates = rseAssignments[rse.id].reduce(function (dates, assignment) { return [...dates, assignment.end] }, [])
       const maxDate = new Date(Math.max(...assignmentEndDates.map(date => { return new Date(date) })))
 
       const id = GSTC.api.GSTCID(`rse-${rse.id}`),
@@ -92,15 +94,17 @@ function generateAvailability(RSEs) {
   return items
 }
 
-function generateAssignments(rses) {
+function generateAssignments(rses, assignments) {
 
   /**
    * @type { import('gantt-schedule-timeline-calendar').Items }
    */
   const items = {}
 
+  let rseAssignments = Object.groupBy(assignments, (assignment) => assignment.rse.id)
+
   rses.forEach(rse => {
-    rse.assignments.forEach(assignment => {
+    rseAssignments[rse.id].forEach(assignment => {
 
       const id = GSTC.api.GSTCID(`assignment-${assignment.id}`),
             rowId = GSTC.api.GSTCID(`rse-${rse.id}-assignments`)
@@ -127,7 +131,7 @@ function generateAssignments(rses) {
 // main component
 export default {
   name: 'Timeline',
-  props: ['rses', 'projects'],
+  props: ['rses', 'projects', 'assignments'],
   emits: ['create', 'selection', 'edit', 'resize'],
   setup(props, { emit }) {
     let gstc, state
@@ -273,8 +277,8 @@ export default {
         },
         chart: {
           items: {
-            ...generateAssignments(props.rses),
-            ...generateAvailability(props.rses)
+            ...generateAssignments(props.rses, props.assignments),
+            ...generateAvailability(props.rses, props.assignments)
           },
           time: {
             calculatedZoomMode: true,
@@ -324,14 +328,14 @@ export default {
     function changeTeam(team) {
       if(team.key == 'All') {
         state.update('config.list.rows', generateRows(props.rses))
-        state.update('config.chart.items', {...generateAssignments(props.rses), ...generateAvailability(props.rses)})
+        state.update('config.chart.items', {...generateAssignments(props.rses, props.assignments), ...generateAvailability(props.rses)})
       }
       else {
         const filteredRSEs = props.rses.filter(rse => rse.team === team.key)
 
         state.update('config', config => {
           config.list.rows = generateRows(filteredRSEs)
-          config.chart.items = {...generateAssignments(filteredRSEs), ...generateAvailability(filteredRSEs)}
+          config.chart.items = {...generateAssignments(filteredRSEs, props.assignments), ...generateAvailability(filteredRSEs)}
           return config
         })
       }
