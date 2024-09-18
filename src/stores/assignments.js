@@ -63,8 +63,46 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       })
     }
 
-    async function fetchAssignments () {
-        assignments.value = await fetchObjects('assignments', 0, 100, ['project', 'rse'])
+    async function fetchAssignments (year) {
+
+      const dates = {
+        startDate: DateTime.fromISO(`${year}-08-01`),
+        endDate: DateTime.fromISO(`${(year + 1)}-07-31`)
+      }
+
+      const dateRangeFilter = {
+        $or: [
+          { 
+            start: {
+              $between: [dates.startDate.toISODate(), dates.endDate.toISODate() ]
+            }
+          },
+          {
+            end: { 
+              $between: [dates.startDate.toISODate(), dates.endDate.toISODate() ]
+            }
+          },
+          {
+            start: { 
+              $lt: dates.startDate.toISODate()
+            },
+            end: {
+              $gt: dates.endDate.toISODate()
+            }
+          }
+        ]
+      }
+      
+      const populateAssignments = {
+        project: {
+          fields: ['id', 'name'],
+        },
+        rse: {
+          fields: ['id']
+        }
+      }
+      
+      assignments.value = await fetchObjects('assignments', 0, 100, populateAssignments, dateRangeFilter)
     }
 
     async function createAssignment (assignment) {

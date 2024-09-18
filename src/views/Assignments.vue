@@ -13,62 +13,21 @@ import Timeline from '@/components/Assignments/Timeline.vue'
 import AssignmentModal from '@/components/Assignments/AssignmentModal.vue'
 import UnallocatedModal from '@/components/Assignments/UnallocatedModal.vue'
 import MenuBar from '@/components/Assignments/MenuBar.vue'
-import { useAssignmentsStore, useRSEsStore, useProjectsStore, useUserStore } from '../stores'
+import { useAssignmentsStore, useRSEsStore, useProjectsStore } from '../stores'
 import { ref, computed } from 'vue'
-import { storeToRefs } from 'pinia'
 import { DateTime } from 'luxon'
-import { fetchObjects } from '../utils/orm'
 
 const assignmentsStore = useAssignmentsStore(),
       rsesStore = useRSEsStore(),
-      projectsStore = useProjectsStore(),
-      userStore = useUserStore()
+      projectsStore = useProjectsStore()
 
 const assignmentModalRef = ref(),
-      unallocatedModalRef = ref(),
-      { settings } = storeToRefs(userStore)
-
-const dates = {
-  startDate: DateTime.fromISO(`${settings.value.financialYear}-08-01`),
-  endDate: DateTime.fromISO(`${(settings.value.financialYear + 1)}-07-31`)
-}
-
-const dateRangeFilter = {
-  $or: [
-    { 
-      start: {
-        $between: [dates.startDate.toISODate(), dates.endDate.toISODate() ]
-      }
-    },
-    {
-      end: { 
-        $between: [dates.startDate.toISODate(), dates.endDate.toISODate() ]
-      }
-    },
-    {
-      start: { 
-        $lt: dates.startDate.toISODate()
-      },
-      end: {
-        $gt: dates.endDate.toISODate()
-      }
-    }
-  ]
-}
-
-const populateAssignments = {
-  project: {
-    fields: ['id', 'name'],
-  },
-  rse: {
-    fields: ['id']
-  }
-}
+      unallocatedModalRef = ref()
 
 const timeline = ref(),
       edited = ref(false),
       rses = rsesStore.getRSEs(),
-      assignments = ref(await fetchObjects('assignments', 0, 100, populateAssignments, dateRangeFilter)),
+      assignments = ref(assignmentsStore.getAssignments()),
       projects = projectsStore.getProjects()
 
 const unallocatedCount = computed(() => projects.filter(project => project.stage === 'Awaiting Allocation').length)

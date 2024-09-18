@@ -45,8 +45,8 @@ export const useUserStore = defineStore('user', () => {
 
             projectsStore.fetchProjects().then(() => {
                 Promise.all([
-                    assignmentsStore.fetchAssignments(),
-                    facilitiesStore.fetchFacilities(),
+                    assignmentsStore.fetchAssignments(currentYear.startDate.year),
+                    facilitiesStore.fetchFacilities(currentYear.startDate.year),
                     invoicesStore.fetchInvoices(currentYear.startDate.year),
                     rsesStore.fetchRSEs(currentYear.startDate.year),
                     transactionsStore.fetchTransactions(currentYear.startDate.year)
