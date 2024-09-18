@@ -150,7 +150,7 @@ const userStore = useUserStore()
 
 const { settings } = storeToRefs(userStore)
 
-let calendar = props.rse.calendar
+let calendar = props.rse.calendar.data
 
 let months = ref([])
 

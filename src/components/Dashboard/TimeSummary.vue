@@ -12,7 +12,6 @@
 <script setup>
 import { toRefs, ref, watch } from 'vue'
 import { useUserStore } from '../../stores'
-import { Interval } from 'luxon'
 import { DateTime } from 'luxon-business-days'
 import { storeToRefs } from 'pinia'
 
@@ -24,12 +23,9 @@ const userStore = useUserStore()
 
 const { settings } = storeToRefs(userStore)
 
-let startDate = DateTime.fromISO(`${settings.value.financialYear}-08-01`),
-    endDate = DateTime.fromISO(`${(settings.value.financialYear + 1)}-07-31`)
-
 let { rse } = toRefs(props)
 
-const calendar = rse.value.calendar
+const calendar = props.rse.calendar.data
 
 let billable = ref(0),
     nonBillable = ref(0),
@@ -62,8 +58,6 @@ function renderSummary() {
     const workingDaysSoFar = (workingDaysToDate * proRata).toFixed(0)
 
     progressThroughCapacity.value = Number(workingDaysSoFar > 0 ? ((workingDaysSoFar / averageCapacity) * 100).toFixed(2) : 0)
-
-    console.log(billable.value, nonBillable.value, leave.value, progressThroughCapacity.value)
 }
 
 watch(settings, async () => {

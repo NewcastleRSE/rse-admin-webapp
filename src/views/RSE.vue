@@ -44,9 +44,7 @@
           <span aria-hidden="true" :class="[currentTabIdx == tabIdx ? 'bg-cyan-600' : 'bg-gray-200', 'absolute inset-x-0 bottom-0 h-0.5']" />
         </div>
       </nav>
-      <Suspense>
-        <calendar v-if="currentTabIdx === 0" :rse="rse" />
-      </Suspense>
+      <calendar v-if="currentTabIdx === 0" :rse="rse" />
       <assignment-list v-if="currentTabIdx === 1" :assignments="assignments" />
       <div v-if="currentTabIdx === 2">
         Skills
@@ -55,7 +53,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onBeforeMount } from 'vue'
+import { ref } from 'vue'
 import { DateTime } from 'luxon'
 import { storeToRefs } from 'pinia'
 import Calendar from '../components/Team/Calendar.vue'
@@ -74,18 +72,15 @@ const assignmentsStore = useAssignmentsStore(),
 
 const { settings } = storeToRefs(userStore)
 
-      const dates = {
-        startDate: DateTime.fromISO(`${settings.value.financialYear}-08-01`),
-        endDate: DateTime.fromISO(`${(settings.value.financialYear + 1)}-07-31`)
-      }
+const dates = {
+  startDate: DateTime.fromISO(`${settings.value.financialYear}-08-01`),
+  endDate: DateTime.fromISO(`${(settings.value.financialYear + 1)}-07-31`)
+}
 
-      let rse = rsesStore.getByName(route.path.split('/')[2])
-      let assignments = assignmentsStore.getByRSE(rse.id).reverse()
+let rse = rsesStore.getByName(route.path.split('/')[2])
+let assignments = assignmentsStore.getByRSE(rse.id).reverse()
 
-onBeforeMount(async() => {
-  const calendar = await fetchObject('rses', `${rse.id}/calendar`, null, { year: { '$eq': dates.startDate.year } })
-  rse.calendar = calendar.data
-})
+rse.calendar = await fetchObject('rses', `${rse.id}/calendar`, null, { year: { '$eq': dates.startDate.year } })
 
 assignments.forEach((assignment, index) => {
   try {

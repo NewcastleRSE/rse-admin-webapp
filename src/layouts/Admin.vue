@@ -109,7 +109,9 @@
     <main>
       <div class="py-6 sm:px-6 lg:px-8">
         <div class="w-full -mt-24">
-          <router-view />
+          <Suspense>
+            <router-view />
+          </Suspense>
         </div>
       </div>
     </main>
