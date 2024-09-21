@@ -73,7 +73,7 @@ export const useRSEsStore = defineStore('rses', () => {
 
     async function fetchRSEs (year) {
         let rseData = await fetchObjects('rses', 0, 100, null, { active: true }),
-            utilisation = await fetchObject('timesheets', 'utilisation', null, { year: { '$eq': year } })
+            utilisationData = await fetchObject('timesheets', 'utilisation', null, { year: { '$eq': year } })
 
 
         Object.keys(import.meta.glob('@/assets/img/avatars/*.*')).forEach(key => {
@@ -90,7 +90,7 @@ export const useRSEsStore = defineStore('rses', () => {
         })
 
         rses.value = rseData,
-        utilisation.value = utilisation
+        utilisation.value = utilisationData
     }
 
     async function reset () {
