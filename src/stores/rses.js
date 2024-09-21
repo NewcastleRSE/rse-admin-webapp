@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { DateTime } from 'luxon'
-import { fetchObjects } from '../utils/orm'
+import { fetchObject, fetchObjects } from '../utils/orm'
 
 export const useRSEsStore = defineStore('rses', () => {
-    const rses = ref([])
+    const rses = ref([]),
+          utilisation = ref({})
 
     function getRSEs(inactive = false) {
         return rses.value.filter(rse => {
@@ -20,6 +21,14 @@ export const useRSEsStore = defineStore('rses', () => {
 
     function getByID(id) {
         return rses.value.find(rse => rse.id == id)
+    }
+
+    function getUtilisation(id = null) {
+        if(id) {
+            return utilisation.value.rses[id]
+        } else {
+            return utilisation.value
+        }
     }
 
     function getNext(teamName) {
@@ -63,7 +72,9 @@ export const useRSEsStore = defineStore('rses', () => {
     }
 
     async function fetchRSEs (year) {
-        let rseData = await fetchObjects('rses', 0, 100, null, { active: true })
+        let rseData = await fetchObjects('rses', 0, 100, null, { active: true }),
+            utilisation = await fetchObject('timesheets', 'utilisation', null, { year: { '$eq': year } })
+
 
         Object.keys(import.meta.glob('@/assets/img/avatars/*.*')).forEach(key => {
 
@@ -78,80 +89,16 @@ export const useRSEsStore = defineStore('rses', () => {
             }
         })
 
-        /*let capacityData = []
-
-        rseData.forEach((rse) => {
-            capacityData = [...capacityData, ...rse.capacities.map(capacity => ({...capacity, rse: rse.id}))]
-        })
-
-        const capacitiesStore = Stores.useCapacitiesStore()
-        capacitiesStore.setCapacities(capacityData)
-
-        const currentYear = currentFY()
-
-        rseData.forEach((rse, index) => {
-            const capacities = capacitiesStore.getCapacityInPeriod(currentYear.startDate.toISODate(), currentYear.endDate.toISODate(), rse.id)
-
-            let capacityEndDates = capacities.reduce(function (dates, capacity) { return [...dates, capacity.end] }, [])
-
-            if(capacityEndDates.length && capacityEndDates.includes(null)) {
-                rseData[index].capacityStart = currentYear.startDate.toISODate()
-                rseData[index].capacityEnd = currentYear.endDate.toISODate()
-            }
-            else if(capacityEndDates.length) {
-                const maxDate = DateTime.max(...[...new Set(capacityEndDates.reduce(function (dates, date) { return [...dates, DateTime.fromISO(date)] }, []))])
-                rseData[index].capacityStart = currentYear.startDate.toISODate()
-                rseData[index].capacityEnd = maxDate.toISODate()
-            }
-            else {
-                rseData[index].capacityStart = null
-                rseData[index].capacityEnd = null
-            }
-
-            // Correction for staff starting this year
-            if(DateTime.fromISO(rse.contractStart) >= currentYear.startDate) {
-                rseData[index].capacityStart = rse.contractStart
-            }
-
-            let annualCapacity = 0
-
-            capacities.forEach(capacity => {
-
-                let start = DateTime.fromISO(capacity.start),
-                    end = capacity.end ? DateTime.fromISO(capacity.end) : currentYear.endDate
-
-                // Capacity is the same all year
-                if(currentYear.startDate >= start && currentYear.endDate <= end) {
-                    annualCapacity += Math.round(Math.round(220 * (capacity.capacity/100)))
-                }
-                // Capacity started this year
-                else if (currentYear.startDate <= start && currentYear.endDate <= end) {
-                    const proRataRatio = Math.round(currentYear.endDate.diff(start, 'days').toObject().days) / 365
-                    annualCapacity += Math.round(Math.round(220 * (capacity.capacity/100)) * proRataRatio)
-                }
-                // Capacity ended this year
-                else if (currentYear.startDate >= start && currentYear.endDate >= end) {
-                    const proRataRatio = Math.round(end.diff(currentYear.startDate, 'days').toObject().days) / 365
-                    annualCapacity += Math.round(Math.round(220 * (capacity.capacity/100)) * proRataRatio)
-                }
-                // Capacity starts and ends in the same year
-                else {
-                    const proRataRatio = Math.round(end.diff(start, 'days').toObject().days) / 365
-                    annualCapacity += Math.round(Math.round(220 * (capacity.capacity/100)) * proRataRatio)
-                }
-            })
-
-            rseData[index].capacity = annualCapacity
-        })*/
-
-        rses.value = rseData
+        rses.value = rseData,
+        utilisation.value = utilisation
     }
 
     async function reset () {
-        rses.value = []
+        rses.value = [],
+        utilisation.value = {}
     }
 
-    return { rses, getRSEs, getByName, getByID, getNext, addAssignment, updateAssignment, deleteAssignment, fetchRSEs, reset }
+    return { rses, utilisation, getRSEs, getByName, getByID, getUtilisation, getNext, addAssignment, updateAssignment, deleteAssignment, fetchRSEs, reset }
 },
 {
     persist: true
