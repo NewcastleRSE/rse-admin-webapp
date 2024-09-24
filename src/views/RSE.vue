@@ -32,7 +32,7 @@
       </div>
       <calendar v-if="currentTabIdx === 1" :rse="rse" />
       <div v-if="currentTabIdx === 2">
-        Leave
+        <LeaveList :leave="leaveDates" />
       </div>
       <div v-if="currentTabIdx === 3">
         <volunteering :months="volunteeringData" />
@@ -49,6 +49,7 @@ import Calendar from '../components/Team/Calendar.vue'
 import TimeSummary from '@/components/Dashboard/TimeSummary.vue'
 import AssignmentList from '@/components/Team/AssignmentList.vue'
 import Volunteering from '../components/Team/Volunteering.vue'
+import LeaveList from '../components/Team/LeaveList.vue'
 import { useRoute } from 'vue-router'
 import { useAssignmentsStore, useProjectsStore, useRSEsStore, useUserStore, useFacilitiesStore } from '../stores'
 import { fetchObject } from '../utils/orm'
@@ -105,7 +106,8 @@ let utilisationRate = utilisation.total.recorded / utilisation.total.capacity * 
     utilisationRateDiff = utilisationRate - (facility.utilisationRate * 100),
     utilisationCap = 100 - (facility.utilisationRate * 100)
 
-let volunteeringDates = rse.calendar.data.filter(date => date.timesheet.some(entery => entery.project === 'Volunteering'))
+let volunteeringDates = rse.calendar.data.filter(date => date.timesheet.some(entery => entery.project === 'Volunteering')),
+    leaveDates = rse.calendar.data.filter(date => date.leave !== null).reverse()
 
 let months = {}
 
