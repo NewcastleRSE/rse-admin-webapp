@@ -4,10 +4,10 @@
       <div class="flex flex-wrap items-center">
         <div class="relative w-full max-w-full flex-grow flex-1">
           <h6 class="uppercase text-blueGray-100 mb-1 text-xs font-semibold">
-            Monthly
+            Daily
           </h6>
           <h2 class="text-white text-xl font-semibold">
-            Utilisation
+            Allocation
           </h2>
         </div>
       </div>
@@ -72,6 +72,7 @@ onMounted(async () => {
           label: 'Capacity',
           backgroundColor: "#0284c7",
           borderColor: "#0284c7",
+          borderWidth: 1.5,
           data: summary.data.days.capacity,
           fill: false,
           stepped: 'middle',
@@ -83,6 +84,7 @@ onMounted(async () => {
           label: 'Target',
           backgroundColor: "#38bdf8",
           borderColor: "#38bdf8",
+          borderWidth: 1.5,
           data: targetDays,
           fill: false,
           stepped: 'middle',
@@ -95,6 +97,7 @@ onMounted(async () => {
           label: 'Assigned',
           backgroundColor: "#f472b6",
           borderColor: "#f472b6",
+          borderWidth: 1.5,
           data: summary.data.days.assigned,
           fill: false,
           stepped: 'middle',
@@ -111,7 +114,7 @@ onMounted(async () => {
           stepped: 'middle',
           pointRadius: 0,
           order: 4,
-          type: 'line',
+          type: 'bar',
           fill: true,
           stack: 'data'
         },
@@ -123,7 +126,7 @@ onMounted(async () => {
           stepped: 'middle',
           pointRadius: 0,
           order: 3,
-          type: 'line',
+          type: 'bar',
           fill: true,
           stack: 'data'
         },
@@ -135,7 +138,7 @@ onMounted(async () => {
           stepped: 'middle',
           pointRadius: 0,
           order: 2,
-          type: 'line',
+          type: 'bar',
           fill: true,
           stack: 'data'
         },
@@ -148,7 +151,7 @@ onMounted(async () => {
           pointRadius: 0,
           order: 0,
           spanGaps: true,
-          type: 'line',
+          type: 'bar',
           fill: true,
           stack: 'data'
         },
@@ -160,7 +163,7 @@ onMounted(async () => {
           stepped: 'middle',
           pointRadius: 0,
           order: 1,
-          type: 'line',
+          type: 'bar',
           fill: true,
           stack: 'data'
         }
