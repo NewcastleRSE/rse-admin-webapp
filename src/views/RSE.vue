@@ -106,20 +106,36 @@ let utilisationRate = utilisation.total.recorded / utilisation.total.capacity * 
     utilisationRateDiff = utilisationRate - (facility.utilisationRate * 100),
     utilisationCap = 100 - (facility.utilisationRate * 100)
 
+let workingDaysToDate = rse.calendar.data.filter(date => DateTime.fromISO(date.date) <= DateTime.now() && date.metadata.isWorkingDay)
+let missingDays = workingDaysToDate.filter(date => date.leave === null && date.timesheet.length === 0)
+
 let volunteeringDates = rse.calendar.data.filter(date => date.timesheet.some(entery => entery.project === 'Volunteering')),
     leaveDates = rse.calendar.data.filter(date => date.leave !== null).reverse()
 
+const averageCapacity = rse.calendar.data.reduce((acc, entry) => acc + entry.utilisation.capacity, 0) / rse.calendar.data.length
+
+const today = rse.calendar.data.find(entry => entry.date === DateTime.now().toISODate()),
+      yearCompleted = Math.abs(dates.startDate.diffNow('days').days) / 365,
+      leaveTarget = ((30 * (averageCapacity/100)) * yearCompleted).toFixed(0),
+      leaveDiff = (leaveTarget - leaveDates.length) * -1
+
 let months = {}
+
+let date = dates.startDate
+
+while (date <= DateTime.now()) {
+  if (!months[date.toFormat('MMMM')]) {
+    months[date.toFormat('MMMM')] = 0
+  }
+
+  date = date.plus({ months: 1 })
+}
 
 volunteeringDates.forEach(entry => {
   let date = DateTime.fromISO(entry.date),
       timesheets = entry.timesheet.filter(entry => entry.project === 'Volunteering')
   
   let duration = timesheets.reduce((acc, entry) => acc + entry.duration, 0)
-
-  if (!months[date.toFormat('MMMM')]) {
-    months[date.toFormat('MMMM')] = 0
-  }
 
   months[date.toFormat('MMMM')] = months[date.toFormat('MMMM')] + duration
 })
@@ -143,32 +159,32 @@ const tabs = [
     changeIcon: utilisationRateDiff < 0 ? ArrowDownIcon : ArrowUpIcon
   },
   { 
-    name: 'Calendar',
-    stat: '58.16%',
-    change: '2.02%',
-    changeType: 'green',
-    changeIcon: CheckIcon
+    name: 'Timesheets',
+    stat: `${(workingDaysToDate.length - missingDays.length)} of ${workingDaysToDate.length}`,
+    change: `${((workingDaysToDate.length - missingDays.length) / workingDaysToDate.length).toFixed(2) * 100}%`,
+    changeType: (workingDaysToDate.length - missingDays.length) / workingDaysToDate.length >= 0.80 ? 'green' : 'red',
+    changeIcon: (workingDaysToDate.length - missingDays.length) / workingDaysToDate.length >= 0.80 ? CheckIcon : ExclamationTriangleIcon
   },
   { 
     name: 'Leave',
-    stat: '24.57%',
-    change: '4.05%',
-    changeType: 'red',
-    changeIcon: CheckIcon
+    stat: `${leaveDates.length} of ${30 * (averageCapacity/100)}`,
+    change: leaveDiff > 0 ? `+${leaveDiff}` : `${leaveDiff}`,
+    changeType: leaveDates.length >= leaveTarget ? 'green' : 'red',
+    changeIcon: leaveDates.length >= leaveTarget ? ArrowUpIcon : ArrowDownIcon
   },
   {
     name: 'Volunteering',
-    stat: `${volunteeringData.length} of ${Math.ceil(Math.abs(dates.startDate.diffNow('months').months))}`,
-    change: `${volunteeringData[0].utilisation.toFixed(0)}%`,
-    changeType: volunteeringData[0].utilisation < 100 ? 'green' : 'red',
-    changeIcon: volunteeringData[0].utilisation < 100 ? CheckIcon : ExclamationTriangleIcon
+    stat: `${volunteeringData.filter(month => month.duration > 0).length} of ${Math.ceil(Math.abs(dates.startDate.diffNow('months').months))}`,
+    change: volunteeringData[0] ? `${volunteeringData[0].utilisation.toFixed(0)}%` : '0%',
+    changeType: volunteeringData[0] ? 75 <= volunteeringData[0].utilisation && volunteeringData[0].utilisation <= 100 ? 'green' : 'red' : 'red',
+    changeIcon: volunteeringData[0] ? 75 <= volunteeringData[0].utilisation && volunteeringData[0].utilisation <= 100 ? CheckIcon : ExclamationTriangleIcon : ExclamationTriangleIcon
   }, 
   {
     name: 'Assignments',
     stat: assignmentCount,
     change: `${assignmentFTE}%`,
-    changeType: assignmentFTE < 100 ? 'red' : 'green',
-    changeIcon: assignmentFTE < 100 ? XMarkIcon : CheckIcon
+    changeType: assignmentFTE < today.utilisation.capacity ? 'red' : 'green',
+    changeIcon: assignmentFTE < today.utilisation.capacity ? XMarkIcon : CheckIcon
   }  
 ]
 
