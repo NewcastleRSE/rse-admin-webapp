@@ -9,13 +9,13 @@
               <div class="flex items-baseline text-2xl font-semibold text-cyan-600">
                 {{ item.stat }}
               </div>
-              <div :class="[item.changeType === 'increase' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800', 'inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium md:mt-2 lg:mt-0']">
+              <div :class="[item.changeType === 'green' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800', 'inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium md:mt-2 lg:mt-0']">
 
-                <component :is="item.changeIcon" class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center" :class="item.changeType === 'increase' ? 'text-green-500' : 'text-red-500' " aria-hidden="true" />
-                <!-- <ArrowUpIcon v-if="item.changeType === 'increase'" class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-green-500" aria-hidden="true" />
+                <component :is="item.changeIcon" class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center" :class="item.changeType === 'green' ? 'text-green-500' : 'text-red-500' " aria-hidden="true" />
+                <!-- <ArrowUpIcon v-if="item.changeType === 'green'" class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-green-500" aria-hidden="true" />
                 <ArrowDownIcon v-else class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-red-500" aria-hidden="true" /> -->
 
-                <span class="sr-only"> {{ item.changeType === 'increase' ? 'Increased' : 'Decreased' }} by </span>
+                <span class="sr-only"> {{ item.changeType === 'green' ? 'Increased' : 'Decreased' }} by </span>
                 {{ item.change }}
               </div>
             </dd>
@@ -53,6 +53,7 @@ import { useRoute } from 'vue-router'
 import { useAssignmentsStore, useProjectsStore, useRSEsStore, useUserStore, useFacilitiesStore } from '../stores'
 import { fetchObject } from '../utils/orm'
 import { ArrowDownIcon, ArrowUpIcon, CheckIcon, XMarkIcon, ExclamationTriangleIcon } from '@heroicons/vue/20/solid'
+import { start } from '@popperjs/core'
 
 let currentTabIdx = ref(0)
 
@@ -123,16 +124,11 @@ volunteeringDates.forEach(entry => {
 
 const monthlyCap = 7.26 * 60 * 60
 
-// Convert duration in seconds to percentage of monthly cap
-Object.keys(months).forEach((month) => {
-  let duration = months[month]
-  months[month] = (duration / monthlyCap) * 100
-})
-
 const volunteeringData = Object.keys(months).map((month) => {
   return {
     month: month,
-    duration: months[month]
+    duration: months[month],
+    utilisation: (months[month] / monthlyCap) * 100
   }
 }).reverse()
 
@@ -141,35 +137,35 @@ const tabs = [
     name: 'Utilisation',
     stat: `${utilisationRate.toFixed(2)}%`,
     change: utilisationRateDiff < utilisationCap ? `${utilisationRateDiff.toFixed(2)}%` : `${(utilisationRateDiff - utilisationCap).toFixed(2)}%`,
-    changeType: utilisationRateDiff < 0 || utilisationRateDiff > utilisationCap ? 'decrease' : 'increase',
+    changeType: utilisationRateDiff < 0 || utilisationRateDiff > utilisationCap ? 'red' : 'green',
     changeIcon: utilisationRateDiff < 0 ? ArrowDownIcon : ArrowUpIcon
   },
   { 
     name: 'Calendar',
     stat: '58.16%',
     change: '2.02%',
-    changeType: 'increase',
+    changeType: 'green',
     changeIcon: CheckIcon
   },
   { 
     name: 'Leave',
     stat: '24.57%',
     change: '4.05%',
-    changeType: 'decrease',
+    changeType: 'red',
     changeIcon: CheckIcon
   },
   {
     name: 'Volunteering',
-    stat: assignmentCount,
-    change: `${assignmentFTE}%`,
-    changeType: assignmentFTE < 100 ? 'decrease' : 'increase',
-    changeIcon: CheckIcon
+    stat: `${volunteeringData.length} of ${Math.ceil(Math.abs(dates.startDate.diffNow('months').months))}`,
+    change: `${volunteeringData[0].utilisation.toFixed(0)}%`,
+    changeType: volunteeringData[0].utilisation < 100 ? 'green' : 'red',
+    changeIcon: volunteeringData[0].utilisation < 100 ? CheckIcon : ExclamationTriangleIcon
   }, 
   {
     name: 'Assignments',
     stat: assignmentCount,
     change: `${assignmentFTE}%`,
-    changeType: assignmentFTE < 100 ? 'decrease' : 'increase',
+    changeType: assignmentFTE < 100 ? 'red' : 'green',
     changeIcon: assignmentFTE < 100 ? XMarkIcon : CheckIcon
   }  
 ]
