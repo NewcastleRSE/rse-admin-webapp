@@ -28,9 +28,9 @@
   <div class="flex flex-wrap">
     <div class="w-full mb-12 xl:mb-0 mx-4 break-words bg-white w-full mb-6 px-4 py-5 shadow-lg rounded-lg">
       <div v-if="currentTabIdx === 0">
-        Skills
+        <utilisation :months="utilisation.months" />
       </div>
-      <calendar v-if="currentTabIdx === 1" :rse="rse" />
+        <calendar v-if="currentTabIdx === 1" :rse="rse" />
       <div v-if="currentTabIdx === 2">
         <LeaveList :leave="leaveDates" />
       </div>
@@ -50,11 +50,11 @@ import TimeSummary from '@/components/Dashboard/TimeSummary.vue'
 import AssignmentList from '@/components/Team/AssignmentList.vue'
 import Volunteering from '../components/Team/Volunteering.vue'
 import LeaveList from '../components/Team/LeaveList.vue'
+import Utilisation from '../components/Team/Utilisation.vue'
 import { useRoute } from 'vue-router'
 import { useAssignmentsStore, useProjectsStore, useRSEsStore, useUserStore, useFacilitiesStore } from '../stores'
 import { fetchObject } from '../utils/orm'
 import { ArrowDownIcon, ArrowUpIcon, CheckIcon, XMarkIcon, ExclamationTriangleIcon } from '@heroicons/vue/20/solid'
-import { start } from '@popperjs/core'
 
 let currentTabIdx = ref(0)
 
@@ -167,7 +167,7 @@ const tabs = [
   },
   { 
     name: 'Leave',
-    stat: `${leaveDates.length} of ${30 * (averageCapacity/100)}`,
+    stat: `${leaveDates.length} of ${(30 * (averageCapacity/100)).toFixed(1)}`,
     change: leaveDiff > 0 ? `+${leaveDiff}` : `${leaveDiff}`,
     changeType: leaveDates.length >= leaveTarget ? 'green' : 'red',
     changeIcon: leaveDates.length >= leaveTarget ? ArrowUpIcon : ArrowDownIcon
