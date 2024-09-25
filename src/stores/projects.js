@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { DateTime } from 'luxon'
 import { fetchObjects, updateObject } from '../utils/orm'
 
 export const useProjectsStore = defineStore('projects', () => {
@@ -32,8 +33,46 @@ export const useProjectsStore = defineStore('projects', () => {
         projects.value[index].status = response.status
     }
 
-    async function fetchProjects () {
-        projects.value = await fetchObjects('projects', 0, 100, ['contacts'])
+    async function fetchProjects (year) {
+
+        const dates = {
+            startDate: DateTime.fromISO(`${year}-08-01`),
+            endDate: DateTime.fromISO(`${(year + 1)}-07-31`)
+          }
+    
+          const dateRangeFilter = {
+            $or: [{
+                assignments: {
+                    $or: [
+                    { 
+                        start: {
+                            $between: [dates.startDate.toISODate(), dates.endDate.toISODate() ]
+                        }
+                    },
+                    {
+                        end: { 
+                            $between: [dates.startDate.toISODate(), dates.endDate.toISODate() ]
+                        }
+                    },
+                    {
+                        start: { 
+                            $lt: dates.startDate.toISODate()
+                        },
+                        end: {
+                            $gt: dates.endDate.toISODate()
+                        }
+                    }
+                    ]
+                }
+            },
+            {
+               stage: {
+                   $in: ['Awaiting Allocation']
+               } 
+            }]
+          }
+
+        projects.value = await fetchObjects('projects', 0, 100, ['contacts', 'assignments'], dateRangeFilter)
     }
 
     async function reset () {
