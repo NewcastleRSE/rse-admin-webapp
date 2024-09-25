@@ -16,13 +16,11 @@
 </template>
 <script setup>
 
-import { DateTime } from 'luxon';
+import { DateTime } from 'luxon'
 
 const props = defineProps({
     months: null
 })
-
-console.log(props.months)
 
 </script>
   
