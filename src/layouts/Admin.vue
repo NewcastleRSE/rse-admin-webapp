@@ -162,6 +162,7 @@ const selectedYear = ref(years[years.map(y => y.id).indexOf(settings.financialYe
 
 watch(selectedYear, async () => {
   userStore.settings.financialYear = selectedYear.value.id
+  userStore.fetchData(userStore.settings.financialYear)
 })
 
 </script>

@@ -20,7 +20,22 @@ export const useUserStore = defineStore('user', () => {
     const user = ref({})
     const settings = ref({})
 
-    function login(token) {
+    function fetchData(year) {
+        return Promise.all([
+            projectsStore.fetchProjects(year),
+            assignmentsStore.fetchAssignments(year),
+            facilitiesStore.fetchFacilities(year),
+            invoicesStore.fetchInvoices(year),
+            rsesStore.fetchRSEs(year),
+            transactionsStore.fetchTransactions(year)
+        ]).then(() => {
+            return true
+        }).catch(error => {
+            console.error(error)
+        })
+    }
+
+    async function login(token) {
         const loginUrl = import.meta.env.VITE_API_URL + '/auth/microsoft/callback/?access_token=' + token
         const azureConfig = { headers: { Authorization: `Bearer ${token}` }}
         const currentYear = currentFY()
@@ -30,7 +45,7 @@ export const useUserStore = defineStore('user', () => {
         let fetchPhoto = axios.get('https://graph.microsoft.com/v1.0/me/photo/$value', {...azureConfig, responseType: 'arraybuffer'})
 
         Promise.all([fetchJWT, fetchProfile, fetchPhoto])
-        .then((values) => {
+        .then(async (values) => {
 
             let profile = values[1].data
                 profile.photo = Buffer.from(values[2].data, 'binary').toString('base64')
@@ -43,21 +58,10 @@ export const useUserStore = defineStore('user', () => {
                 defaultTeam: 'all'
             }
 
-            projectsStore.fetchProjects().then(() => {
-                Promise.all([
-                    assignmentsStore.fetchAssignments(currentYear.startDate.year),
-                    facilitiesStore.fetchFacilities(currentYear.startDate.year),
-                    invoicesStore.fetchInvoices(currentYear.startDate.year),
-                    rsesStore.fetchRSEs(currentYear.startDate.year),
-                    transactionsStore.fetchTransactions(currentYear.startDate.year)
-                ]).then(() => {
-                    router.push({ name: "Dashboard" })
-                }).catch(error => {
-                    console.error(error)
-                })
-            }).catch(error => {
-            console.error(error)
-            })
+            await fetchData(currentYear.startDate.year)
+            
+            router.push({ name: "Dashboard" })
+            
         })
         .catch((err) => {
             console.log(err)
@@ -68,9 +72,9 @@ export const useUserStore = defineStore('user', () => {
         accessToken.value = null
         jwt.value = null
         user.value = null
-      }
+    }
 
-    return { accessToken, jwt, user, settings, login, reset }
+    return { accessToken, jwt, user, settings, login, fetchData, reset }
 },
 { 
     persist: true
