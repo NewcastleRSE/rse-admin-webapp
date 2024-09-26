@@ -26,7 +26,7 @@
                                     <dd class="text-sm text-gray-500">{{ rse.team }}</dd>
                                     <dt class="sr-only">Role</dt>
                                     <dd class="mt-3">
-                                        <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">{{ rse.team }}</span>
+                                        <span class="inline-flex items-center rounded-full px-2 py-1 text font-medium ring-1 ring-inset" :class="totalUtilisation[rse.id] > facility.utilisationRate * 100 ? 'bg-green-50 text-green-700 ring-green-600/20' : 'bg-red-50 text-red-700 ring-red-600/20'">Utilisation: {{totalUtilisation[rse.id] }}%</span>
                                     </dd>
                                 </dl>
                             </a>
@@ -55,12 +55,27 @@
     </div>
 </template>
 <script setup>
-import { useRSEsStore } from '../stores'
-import { CalendarDaysIcon, ListBulletIcon } from '@heroicons/vue/24/outline';
+import { storeToRefs } from 'pinia'
+import { useRSEsStore, useFacilitiesStore, useUserStore } from '../stores'
+import { CalendarDaysIcon, ListBulletIcon } from '@heroicons/vue/24/outline'
 
-const rsesStore = useRSEsStore()
+const rsesStore = useRSEsStore(),
+      facilitiesStore = useFacilitiesStore(),
+      userStore = useUserStore(),
+      rses = rsesStore.getRSEs(),
+      utilisation = rsesStore.getUtilisation()
 
-const rses = rsesStore.getRSEs()
+const { settings } = storeToRefs(userStore)
+
+const facility = facilitiesStore.getByYear(settings.value.financialYear)
+
+
+
+let totalUtilisation = {}
+
+for(let rse of Object.keys(utilisation.rses)) {
+    totalUtilisation[rse] = Number((utilisation.rses[rse].total.recorded / utilisation.rses[rse].total.capacity) * 100).toFixed(2)
+}
 
 function getImageUrl(name) {
   return new URL(`../assets/img/avatars/${name}`, import.meta.url).href

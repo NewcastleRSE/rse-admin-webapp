@@ -182,7 +182,7 @@ tabs.value = [
   },
   { 
     name: 'Timesheets',
-    stat: `${(workingDaysToDate.length - missingDays.length)} of ${(workingDaysToDate.length - leaveDates.value.filter(date => date.leave.type === 'AL').length)}`,
+    stat: `${(workingDaysToDate.length - missingDays.length)} of ${(workingDaysToDate.length - 30)}`,
     change: `${((workingDaysToDate.length - missingDays.length) / workingDaysToDate.length).toFixed(2) * 100}%`,
     changeType: (workingDaysToDate.length - missingDays.length) / workingDaysToDate.length >= 0.80 ? 'green' : 'red',
     changeIcon: (workingDaysToDate.length - missingDays.length) / workingDaysToDate.length >= 0.80 ? CheckIcon : ExclamationTriangleIcon
