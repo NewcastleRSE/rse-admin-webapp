@@ -38,9 +38,9 @@ export const useProjectsStore = defineStore('projects', () => {
         const dates = {
             startDate: DateTime.fromISO(`${year}-08-01`),
             endDate: DateTime.fromISO(`${(year + 1)}-07-31`)
-          }
+        }
     
-          const dateRangeFilter = {
+        const dateRangeFilter = {
             $or: [{
                 assignments: {
                     $or: [
@@ -70,7 +70,7 @@ export const useProjectsStore = defineStore('projects', () => {
                    $in: ['Awaiting Allocation']
                } 
             }]
-          }
+        }
 
         projects.value = await fetchObjects('projects', 0, 100, ['contacts', 'assignments'], dateRangeFilter)
     }

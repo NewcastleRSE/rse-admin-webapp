@@ -7,11 +7,9 @@ export const useRSEsStore = defineStore('rses', () => {
     const rses = ref([]),
           utilisation = ref({})
 
-    function getRSEs(inactive = false) {
-        return rses.value.filter(rse => {
-            return inactive ? true : rse.active
-        }).sort(function(a, b) {
-            return a.lastname.localeCompare(b.lastname);
+    function getRSEs() {
+        return rses.value.sort(function(a, b) {
+            return a.lastname.localeCompare(b.lastname)
         })
     }
 
@@ -72,7 +70,36 @@ export const useRSEsStore = defineStore('rses', () => {
     }
 
     async function fetchRSEs (year) {
-        let rseData = await fetchObjects('rses', 0, 100, null, { active: true }),
+        const startDate = DateTime.fromISO(`${year}-08-01`),
+              endDate = DateTime.fromISO(`${(year + 1)}-07-31`)
+    
+        const contractRangeFilter = {
+            $and: [
+              {
+                contractStart: { 
+                    $lt: endDate.toISODate()
+                }
+              },
+              {
+                capacities: {
+                    $or: [
+                        {
+                            end: { 
+                                $between: [startDate.toISODate(), endDate.toISODate() ]
+                            }
+                        },
+                        {
+                            end: { 
+                                $null: true
+                            }
+                        }
+                    ]
+                }
+              }
+            ]
+          }
+
+        let rseData = await fetchObjects('rses', 0, 100, null, contractRangeFilter),
             utilisationData = await fetchObject('timesheets', 'utilisation', null, { year: { '$eq': year } })
 
 
