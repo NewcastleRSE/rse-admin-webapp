@@ -51,7 +51,7 @@ function groupBy(data, keyFn) {
 }
 
 onMounted(async () => {
-   let startDate = DateTime.fromFormat(`${settings.value.financialYear}-08-01`, 'yyyy-MM-dd').startOf('day'),
+  let startDate = DateTime.fromFormat(`${settings.value.financialYear}-08-01`, 'yyyy-MM-dd').startOf('day'),
       endDate = startDate.plus({ years: 1 }).minus({ days: 1 }).endOf('day')
 
   const summary = await fetchObject('timesheets', 'summary', null, { year: { '$eq': settings.value.financialYear } })
