@@ -22,14 +22,18 @@
 </template>
 <script setup>
 import { onMounted, defineOptions } from 'vue'
+import { useUserStore } from '../../stores'
+import { storeToRefs } from 'pinia'
 import Chart from 'chart.js/auto'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import { DateTime } from 'luxon'
-import { currentFY } from '../../utils/dates'
 import { fetchObject } from '../../utils/orm'
 defineOptions({
   name: 'capacity'
 })
+
+const userStore = useUserStore()
+const { settings } = storeToRefs(userStore)
 
 Chart.register(annotationPlugin)
 
@@ -47,13 +51,10 @@ function groupBy(data, keyFn) {
 }
 
 onMounted(async () => {
+   let startDate = DateTime.fromFormat(`${settings.value.financialYear}-08-01`, 'yyyy-MM-dd').startOf('day'),
+      endDate = startDate.plus({ years: 1 }).minus({ days: 1 }).endOf('day')
 
-  const dates = currentFY()
-
-  let startDate = dates.startDate,
-      endDate = dates.endDate
-
-  const summary = await fetchObject('timesheets', 'summary', null, { year: { '$eq': startDate.year } })
+  const summary = await fetchObject('timesheets', 'summary', null, { year: { '$eq': settings.value.financialYear } })
 
   let date = startDate,
       dateLabels = [],
