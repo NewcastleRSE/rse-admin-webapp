@@ -77,149 +77,137 @@ const assignmentsStore = useAssignmentsStore(),
 // Global Settings
 const { settings } = storeToRefs(userStore)
 
-async function renderStatsBar() {
-  // Selected FY dates
-  const dates = {
-    startDate: DateTime.fromISO(`${settings.value.financialYear}-08-01`),
-    endDate: DateTime.fromISO(`${(settings.value.financialYear + 1)}-07-31`)
-  }
-
-  const targetDate = DateTime.now() > dates.endDate ? dates.endDate : DateTime.now()
-
-  // RSE Data
-  
-  let rse = rsesStore.getByName(rseName)
-  let facility = facilitiesStore.getByYear(dates.startDate.year)
-
-  assignments.value = assignmentsStore.getByRSE(rse.id).reverse()
-  utilisation.value = rsesStore.getUtilisation(rse.id)
-
-  // RSE Calendar
-  rse.calendar = await fetchObject('rses', `${rse.id}/calendar`, null, { year: { '$eq': dates.startDate.year } })
-
-  // Utilisation
-  let utilisationRate = utilisation.value.total.recorded / utilisation.value.total.capacity * 100,
-      utilisationRateDiff = utilisationRate - (facility.utilisationRate * 100),
-      utilisationCap = 100 - (facility.utilisationRate * 100)
-
-  // Calendar
-  let workingDaysToDate = rse.calendar.data.filter(date => DateTime.fromISO(date.date) <= targetDate && date.metadata.isWorkingDay)
-  let missingDays = workingDaysToDate.filter(date => date.leave === null && date.timesheet.length === 0)
-
-  // Leave
-  leaveDates.value = rse.calendar.data.filter(date => date.leave !== null).reverse()
-
-  const averageCapacity = rse.calendar.data.reduce((acc, entry) => acc + entry.utilisation.capacity, 0) / rse.calendar.data.length
-
-  const today = rse.calendar.data.find(entry => entry.date === targetDate.toISODate()),
-        yearCompleted = Math.abs(dates.startDate.diff(targetDate, 'days').days) / 365,
-        leaveTarget = ((30 * (averageCapacity/100)) * yearCompleted).toFixed(0),
-        leaveDiff = (leaveTarget - leaveDates.value.filter(date => date.leave.type === 'AL').length) * -1
-
-  // Volunteering
-  let volunteeringDates = rse.calendar.data.filter(date => date.timesheet.some(entery => entery.project === 'Volunteering'))
-      
-  let months = {}
-
-  let date = dates.startDate
-
-  while (date <= targetDate) {
-    if (!months[date.toFormat('MMMM')]) {
-      months[date.toFormat('MMMM')] = 0
-    }
-
-    date = date.plus({ months: 1 })
-  }
-
-  volunteeringDates.forEach(entry => {
-    let date = DateTime.fromISO(entry.date),
-        timesheets = entry.timesheet.filter(entry => entry.project === 'Volunteering')
-    
-    let duration = timesheets.reduce((acc, entry) => acc + entry.duration, 0)
-
-    months[date.toFormat('MMMM')] = months[date.toFormat('MMMM')] + duration
-  })
-
-  const monthlyCap = 7.26 * 60 * 60
-
-  volunteeringData.value = Object.keys(months).map((month) => {
-    return {
-      month: month,
-      duration: months[month],
-      utilisation: (months[month] / monthlyCap) * 100
-    }
-  }).reverse()
-
-  // Assignments
-
-  let assignmentCount = 0,
-      assignmentFTE = 0
-
-  console.log(assignments.value)
-
-  assignments.value.forEach((assignment, index) => {
-    try {
-      if(!!Object.hasOwn(assignment.project, 'name')) {
-        assignments.value[index].project = projectsStore.getByID(assignment.project.id)
-      }
-      if(DateTime.fromISO(assignment.start) <= targetDate && DateTime.fromISO(assignment.end) >= targetDate) {
-        assignmentCount++
-        assignmentFTE += assignment.fte
-      }
-    }
-    catch(e) {
-      console.log(assignment)
-      console.log(assignments[index])
-      console.log(e)
-      console.log(assignment.id)
-    }
-  })
-
-  // Tab construction
-  tabs.value = [
-    { 
-      name: 'Utilisation',
-      stat: `${utilisationRate.toFixed(2)}%`,
-      change: utilisationRateDiff < utilisationCap ? `${utilisationRateDiff.toFixed(2)}%` : `${(utilisationRateDiff - utilisationCap).toFixed(2)}%`,
-      changeType: utilisationRateDiff < 0 || utilisationRateDiff > utilisationCap ? 'red' : 'green',
-      changeIcon: utilisationRateDiff < 0 ? ArrowDownIcon : ArrowUpIcon
-    },
-    { 
-      name: 'Timesheets',
-      stat: `${(workingDaysToDate.length - missingDays.length)} of ${(workingDaysToDate.length - leaveDates.value.filter(date => date.leave.type === 'AL').length)}`,
-      change: `${((workingDaysToDate.length - missingDays.length) / workingDaysToDate.length).toFixed(2) * 100}%`,
-      changeType: (workingDaysToDate.length - missingDays.length) / workingDaysToDate.length >= 0.80 ? 'green' : 'red',
-      changeIcon: (workingDaysToDate.length - missingDays.length) / workingDaysToDate.length >= 0.80 ? CheckIcon : ExclamationTriangleIcon
-    },
-    { 
-      name: 'Leave',
-      stat: `${leaveDates.value.filter(date => date.leave.type === 'AL').length} of ${(30 * (averageCapacity/100)).toFixed(1)}`,
-      change: leaveDiff > 0 ? `+${leaveDiff}` : `${leaveDiff}`,
-      changeType: leaveDates.value.filter(date => date.leave.type === 'AL').length >= leaveTarget ? 'green' : 'red',
-      changeIcon: leaveDates.value.filter(date => date.leave.type === 'AL').length >= leaveTarget ? ArrowUpIcon : ArrowDownIcon
-    },
-    {
-      name: 'Volunteering',
-      stat: `${volunteeringData.value.filter(month => month.duration > 0).length} of ${Math.ceil(Math.abs(dates.startDate.diff(targetDate, 'months').months))}`,
-      change: volunteeringData.value[0] ? `${volunteeringData.value[0].utilisation.toFixed(0)}%` : '0%',
-      changeType: volunteeringData.value[0] ? 75 <= volunteeringData.value[0].utilisation && volunteeringData.value[0].utilisation <= 100 ? 'green' : 'red' : 'red',
-      changeIcon: volunteeringData.value[0] ? 75 <= volunteeringData.value[0].utilisation && volunteeringData.value[0].utilisation <= 100 ? CheckIcon : ExclamationTriangleIcon : ExclamationTriangleIcon
-    }, 
-    {
-      name: 'Assignments',
-      stat: assignmentCount,
-      change: `${assignmentFTE}%`,
-      changeType: assignmentFTE < today.utilisation.capacity ? 'red' : 'green',
-      changeIcon: assignmentFTE < today.utilisation.capacity ? XMarkIcon : CheckIcon
-    }  
-  ]
+// Selected FY dates
+const dates = {
+  startDate: DateTime.fromISO(`${settings.value.financialYear}-08-01`),
+  endDate: DateTime.fromISO(`${(settings.value.financialYear + 1)}-07-31`)
 }
 
-watch(settings, async () => {
-  renderStatsBar()
-},
-{ deep: true })
+const targetDate = DateTime.now() > dates.endDate ? dates.endDate : DateTime.now()
 
-renderStatsBar()
+// RSE Data
+
+let rse = rsesStore.getByName(rseName)
+let facility = facilitiesStore.getByYear(dates.startDate.year)
+
+assignments.value = assignmentsStore.getByRSE(rse.id).reverse()
+utilisation.value = rsesStore.getUtilisation(rse.id)
+
+// RSE Calendar
+rse.calendar = await fetchObject('rses', `${rse.id}/calendar`, null, { year: { '$eq': dates.startDate.year } })
+
+// Utilisation
+let utilisationRate = utilisation.value.total.recorded / utilisation.value.total.capacity * 100,
+    utilisationRateDiff = utilisationRate - (facility.utilisationRate * 100),
+    utilisationCap = 100 - (facility.utilisationRate * 100)
+
+// Calendar
+let workingDaysToDate = rse.calendar.data.filter(date => DateTime.fromISO(date.date) <= targetDate && date.metadata.isWorkingDay)
+let missingDays = workingDaysToDate.filter(date => date.leave === null && date.timesheet.length === 0)
+
+// Leave
+leaveDates.value = rse.calendar.data.filter(date => date.leave !== null).reverse()
+
+const averageCapacity = rse.calendar.data.reduce((acc, entry) => acc + entry.utilisation.capacity, 0) / rse.calendar.data.length
+
+const today = rse.calendar.data.find(entry => entry.date === targetDate.toISODate()),
+      yearCompleted = Math.abs(dates.startDate.diff(targetDate, 'days').days) / 365,
+      leaveTarget = ((30 * (averageCapacity/100)) * yearCompleted).toFixed(0),
+      leaveDiff = (leaveTarget - leaveDates.value.filter(date => date.leave.type === 'AL').length) * -1
+
+// Volunteering
+let volunteeringDates = rse.calendar.data.filter(date => date.timesheet.some(entery => entery.project === 'Volunteering'))
+    
+let months = {}
+
+let date = dates.startDate
+
+while (date <= targetDate) {
+  if (!months[date.toFormat('MMMM')]) {
+    months[date.toFormat('MMMM')] = 0
+  }
+
+  date = date.plus({ months: 1 })
+}
+
+volunteeringDates.forEach(entry => {
+  let date = DateTime.fromISO(entry.date),
+      timesheets = entry.timesheet.filter(entry => entry.project === 'Volunteering')
+  
+  let duration = timesheets.reduce((acc, entry) => acc + entry.duration, 0)
+
+  months[date.toFormat('MMMM')] = months[date.toFormat('MMMM')] + duration
+})
+
+const monthlyCap = 7.26 * 60 * 60
+
+volunteeringData.value = Object.keys(months).map((month) => {
+  return {
+    month: month,
+    duration: months[month],
+    utilisation: (months[month] / monthlyCap) * 100
+  }
+}).reverse()
+
+// Assignments
+
+let assignmentCount = 0,
+    assignmentFTE = 0
+
+console.log(assignments.value)
+
+assignments.value.forEach((assignment, index) => {
+  try {
+    if(!!Object.hasOwn(assignment.project, 'name')) {
+      assignments.value[index].project = projectsStore.getByID(assignment.project.id)
+    }
+    if(DateTime.fromISO(assignment.start) <= targetDate && DateTime.fromISO(assignment.end) >= targetDate) {
+      assignmentCount++
+      assignmentFTE += assignment.fte
+    }
+  }
+  catch(e) {
+    console.log(e)
+  }
+})
+
+// Tab construction
+tabs.value = [
+  { 
+    name: 'Utilisation',
+    stat: `${utilisationRate.toFixed(2)}%`,
+    change: utilisationRateDiff < utilisationCap ? `${utilisationRateDiff.toFixed(2)}%` : `${(utilisationRateDiff - utilisationCap).toFixed(2)}%`,
+    changeType: utilisationRateDiff < 0 || utilisationRateDiff > utilisationCap ? 'red' : 'green',
+    changeIcon: utilisationRateDiff < 0 ? ArrowDownIcon : ArrowUpIcon
+  },
+  { 
+    name: 'Timesheets',
+    stat: `${(workingDaysToDate.length - missingDays.length)} of ${(workingDaysToDate.length - leaveDates.value.filter(date => date.leave.type === 'AL').length)}`,
+    change: `${((workingDaysToDate.length - missingDays.length) / workingDaysToDate.length).toFixed(2) * 100}%`,
+    changeType: (workingDaysToDate.length - missingDays.length) / workingDaysToDate.length >= 0.80 ? 'green' : 'red',
+    changeIcon: (workingDaysToDate.length - missingDays.length) / workingDaysToDate.length >= 0.80 ? CheckIcon : ExclamationTriangleIcon
+  },
+  { 
+    name: 'Leave',
+    stat: `${leaveDates.value.filter(date => date.leave.type === 'AL').length} of ${(30 * (averageCapacity/100)).toFixed(1)}`,
+    change: leaveDiff > 0 ? `+${leaveDiff}` : `${leaveDiff}`,
+    changeType: leaveDates.value.filter(date => date.leave.type === 'AL').length >= leaveTarget ? 'green' : 'red',
+    changeIcon: leaveDates.value.filter(date => date.leave.type === 'AL').length >= leaveTarget ? ArrowUpIcon : ArrowDownIcon
+  },
+  {
+    name: 'Volunteering',
+    stat: `${volunteeringData.value.filter(month => month.duration > 0).length} of ${Math.ceil(Math.abs(dates.startDate.diff(targetDate, 'months').months))}`,
+    change: volunteeringData.value[0] ? `${volunteeringData.value[0].utilisation.toFixed(0)}%` : '0%',
+    changeType: volunteeringData.value[0] ? 75 <= volunteeringData.value[0].utilisation && volunteeringData.value[0].utilisation <= 100 ? 'green' : 'red' : 'red',
+    changeIcon: volunteeringData.value[0] ? 75 <= volunteeringData.value[0].utilisation && volunteeringData.value[0].utilisation <= 100 ? CheckIcon : ExclamationTriangleIcon : ExclamationTriangleIcon
+  }, 
+  {
+    name: 'Assignments',
+    stat: assignmentCount,
+    change: `${assignmentFTE}%`,
+    changeType: assignmentFTE < today.utilisation.capacity ? 'red' : 'green',
+    changeIcon: assignmentFTE < today.utilisation.capacity ? XMarkIcon : CheckIcon
+  }  
+]
 
 </script>
