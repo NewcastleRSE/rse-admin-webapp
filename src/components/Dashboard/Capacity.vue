@@ -4,10 +4,10 @@
       <div class="flex flex-wrap items-center">
         <div class="relative w-full max-w-full flex-grow flex-1">
           <h6 class="uppercase text-blueGray-100 mb-1 text-xs font-semibold">
-            Daily
+            Capacity
           </h6>
           <h2 class="text-white text-xl font-semibold">
-            Allocation
+            Distribution
           </h2>
         </div>
       </div>

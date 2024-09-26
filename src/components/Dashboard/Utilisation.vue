@@ -15,7 +15,7 @@
         <div class="block w-full overflow-x-auto">
             <dl
                 class="mt-5 grid grid-cols-1 divide-x divide-gray-200 overflow-hidden rounded-lg bg-white shadow">
-                <div v-for="item in stats" :key="item.name" class="px-4 py-5 sm:p-6">
+                <div v-for="item in stats" :key="item.name" class="px-4 py-2 sm:p-4">
                     <dt class="text-base font-normal text-gray-900">{{ item.name }}</dt>
                     <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
                         <div class="flex items-baseline text-2xl font-semibold text-cyan-600">
@@ -39,49 +39,57 @@
     </div>
 </template>
 <script setup>
-
-import { DateTime } from 'luxon'
-import { useRSEsStore, useFacilitiesStore } from '@/stores'
-import { currentFY } from '../../utils/dates'
+import { storeToRefs } from 'pinia'
+import { useRSEsStore, useFacilitiesStore, useUserStore } from '@/stores'
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/vue/20/solid'
 
-const dates = currentFY()
-
 const rsesStore = useRSEsStore(),
-    facilitiesStore = useFacilitiesStore()
+    facilitiesStore = useFacilitiesStore(),
+    userStore = useUserStore()
+
+const { settings } = storeToRefs(userStore)
 
 const utilisation = rsesStore.getUtilisation(),
-    facility = facilitiesStore.getByYear(dates.startDate.year)
+      facility = facilitiesStore.getByYear(settings.value.financialYear)
 
-const thisMonth = utilisation.months[DateTime.now().toFormat('MMMM')],
-    lastMonth = utilisation.months[DateTime.now().startOf('month').minus({ days: 1 }).toFormat('MMMM')]
+for(const month in utilisation.months) {
+    utilisation.months[month].utilisation = utilisation.months[month].recorded / utilisation.months[month].capacity * 100
+}
 
-const utilisationTotal = utilisation.total.recorded / utilisation.total.capacity * 100,
-      thisMonthTotal = thisMonth.recorded / thisMonth.capacity * 100,
-      lastMonthTotal = lastMonth.recorded / lastMonth.capacity * 100
+const overall = utilisation.total.recorded / utilisation.total.capacity * 100
 
-const utilisationTotalDiff = utilisationTotal - (facility.utilisationRate * 100),
-      utilisationThisMonthDiff = thisMonthTotal - (facility.utilisationRate * 100),
-      utilisationLastMonthDiff = lastMonthTotal - (facility.utilisationRate * 100)
+const monthlyAverage = Object.keys(utilisation.months).reduce((acc, month) => acc + utilisation.months[month].utilisation, 0) / Object.keys(utilisation.months).length
+
+const highestMonthName = Object.keys(utilisation.months).reduce((a, b) => utilisation.months[a].utilisation > utilisation.months[b].utilisation ? a : b),
+      lowestMonthName = Object.keys(utilisation.months).reduce((a, b) => utilisation.months[a].utilisation < utilisation.months[b].utilisation ? a : b)
+      
+const highest = utilisation.months[highestMonthName].utilisation,
+      lowest = utilisation.months[lowestMonthName].utilisation
 
 const stats = [
     {
-        name: 'This Year',
-        stat: utilisationTotal.toFixed(2) + '%',
-        change: utilisationTotalDiff.toFixed(2) + '%',
-        changeType: utilisationTotalDiff > 0 ? 'increase' : 'decrease'
+        name: 'Overall',
+        stat: overall.toFixed(2) + '%',
+        change: (overall - (facility.utilisationRate * 100)).toFixed(2) + '%',
+        changeType: (overall - (facility.utilisationRate * 100)) > 0 ? 'increase' : 'decrease'
     },
     {
-        name: 'Month to Date',
-        stat: thisMonthTotal.toFixed(2) + '%',
-        change: utilisationThisMonthDiff.toFixed(2) + '%',
-        changeType: utilisationThisMonthDiff > 0 ? 'increase' : 'decrease'
+        name: 'Monthly Average',
+        stat: monthlyAverage.toFixed(2) + '%',
+        change: (monthlyAverage - (facility.utilisationRate * 100)).toFixed(2) + '%',
+        changeType: (monthlyAverage - (facility.utilisationRate * 100)) > 0 ? 'increase' : 'decrease'
     },
     {
-        name: 'Last Month',
-        stat: lastMonthTotal.toFixed(2) + '%',
-        change: utilisationLastMonthDiff.toFixed(2) + '%',
-        changeType: utilisationLastMonthDiff > 0 ? 'increase' : 'decrease'
+        name: `${highestMonthName} (Highest)`,
+        stat: highest.toFixed(2) + '%',
+        change: (highest - (facility.utilisationRate * 100)).toFixed(2) + '%',
+        changeType: (highest - (facility.utilisationRate * 100)) > 0 ? 'increase' : 'decrease'
+    },
+    {
+        name: `${lowestMonthName} (Lowest)`,
+        stat: lowest.toFixed(2) + '%',
+        change: (lowest - (facility.utilisationRate * 100)).toFixed(2) + '%',
+        changeType: (lowest - (facility.utilisationRate * 100)) > 0 ? 'increase' : 'decrease'
     },
 ]
 
