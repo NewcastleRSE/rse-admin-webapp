@@ -16,7 +16,7 @@
           </div>
           <div class="hidden md:block">
             <div class="ml-4 flex items-center md:ml-6">
-              <Listbox as="div" class="px-3" v-model="selectedYear" v-if="!isDashboard">
+              <Listbox as="div" class="px-3" v-model="selectedYear">
                 <div class="relative">
                   <ListboxButton class="relative w-full cursor-default py-1.5 pl-3 pr-10 text-left text-white shadow-sm ring-inset focus:outline-none focus:ring-2 focus:ring-cyan-600 sm:text-sm sm:leading-6">
                     <div class="flex flex-col pr-3 text-white">
@@ -119,7 +119,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, getCurrentInstance } from 'vue'
 import { useRoute } from 'vue-router'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
@@ -162,7 +162,9 @@ const selectedYear = ref(years[years.map(y => y.id).indexOf(settings.financialYe
 
 watch(selectedYear, async () => {
   userStore.settings.financialYear = selectedYear.value.id
-  userStore.fetchData(userStore.settings.financialYear)
+  await userStore.fetchData(userStore.settings.financialYear)
+  // Horrible hack!
+  window.location.reload()
 })
 
 </script>
