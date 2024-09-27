@@ -64,11 +64,13 @@ function generateRows(RSEs) {
   return rows
 }
 
-function generateAvailability(RSEs) {
+function generateAvailability(RSEs, assignments) {
   const items = {}
 
+  let rseAssignments = Object.groupBy(assignments, (assignment) => assignment.rse.id)
+
   RSEs.forEach(rse => {
-      let assignmentEndDates = rse.assignments.reduce(function (dates, assignment) { return [...dates, assignment.end] }, [])
+      let assignmentEndDates = rseAssignments[rse.id].reduce(function (dates, assignment) { return [...dates, assignment.end] }, [])
       const maxDate = new Date(Math.max(...assignmentEndDates.map(date => { return new Date(date) })))
 
       const id = GSTC.api.GSTCID(`rse-${rse.id}`),
@@ -92,15 +94,17 @@ function generateAvailability(RSEs) {
   return items
 }
 
-function generateAssignments(rses) {
+function generateAssignments(rses, assignments) {
 
   /**
    * @type { import('gantt-schedule-timeline-calendar').Items }
    */
   const items = {}
 
+  let rseAssignments = Object.groupBy(assignments, (assignment) => assignment.rse.id)
+
   rses.forEach(rse => {
-    rse.assignments.forEach(assignment => {
+    rseAssignments[rse.id].forEach(assignment => {
 
       const id = GSTC.api.GSTCID(`assignment-${assignment.id}`),
             rowId = GSTC.api.GSTCID(`rse-${rse.id}-assignments`)
@@ -110,7 +114,7 @@ function generateAssignments(rses) {
 
       items[id] = {
         id,
-        label: assignment.project.data.name,
+        label: assignment.project.name,
         rowId,
         time: {
           start: assignmentStart.toMillis(),
@@ -127,7 +131,7 @@ function generateAssignments(rses) {
 // main component
 export default {
   name: 'Timeline',
-  props: ['rses', 'projects'],
+  props: ['rses', 'projects', 'assignments'],
   emits: ['create', 'selection', 'edit', 'resize'],
   setup(props, { emit }) {
     let gstc, state
@@ -142,11 +146,8 @@ export default {
             // Selection includes cells
             if (cells.length) {
               let rseID = cells[0].row.id.split('-')[2],
-                  range = [
-                    cells[0].time.leftGlobalDate,
-                    cells[cells.length-1].time.rightGlobalDate
-                  ]
-              emit('create', rseID, null, range)
+                  rse = props.rses.find(rse => rse.id == rseID)
+              emit('create', rse, cells[0].time.leftGlobalDate.$d, cells[cells.length-1].time.rightGlobalDate.$d)
               gstc.api.plugins.Selection.selectItems([])
             }
 
@@ -276,8 +277,8 @@ export default {
         },
         chart: {
           items: {
-            ...generateAssignments(props.rses),
-            ...generateAvailability(props.rses)
+            ...generateAssignments(props.rses, props.assignments),
+            ...generateAvailability(props.rses, props.assignments)
           },
           time: {
             calculatedZoomMode: true,
@@ -301,18 +302,17 @@ export default {
       const assignmentsStore = useAssignmentsStore()
 
       assignmentsStore.$subscribe((mutation) => {
-        // console.log(mutation)
         // New assignment
         if(mutation.events.type === 'add') {
           addAssignment(mutation.events.newValue)
         }
         // Deleted assignment
-        else if(mutation.events.type === 'set' && mutation.events.key === 'length' && mutation.events.newValue < mutation.events.oldValue) {
+        else if(mutation.events.type === 'delete') {
           deleteAssignments()
         }
         // Edited Assignment
         else {
-          console.log(mutation.events)
+          updateAssignment(mutation.events.newValue)
         }
       })
     })
@@ -328,14 +328,14 @@ export default {
     function changeTeam(team) {
       if(team.key == 'All') {
         state.update('config.list.rows', generateRows(props.rses))
-        state.update('config.chart.items', {...generateAssignments(props.rses), ...generateAvailability(props.rses)})
+        state.update('config.chart.items', {...generateAssignments(props.rses, props.assignments), ...generateAvailability(props.rses)})
       }
       else {
         const filteredRSEs = props.rses.filter(rse => rse.team === team.key)
 
         state.update('config', config => {
           config.list.rows = generateRows(filteredRSEs)
-          config.chart.items = {...generateAssignments(filteredRSEs), ...generateAvailability(filteredRSEs)}
+          config.chart.items = {...generateAssignments(filteredRSEs, props.assignments), ...generateAvailability(filteredRSEs)}
           return config
         })
       }
@@ -356,8 +356,8 @@ export default {
     function addAssignment(assignment){
       let newItem = {
         id: GSTC.api.GSTCID(`assignment-${assignment.id}`),
-        rowId: GSTC.api.GSTCID(`rse-${assignment.rse}-assignments`),
-        label: assignment.project.data.name,
+        rowId: GSTC.api.GSTCID(`rse-${assignment.rse.id}-assignments`),
+        label: assignment.project.name,
         time: {
           start: DateTime.fromISO(assignment.start).startOf('day').valueOf(),
           end: DateTime.fromISO(assignment.end).endOf('day').valueOf(),
@@ -367,6 +367,16 @@ export default {
       }
       gstc.api.plugins.Selection.selectItems([])
       state.update(`config.chart.items.${GSTC.api.GSTCID(`assignment-${assignment.id}`)}`, (item) => { item = newItem; return item } )
+    }
+    function updateAssignment(assignment){
+      state.update(`config.chart.items.${GSTC.api.GSTCID(`assignment-${assignment.id}`)}`, item=>{
+        item.label = assignment.project.name
+        item.time = {
+          start: DateTime.fromISO(assignment.start).startOf('day').valueOf(),
+          end: DateTime.fromISO(assignment.end).endOf('day').valueOf(),
+        }
+        return item
+      })
     }
     function deleteAssignments(){
       const selectedItems = gstc.api.plugins.Selection.getSelected()['chart-timeline-items-row-item']
@@ -407,6 +417,7 @@ export default {
       changeTeam,
       changeFY,
       addAssignment,
+      updateAssignment,
       deleteAssignments,
       getSelectedAssignments,
     }

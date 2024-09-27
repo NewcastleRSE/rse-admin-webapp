@@ -15,7 +15,7 @@
                       <DialogTitle as="h3" class="mb-6 text-base font-semibold leading-6 text-gray-900">{{ title }}</DialogTitle>
                         <div class="grid grid-cols-6 gap-x-6 gap-y-8">
                           <div class="sm:col-span-6">
-                            <Combobox as="div" v-model="project" nullable>
+                            <Combobox as="div" v-model="selectedProject" nullable>
                               <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">Project</ComboboxLabel>
                               <div class="relative mt-2">
                                 <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" required @change="projectQuery = $event.target.value" :display-value="(project) => project?.name" />
@@ -41,9 +41,8 @@
                               </div>
                             </Combobox>
                           </div>
-
                           <div class="sm:col-span-4">
-                            <Combobox as="div" v-model="rse" nullable>
+                            <Combobox as="div" v-model="selectedRSE" nullable>
                               <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">RSE</ComboboxLabel>
                               <div class="relative mt-2">
                                 <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" required @change="rseQuery = $event.target.value" :display-value="(rse) => `${rse?.firstname} ${rse?.lastname}`" />
@@ -141,8 +140,8 @@ const defaultState = {
 
 let title = '',
     assignmentId = null,
-    project = ref(null),
-    rse = ref(null),
+    selectedProject = ref(null),
+    selectedRSE = ref(null),
     fte = 50,
     startDate = null,
     endDate = null
@@ -163,23 +162,22 @@ function toggleModal() {
   isOpen.value = !isOpen.value
 }
 
-function createAssignment(assignmentID, rseID, projectID, dateRange, split) {
-
-  title = 'Create Assignment'
-
-  const start = dateRange ? DateTime.fromJSDate(dateRange[0].$d) : null,
-        end = dateRange ? DateTime.fromJSDate(dateRange[1].$d) : null
-
-  if(assignmentID) {
+function createAssignment(assignment, rse, start, end) {
+  if(assignment) {
     title = 'Edit Assignment'
-    assignmentId = assignmentID
+    assignmentId = assignment.id,
+    selectedProject.value = assignment.project
+    selectedRSE.value = assignment.rse
+    startDate = DateTime.fromISO(assignment.start).toISODate()
+    endDate = DateTime.fromISO(assignment.end).toISODate()
+    fte = assignment.fte
   }
-
-  project.value = projectID ? projectsStore.getByID(projectID) : null
-  rse.value = rseID ? rsesStore.getByID(rseID) : null
-  startDate = dateRange ? start.toISODate() : null
-  endDate = dateRange ? end.toISODate() : null
-  fte = split ? split : 50
+  else {
+    title = 'Create Assignment'
+    selectedRSE.value = rse
+    startDate = DateTime.fromJSDate(start).toISODate()
+    endDate = DateTime.fromJSDate(end).toISODate()
+  }
   
   isOpen.value = true
 }
@@ -191,18 +189,20 @@ async function submit(event) {
 
   if(assignmentId) {
     assignment = await assignmentsStore.updateAssignment({
-      assignmentId: assignmentId,
-      project: project.value.id,
-      rse: rse.value.id,
+      id: assignmentId,
+      project: selectedProject.value,
+      rse: selectedRSE.value,
       fte: fte,
       start: startDate,
       end: endDate
     })
+
+    emits('editedAssignment', assignment)
   }
   else {
     assignment = await assignmentsStore.createAssignment({
-      project: project.value.id,
-      rse: rse.value.id,
+      project: selectedProject.value,
+      rse: selectedRSE.value,
       fte: fte,
       start: startDate,
       end: endDate
@@ -211,8 +211,8 @@ async function submit(event) {
     emits('createdAssignment', assignment)
   }
 
-  project.value = defaultState.project
-  rse.value = defaultState.rse
+  selectedProject.value = defaultState.project
+  selectedRSE.value = defaultState.rse
   fte = defaultState.fte
   startDate = defaultState.startDate
   endDate = defaultState.endDate
@@ -224,11 +224,13 @@ async function submit(event) {
 async function remove() {
   await assignmentsStore.deleteAssignment(assignmentId)
 
-  project.value = defaultState.project
-  rse.value = defaultState.rse
+  selectedProject.value = defaultState.project
+  selectedRSE.value = defaultState.rse
   fte = defaultState.fte
   startDate = defaultState.startDate
   endDate = defaultState.endDate
+
+  emits('removedAssignment')
 
   isOpen.value = false
 }

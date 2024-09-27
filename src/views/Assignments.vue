@@ -2,7 +2,7 @@
   <div class="w-full mb-12 px-4">
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
       <menu-bar :edited="edited" :changeTeam="changeTeam" :changeFY="changeFY" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :export="exportCSV"/>
-      <Timeline ref="timeline" :rses="rses" :projects="projects" @create="create" @edit="edit" @resize="resize" />
+      <Timeline ref="timeline" :rses="rses" :assignments="assignments" :projects="projects" @create="create" @edit="edit" @resize="resize" />
     </div>
     <assignment-modal ref="assignmentModalRef" />
     <unallocated-modal ref="unallocatedModalRef" @createAssignment="create" />
@@ -27,6 +27,7 @@ const assignmentModalRef = ref(),
 const timeline = ref(),
       edited = ref(false),
       rses = rsesStore.getRSEs(),
+      assignments = ref(assignmentsStore.getAssignments()),
       projects = projectsStore.getProjects()
 
 const unallocatedCount = computed(() => projects.filter(project => project.stage === 'Awaiting Allocation').length)
@@ -43,8 +44,8 @@ function unallocated() {
   unallocatedModalRef.value.toggleModal()
 }
 
-function create(rseID, projectID, dateRange, split) {
-  assignmentModalRef.value.createAssignment(null, rseID, projectID, dateRange, split)
+function create(rse, start, end) {
+  assignmentModalRef.value.createAssignment(null, rse, start, end)
 }
 
 function edit(assignmentID, rseID, start, end) {
@@ -59,8 +60,7 @@ function edit(assignmentID, rseID, start, end) {
     assignment.end = DateTime.fromMillis(end).toISODate() !== assignment.end ? DateTime.fromMillis(end).toISODate() : assignment.end
   }
 
-  const dateRange = [{$d: new Date(assignment.start)}, {$d: new Date(assignment.end)}]
-  assignmentModalRef.value.createAssignment(assignment.id, assignment.rse, assignment.project.id, dateRange, assignment.fte)
+  assignmentModalRef.value.createAssignment(assignment)
 }
 
 async function resize(assignmentID, rseID, start, end) {

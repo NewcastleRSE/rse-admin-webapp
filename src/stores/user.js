@@ -3,46 +3,49 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { Buffer } from 'buffer'
 import router from '../router'
+import { currentFY } from '../utils/dates'
 import * as Stores from '@/stores'
 
-export const useAuthStore = defineStore('auth', () => {
+export const useUserStore = defineStore('user', () => {
 
     const assignmentsStore = Stores.useAssignmentsStore(),
-          holidaysStore = Stores.useHolidaysStore(), 
           facilitiesStore = Stores.useFacilitiesStore(),
           invoicesStore = Stores.useInvoicesStore(),
-          leaveStore = Stores.useLeaveStore(),
           projectsStore = Stores.useProjectsStore(),
           rsesStore = Stores.useRSEsStore(),
-          timesheetsStore = Stores.useTimesheetsStore(),
           transactionsStore = Stores.useTransactionsStore()
 
     const accessToken = ref('')
     const jwt = ref('')
     const user = ref({})
+    const settings = ref({})
 
-    function getAccessToken() {
-        return accessToken
+    function fetchData(year) {
+        return Promise.all([
+            projectsStore.fetchProjects(year),
+            assignmentsStore.fetchAssignments(year),
+            facilitiesStore.fetchFacilities(year),
+            invoicesStore.fetchInvoices(year),
+            rsesStore.fetchRSEs(year),
+            transactionsStore.fetchTransactions(year)
+        ]).then(() => {
+            return true
+        }).catch(error => {
+            console.error(error)
+        })
     }
 
-    function getJWT() {
-        return jwt
-    }
-
-    function getUser() {
-        return user
-    }
-
-    function login(token) {
+    async function login(token) {
         const loginUrl = import.meta.env.VITE_API_URL + '/auth/microsoft/callback/?access_token=' + token
         const azureConfig = { headers: { Authorization: `Bearer ${token}` }}
+        const currentYear = currentFY()
 
         let fetchJWT = axios.get(loginUrl)
         let fetchProfile = axios.get('https://graph.microsoft.com/v1.0/me', azureConfig)
         let fetchPhoto = axios.get('https://graph.microsoft.com/v1.0/me/photo/$value', {...azureConfig, responseType: 'arraybuffer'})
 
         Promise.all([fetchJWT, fetchProfile, fetchPhoto])
-        .then((values) => {
+        .then(async (values) => {
 
             let profile = values[1].data
                 profile.photo = Buffer.from(values[2].data, 'binary').toString('base64')
@@ -50,25 +53,15 @@ export const useAuthStore = defineStore('auth', () => {
             accessToken.value = token
             jwt.value = values[0].data.jwt
             user.value = profile
+            settings.value = {
+                financialYear: currentYear.startDate.year,
+                defaultTeam: 'all'
+            }
 
-            projectsStore.fetchProjects().then(() => {
-                Promise.all([
-                    assignmentsStore.fetchAssignments(),
-                    facilitiesStore.fetchFacilities(),
-                    holidaysStore.fetchHolidays(),
-                    invoicesStore.fetchInvoices(),
-                    leaveStore.fetchLeave(),
-                    rsesStore.fetchRSEs(),
-                    timesheetsStore.fetchTimesheets(),
-                    transactionsStore.fetchTransactions()
-                ]).then(() => {
-                    router.push({ name: "Dashboard" })
-                }).catch(error => {
-                    console.error(error)
-                })
-            }).catch(error => {
-            console.error(error)
-            })
+            await fetchData(currentYear.startDate.year)
+            
+            router.push({ name: "Dashboard" })
+            
         })
         .catch((err) => {
             console.log(err)
@@ -79,9 +72,9 @@ export const useAuthStore = defineStore('auth', () => {
         accessToken.value = null
         jwt.value = null
         user.value = null
-      }
+    }
 
-    return { accessToken, jwt, user, getAccessToken, getJWT, getUser, login, reset }
+    return { accessToken, jwt, user, settings, login, fetchData, reset }
 },
 { 
     persist: true

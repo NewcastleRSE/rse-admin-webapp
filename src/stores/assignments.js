@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
-import { useAuthStore, useRSEsStore } from '@/stores'
+import { useUserStore, useRSEsStore } from '@/stores'
 import { DateTime, Interval } from 'luxon'
 import { fetchObjects } from '../utils/orm'
 
 export const useAssignmentsStore = defineStore('assignments', () => {
     
-    const store = useAuthStore()
+    const store = useUserStore()
     const rses = useRSEsStore()
     const assignments = ref([])
 
@@ -63,8 +63,46 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       })
     }
 
-    async function fetchAssignments () {
-        assignments.value = await fetchObjects('assignments', 0, 100, ['project', 'rse'])
+    async function fetchAssignments (year) {
+
+      const dates = {
+        startDate: DateTime.fromISO(`${year}-08-01`),
+        endDate: DateTime.fromISO(`${(year + 1)}-07-31`)
+      }
+
+      const dateRangeFilter = {
+        $or: [
+          { 
+            start: {
+              $between: [dates.startDate.toISODate(), dates.endDate.toISODate() ]
+            }
+          },
+          {
+            end: { 
+              $between: [dates.startDate.toISODate(), dates.endDate.toISODate() ]
+            }
+          },
+          {
+            start: { 
+              $lt: dates.startDate.toISODate()
+            },
+            end: {
+              $gt: dates.endDate.toISODate()
+            }
+          }
+        ]
+      }
+      
+      const populateAssignments = {
+        project: {
+          fields: ['id', 'name'],
+        },
+        rse: {
+          fields: ['id']
+        }
+      }
+      
+      assignments.value = await fetchObjects('assignments', 0, 100, populateAssignments, dateRangeFilter)
     }
 
     async function createAssignment (assignment) {
@@ -77,9 +115,8 @@ export const useAssignmentsStore = defineStore('assignments', () => {
             Authorization: `Bearer ${store.jwt}`
           }
       }).then(response => {
-        let newAssignment = response.data.data
-        newAssignment.rse = response.data.data.rse.data.id
-        newAssignment.project = response.data.data.project.data
+
+        const newAssignment = response.data.data
 
         rses.addAssignment(newAssignment)
         assignments.value.push(newAssignment)
@@ -87,7 +124,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     async function updateAssignment (assignment) {
-      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.assignmentId}?populate=*`, 
+      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.id}?populate=*`, 
         { 
           data: assignment
         },
@@ -97,10 +134,10 @@ export const useAssignmentsStore = defineStore('assignments', () => {
           }
       }).then(response => {
         let updatedAssignment = response.data.data
-        updatedAssignment.rse = response.data.data.rse.data.id
-        updatedAssignment.project = response.data.data.project.data
+        updatedAssignment.rse = response.data.data.rse.id
+        updatedAssignment.project = response.data.data.project
         
-        const position = assignments.value.map(e => e.id).indexOf(assignment.assignmentId)
+        const position = assignments.value.map(e => e.id).indexOf(assignment.id)
         rses.updateAssignment(updatedAssignment)
         assignments.value[position] = updatedAssignment
       })

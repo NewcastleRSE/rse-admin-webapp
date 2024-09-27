@@ -21,7 +21,15 @@ export const useTransactionsStore = defineStore('transactions', () => {
 
     function getSummary(year) {
         let transactions = getByYear(year),
-            summary = {}
+            summary = {
+                income: {
+                    total: 0
+                },
+                nonSalaryExpenditure: {
+                    total: 0
+                },
+                lastUpdated: DateTime.now().startOf('month').minus({ days: 1 })
+            }
 
         const ieCategories = [...new Set(transactions.map(transaction => transaction.ieCategory))]
 
@@ -58,8 +66,8 @@ export const useTransactionsStore = defineStore('transactions', () => {
         return summary
     }
 
-    async function fetchTransactions () {
-        transactions.value = await fetchObjects('transactions', 0, 100)
+    async function fetchTransactions (year) {
+        transactions.value = await fetchObjects('transactions', 0, 100, null, { fiscalYear: year })
     }
 
     async function reset () {

@@ -85,6 +85,7 @@
 import { ref } from 'vue'
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
+import { currentFY } from '../../utils/dates'
 
 defineProps({
   selected: { type: Boolean },
@@ -97,24 +98,23 @@ defineProps({
   export: { type: Function },
 })
 
+const dates = currentFY()
+
 const teams = [
   { id: 1, key: 'All', name: 'All' },
   { id: 2, key: 'DataScience', name: 'Data Science' },
-  { id: 3, key: 'Middleware', name: 'Middleware' },
-  { id: 4, key: 'WebMobile', name: 'Web & Mobile' }
+  { id: 3, key: 'HPC', name: 'HPC' },
+  { id: 4, key: 'Middleware', name: 'Middleware' },
+  { id: 5, key: 'WebMobile', name: 'Web & Mobile' }
 ]
 
-const years = [
-  { id: 1, name: '2018/19' },
-  { id: 2, name: '2019/20' },
-  { id: 3, name: '2020/21' },
-  { id: 4, name: '2021/22' },
-  { id: 5, name: '2022/23' },
-  { id: 6, name: '2023/24' },
-  { id: 7, name: '2024/25' }
-]
+const years = []
 
-const selectedYear = ref(years[years.length - 2]),
+for (let i = 2018; i <= (dates.startDate.year + 1); i++) {
+  years.push({ id: i, name: `${i}/${i + 1}` })
+}
+
+const selectedYear = ref(years[years.map(y => y.id).indexOf(dates.startDate.year)]),
       selectedTeam = ref(teams[0])
 
 </script>
