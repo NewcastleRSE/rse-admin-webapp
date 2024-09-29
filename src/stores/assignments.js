@@ -24,7 +24,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     function getByRSE(rse) {
-        return assignments.value.filter(assignment => assignment.rse.id === rse)
+        return assignments.value.filter(assignment => assignment.rse.id === Number(rse))
     }
 
     function getByProject(projectId) {

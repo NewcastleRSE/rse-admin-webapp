@@ -25,25 +25,28 @@
                                     <dt class="sr-only">Team</dt>
                                     <dd class="text-sm text-gray-500">{{ rse.team }}</dd>
                                     <dt class="sr-only">Role</dt>
-                                    <dd class="mt-3">
-                                        <span class="inline-flex items-center rounded-full px-2 py-1 text font-medium ring-1 ring-inset" :class="totalUtilisation[rse.id] > facility.utilisationRate * 100 ? 'bg-green-50 text-green-700 ring-green-600/20' : 'bg-red-50 text-red-700 ring-red-600/20'">Utilisation: {{totalUtilisation[rse.id] }}%</span>
-                                    </dd>
                                 </dl>
                             </a>
                             <div>
-                                <div class="-mt-px flex divide-x divide-gray-200">
-                                <div class="flex w-0 flex-1">
-                                    <a :href="`/team/${(rse.displayName).replace(/\s+/g, '-').toLowerCase()}`" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
-                                        <CalendarDaysIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                        Timesheets
-                                    </a>
-                                </div>
-                                <div class="-ml-px flex w-0 flex-1">
-                                    <a :href="`/team/${(rse.displayName).replace(/\s+/g, '-').toLowerCase()}`" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
-                                        <ListBulletIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                        Assignments
-                                    </a>
-                                </div>
+                                <div class="-mt-px flex divide">
+                                    <div class="flex w-0 flex-1 border-t border-b border-l rounded-bl-lg" :class="totalUtilisation[rse.id].actual >= totalUtilisation[rse.id].target ? 'bg-green-50 text-green-700 border-green-600' : 'bg-red-50 text-red-700 border-red-600'">
+                                        <a :href="`/team/${(rse.displayName).replace(/\s+/g, '-').toLowerCase()}`" class="relative -mr-px inline-flex w-full flex-col items-center justify-center gap-y-2 rounded-bl-lg border border-transparent py-2 text-sm">
+                                            <span class="font-semibold">{{totalUtilisation[rse.id].actual }}%</span>
+                                            <span>Total</span>
+                                        </a>
+                                    </div>
+                                    <div class="flex w-0 flex-1 border" :class="billableUtilisation[rse.id].actual >= (billableUtilisation[rse.id].target * 0.95) ? 'bg-green-50 text-green-700 border-green-600' : 'bg-red-50 text-red-700 border-red-600'">
+                                        <a :href="`/team/${(rse.displayName).replace(/\s+/g, '-').toLowerCase()}`" class="relative -mr-px inline-flex w-full flex-col items-center justify-center gap-y-2 rounded-bl-lg border border-transparent py-2 text-sm">
+                                            <span class="font-semibold">{{billableUtilisation[rse.id].actual }}%</span>
+                                            <span>Billable</span>
+                                        </a>
+                                    </div>
+                                    <div class="flex w-0 flex-1 border-box border-t border-r border-b rounded-br-lg" :class="nonBillableUtilisation[rse.id].actual <= (nonBillableUtilisation[rse.id].target * 1.05) ? 'bg-green-50 text-green-700 border-green-600' : 'bg-red-50 text-red-700 border-red-600'">
+                                        <a :href="`/team/${(rse.displayName).replace(/\s+/g, '-').toLowerCase()}`" class="relative -mr-px inline-flex w-full flex-col items-center justify-center gap-y-2 rounded-bl-lg border border-transparent py-2 text-sm">
+                                            <span class="font-semibold">{{nonBillableUtilisation[rse.id].actual }}%</span>
+                                            <span>Non-Billable</span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </li>
@@ -56,10 +59,10 @@
 </template>
 <script setup>
 import { storeToRefs } from 'pinia'
-import { useRSEsStore, useFacilitiesStore, useUserStore } from '../stores'
-import { CalendarDaysIcon, ListBulletIcon } from '@heroicons/vue/24/outline'
+import { useAssignmentsStore, useRSEsStore, useFacilitiesStore, useUserStore } from '../stores'
 
-const rsesStore = useRSEsStore(),
+const assignmentsStore = useAssignmentsStore(),
+      rsesStore = useRSEsStore(),
       facilitiesStore = useFacilitiesStore(),
       userStore = useUserStore(),
       rses = rsesStore.getRSEs(),
@@ -69,12 +72,40 @@ const { settings } = storeToRefs(userStore)
 
 const facility = facilitiesStore.getByYear(settings.value.financialYear)
 
+let totalUtilisation = {},
+    billableUtilisation = {},
+    nonBillableUtilisation = {}
 
+for(let rse of rses.map(rse => rse.id)) {
+    const assingnments = assignmentsStore.getByRSE(rse)
 
-let totalUtilisation = {}
+    const management = assingnments.filter(assignment => assignment.project.name === 'Management')
 
-for(let rse of Object.keys(utilisation.rses)) {
-    totalUtilisation[rse] = Number((utilisation.rses[rse].total.recorded / utilisation.rses[rse].total.capacity) * 100).toFixed(2)
+    let billableTarget = facility.utilisationRate * 100
+    let nonBillableTarget = 100 - billableTarget
+
+    if(management.length > 0) {
+        nonBillableTarget = 50
+        billableTarget = 50
+
+        if(management[0].fte === 100) {
+            billableTarget = 0
+            nonBillableTarget = 100
+        }
+    }
+
+    totalUtilisation[rse] = { target: facility.utilisationRate * 100, actual: 0 }
+    billableUtilisation[rse] = { target: billableTarget, actual: 0 }
+    nonBillableUtilisation[rse] = { target: nonBillableTarget, actual: 0 }
+
+    if(utilisation.rses[rse]) {
+        totalUtilisation[rse].actual = Number((utilisation.rses[rse].total.recorded / utilisation.rses[rse].total.capacity) * 100).toFixed(2)
+        billableUtilisation[rse].actual = Number((utilisation.rses[rse].total.billable / utilisation.rses[rse].total.capacity) * 100).toFixed(2)
+        nonBillableUtilisation[rse].actual = Number((utilisation.rses[rse].total.nonBillable / utilisation.rses[rse].total.capacity) * 100).toFixed(2)
+    }
+    else {
+        
+    }
 }
 
 function getImageUrl(name) {
