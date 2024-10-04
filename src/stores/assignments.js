@@ -98,7 +98,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
           fields: ['id', 'name'],
         },
         rse: {
-          fields: ['id']
+          fields: ['id', 'displayName'],
         }
       }
       
