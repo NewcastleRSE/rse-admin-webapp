@@ -51,24 +51,6 @@ export const useRSEsStore = defineStore('rses', () => {
           return nextRSE
     }
 
-    function addAssignment (assignment) {
-        const position = rses.value.map(e => e.id).indexOf(assignment.rse.id)
-        rses.value[position].assignments.push(assignment)
-    }
-
-    function updateAssignment (assignment) {
-        const rseIndex = rses.value.map(e => e.id).indexOf(assignment.rse.id)
-        const assignmentIndex = rses.value[rseIndex].assignments.map(e => e.id).indexOf(assignment.id)
-        rses.value[rseIndex].assignments[assignmentIndex] = assignment
-    }
-
-    function deleteAssignment (assignment) {
-        const rseIndex = rses.value.map(e => e.id).indexOf(assignment.rse.id)
-        const assignmentIndex = rses.value[rseIndex].assignments.map(e => e.id).indexOf(assignment.id)
-
-        rses.value[rseIndex].assignments.splice(assignmentIndex, 1)
-    }
-
     async function fetchRSEs (year) {
         const startDate = DateTime.fromISO(`${year}-08-01`),
               endDate = DateTime.fromISO(`${(year + 1)}-07-31`)
@@ -125,7 +107,7 @@ export const useRSEsStore = defineStore('rses', () => {
         utilisation.value = {}
     }
 
-    return { rses, utilisation, getRSEs, getByName, getByID, getUtilisation, getNext, addAssignment, updateAssignment, deleteAssignment, fetchRSEs, reset }
+    return { rses, utilisation, getRSEs, getByName, getByID, getUtilisation, getNext, fetchRSEs, reset }
 },
 {
     persist: true

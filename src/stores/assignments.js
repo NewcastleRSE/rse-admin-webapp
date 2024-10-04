@@ -1,14 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
-import { useUserStore, useRSEsStore } from '@/stores'
+import { useUserStore } from '@/stores'
 import { DateTime, Interval } from 'luxon'
 import { fetchObjects } from '../utils/orm'
 
 export const useAssignmentsStore = defineStore('assignments', () => {
     
     const store = useUserStore()
-    const rses = useRSEsStore()
     const assignments = ref([])
 
     function getAssignments() {
@@ -115,11 +114,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
             Authorization: `Bearer ${store.jwt}`
           }
       }).then(response => {
-
-        const newAssignment = response.data.data
-
-        rses.addAssignment(newAssignment)
-        assignments.value.push(newAssignment)
+        assignments.value.push(response.data.data)
       })
     }
 
@@ -138,7 +133,6 @@ export const useAssignmentsStore = defineStore('assignments', () => {
         updatedAssignment.project = response.data.data.project
         
         const position = assignments.value.map(e => e.id).indexOf(assignment.id)
-        rses.updateAssignment(updatedAssignment)
         assignments.value[position] = updatedAssignment
       })
     }
@@ -151,7 +145,6 @@ export const useAssignmentsStore = defineStore('assignments', () => {
           }
       }).then(() => {
           const position = assignments.value.map(e => e.id).indexOf(assignmentId)
-          rses.deleteAssignment(assignments.value[position])
           assignments.value.splice(position, 1)
       })
     }
