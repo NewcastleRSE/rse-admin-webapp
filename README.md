@@ -18,7 +18,7 @@ Newcastle University
 
 ## Built With
 
-The application uses Vue to manage routes and daa binding, with Vuex for state management. Charts are implemented with HighCharts and layout uses TailwindCCS.
+The application uses Vue to manage routes and data binding, with Vuex for state management. Charts are implemented with HighCharts and layout uses TailwindCCS.
 
 [VueJS](https://v3.vuejs.org/guide/introduction.html)  
 [Vuex](https://vuex.vuejs.org/)  
