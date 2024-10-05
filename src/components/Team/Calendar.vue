@@ -15,15 +15,15 @@
             <div>S</div>
           </div>
           <div class="isolate mt-2 grid grid-cols-7 gap-px rounded-lg bg-gray-200 text-sm shadow ring-1 ring-gray-200">
-            <div v-for="(day, dayIdx) in month.days" :key="day.date"
-              v-on:mouseover="togglePopover($event, day)" :class="[
-          day.isCurrentMonth ? day.type : 'bg-gray-50 text-gray-400',
-          dayIdx === 0 && 'rounded-tl-lg',
-          dayIdx === 6 && 'rounded-tr-lg',
-          dayIdx === month.days.length - 7 && 'rounded-bl-lg',
-          dayIdx === month.days.length - 1 && 'rounded-br-lg',
-          'aspect-square flex items-center justify-center'
-        ]">
+            <div v-for="(day, dayIdx) in month.days" :key="day.date" v-on:mouseover="togglePopover($event, day)" :class="[
+                day.hasEntries ? 'text-white' : 'text-gray-400',
+                dayIdx === 0 && 'rounded-tl-lg',
+                dayIdx === 6 && 'rounded-tr-lg',
+                dayIdx === month.days.length - 7 && 'rounded-bl-lg',
+                dayIdx === month.days.length - 1 && 'rounded-br-lg',
+                'bg-gray-50 aspect-square flex items-center justify-center'
+              ]"
+              :style="day.style">
               <time :datetime="day.date">{{ day.date.split('-').pop().replace(/^0/, '') }}</time>
             </div>
             <div ref="popoverRef" :class="{ 'hidden': !popoverShow, 'block': popoverShow }"
@@ -56,84 +56,6 @@
     </div>
   </div>
 </template>
-<style>
-.billable-billable {
-  background: linear-gradient(135deg, theme('colors.cyan.600'), theme('colors.cyan.600') 50%, theme('colors.cyan.600') 50%, theme('colors.cyan.600'));
-  color: white
-}
-
-.billable-nonbillable {
-  background: linear-gradient(135deg, theme('colors.cyan.600'), theme('colors.cyan.600') 50%, theme('colors.yellow.400') 50%, theme('colors.yellow.400'));
-  color: white
-}
-
-.billable-leave {
-  background: linear-gradient(135deg, theme('colors.cyan.600'), theme('colors.cyan.600') 50%, theme('colors.emerald.400') 50%, theme('colors.emerald.400'));
-  color: white
-}
-
-.billable-missing {
-  background: linear-gradient(135deg, theme('colors.cyan.600'), theme('colors.cyan.600') 50%, theme('colors.red.400') 50%, theme('colors.red.400'));
-  color: white
-}
-
-.nonbillable-billable {
-  background: linear-gradient(135deg, theme('colors.yellow.400'), theme('colors.yellow.600') 50%, theme('colors.cyan.600') 50%, theme('colors.cyan.600'))
-}
-
-.nonbillable-nonbillable {
-  background: linear-gradient(135deg, theme('colors.yellow.400'), theme('colors.yellow.400') 50%, theme('colors.yellow.400') 50%, theme('colors.yellow.400'))
-}
-
-.nonbillable-leave {
-  background: linear-gradient(135deg, theme('colors.yellow.400'), theme('colors.yellow.400') 50%, theme('colors.emerald.400') 50%, theme('colors.emerald.400'))
-}
-
-.nonbillable-missing {
-  background: linear-gradient(135deg, theme('colors.yellow.400'), theme('colors.yellow.400') 50%, theme('colors.red.400') 50%, theme('colors.red.400'))
-}
-
-.leave-billable {
-  background: linear-gradient(135deg, theme('colors.emerald.400'), theme('colors.emerald.400') 50%, theme('colors.cyan.600') 50%, theme('colors.cyan.600'))
-}
-
-.leave-nonbillable {
-  background: linear-gradient(135deg, theme('colors.emerald.400'), theme('colors.emerald.400') 50%, theme('colors.yellow.400') 50%, theme('colors.yellow.400'))
-}
-
-.leave-leave {
-  background: linear-gradient(135deg, theme('colors.emerald.400'), theme('colors.emerald.400') 50%, theme('colors.emerald.400') 50%, theme('colors.emerald.400'))
-}
-
-.leave-missing {
-  background: linear-gradient(135deg, theme('colors.emerald.400'), theme('colors.emerald.400') 50%, theme('colors.red.400') 50%, theme('colors.red.400'))
-}
-
-.leave-white {
-  background: linear-gradient(135deg, theme('colors.emerald.400'), theme('colors.emerald.400') 50%, theme('colors.white') 50%, theme('colors.white'))
-}
-
-.white-leave {
-  background: linear-gradient(135deg, theme('colors.white'), theme('colors.white') 50%, theme('colors.emerald.400') 50%, theme('colors.emerald.400'))
-}
-
-.missing-billable {
-  background: linear-gradient(135deg, theme('colors.red.400'), theme('colors.red.400') 50%, theme('colors.cyan.600') 50%, theme('colors.cyan.600'))
-}
-
-.missing-nonbillable {
-  background: linear-gradient(135deg, theme('colors.red.400'), theme('colors.red.400') 50%, theme('colors.yellow.400') 50%, theme('colors.yellow.400'))
-}
-
-.missing-leave {
-  background: linear-gradient(135deg, theme('colors.red.400'), theme('colors.red.400') 50%, theme('colors.emerald.400') 50%, theme('colors.emerald.400'))
-}
-
-.missing-missing {
-  background: linear-gradient(135deg, theme('colors.red.400'), theme('colors.red.400') 50%, theme('colors.red.400') 50%, theme('colors.red.400'))
-}
-</style>
-<!-- class="bg-gradient-to-tl from-emerald-600 from-50% via-amber-600 via-50% to-amber-600" -->
 <script setup>
 import { ref, watch } from 'vue'
 import { useUserStore } from '../../stores'
@@ -159,6 +81,9 @@ let popoverTitle = '',
     popoverX = 0,
     popoverY = 0
 
+// A full working day in seconds
+const fullDay = 7.26 * 60 * 60
+
 function renderCalendar() {
 
   months.value = []
@@ -180,7 +105,10 @@ function renderCalendar() {
 
     for (let d = 0; d < 42; d++) {
 
-      let type = [null, null]
+      let hasEntries = false,
+          // 0: billable, 1: nonbillable, 2: leave
+          timeSplit = [0, 0, 0],
+          style = ''
 
       const calendarEntry = calendar.find(entry => entry.date === startPoint.toISODate())
 
@@ -188,43 +116,44 @@ function renderCalendar() {
       if (startPoint.month === date.month) {
 
         if (calendarEntry.holiday) {
-          type = ['leave', 'leave']
+          timeSplit[2] = 100
         }
         else {
           if (calendarEntry.timesheet.length > 0) {
 
-            let types = calendarEntry.timesheet.reduce((billable, entry) => [...billable, entry.billable], [])
+            const billable = calendarEntry.timesheet.reduce((total, entry) => total += entry.billable ? entry.duration : 0, 0),
+                  nonBillable = calendarEntry.timesheet.reduce((total, entry) => total += entry.billable ? 0 : entry.duration, 0),
+                  recorded = billable + nonBillable
 
-            if (types.every(type => type)) {
-              type = ['billable', 'billable']
-            }
-            else if (types.every(type => !type)) {
-              type = ['nonbillable', 'nonbillable']
+            if(recorded > fullDay) {
+              timeSplit[0] = Number((billable / recorded * 100).toFixed(2))
+              timeSplit[1] = Number((nonBillable / recorded * 100).toFixed(2))
             }
             else {
-              type = ['billable', 'nonbillable']
+              timeSplit[0] = Number((billable / fullDay * 100).toFixed(2))
+              timeSplit[1] = Number((nonBillable / fullDay * 100).toFixed(2))
             }
           }
 
           if (calendarEntry.leave) {
-
-            if (calendarEntry.leave.duration === 'A') {
-              type[0] = 'leave'
-              type[1] = type[1] ? type[1] : 'white'
-            }
-            else if (calendarEntry.leave.duration === 'P') {
-              type[0] = type[0] ? type[0] : 'white'
-              type[1] = 'leave'
+            if (calendarEntry.leave.durationCode === 'Y') {
+              timeSplit[2] = 100
             }
             else {
-              type = ['leave', 'leave']
+              timeSplit[2] = 50
             }
           }
         }
 
-        if (startPoint < DateTime.now() && startPoint.weekday < 6 && startPoint > contractStart) {
-          type[0] = type[0] ? type[0] : 'missing'
-          type[1] = type[1] ? type[1] : 'missing'
+        if(timeSplit.every(split => split === 0)) {
+          style = { background: 'white' }
+        }
+        else {
+          hasEntries = true
+          style = {
+            background: `linear-gradient(to bottom, rgb(8 145 178) 0%, rgb(8 145 178) ${timeSplit[0]}%, rgb(251 191 36) ${timeSplit[0]}%, rgb(251 191 36) ${(timeSplit[0] + timeSplit[1])}%, rgb(52, 211, 153) ${(timeSplit[0] + timeSplit[1])}%, rgb(52, 211, 153) ${(timeSplit[0] + timeSplit[1] + timeSplit[2])}%)`,
+            color: timeSplit[0] >= 50 ? 'white' : 'black'
+          }
         }
       }
 
@@ -232,7 +161,8 @@ function renderCalendar() {
         date: startPoint.toISODate(),
         isCurrentMonth: startPoint.month === date.month,
         calendarEntry: calendarEntry,
-        type: !type[0] && !type[1] ? 'bg-white' : type.join('-')
+        style: style,
+        hasEntries: hasEntries
       })
 
       startPoint = startPoint.plus({ days: 1 })
@@ -252,7 +182,7 @@ function togglePopover(event, day) {
 
 popoverShow.value = false
 
-if (!day.isCurrentMonth || day.type === 'bg-white' || day.type === 'missing-missing') {
+if (!day.isCurrentMonth) {
   popoverShow.value = false
 }
 else {
