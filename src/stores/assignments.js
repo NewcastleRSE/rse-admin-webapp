@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
-import { useUserStore, useRSEsStore } from '@/stores'
+import { useUserStore } from '@/stores'
 import { DateTime, Interval } from 'luxon'
 import { fetchObjects } from '../utils/orm'
 
 export const useAssignmentsStore = defineStore('assignments', () => {
     
+    const populateQuery = 'populate[rse][fields][0]=id&populate[rse][fields][1]=displayName&populate[project][fields][0]=id&populate[project][fields][1]=name'
     const store = useUserStore()
-    const rses = useRSEsStore()
     const assignments = ref([])
 
     function getAssignments() {
@@ -98,7 +98,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
           fields: ['id', 'name'],
         },
         rse: {
-          fields: ['id']
+          fields: ['id', 'displayName'],
         }
       }
       
@@ -106,7 +106,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     async function createAssignment (assignment) {
-      return axios.post(`${import.meta.env.VITE_API_URL}/assignments?populate=*`, 
+      return axios.post(`${import.meta.env.VITE_API_URL}/assignments?${populateQuery}`, 
         { 
           data: assignment
         },
@@ -115,16 +115,12 @@ export const useAssignmentsStore = defineStore('assignments', () => {
             Authorization: `Bearer ${store.jwt}`
           }
       }).then(response => {
-
-        const newAssignment = response.data.data
-
-        rses.addAssignment(newAssignment)
-        assignments.value.push(newAssignment)
+        assignments.value.push(response.data.data)
       })
     }
 
     async function updateAssignment (assignment) {
-      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.id}?populate=*`, 
+      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.id}?${populateQuery}`, 
         { 
           data: assignment
         },
@@ -134,11 +130,10 @@ export const useAssignmentsStore = defineStore('assignments', () => {
           }
       }).then(response => {
         let updatedAssignment = response.data.data
-        updatedAssignment.rse = response.data.data.rse.id
+        updatedAssignment.rse = {id: response.data.data.rse.id, displayName: response.data.data.rse.displayName}
         updatedAssignment.project = response.data.data.project
         
         const position = assignments.value.map(e => e.id).indexOf(assignment.id)
-        rses.updateAssignment(updatedAssignment)
         assignments.value[position] = updatedAssignment
       })
     }
@@ -151,7 +146,6 @@ export const useAssignmentsStore = defineStore('assignments', () => {
           }
       }).then(() => {
           const position = assignments.value.map(e => e.id).indexOf(assignmentId)
-          rses.deleteAssignment(assignments.value[position])
           assignments.value.splice(position, 1)
       })
     }

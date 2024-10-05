@@ -45,7 +45,7 @@
                             <Combobox as="div" v-model="selectedRSE" nullable>
                               <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">RSE</ComboboxLabel>
                               <div class="relative mt-2">
-                                <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" required @change="rseQuery = $event.target.value" :display-value="(rse) => `${rse?.firstname} ${rse?.lastname}`" />
+                                <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" required @change="rseQuery = $event.target.value" :display-value="(rse) => `${rse?.displayName}`" />
                                 <ComboboxButton class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
                                   <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                                 </ComboboxButton>
@@ -56,7 +56,7 @@
                                       <div class="flex items-center">
                                         <img :src="getImageUrl(rse.photo)" alt="" class="h-6 w-6 flex-shrink-0 rounded-full" />
                                         <span :class="['ml-3 truncate', selected && 'font-semibold']">
-                                          {{ rse.firstname }} {{ rse.lastname }}
+                                          {{ rse.displayName }}
                                         </span>
                                       </div>
 
@@ -154,7 +154,7 @@ const filteredProjects = computed(() =>
 
 const filteredRSEs = computed(() =>
   rseQuery.value === '' ? rses : rses.filter((rse) => {
-    return rse.firstname.toLowerCase().includes(rseQuery.value.toLowerCase()) || rse.lastname.toLowerCase().includes(rseQuery.value.toLowerCase())
+    return rse.displayName.toLowerCase().includes(rseQuery.value.toLowerCase())
   })
 )
 
@@ -164,6 +164,7 @@ function toggleModal() {
 
 function createAssignment(assignment, rse, start, end) {
   if(assignment) {
+    console.log(assignment)
     title = 'Edit Assignment'
     assignmentId = assignment.id,
     selectedProject.value = assignment.project
