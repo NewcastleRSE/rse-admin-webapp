@@ -328,14 +328,14 @@ export default {
     function changeTeam(team) {
       if(team.key == 'All') {
         state.update('config.list.rows', generateRows(props.rses))
-        state.update('config.chart.items', {...generateAssignments(props.rses, props.assignments), ...generateAvailability(props.rses)})
+        state.update('config.chart.items', {...generateAssignments(props.rses, props.assignments), ...generateAvailability(props.rses, props.assignments)})
       }
       else {
         const filteredRSEs = props.rses.filter(rse => rse.team === team.key)
 
         state.update('config', config => {
           config.list.rows = generateRows(filteredRSEs)
-          config.chart.items = {...generateAssignments(filteredRSEs, props.assignments), ...generateAvailability(filteredRSEs)}
+          config.chart.items = {...generateAssignments(filteredRSEs, props.assignments), ...generateAvailability(filteredRSEs, props.assignments)}
           return config
         })
       }
