@@ -7,6 +7,7 @@ import { fetchObjects } from '../utils/orm'
 
 export const useAssignmentsStore = defineStore('assignments', () => {
     
+    const populateQuery = 'populate[rse][fields][0]=id&populate[rse][fields][1]=displayName&populate[project][fields][0]=id&populate[project][fields][1]=name'
     const store = useUserStore()
     const assignments = ref([])
 
@@ -105,7 +106,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     async function createAssignment (assignment) {
-      return axios.post(`${import.meta.env.VITE_API_URL}/assignments?populate=*`, 
+      return axios.post(`${import.meta.env.VITE_API_URL}/assignments?${populateQuery}`, 
         { 
           data: assignment
         },
@@ -119,7 +120,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     async function updateAssignment (assignment) {
-      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.id}?populate=*`, 
+      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.id}?${populateQuery}`, 
         { 
           data: assignment
         },
