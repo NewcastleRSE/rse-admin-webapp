@@ -135,7 +135,7 @@ function renderCalendar() {
             }
           }
 
-          if (calendarEntry.leave) {
+          if(calendarEntry.leave && calendarEntry.leave.status !== '3') {
             if (calendarEntry.leave.durationCode === 'Y') {
               timeSplit[2] = 100
             }
@@ -197,7 +197,7 @@ else {
     })
   }
   else {
-    if (day.calendarEntry.leave) {
+    if (day.calendarEntry.leave && day.calendarEntry.leave.status !== '3') {
       if (day.calendarEntry.leave.duration === 'A') {
         entries.push({
           project: 'Annual Leave',

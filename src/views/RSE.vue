@@ -93,6 +93,8 @@ let facility = facilitiesStore.getByYear(dates.startDate.year)
 assignments.value = assignmentsStore.getByRSE(rse.id).reverse()
 utilisation.value = rsesStore.getUtilisation(rse.id)
 
+const averageCapacity = rse.calendar.data.reduce((acc, entry) => acc + entry.utilisation.capacity, 0) / rse.calendar.data.length
+
 // RSE Calendar
 rse.calendar = await fetchObject('rses', `${rse.id}/calendar`, null, { year: { '$eq': dates.startDate.year } })
 
@@ -102,18 +104,18 @@ let utilisationRate = utilisation.value.total.recorded / utilisation.value.total
     utilisationCap = 100 - (facility.utilisationRate * 100)
 
 // Calendar
-let workingDaysToDate = rse.calendar.data.filter(date => DateTime.fromISO(date.date) <= targetDate && date.metadata.isWorkingDay)
-let missingDays = workingDaysToDate.filter(date => date.leave === null && date.timesheet.length === 0)
+let workingDaysToDate = rse.calendar.data.filter(date => DateTime.fromISO(date.date) <= targetDate && date.metadata.isWorkingDay),
+    workingHoursToDate = (workingDaysToDate.length * 7.26) * (averageCapacity / 100)
 
 // Leave
-leaveDates.value = rse.calendar.data.filter(date => date.leave !== null).reverse()
-
-const averageCapacity = rse.calendar.data.reduce((acc, entry) => acc + entry.utilisation.capacity, 0) / rse.calendar.data.length
+leaveDates.value = rse.calendar.data.filter(date => date.leave !== null && date.leave?.status != 3).reverse()
 
 const today = rse.calendar.data.find(entry => entry.date === targetDate.toISODate()),
       yearCompleted = Math.abs(dates.startDate.diff(targetDate, 'days').days) / 365,
       leaveTarget = ((30 * (averageCapacity/100)) * yearCompleted).toFixed(0),
-      leaveDiff = (leaveTarget - leaveDates.value.filter(date => date.leave.type === 'AL').length) * -1
+      leaveDiff = (leaveTarget - leaveDates.value.filter(date => date.leave.type === 'AL').length) * -1,
+      leaveToDate = leaveDates.value.filter(date => DateTime.fromISO(date.date) <= DateTime.now()),
+      annualLeaveToDate = leaveToDate.filter(date => date.leave.type === 'AL').reduce((acc, entry) => acc + entry.leave.duration, 0)
 
 // Volunteering
 let volunteeringDates = rse.calendar.data.filter(date => date.timesheet.some(entery => entery.project === 'Volunteering'))
@@ -154,8 +156,6 @@ volunteeringData.value = Object.keys(months).map((month) => {
 let assignmentCount = 0,
     assignmentFTE = 0
 
-console.log(assignments.value)
-
 assignments.value.forEach((assignment, index) => {
   try {
     if(!!Object.hasOwn(assignment.project, 'name')) {
@@ -182,10 +182,10 @@ tabs.value = [
   },
   { 
     name: 'Timesheets',
-    stat: `${(workingDaysToDate.length - missingDays.length)} of ${(workingDaysToDate.length - 30)}`,
-    change: `${((workingDaysToDate.length - missingDays.length) / workingDaysToDate.length).toFixed(2) * 100}%`,
-    changeType: (workingDaysToDate.length - missingDays.length) / workingDaysToDate.length >= 0.80 ? 'green' : 'red',
-    changeIcon: (workingDaysToDate.length - missingDays.length) / workingDaysToDate.length >= 0.80 ? CheckIcon : ExclamationTriangleIcon
+    stat: `${(utilisation.value.total.recorded / 60 / 60 / 7.26).toFixed(2)} of ${((workingHoursToDate-annualLeaveToDate) / 7.26).toFixed(0)}`,
+    change: `${(workingDaysToDate.length / workingDaysToDate.length).toFixed(2) * 100}%`,
+    changeType: workingDaysToDate.length / workingDaysToDate.length >= 0.80 ? 'green' : 'red',
+    changeIcon: workingDaysToDate.length / workingDaysToDate.length >= 0.80 ? CheckIcon : ExclamationTriangleIcon
   },
   { 
     name: 'Leave',
