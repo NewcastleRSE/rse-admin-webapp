@@ -135,7 +135,7 @@ function renderCalendar() {
             }
           }
 
-          if(calendarEntry.leave && calendarEntry.leave.status !== '3') {
+          if(calendarEntry.leave) {
             if (calendarEntry.leave.durationCode === 'Y') {
               timeSplit[2] = 100
             }
@@ -197,15 +197,15 @@ else {
     })
   }
   else {
-    if (day.calendarEntry.leave && day.calendarEntry.leave.status !== '3') {
-      if (day.calendarEntry.leave.duration === 'A') {
+    if (day.calendarEntry.leave) {
+      if (day.calendarEntry.leave.durationCode === 'A') {
         entries.push({
           project: 'Annual Leave',
           client: 'Half Day (AM)',
           duration: '03:42:00'
         })
       }
-      else if (day.calendarEntry.leave.duration === 'P') {
+      else if (day.calendarEntry.leave.durationCode === 'P') {
         entries.push({
           project: 'Annual Leave',
           client: 'Half Day (PM)',
