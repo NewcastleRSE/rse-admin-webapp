@@ -93,10 +93,10 @@ let facility = facilitiesStore.getByYear(dates.startDate.year)
 assignments.value = assignmentsStore.getByRSE(rse.id).reverse()
 utilisation.value = rsesStore.getUtilisation(rse.id)
 
-const averageCapacity = rse.calendar.data.reduce((acc, entry) => acc + entry.utilisation.capacity, 0) / rse.calendar.data.length
-
 // RSE Calendar
 rse.calendar = await fetchObject('rses', `${rse.id}/calendar`, null, { year: { '$eq': dates.startDate.year } })
+
+const averageCapacity = rse.calendar.data.reduce((acc, entry) => acc + entry.utilisation.capacity, 0) / rse.calendar.data.length
 
 // Utilisation
 let utilisationRate = utilisation.value.total.recorded / utilisation.value.total.capacity * 100,
