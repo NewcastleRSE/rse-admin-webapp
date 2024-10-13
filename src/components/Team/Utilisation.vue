@@ -4,7 +4,9 @@
             <thead>
               <tr>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Month</th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Hours</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Total</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Billable</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Non-Billable</th>
                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Utilisation</th>
                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 w-1/3">Split</th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
@@ -23,8 +25,13 @@
                   </div>
                 </td>
                 <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                  <div class="text-gray-900">{{ convertSeconds(month.billable) }} Billable</div>
-                  <div class="mt-1 text-gray-900">{{ convertSeconds(month.nonBillable) }} Non-Billable</div>
+                  <div class="text-gray-900">{{ convertSeconds(month.recorded) }}</div>
+                </td>
+                <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                  <div class="text-gray-900">{{ convertSeconds(month.billable) }}</div>
+                </td>
+                <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                  <div class="text-gray-900">{{ convertSeconds(month.nonBillable) }}</div>
                 </td>
                 <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                   <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset "
@@ -34,9 +41,9 @@
                     </span>
                 </td>
                 <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                    <div class="overflow-hidden rounded-full bg-gray-200 h-4 relative">
-                        <div class="h-4 absolute bg-cyan-600" :style="{ width: `${(month.billable/month.capacity) * 100}%` }" />
-                        <div class="h-4 absolute bg-yellow-400" :style="{ left: `${(month.billable/month.capacity) * 100}%`, width: `${(month.nonBillable/month.capacity) * 100}%` }" />
+                    <div class="overflow-hidden rounded-full bg-gray-200 h-6 relative">
+                        <div class="h-6 absolute bg-cyan-600 leading-6 text-center text-white" :style="{ width: `${(month.billable/month.capacity) * 100}%` }">{{ `${((month.billable/month.capacity) * 100).toFixed(2)}%` }}</div>
+                        <div class="h-6 absolute bg-yellow-400 leading-6 text-center text-black" :style="{ left: `${(month.billable/month.capacity) * 100}%`, width: `${(month.nonBillable/month.capacity) * 100}%` }">{{ `${((month.nonBillable/month.capacity) * 100).toFixed(2)}%` }}</div>
                     </div>
                 </td>
                 <td class="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
