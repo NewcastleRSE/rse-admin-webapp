@@ -63,7 +63,7 @@
                             <h3 class="mt-6 text-sm font-medium text-gray-900">{{ rse.displayName }}</h3>
                             <dl class="mt-1 flex flex-grow flex-col justify-between">
                                 <dt class="sr-only">Team</dt>
-                                <dd class="text-sm text-gray-500">{{ rse.team }}</dd>
+                                <dd class="text-sm text-gray-500">{{ getTeamFromValue(rse.team).name }}</dd>
                                 <dt class="sr-only">Role</dt>
                             </dl>
                         </a>
@@ -174,6 +174,10 @@ const filteredRSEs = computed(() =>
 
 function getImageUrl(name) {
     return new URL(`../assets/img/avatars/${name}`, import.meta.url).href
+}
+
+function getTeamFromValue(value) {
+    return teams.find(team => team.value === value)
 }
 
 </script>
