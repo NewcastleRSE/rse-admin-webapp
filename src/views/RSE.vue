@@ -24,7 +24,7 @@
   <div class="flex flex-wrap">
     <div class="w-full mb-12 xl:mb-0 mx-4 break-words bg-white px-4 py-5 shadow-lg rounded-lg">
       <div v-if="currentTabIdx === 0">
-        <utilisation :months="utilisation.months" />
+        <utilisation :months="utilisation.months" :clockifyID="rse.clockifyID" />
       </div>
         <calendar v-if="currentTabIdx === 1" :rse="rse" />
       <div v-if="currentTabIdx === 2">
