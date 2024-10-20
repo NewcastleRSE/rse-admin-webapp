@@ -1,7 +1,7 @@
 <template>
     <ul v-if="projects.length" role="list" class="divide-y divide-gray-100">
       <li v-for="project in projects" :key="project.id" class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap">
-        <div class="flex flex-row items-center">
+        <div class="flex basis-1/2 flex-row items-center">
           <div class="pr-6">
             <ExclamationCircleIcon v-if="project.status === 'red'" class="h-8 w-8 text-red-600" aria-hidden="true" />
             <ExclamationTriangleIcon v-else-if="project.status === 'amber'" class="h-8 w-8 text-yellow-600" aria-hidden="true" />
@@ -29,7 +29,17 @@
             </div>
           </div> 
         </div>
-        <div class="flex w-full sm:w-auto">
+        <div class="flex flex-col basis-1/3 w-full sm:w-auto">
+          <div v-if="isFinite(project.burndown)">
+            <p class="text-xs">{{ project.burndown.toFixed(2) }}% Clocked</p>
+            <div class="my-2 relative w-full" aria-hidden="true">
+              <div class="overflow-hidden rounded-full bg-gray-200">
+                <div class="h-4 rounded-full" :class="[project.burndown > 105 ? 'bg-red-700' : 'bg-cyan-600']" :style="{ width: project.burndown + '%' }"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex basis-1/6 justify-end">
           <div class="flex -space-x-0.5">
             <dt class="sr-only">RSEs</dt>
             <dd v-for="rse in project.rses" :key="rse.id">
@@ -40,14 +50,6 @@
               </div>
             </dd>
           </div>
-          <!-- <div class="flex gap-x-2.5 ml-6">
-            <a :href="project.clockifyLink" target="_blank">
-              <Clockify class="h-8 w-8 external-service-icon clockify-icon" />
-            </a>
-            <a :href="project.hubspotLink" target="_blank">
-              <HubSpot class="h-8 w-8 external-service-icon hubspot-icon" />
-            </a>
-          </div> -->
           <Menu as="div" class="relative flex gap-x-2.5 ml-6">
             <MenuButton class="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900">
               <span class="sr-only">Open options</span>
@@ -94,6 +96,7 @@
     </div>
 </template> 
 <script setup>
+import { Duration } from 'luxon'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { EllipsisVerticalIcon } from '@heroicons/vue/20/solid'
 import { useRoute } from 'vue-router'
@@ -126,6 +129,11 @@ projects.forEach((project, index) => {
         rseIDs = new Set(assignments.map(assignment => assignment.rse.id))
         rseIDs.forEach(id => projects[index].rses.push(rsesStore.getByID(id)))
     }
+
+    const estimate = Duration.fromISO(project.estimate),
+          spent = Duration.fromISO(project.spent)
+
+    projects[index].burndown = Number(spent.toFormat('h')) / Number(estimate.toFormat('h')) * 100
     
     projects[index].hubspotLink = 'https://app.hubspot.com/contacts/5251042/deal/' + project.hubspotId
     projects[index].clockifyLink = `https://app.clockify.me/reports/summary?start=${dates.startDate.toISO()}&end=${dates.currentDate.toISO()}&filterValuesData=%7B%22projects%22:%5B%22${project.clockifyID}%22%5D%7D&filterOptions=%7B%22projects%22:%7B%22status%22:%22ALL%22%7D%7D`
