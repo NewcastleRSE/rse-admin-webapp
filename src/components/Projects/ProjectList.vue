@@ -111,7 +111,7 @@ const assignmentsStore = useAssignmentsStore(),
       projectsStore = useProjectsStore(),
       rsesStore = useRSEsStore()
 
-let projects = projectsStore.getProjects().filter(project => project.stage === 'Awaiting Allocation' || project.stage === 'Allocated')
+let projects = projectsStore.getProjects().filter(project => (project.stage === 'Awaiting Allocation' || project.stage === 'Allocated') && project.name !== 'Management')
 
 if(status) {
   projects = projects.filter(project => project.status === status)
