@@ -53,6 +53,10 @@ If using Node 18 You may need to run this command if `yarn serve` fails with an 
 
 or switch to Node 16.
 
+Running locally with vite:
+
+`yarn dev`
+
 
 ### Running Tests
 
