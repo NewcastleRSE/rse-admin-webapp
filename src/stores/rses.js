@@ -99,7 +99,7 @@ export const useRSEsStore = defineStore('rses', () => {
         })
 
         rses.value = rseData,
-        utilisation.value = utilisationData
+        utilisation.value = utilisationData.data
     }
 
     async function reset () {

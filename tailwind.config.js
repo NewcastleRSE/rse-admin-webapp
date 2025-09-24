@@ -15,7 +15,7 @@ module.exports = {
         emerald: colors.emerald,
         fuchsia: colors.fuchsia,
         neutral: colors.neutral,
-        blueGray: colors.slate,
+        slate: colors.slate,
         gray: colors.gray,
         stone: colors.stone,
         green: colors.green,

@@ -28,7 +28,7 @@
             </div>
             <div ref="popoverRef" :class="{ 'hidden': !popoverShow, 'block': popoverShow }"
               :style="{ 'left': popoverX + 'px', 'top': popoverY + 'px' }"
-              class="bg-blueGray-700 text-white border-0 mb-3 fixed block z-50 font-normal leading-normal text-sm max-w-xs text-left no-underline break-words rounded">
+              class="bg-slate-700 text-white border-0 mb-3 fixed block z-50 font-normal leading-normal text-sm max-w-xs text-left no-underline break-words rounded">
               <div class="font-semibold p-3 mb-0 border-b border-solid border-slate-100 uppercase rounded-t-lg">
                 {{ popoverTitle }}
               </div>

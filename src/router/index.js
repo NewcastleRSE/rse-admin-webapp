@@ -1,6 +1,6 @@
 import { nextTick } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import jwt_decode from 'jwt-decode'
+import { jwtDecode } from "jwt-decode"
 import * as Store from '../stores'
 
 // Layouts
@@ -38,7 +38,7 @@ function isTokenValid() {
   // move to auth getter so can be used on components (navbar)
   var token = userStore.jwt
   if (token) {
-    var decoded = jwt_decode(token)
+    var decoded = jwtDecode(token)
     var exp = decoded.exp
     if (Date.now() < exp * 1000) {
       return true // when token is valid

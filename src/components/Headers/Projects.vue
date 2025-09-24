@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-stretch flex-wrap">
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
-      <Status :icon="Bars4Icon" :title="'All'" :subTitle="'View All Projects'" :background="'bg-blueGray-600'" :link="'/projects'" />
+      <Status :icon="Bars4Icon" :title="'All'" :subTitle="'View All Projects'" :background="'bg-slate-600'" :link="'/projects'" />
     </div>
     <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
       <Status :icon="CheckCircleIcon" :title="'Green'" :subTitle="`${occurrences.green} Stable Projects`" :background="'bg-emerald-600'" :link="'/projects/green'" />

@@ -3,10 +3,10 @@
       <div class="rounded-t mb-0 px-4 py-3 bg-transparent">
         <div class="flex flex-wrap items-center">
           <div class="relative w-full max-w-full flex-grow flex-1">
-            <h6 class="uppercase text-blueGray-900 mb-1 text-xs font-semibold">
+            <h6 class="uppercase text-slate-900 mb-1 text-xs font-semibold">
               Monthly Spend
             </h6>
-            <h2 class="text-blueGray-900 text-xl font-semibold">
+            <h2 class="text-slate-900 text-xl font-semibold">
               {{ props.title }}
             </h2>
           </div>

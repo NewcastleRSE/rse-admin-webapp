@@ -8,7 +8,7 @@
         <div class="relative w-full px-4 max-w-full flex-grow flex-1">
           <h3
             class="font-semibold text-lg"
-            :class="[color === 'light' ? 'text-blueGray-700' : 'text-white']"
+            :class="[color === 'light' ? 'text-slate-700' : 'text-white']"
           >
             All Projects
           </h3>
@@ -21,27 +21,27 @@
         <thead>
           <tr>
             <th
-              class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
+              class="px-6 bg-slate-50 text-slate-500 align-middle border border-solid border-slate-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
             >
               Name
             </th>
             <th
-              class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
+              class="px-6 bg-slate-50 text-slate-500 align-middle border border-solid border-slate-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
             >
               Lead
             </th>
             <th
-              class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
+              class="px-6 bg-slate-50 text-slate-500 align-middle border border-solid border-slate-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
             >
               School
             </th>
             <th
-              class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
+              class="px-6 bg-slate-50 text-slate-500 align-middle border border-solid border-slate-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
             >
               Progress
             </th>
             <th
-              class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
+              class="px-6 bg-slate-50 text-slate-500 align-middle border border-solid border-slate-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
             >
               Status
             </th>
@@ -58,7 +58,7 @@
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
               <div class="flex items-center">
-                <img :src="avatars.default" class="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow mr-2" />{{ project.project_lead }}
+                <img :src="avatars.default" class="w-10 h-10 rounded-full border-2 border-slate-50 shadow mr-2" />{{ project.project_lead }}
               </div>
             </td>
             <td

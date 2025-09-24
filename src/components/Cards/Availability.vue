@@ -5,13 +5,13 @@
         <img :src="image" class="h-20 rounded-full m-2 shadow-lg" />
       </div>
       <div class="flex-1">
-          <h5 class="text-blueGray-400 uppercase font-bold text-xs">
+          <h5 class="text-slate-400 uppercase font-bold text-xs">
             {{ label }}
           </h5>
-          <h3 class="font-semibold text-blueGray-700">
+          <h3 class="font-semibold text-slate-700">
             {{ title }}
           </h3>
-          <h1 class="font-semibold text-blueGray-700">
+          <h1 class="font-semibold text-slate-700">
             {{ subTitle }}
           </h1>
           <span class="mr-2 font-bold text-cyan-600">

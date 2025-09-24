@@ -10,8 +10,8 @@
       </svg>
     </a>
     <div v-else>
-      <h2 class="mb-6 font-semibold text-blueGray-700 dark:text-white">Loading...</h2>
-      <ul class="max-w-md space-y-1 text-blueGray-700 font-semibold list-inside dark:text-gray-400">
+      <h2 class="mb-6 font-semibold text-slate-700 dark:text-white">Loading...</h2>
+      <ul class="max-w-md space-y-1 text-slate-700 font-semibold list-inside dark:text-gray-400">
         <li class="flex items-center">
             <svg v-if="rses.length > 0" class="w-4 h-4 mr-1.5 text-cyan-500 dark:text-cyan-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
             <svg v-else class="w-4 h-4 mr-1.5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
