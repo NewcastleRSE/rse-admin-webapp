@@ -5,23 +5,23 @@
           <h3 class="font-semibold text-ellipsis line-clamp-1">
             {{ assignment.project.name }}
           </h3>
-          <h5 v-if="assignment.project.contacts" class="text-blueGray-400 uppercase font-bold text-xs">
+          <h5 v-if="assignment.project.contacts" class="text-slate-400 uppercase font-bold text-xs">
             {{ assignment.project.contacts[0].firstname }} {{ assignment.project.contacts[0].lastname }}
           </h5>
           <div class="flex flex-row mt-4">
             <div class="grow">
-              <h3 class="text-blueGray-900 uppercase font-bold">
+              <h3 class="text-slate-900 uppercase font-bold">
                 {{ assignment.start }}
               </h3>
-              <h6 class="text-blueGray-400 mr-2 uppercase font-bold text-xs">
+              <h6 class="text-slate-400 mr-2 uppercase font-bold text-xs">
                 Start
               </h6>
             </div>
             <div class="grow">
-              <h3 class="text-blueGray-900 uppercase font-bold">
+              <h3 class="text-slate-900 uppercase font-bold">
                 {{ assignment.end }}
               </h3>
-              <h6 class="text-blueGray-400 mr-2 uppercase font-bold text-xs">
+              <h6 class="text-slate-400 mr-2 uppercase font-bold text-xs">
                 End
               </h6>
             </div>

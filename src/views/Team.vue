@@ -6,10 +6,10 @@
                     <div class="flex flex-wrap items-center">
                         <div class="relative w-full max-w-full flex-grow flex">
                             <div class="flex-1">
-                                <h6 class="uppercase text-blueGray-400 mb-1 text-xs font-semibold">
+                                <h6 class="uppercase text-slate-400 mb-1 text-xs font-semibold">
                                     Team
                                 </h6>
-                                <h2 class="text-blueGray-700 text-xl font-semibold">
+                                <h2 class="text-slate-700 text-xl font-semibold">
                                     Overview
                                 </h2>
                             </div>

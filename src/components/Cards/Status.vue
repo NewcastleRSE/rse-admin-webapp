@@ -8,7 +8,7 @@
             <h3 class="font-bold text-white mb-1 text-lg">
               {{ title }}
             </h3>
-            <span class="mr-2 font-semibold text-blueGray-100 text-sm">
+            <span class="mr-2 font-semibold text-slate-100 text-sm">
               {{ subTitle }}
             </span>
         </div>

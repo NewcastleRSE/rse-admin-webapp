@@ -17,16 +17,17 @@ export const fetchObjects = async function (object, page, pageSize, populate, fi
     
     const recursiveFetch = async function (object, page, pageSize, populate, filters) {
 
-        const query = qs.stringify({
-            pagination: {
-              page: page,
-              pageSize: pageSize,
-            },
-            populate: populate,
-            filters: filters
-          },{
-            encodeValuesOnly: true,
-          });
+        const queryObject = {
+          pagination: {
+            page: page,
+            pageSize: pageSize,
+          }
+        }
+
+        if(populate) { queryObject.populate = populate}
+        if(filters) { queryObject.filters = filters }
+
+        const query = qs.stringify(queryObject, { encodeValuesOnly: true });
 
         try {
 
@@ -81,12 +82,12 @@ export const fetchObject = async function (object, id, populate, filters) {
 
   const store = useUserStore()
 
-  const query = qs.stringify({
-    populate: populate,
-    filters: filters
-  },{
-    encodeValuesOnly: true,
-  });
+  const queryObject = {}
+
+  if(populate) { queryObject.populate = populate}
+  if(filters) { queryObject.filters = filters }
+
+  const query = qs.stringify(queryObject, { encodeValuesOnly: true });
 
   let response = await axios.get(`${import.meta.env.VITE_API_URL}/${object}/${id}?${query}`, {
     headers: {
