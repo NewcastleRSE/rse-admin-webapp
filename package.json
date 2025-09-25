@@ -1,6 +1,6 @@
 {
     "name": "RSEAdmin",
-    "version": "2.0.0",
+    "version": "3.0.0",
     "private": true,
     "scripts": {
         "dev": "vite",
@@ -52,9 +52,6 @@
     },
     "overrides": {
         "vue-eslint-parser": "^10.2.0"
-    },
-    "resolutions": {
-        "rollup": "npm:@rollup/wasm-node"
     },
     "eslintConfig": {
         "root": true,

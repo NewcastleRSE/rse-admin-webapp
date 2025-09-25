@@ -20,7 +20,8 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '3.0.100'
-
+      - name: Remove Package Lock and Update Dependencies
+        run: rm -f package-lock.json
       - name: Install Dependencies
         run: npm ci
 
