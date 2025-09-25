@@ -23,7 +23,7 @@ jobs:
       - name: Remove Package Lock and Update Dependencies
         run: rm -f package-lock.json
       - name: Install Dependencies
-        run: npm ci
+        run: npm install
 
       - name: Generate Distribution
         run: npm run build
