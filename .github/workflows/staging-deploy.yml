@@ -22,10 +22,10 @@ jobs:
           dotnet-version: '3.0.100'
 
       - name: Install Dependencies
-        run: yarn
+        run: npm install
 
       - name: Generate Distribution
-        run: yarn build
+        run: npm run build
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_GANTT_KEY: ${{ secrets.VITE_GANTT_KEY }}
