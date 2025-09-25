@@ -19,12 +19,12 @@
       </div>
       <div class="text-center mt-12">
         <h3
-          class="text-xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2"
+          class="text-xl font-semibold leading-normal mb-2 text-slate-700 mb-2"
         >
           {{rse.firstname}} {{rse.lastname}}
         </h3>
         <div
-          class="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase"
+          class="text-sm leading-normal mt-0 mb-2 text-slate-400 font-bold uppercase"
         >
           {{rse.team}}
         </div>
@@ -32,30 +32,30 @@
       <div class="flex flex-row justify-center py-4 lg:pt-4 pt-8">
             <div class="flex flex-col p-3 text-center">
               <span
-                class="text-2xl font-bold block uppercase tracking-wide text-blueGray-600"
+                class="text-2xl font-bold block uppercase tracking-wide text-slate-600"
               >
                 <i class="fa-solid fa-envelope-open-text"></i>
               </span>
-              <span class="text-lg text-blueGray-600">Email</span>
+              <span class="text-lg text-slate-600">Email</span>
             </div>
             <div class="flex flex-col p-3 text-center">
               <span
-                class="text-2xl font-bold block uppercase tracking-wide text-blueGray-600"
+                class="text-2xl font-bold block uppercase tracking-wide text-slate-600"
               >
                 <i class="fa-brands fa-slack"></i>
               </span>
-              <span class="text-lg text-blueGray-600">Slack</span>
+              <span class="text-lg text-slate-600">Slack</span>
             </div>
             <div class="flex flex-col p-3 text-center">
               <span
-                class="text-2xl font-bold block uppercase tracking-wide text-blueGray-600"
+                class="text-2xl font-bold block uppercase tracking-wide text-slate-600"
               >
                 <i class="fa-brands fa-github"></i>
               </span>
-              <span class="text-lg text-blueGray-600">GitHub</span>
+              <span class="text-lg text-slate-600">GitHub</span>
             </div>
           </div>
-      <div class="mt-10 py-10 border-t border-blueGray-200 text-center">
+      <div class="mt-10 py-10 border-t border-slate-200 text-center">
         <div class="flex flex-wrap justify-center">
           <div class="w-full lg:w-9/12 px-4">
             <dl class="text-left">

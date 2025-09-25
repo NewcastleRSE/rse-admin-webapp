@@ -5,13 +5,13 @@
         <component :is="icon" :class="`text-${iconColour}`" class="align-middle m-2 text-6xl"></component>
       </div>
       <div class="flex-1">
-          <h5 class="text-blueGray-400 uppercase font-bold text-xs">
+          <h5 class="text-slate-400 uppercase font-bold text-xs">
             {{ label }}
           </h5>
           <h3 class="font-semibold text-white mb-3">
             {{ title }}
           </h3>
-          <h1 class="text-blueGray-400 uppercase font-bold text-xs">
+          <h1 class="text-slate-400 uppercase font-bold text-xs">
             {{ subLabel }}
           </h1>
           <span :class="`text-${fontColour}`" class="mr-2 font-bold">

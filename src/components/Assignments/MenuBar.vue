@@ -3,7 +3,7 @@
       <div class="mx-auto flex flex-wrap items-center justify-between">
         <div class="max-w-full flex-grow flex-1 w-full relative flex justify-between lg:w-auto pr-4 lg:static lg:block lg:justify-start">
           <div class="flex flex-row">
-            <h3 class="font-semibold text-lg leading-9 text-blueGray-700">
+            <h3 class="font-semibold text-lg leading-9 text-slate-700">
               Project Assignments
             </h3>
             <Listbox as="div" class="px-3 w-48 " v-model="selectedTeam" @update:model-value="changeTeam(selectedTeam)">
@@ -62,18 +62,18 @@
             </li>
             <li class="nav-item">
               <button class="px-3 -mr-4 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="unallocated()">
-                <i class="fas fa-bars text-lg leading-9 opacity-75 text-blueGray-700"></i>
+                <i class="fas fa-bars text-lg leading-9 opacity-75 text-slate-700"></i>
                 <span class="text-sm bg-red-600 min-w-6 py-0.5 px-1 rounded rounded-full text-white relative -left-2 -top-2">{{unallocatedCount}}</span>
               </button>
             </li>
             <li class="nav-item">
               <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="create()">
-                <i class="fas fa-plus text-lg leading-9 opacity-75 text-blueGray-700"></i>
+                <i class="fas fa-plus text-lg leading-9 opacity-75 text-slate-700"></i>
               </button>
             </li>
             <li class="nav-item">
               <button class="px-3 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" v-on:click="exportCSV()">
-                <i class="fas fa-download text-lg leading-9 opacity-75 text-blueGray-700"></i>
+                <i class="fas fa-download text-lg leading-9 opacity-75 text-slate-700"></i>
               </button>
             </li>
           </ul>

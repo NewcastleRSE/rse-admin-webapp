@@ -1,6 +1,6 @@
 <template>
   <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-xl rounded-lg bg-white border-0 mt-16">
-    <div class="relative flex flex-col min-w-0 h-350-px break-words p-4 m-6 lg:-mt-16 shadow-lg rounded-lg bg-blueGray-700">
+    <div class="relative flex flex-col min-w-0 h-350-px break-words p-4 m-6 lg:-mt-16 shadow-lg rounded-lg bg-slate-700">
         <canvas id="availability-chart"></canvas>
     </div>
     <div class="flex-auto px-4 lg:px-10 py-10 pt-0 mb-6">
