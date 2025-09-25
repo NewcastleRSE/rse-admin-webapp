@@ -30,12 +30,3 @@ jobs:
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_GANTT_KEY: ${{ secrets.VITE_GANTT_KEY }}
-
-      - name: Deploy
-        uses: lauchacarro/Azure-Storage-Action@v1.1
-        with:
-          enabled-static-website: 'true'
-          folder: 'dist'
-          index-document: 'index.html'
-          error-document: 'index.html'
-          connection-string: ${{ secrets.CONNECTION_STRING }}

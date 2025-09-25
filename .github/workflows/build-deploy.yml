@@ -1,0 +1,41 @@
+name: Build & Staging Deploy
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Setup Node
+        uses: actions/setup-node@v2.1.2
+        with:
+          node-version: 20
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.0.100'
+        
+      - name: Remove Package Lock and Update Dependencies
+        run: rm -f package-lock.json
+        
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Generate Distribution
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_GANTT_KEY: ${{ secrets.VITE_GANTT_KEY }}
+
+      - name: Deploy
+        uses: lauchacarro/Azure-Storage-Action@v1.1
+        with:
+          enabled-static-website: 'true'
+          folder: 'dist'
+          connection-string: ${{ secrets.CONNECTION_STRING }}
