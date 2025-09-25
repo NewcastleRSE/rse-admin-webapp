@@ -22,7 +22,7 @@ jobs:
           dotnet-version: '3.0.100'
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Generate Distribution
         run: npm run build
