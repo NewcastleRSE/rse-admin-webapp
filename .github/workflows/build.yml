@@ -32,6 +32,7 @@ jobs:
           VITE_GANTT_KEY: ${{ secrets.VITE_GANTT_KEY }}
 
   deploy:
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
