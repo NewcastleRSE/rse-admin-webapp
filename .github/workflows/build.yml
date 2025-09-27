@@ -1,16 +1,12 @@
-name: Build & Staging Deploy
+name: Build
 on:
   push:
     branches:
       - dev
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
@@ -26,8 +22,10 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '3.0.100'
+        
       - name: Remove Package Lock and Update Dependencies
         run: rm -f package-lock.json
+        
       - name: Install Dependencies
         run: npm install
 
@@ -36,17 +34,14 @@ jobs:
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_GANTT_KEY: ${{ secrets.VITE_GANTT_KEY }}
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: distribution
           path: ./dist
-
   deploy:
     needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -56,15 +51,17 @@ jobs:
         with:
           name: distribution
           path: ./dist
-      - name: List files
-        run: ls -la ./dist
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: LanceMcCarthy/Action-AzureBlobUpload@v2
+        name: Azure Blob Upload with Destination folder defined
         with:
-          # Upload distribution files to GitHub Pages
-          path: './dist'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          connection_string: ${{secrets.CONNECTION_STRING}}
+          container_name: $web
+          source_folder: ./dist
+          clean_destination_folder: true
+      - name: Purge Cache
+        uses: nathanvaughn/actions-cloudflare-purge
+        with:
+          cf_zone: ${{ secrets.CLOUDFLARE_ZONE }}
+          cf_auth: ${{ secrets.CLOUDFLARE_AUTH_KEY }}
+          hosts: |
+            admin.ncldata.dev
