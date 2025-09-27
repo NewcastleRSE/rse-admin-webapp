@@ -1,11 +1,14 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { DateTime } from 'luxon'
+import { currentFY } from '../utils/dates'
 import { fetchObject, fetchObjects } from '../utils/orm'
 
 export const useRSEsStore = defineStore('rses', () => {
+
     const rses = ref([]),
-          utilisation = ref({})
+          utilisation = ref({}),
+          currentYear = currentFY()
 
     function getRSEs() {
         return rses.value.sort(function(a, b) {
@@ -21,11 +24,47 @@ export const useRSEsStore = defineStore('rses', () => {
         return rses.value.find(rse => rse.id == id)
     }
 
-    function getUtilisation(id = null) {
+    function getUtilisation(id = null, wholeMonths = false) {
+
+        let data
+
+        if(wholeMonths) {
+            // Deep clone the object to avoid mutating the store state
+            data = JSON.parse(JSON.stringify(utilisation.value))
+        }
+        else {
+            data = utilisation.value
+        }
+
+        if(wholeMonths) {
+            for(const month in data.months) {
+                const monthDate = DateTime.fromFormat(`${currentYear.startDate.year}-${month}-01`, 'yyyy-MMMM-dd').endOf('month')
+                const now = DateTime.now().endOf('month')
+
+                // If the month is the current month or in the future, remove it from the list. Missing timesheets will suppress the utilisation rate
+                if (monthDate >= now) {
+                    delete data.months[month]
+                    continue
+                }
+
+                data.months[month].utilisation = data.months[month].recorded / data.months[month].capacity * 100
+            }
+
+            // Compute new totals due to possible deletions above
+            const totalCapacity = Object.keys(data.months).reduce((acc, month) => acc + data.months[month].capacity, 0),
+                  totalRecorded = Object.keys(data.months).reduce((acc, month) => acc + data.months[month].recorded, 0)
+            
+            data.total = {
+                capacity: totalCapacity,
+                recorded: totalRecorded,
+                utilisation: totalRecorded / totalCapacity * 100
+            }
+        }  
+        
         if(id) {
-            return utilisation.value.rses[id]
+            return data.rses[id]
         } else {
-            return utilisation.value
+            return data
         }
     }
 
