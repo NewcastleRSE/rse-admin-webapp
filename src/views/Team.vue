@@ -54,7 +54,7 @@
         <div class="w-full px-4">
             <div class="block w-full overflow-x-auto pb-4">
                 <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                    <li v-for="rse in filteredRSEs" :key="rse.id"
+                    <li v-for="rse in filteredRSEs" :key="rse.documentId"
                         class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow-lg">
                         <a :href="`/team/${(rse.displayName).replace(/\s+/g, '-').toLowerCase()}`"
                             class="flex flex-1 flex-col p-8">
@@ -70,26 +70,26 @@
                         <div>
                             <div class="-mt-px flex divide">
                                 <div class="flex w-0 flex-1 border-t border-b border-l rounded-bl-lg"
-                                    :class="totalUtilisation[rse.id].actual >= totalUtilisation[rse.id].target ? 'bg-green-50 text-green-700 border-green-600' : 'bg-red-50 text-red-700 border-red-600'">
+                                    :class="totalUtilisation[rse.documentId].actual >= totalUtilisation[rse.documentId].target ? 'bg-green-50 text-green-700 border-green-600' : 'bg-red-50 text-red-700 border-red-600'">
                                     <a :href="`/team/${(rse.displayName).replace(/\s+/g, '-').toLowerCase()}`"
                                         class="relative -mr-px inline-flex w-full flex-col items-center justify-center gap-y-2 rounded-bl-lg border border-transparent py-2 text-sm">
-                                        <span class="font-semibold">{{ totalUtilisation[rse.id].actual }}%</span>
+                                        <span class="font-semibold">{{ totalUtilisation[rse.documentId].actual }}%</span>
                                         <span>Total</span>
                                     </a>
                                 </div>
                                 <div class="flex w-0 flex-1 border"
-                                    :class="billableUtilisation[rse.id].actual >= (billableUtilisation[rse.id].target * 0.95) ? 'bg-green-50 text-green-700 border-green-600' : 'bg-red-50 text-red-700 border-red-600'">
+                                    :class="billableUtilisation[rse.documentId].actual >= (billableUtilisation[rse.documentId].target * 0.95) ? 'bg-green-50 text-green-700 border-green-600' : 'bg-red-50 text-red-700 border-red-600'">
                                     <a :href="`/team/${(rse.displayName).replace(/\s+/g, '-').toLowerCase()}`"
                                         class="relative -mr-px inline-flex w-full flex-col items-center justify-center gap-y-2 rounded-bl-lg border border-transparent py-2 text-sm">
-                                        <span class="font-semibold">{{ billableUtilisation[rse.id].actual }}%</span>
+                                        <span class="font-semibold">{{ billableUtilisation[rse.documentId].actual }}%</span>
                                         <span>Billable</span>
                                     </a>
                                 </div>
                                 <div class="flex w-0 flex-1 border-box border-t border-r border-b rounded-br-lg"
-                                    :class="nonBillableUtilisation[rse.id].actual <= (nonBillableUtilisation[rse.id].target * 1.05) ? 'bg-green-50 text-green-700 border-green-600' : 'bg-red-50 text-red-700 border-red-600'">
+                                    :class="nonBillableUtilisation[rse.documentId].actual <= (nonBillableUtilisation[rse.documentId].target * 1.05) ? 'bg-green-50 text-green-700 border-green-600' : 'bg-red-50 text-red-700 border-red-600'">
                                     <a :href="`/team/${(rse.displayName).replace(/\s+/g, '-').toLowerCase()}`"
                                         class="relative -mr-px inline-flex w-full flex-col items-center justify-center gap-y-2 rounded-bl-lg border border-transparent py-2 text-sm">
-                                        <span class="font-semibold">{{ nonBillableUtilisation[rse.id].actual }}%</span>
+                                        <span class="font-semibold">{{ nonBillableUtilisation[rse.documentId].actual }}%</span>
                                         <span>Non-Billable</span>
                                     </a>
                                 </div>
@@ -134,7 +134,7 @@ let totalUtilisation = {},
     billableUtilisation = {},
     nonBillableUtilisation = {}
 
-for (let rse of rses.map(rse => rse.id)) {
+for (let rse of rses.map(rse => rse.documentId)) {
     const assingnments = assignmentsStore.getByRSE(rse)
 
     const management = assingnments.filter(assignment => assignment.project.name === 'Management')

@@ -9,8 +9,8 @@ export const useFacilitiesStore = defineStore('facilities', () => {
         return facilities.value
     }
 
-    function getByID(id) {
-        return facilities.value.find(facility => facility.id == id)
+    function getByID(documentId) {
+        return facilities.value.find(facility => facility.documentId == documentId)
     }
 
     function getByYear(year) {

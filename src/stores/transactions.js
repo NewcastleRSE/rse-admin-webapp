@@ -11,8 +11,8 @@ export const useTransactionsStore = defineStore('transactions', () => {
         return transactions.value.reverse()
     }
 
-    function getByID(id) {
-        return transactions.value.find(transaction => transaction.id == id)
+    function getByID(documentId) {
+        return transactions.value.find(transaction => transaction.documentId == documentId)
     }
 
     function getByYear(year) {

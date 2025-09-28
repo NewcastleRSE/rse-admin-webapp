@@ -1,7 +1,7 @@
 <template>
     <div class="w-full">
       <ul role="list" class="divide-y divide-gray-100 px-4">
-        <li v-for="assignment in assignments" :key="assignment.id" class="relative flex justify-between py-5">
+        <li v-for="assignment in assignments" :key="assignment.documentId" class="relative flex justify-between py-5">
           <div class="flex-1 gap-x-4 pr-6">
             <div class="min-w-0 flex-auto">
               <p class="text-sm font-semibold leading-6 text-gray-900">

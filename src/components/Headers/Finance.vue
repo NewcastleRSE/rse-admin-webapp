@@ -112,11 +112,11 @@ let invoiceCounts = {
 for (let i = 0; i < monthsToDate; i++) {
 
   const assignments = assignmentsStore.getByPeriod(dates.startDate.toISODate(), dates.startDate.endOf('month').minus({days: 1}))
-  const projectIDs = assignments.reduce(function (IDs, assignment) { return [...IDs, assignment.project.id] }, [])
+  const projectIDs = assignments.reduce(function (IDs, assignment) { return [...IDs, assignment.project.documentId] }, [])
   const projects = projectsStore.filterByIDs([...new Set(projectIDs)]).filter(project => project.costModel === 'Facility')
 
   for (let y = 0; y < projects.length; y++) {
-    projects[y].invoice = invoices.find(invoice => invoice.project.id == projects[y].id && invoice.year == dates.startDate.year && invoice.month == dates.startDate.monthLong.toLowerCase())
+    projects[y].invoice = invoices.find(invoice => invoice.project.documentId == projects[y].documentId && invoice.year == dates.startDate.year && invoice.month == dates.startDate.monthLong.toLowerCase())
   }
 
   const monthlyInvoices = invoices.filter(invoice => invoice.month === dates.startDate.monthLong.toLowerCase())

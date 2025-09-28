@@ -16,8 +16,8 @@ export const useInvoicesStore = defineStore('invoices', () => {
         return invoices.value
     }
 
-    function getByID(id) {
-        const results = invoices.value.find(invoice => invoice.id == id)
+    function getByID(documentId) {
+        const results = invoices.value.find(invoice => invoice.documentId == documentId)
         return results ? results : null
     }
 
@@ -39,8 +39,8 @@ export const useInvoicesStore = defineStore('invoices', () => {
         return results ? results : []
     }
 
-    function getByProject(id) {
-        const results = invoices.value.filter(invoice => invoice.project.id == id)
+    function getByProject(documentId) {
+        const results = invoices.value.filter(invoice => invoice.project.documentId == documentId)
         return results ? results : []
     }
 
@@ -75,17 +75,17 @@ export const useInvoicesStore = defineStore('invoices', () => {
         switch(state){
             case 'sent':
                 invoice.sent = DateTime.utc().toISODate()
-                invoices.value[invoices.value.findIndex(inv => inv.id === invoice.id)].sent = invoice.sent
+                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].sent = invoice.sent
                 break;
             case 'processed':
                 invoice.processed = DateTime.utc().toISODate()
-                invoices.value[invoices.value.findIndex(inv => inv.id === invoice.id)].processed = invoice.processed
+                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].processed = invoice.processed
                 break;
             default:
                 break;
         }
 
-        await axios.put(`${import.meta.env.VITE_API_URL}/invoices/${invoice.id}`, {
+        await axios.put(`${import.meta.env.VITE_API_URL}/invoices/${invoice.documentId}`, {
             headers: {
               Authorization: `Bearer ${store.jwt}`
             },

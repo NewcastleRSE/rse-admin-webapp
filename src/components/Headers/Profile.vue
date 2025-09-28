@@ -36,7 +36,7 @@ const assignmentsStore = useAssignmentsStore(),
       rseStore = useRSEsStore()
 
 const rse = rseStore.getByName(route.path.split('/')[2]),
-      assignments = assignmentsStore.getByPeriod(DateTime.now().toISODate(), dates.startDate.toISODate(), rse.id)
+      assignments = assignmentsStore.getByPeriod(DateTime.now().toISODate(), dates.startDate.toISODate(), rse.documentId)
 
 assignments.forEach((assignment, index) => {
   if(assignment.project.name && (assignment.project.name === 'Management' || assignment.project.name === 'Carpentries Training')) {

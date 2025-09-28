@@ -14,10 +14,10 @@
     </div>
     <div class="block w-full overflow-x-auto">
       <ul role="list" class="divide-y divide-gray-100 px-4">
-        <li v-for="project in projects" :key="project.id" class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap">
+        <li v-for="project in projects" :key="project.documentId" class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap">
           <div>
             <p class="text-sm font-semibold leading-6 text-gray-900">
-              <a :href="`/projects/${project.id}`" class="hover:underline">{{ project.name }}</a>
+              <a :href="`/projects/${project.documentId}`" class="hover:underline">{{ project.name }}</a>
             </p>
             <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
               <p v-if="project.contacts">
