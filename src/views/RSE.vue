@@ -1,4 +1,4 @@
-<template>
+<template class="relative">
   <div class="flex flex-wrap">
     <div class="w-full mb-12 xl:mb-0 px-4">
       <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
@@ -18,27 +18,29 @@
             <span aria-hidden="true" class="absolute inset-x-0 bottom-0 h-0.5" :class="[currentTabIdx == index ? 'bg-cyan-600' : 'bg-white']" />
           </div>
         </dl>
-      </div>
+    </div>
     </div>
   </div>
   <div class="flex flex-wrap">
     <div class="w-full mb-12 xl:mb-0 mx-4 break-words bg-white px-4 py-5 shadow-lg rounded-lg">
-      <div v-if="currentTabIdx === 0">
+      <div v-if="currentTabIdx === 0" class="relative">
         <utilisation :months="utilisation.months" :clockifyID="rse.clockifyID" />
       </div>
         <calendar v-if="currentTabIdx === 1" :rse="rse" />
-      <div v-if="currentTabIdx === 2">
+      <div v-if="currentTabIdx === 2" class="relative">
         <LeaveList :leave="leaveDates" />
       </div>
-      <div v-if="currentTabIdx === 3">
+      <div v-if="currentTabIdx === 3" class="relative">
         <volunteering :months="volunteeringData" />
       </div>
-      <assignment-list v-if="currentTabIdx === 4" :assignments="assignments" />
+      <div v-if="currentTabIdx === 4" class="relative">
+        <assignment-list :assignments="assignments" />
+      </div>
     </div>
   </div>
 </template>
 <script setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { DateTime } from 'luxon'
@@ -92,8 +94,6 @@ let facility = facilitiesStore.getByYear(dates.startDate.year)
 
 assignments.value = assignmentsStore.getByRSE(rse.id).reverse()
 utilisation.value = rsesStore.getUtilisation(rse.id)
-
-console.log(rse)
 
 // RSE Calendar
 rse.calendar = await fetchObject('rses', `${rse.documentId}/calendar`, null, { year: { '$eq': dates.startDate.year } })
@@ -191,7 +191,7 @@ tabs.value = [
   },
   { 
     name: 'Leave',
-    stat: `${leaveDates.value.filter(date => date.leave.type === 'AL').length} of ${(30 * (averageCapacity/100)).toFixed(1)}`,
+    stat: `${leaveDates.value.filter(date => date.leave.type === 'AL').length} of ${(30 * (averageCapacity/100)).toFixed(0)}`,
     change: leaveDiff > 0 ? `+${leaveDiff}` : `${leaveDiff}`,
     changeType: leaveDates.value.filter(date => date.leave.type === 'AL').length >= leaveTarget ? 'green' : 'red',
     changeIcon: leaveDates.value.filter(date => date.leave.type === 'AL').length >= leaveTarget ? ArrowUpIcon : ArrowDownIcon

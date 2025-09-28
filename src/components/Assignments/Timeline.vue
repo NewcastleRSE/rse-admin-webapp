@@ -1,7 +1,14 @@
 <template>
   <div class="gstc-wrapper" ref="gstcElement"></div>
 </template>
+<style>
 
+.gstc__chart-timeline-items-row-item {
+  background: var(--color-cyan-600);
+  border-radius: 0.25rem;
+}
+
+</style>
 <script>
 import GSTC from 'gantt-schedule-timeline-calendar/dist/gstc.wasm.esm.min.js'
 import { Plugin as TimelinePointer } from 'gantt-schedule-timeline-calendar/dist/plugins/timeline-pointer.esm.min.js'
