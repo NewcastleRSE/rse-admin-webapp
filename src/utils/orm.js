@@ -110,7 +110,9 @@ export const updateObject = async function (object, documentId, payload) {
   const store = useUserStore()
 
   let response = await axios.put(`${import.meta.env.VITE_API_URL}/${object}/${documentId}`, 
-    { data: payload },
+    { 
+      data: payload
+    },
     {
       headers: {
         Authorization: `Bearer ${store.jwt}`,

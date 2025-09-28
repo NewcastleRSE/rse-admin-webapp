@@ -190,9 +190,9 @@ async function submit(event) {
 
   if(assignmentId) {
     assignment = await assignmentsStore.updateAssignment({
-      id: assignmentId,
-      project: selectedProject.value,
-      rse: selectedRSE.value,
+      documentId: assignmentId,
+      project: selectedProject.value.documentId,
+      rse: selectedRSE.value.documentId,
       fte: fte,
       start: startDate,
       end: endDate
@@ -202,8 +202,8 @@ async function submit(event) {
   }
   else {
     assignment = await assignmentsStore.createAssignment({
-      project: selectedProject.value,
-      rse: selectedRSE.value,
+      project: selectedProject.value.documentId,
+      rse: selectedRSE.value.documentId,
       fte: fte,
       start: startDate,
       end: endDate

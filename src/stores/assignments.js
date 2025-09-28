@@ -130,7 +130,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
           }
       }).then(response => {
         let updatedAssignment = response.data.data
-        updatedAssignment.rse = {id: response.data.data.rse.documentId, displayName: response.data.data.rse.displayName}
+        updatedAssignment.rse = {documentId: response.data.data.rse.documentId, displayName: response.data.data.rse.displayName}
         updatedAssignment.project = response.data.data.project
 
         const position = assignments.value.map(e => e.documentId).indexOf(assignment.documentId)
