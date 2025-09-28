@@ -152,8 +152,9 @@ export default {
 
             // Selection includes cells
             if (cells.length) {
-              let rseID = cells[0].row.documentId.split('-')[2],
+              let rseID = cells[0].row.assignments.split('-')[2],
                   rse = props.rses.find(rse => rse.documentId == rseID)
+
               emit('create', rse, cells[0].time.leftGlobalDate.$d, cells[cells.length-1].time.rightGlobalDate.$d)
               gstc.api.plugins.Selection.selectItems([])
             }
@@ -177,8 +178,8 @@ export default {
         events: {
           onEnd({ items }) {
             items.after.forEach((assignment, index) => {
-              const assignmentID = Number(assignment.documentId.split('-')[2]),
-                    rseID = Number(assignment.rowId.split('-')[2])
+              const assignmentID = assignment.id.split('-')[2],
+                    rseID = assignment.rowId.split('-')[2]
               
               if(assignment.time.start !== items.initial[index].time.start || assignment.time.end !== items.initial[index].time.end) {
                 emit('resize', assignmentID, rseID, assignment.time.start, assignment.time.end)
@@ -208,8 +209,10 @@ export default {
           },
           onEnd({ items }) {
             items.after.forEach((assignment, index) => {
-              const assignmentID = Number(assignment.documentId.split('-')[2]),
-                    rseID = Number(assignment.rowId.split('-')[2])
+              const assignmentID = assignment.id.split('-')[2],
+                    rseID = assignment.rowId.split('-')[2]
+
+              console.log(assignmentID, rseID)
 
               if(assignment.time.start !== items.initial[index].time.start || assignment.time.end !== items.initial[index].time.end) {
                 emit('resize', assignmentID, rseID, assignment.time.start, assignment.time.end)
