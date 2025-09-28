@@ -21,7 +21,7 @@
     </div>
 </template>
 <script setup>
-import { onMounted, defineOptions, defineProps } from 'vue'
+import { onMounted } from 'vue'
 import Chart from 'chart.js/auto'
 import annotationPlugin from 'chartjs-plugin-annotation'
 
