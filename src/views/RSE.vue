@@ -92,8 +92,8 @@ const targetDate = DateTime.now() > dates.endDate ? dates.endDate : DateTime.now
 let rse = rsesStore.getByName(rseName)
 let facility = facilitiesStore.getByYear(dates.startDate.year)
 
-assignments.value = assignmentsStore.getByRSE(rse.id).reverse()
-utilisation.value = rsesStore.getUtilisation(rse.id)
+assignments.value = assignmentsStore.getByRSE(rse.documentId).reverse()
+utilisation.value = rsesStore.getUtilisation(rse.documentId)
 
 // RSE Calendar
 rse.calendar = await fetchObject('rses', `${rse.documentId}/calendar`, null, { year: { '$eq': dates.startDate.year } })
@@ -161,7 +161,7 @@ let assignmentCount = 0,
 assignments.value.forEach((assignment, index) => {
   try {
     if(!!Object.hasOwn(assignment.project, 'name')) {
-      assignments.value[index].project = projectsStore.getByID(assignment.project.id)
+      assignments.value[index].project = projectsStore.getByID(assignment.project.documentId)
     }
     if(DateTime.fromISO(assignment.start) <= targetDate && DateTime.fromISO(assignment.end) >= targetDate) {
       assignmentCount++

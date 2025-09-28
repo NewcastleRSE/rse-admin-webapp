@@ -14,23 +14,23 @@ export const useProjectsStore = defineStore('projects', () => {
         })
     }
 
-    function getByID(id) {
-        return projects.value.find(project => project.id == id)
+    function getByID(documentId) {
+        return projects.value.find(project => project.documentId == documentId)
     }
 
-    function getByHubspotID(id) {
-        return projects.value.find(project => project.hubspotId == id)
+    function getByHubspotID(hubspotId) {
+        return projects.value.find(project => project.hubspotId == hubspotId)
     }
 
     function filterByIDs(ids) {
-        return projects.value.filter(project => ids.includes(project.id))
+        return projects.value.filter(project => ids.includes(project.documentId))
     }
 
-    async function changeStatus(id, status) {
-        const response = await updateObject('projects', id, { status: status})
-        const index = projects.value.findIndex((project) => project.id === response.id)
+    async function changeCondition(documentId, condition) {
+        const response = await updateObject('projects', documentId, { condition: condition})
+        const index = projects.value.findIndex((project) => project.documentId === response.documentId)
 
-        projects.value[index].status = response.status
+        projects.value[index].condition = response.condition
     }
 
     async function fetchProjects (year) {
@@ -79,7 +79,7 @@ export const useProjectsStore = defineStore('projects', () => {
         projects.value = []
     }
 
-    return { projects, getProjects, getByID, getByHubspotID, filterByIDs, changeStatus, fetchProjects, reset }
+    return { projects, getProjects, getByID, getByHubspotID, filterByIDs, changeCondition, fetchProjects, reset }
 },
 {
     persist: true

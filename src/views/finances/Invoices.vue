@@ -23,13 +23,13 @@
               </dt>
               <DisclosurePanel as="dd" class="mt-2 pr-12">
                 <ul role="list" class="divide-y divide-gray-100">
-                  <li v-for="project in month.projects" :key="project.id" class="flex items-center justify-between gap-x-6 py-5">
+                  <li v-for="project in month.projects" :key="project.documentId" class="flex items-center justify-between gap-x-6 py-5">
                     <div class="min-w-0">
                       <div class="flex items-start gap-x-3">
                         <p class="text-sm font-semibold leading-6 text-gray-900">{{ project.name }}</p>
-                        <p v-if="hasState(getInvoice(project.id, month.year, month.name), 'transaction')" :class="[statuses['paid'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Paid {{ getInvoice(project.id, month.year, month.name).transaction.postedDate }}</p>
-                        <p v-else-if="hasState(getInvoice(project.id, month.year, month.name), 'processed')" :class="[statuses['processed'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Processed {{ getInvoice(project.id, month.year, month.name).processed }}</p>
-                        <p v-else-if="hasState(getInvoice(project.id, month.year, month.name), 'sent')" :class="[statuses['sent'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Sent {{ getInvoice(project.id, month.year, month.name).sent }}</p>
+                        <p v-if="hasState(getInvoice(project.documentId, month.year, month.name), 'transaction')" :class="[statuses['paid'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Paid {{ getInvoice(project.documentId, month.year, month.name).transaction.postedDate }}</p>
+                        <p v-else-if="hasState(getInvoice(project.documentId, month.year, month.name), 'processed')" :class="[statuses['processed'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Processed {{ getInvoice(project.documentId, month.year, month.name).processed }}</p>
+                        <p v-else-if="hasState(getInvoice(project.documentId, month.year, month.name), 'sent')" :class="[statuses['sent'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Sent {{ getInvoice(project.documentId, month.year, month.name).sent }}</p>
                       </div>
                       <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
                         <p v-if="project.contacts" class="whitespace-nowrap">
@@ -42,12 +42,12 @@
                       </div>
                     </div>
                     <div class="flex flex-none items-center gap-x-4">
-                      <button v-if="!getInvoice(project.id, month.year, month.name)" :disabled="creating !== null || !project.accountCode" v-on:click="createInvoice(project.clockifyID, month.year, month.name)" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 sm:block disabled:text-gray-300 disabled:cursor-not-allowed">
+                      <button v-if="!getInvoice(project.documentId, month.year, month.name)" :disabled="creating !== null || !project.accountCode" v-on:click="createInvoice(project.clockifyID, month.year, month.name)" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 sm:block disabled:text-gray-300 disabled:cursor-not-allowed">
                         <span v-if="creating == `${project.clockifyID}-${month.year}-${month.month}`">Generating...</span>
                         <span v-else>Generate Invoice</span>
                       </button>
-                      <div v-else-if="getInvoice(project.id, month.year, month.name).sent === null" class="inline-flex rounded-md shadow-sm">
-                        <button v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.id, month.year, month.name), 'sent')" type="button" class="relative inline-flex items-center rounded-l-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">Mark As Sent</button>
+                      <div v-else-if="getInvoice(project.documentId, month.year, month.name).sent === null" class="inline-flex rounded-md shadow-sm">
+                        <button v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.documentId, month.year, month.name), 'sent')" type="button" class="relative inline-flex items-center rounded-l-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">Mark As Sent</button>
                         <Menu as="div" class="relative -ml-px block">
                           <MenuButton class="relative inline-flex items-center rounded-r-md bg-white px-2.5 h-full text-gray-400 text-sm font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">
                             <span class="sr-only">Mark As Sent</span>
@@ -57,17 +57,17 @@
                             <MenuItems class="absolute right-0 z-10 mt-0.5 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                               <div class="py-1">
                                 <MenuItem>
-                                  <button v-on:click="createInvoice(project.id, month.year, month.name)" class="text-gray-900 block px-4 py-2 text-sm whitespace-nowrap font-semibold shadow-s sm:block hover:bg-gray-50 cursor-pointer">Generate Invoice</button>
+                                  <button v-on:click="createInvoice(project.documentId, month.year, month.name)" class="text-gray-900 block px-4 py-2 text-sm whitespace-nowrap font-semibold shadow-s sm:block hover:bg-gray-50 cursor-pointer">Generate Invoice</button>
                                 </MenuItem>
                               </div>
                             </MenuItems>
                           </transition>
                         </Menu>
                       </div>
-                      <button v-else-if="getInvoice(project.id, month.year, month.name).processed === null" v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.id, month.year, month.name), 'processed')" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
+                      <button v-else-if="getInvoice(project.documentId, month.year, month.name).processed === null" v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.documentId, month.year, month.name), 'processed')" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
                         Mark As Processed
                       </button>
-                      <div v-else-if="getInvoice(project.id, month.year, month.name).paid === null" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:block">
+                      <div v-else-if="getInvoice(project.documentId, month.year, month.name).paid === null" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:block">
                         Payment Pending
                       </div>
                       <!-- <div v-else class="hidden rounded-md bg-green-300 px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-green-60 sm:block">
@@ -108,11 +108,11 @@ const creating = ref(null)
 for (let i = 0; i <= monthsToDate; i++) {
 
   const assignments = assignmentsStore.getByPeriod(fyDates.startDate.toISODate(), fyDates.startDate.endOf('month').minus({days: 1}))
-  const projectIDs = assignments.reduce(function (IDs, assignment) { return [...IDs, assignment.project.id] }, [])
+  const projectIDs = assignments.reduce(function (IDs, assignment) { return [...IDs, assignment.project.documentId] }, [])
   const projects = projectsStore.filterByIDs([...new Set(projectIDs)]).filter(project => project.costModel === 'Facility')
 
   for (let y = 0; y < projects.length; y++) {
-    projects[y].invoice = invoices.find(invoice => invoice.project.id == projects[y].id && invoice.year == fyDates.startDate.year && invoice.month == fyDates.startDate.monthLong.toLowerCase())
+    projects[y].invoice = invoices.find(invoice => invoice.project.documentId == projects[y].documentId && invoice.year == fyDates.startDate.year && invoice.month == fyDates.startDate.monthLong.toLowerCase())
   }
 
   const monthlyInvoices = invoices.filter(invoice => invoice.month === fyDates.startDate.monthLong.toLowerCase())
@@ -133,7 +133,7 @@ for (let i = 0; i <= monthsToDate; i++) {
 months.reverse()
 
 function getInvoice(projectId, year, month) {
-  return invoices.find(invoice => invoice.project.id == projectId && invoice.year == year && invoice.month == month.toLowerCase())
+  return invoices.find(invoice => invoice.project.documentId == projectId && invoice.year == year && invoice.month == month.toLowerCase())
 }
 
 function createInvoice(projectId, year, month) {

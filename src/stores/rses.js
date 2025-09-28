@@ -20,8 +20,8 @@ export const useRSEsStore = defineStore('rses', () => {
         return rses.value.find(rse => `${rse.firstname.replace(/\s+/g, '-').toLowerCase()}-${rse.lastname.replace(/\s+/g, '-').toLowerCase()}` == name)
     }
 
-    function getByID(id) {
-        return rses.value.find(rse => rse.id == id)
+    function getByID(documentId) {
+        return rses.value.find(rse => rse.documentId == documentId)
     }
 
     function getUtilisation(id = null, wholeMonths = false) {

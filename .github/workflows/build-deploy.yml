@@ -1,4 +1,4 @@
-name: Build & Staging Deploy
+name: Build & Deploy
 on:
   release:
     types: [published]

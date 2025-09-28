@@ -30,13 +30,14 @@
   </div>
 </template>
 <script setup>
-import { onMounted, defineOptions, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useUserStore } from '../../stores'
 import { storeToRefs } from 'pinia'
 import Chart from 'chart.js/auto'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import { DateTime } from 'luxon'
 import { fetchObject } from '../../utils/orm'
+
 defineOptions({
   name: 'capacity'
 })

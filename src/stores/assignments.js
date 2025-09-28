@@ -19,16 +19,16 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       assignments.value = data
   }
 
-    function getByID(id) {
-        return assignments.value.find(assignment => assignment.id === Number(id))
+    function getByID(documentId) {
+        return assignments.value.find(assignment => assignment.documentId === documentId)
     }
 
-    function getByRSE(rse) {
-        return assignments.value.filter(assignment => assignment.rse.id === Number(rse))
+    function getByRSE(rseId) {
+        return assignments.value.filter(assignment => assignment.rse.documentId === rseId)
     }
 
     function getByProject(projectId) {
-      return assignments.value.filter(assignment => assignment.project.id === Number(projectId))
+      return assignments.value.filter(assignment => assignment.project.documentId === projectId)
     }
 
     function getByPeriod(start,end,rse = null) {
@@ -38,7 +38,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       
       if(rse) {
         response = assignments.value.filter(assignment =>
-          (assignment.rse.id === rse
+          (assignment.rse.documentId === rse
           // assignment crosses start date provided
           && DateTime.fromISO(assignment.start) <= DateTime.fromISO(start)
           && DateTime.fromISO(assignment.end) >= DateTime.fromISO(start)) ||
@@ -120,7 +120,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
     }
 
     async function updateAssignment (assignment) {
-      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.id}?${populateQuery}`, 
+      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.documentId}?${populateQuery}`, 
         { 
           data: assignment
         },
@@ -130,10 +130,10 @@ export const useAssignmentsStore = defineStore('assignments', () => {
           }
       }).then(response => {
         let updatedAssignment = response.data.data
-        updatedAssignment.rse = {id: response.data.data.rse.id, displayName: response.data.data.rse.displayName}
+        updatedAssignment.rse = {documentId: response.data.data.rse.documentId, displayName: response.data.data.rse.displayName}
         updatedAssignment.project = response.data.data.project
-        
-        const position = assignments.value.map(e => e.id).indexOf(assignment.id)
+
+        const position = assignments.value.map(e => e.documentId).indexOf(assignment.documentId)
         assignments.value[position] = updatedAssignment
       })
     }
@@ -145,7 +145,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
             Authorization: `Bearer ${store.jwt}`
           }
       }).then(() => {
-          const position = assignments.value.map(e => e.id).indexOf(assignmentId)
+          const position = assignments.value.map(e => e.documentId).indexOf(assignmentId)
           assignments.value.splice(position, 1)
       })
     }

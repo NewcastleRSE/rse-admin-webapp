@@ -5,7 +5,7 @@
     </div>
     <div class="flex-auto px-4 lg:px-10 py-10 pt-0 mb-6">
       <ol class="relative border-l border-gray-200 dark:border-gray-700 ">
-        <li class="mb-10 ml-8" v-for="assignment in assignments" v-bind:key="assignment.id">
+        <li class="mb-10 ml-8" v-for="assignment in assignments" v-bind:key="assignment.documentId">
           <span v-if="assignment.project.faculty === 'Science, Agriculture & Engineering'" class="flex absolute -left-4 justify-center items-center w-8 h-8 bg-cyan-700 rounded-full ring-cyan-200 ">
             <i class="fa-solid fa-atom text-white"></i>
           </span>
@@ -19,8 +19,8 @@
             <i class="fa-solid fa-code text-white"></i>
           </span>
           <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">{{assignment.project.name}}
-            <span v-if="assignment.project.status === 'Red'" class="bg-red-200 text-red-600 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Red</span>
-            <span v-else-if="assignment.project.status === 'Amber'" class="bg-amber-200 text-amber-600 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Red</span>
+            <span v-if="assignment.project.condition === 'Red'" class="bg-red-200 text-red-600 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Red</span>
+            <span v-else-if="assignment.project.condition === 'Amber'" class="bg-amber-200 text-amber-600 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Red</span>
           </h3>
           <time class="block mb-2 text-sm font-normal leading-none text-gray-500">{{formatDate(assignment.start)}} to {{formatDate(assignment.end)}}</time>
           <p v-if="assignment.project.contacts" class="mb-1 text-base font-normal text-gray-700">
@@ -50,11 +50,11 @@ export default {
     const RSE = this.$store.getters["rses/getRse"](this.$route.params.name),
           startDate = DateTime.fromISO(RSE.contractStart).startOf('month'),
           endDate = DateTime.local().startOf('month').plus({month: 24}),
-          assignments = this.$store.getters["assignments/getAssignmentsInPeriod"](startDate.toISODate(), endDate.toISODate(), RSE.id),
+          assignments = this.$store.getters["assignments/getAssignmentsInPeriod"](startDate.toISODate(), endDate.toISODate(), RSE.documentId),
           projects = this.$store.getters["projects/getProjects"](assignments.reduce(function (ids, assignment) { return [...ids, assignment.project.hubspotID] }, []))
 
     assignments.forEach(assignment => {
-      assignment.project = projects.find(project => project.id == assignment.project.hubspotID)
+      assignment.project = projects.find(project => project.documentId == assignment.project.hubspotID)
     })
 
     console.log(assignments)
