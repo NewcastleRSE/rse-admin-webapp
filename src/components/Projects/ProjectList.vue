@@ -1,10 +1,10 @@
 <template>
     <ul v-if="projects.length" role="list" class="divide-y divide-gray-100">
-      <li v-for="project in projects" :key="project.id" class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap">
+      <li v-for="project in projects" :key="project.documentId" class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap">
         <div class="flex basis-1/2 flex-row items-center">
           <div class="pr-6">
-            <ExclamationCircleIcon v-if="project.status === 'red'" class="h-8 w-8 text-red-600" aria-hidden="true" />
-            <ExclamationTriangleIcon v-else-if="project.status === 'amber'" class="h-8 w-8 text-yellow-600" aria-hidden="true" />
+            <ExclamationCircleIcon v-if="project.condition === 'red'" class="h-8 w-8 text-red-600" aria-hidden="true" />
+            <ExclamationTriangleIcon v-else-if="project.condition === 'amber'" class="h-8 w-8 text-yellow-600" aria-hidden="true" />
             <CheckCircleIcon v-else class="h-8 w-8 text-green-600" aria-hidden="true" />
           </div>
           <div class="flex flex-col">
@@ -42,7 +42,7 @@
         <div class="flex basis-1/6 justify-end">
           <div class="flex -space-x-0.5">
             <dt class="sr-only">RSEs</dt>
-            <dd v-for="rse in project.rses" :key="rse.id">
+            <dd v-for="rse in project.rses" :key="rse.documentId">
               <div class="group flex relative">
               <img class="h-8 w-8 rounded-full shadow-md bg-gray-50 ring-2 ring-white" :src="getImageUrl(rse.photo)" :alt="`${rse.firstname} ${rse.lastname}`" />
                 <span class="z-10 group-hover:opacity-100 transition-opacity bg-gray-800 p-2 text-sm text-gray-100 rounded-md absolute left-1/2 
@@ -59,21 +59,21 @@
               <MenuItems class="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white py-2 divide-y divide-gray-100 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                 <div class="py-1">
                   <MenuItem v-slot="{ active }">
-                    <div v-on:click="changeStatus(project, 'green')" :class="[active ? 'bg-gray-50' : '', 'flex items-center px-4 py-1 text-sm font leading-6 text-gray-900']">
+                    <div v-on:click="changeCondition(project, 'green')" :class="[active ? 'bg-gray-50' : '', 'flex items-center px-4 py-1 text-sm font leading-6 text-gray-900']">
                       <span class="grow">Stable</span>
-                      <CheckIcon v-if="project.status === 'green'" class="h-5 w-5 text-gray-700" />
+                      <CheckIcon v-if="project.condition === 'green'" class="h-5 w-5 text-gray-700" />
                     </div>
                   </MenuItem>
                   <MenuItem v-slot="{ active }">
-                    <div v-on:click="changeStatus(project, 'amber')" :class="[active ? 'bg-gray-50' : '', 'flex items-center px-4 py-1 text-sm leading-6 text-gray-900']">
+                    <div v-on:click="changeCondition(project, 'amber')" :class="[active ? 'bg-gray-50' : '', 'flex items-center px-4 py-1 text-sm leading-6 text-gray-900']">
                       <span class="grow">At Risk</span>
-                      <CheckIcon v-if="project.status === 'amber'" class="h-5 w-5 text-gray-700" />
+                      <CheckIcon v-if="project.condition === 'amber'" class="h-5 w-5 text-gray-700" />
                     </div>
                   </MenuItem>
                   <MenuItem v-slot="{ active }">
-                    <div v-on:click="changeStatus(project, 'red')" :class="[active ? 'bg-gray-50' : '', 'flex items-center px-4 py-1 text-sm leading-6 text-gray-900']">
+                    <div v-on:click="changeCondition(project, 'red')" :class="[active ? 'bg-gray-50' : '', 'flex items-center px-4 py-1 text-sm leading-6 text-gray-900']">
                       <span class="grow">Critical</span>
-                      <CheckIcon v-if="project.status === 'red'" class="h-5 w-5 text-gray-700" />
+                      <CheckIcon v-if="project.condition === 'red'" class="h-5 w-5 text-gray-700" />
                     </div>
                   </MenuItem>
                 </div>
@@ -92,7 +92,7 @@
       </li>
     </ul>
     <div v-else>
-      <p class="text-center my-8 font-semibold">There are no projects with this status.</p>
+      <p class="text-center my-8 font-semibold">There are no projects with this condition.</p>
     </div>
 </template> 
 <script setup>
@@ -105,7 +105,7 @@ import { currentFY } from '../../utils/dates'
 import { CheckIcon, CheckCircleIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
 
 const route = useRoute()
-const status = route.path.split('/')[2]
+const condition = route.path.split('/')[2]
 
 const assignmentsStore = useAssignmentsStore(),
       projectsStore = useProjectsStore(),
@@ -113,20 +113,20 @@ const assignmentsStore = useAssignmentsStore(),
 
 let projects = projectsStore.getProjects().filter(project => (project.stage === 'Awaiting Allocation' || project.stage === 'Allocated') && project.name !== 'Management')
 
-if(status) {
-  projects = projects.filter(project => project.status === status)
+if(condition) {
+  projects = projects.filter(project => project.condition === condition)
 }
 
 const dates = currentFY()
 
 projects.forEach((project, index) => {
-    const assignments = assignmentsStore.getByProject(project.id)
+    const assignments = assignmentsStore.getByProject(project.documentId)
 
     let rseIDs = null
     projects[index].rses = []
 
     if(assignments && assignments.length) {
-        rseIDs = new Set(assignments.map(assignment => assignment.rse.id))
+        rseIDs = new Set(assignments.map(assignment => assignment.rse.documentId))
         rseIDs.forEach(id => projects[index].rses.push(rsesStore.getByID(id)))
     }
 
@@ -143,8 +143,8 @@ function getImageUrl(name) {
   return new URL(`../../assets/img/avatars/${name}`, import.meta.url).href
 }
 
-function changeStatus(project, status) {
-  projectsStore.changeStatus(project.id, status)
+function changeCondition(project, condition) {
+  projectsStore.changeCondition(project.documentId, condition)
 }
 
 </script>

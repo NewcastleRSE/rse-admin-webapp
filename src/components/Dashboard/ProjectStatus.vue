@@ -7,7 +7,7 @@
             Projects
           </h6>
           <h2 class="text-slate-700 text-xl font-semibold">
-            Status
+            Condition
           </h2>
         </div>
       </div>
@@ -34,9 +34,9 @@
           <dl class="flex w-full flex-none justify-between gap-x-8 sm:w-auto">
             <div class="flex w-16 gap-x-2.5">
               <dt>
-                <span class="sr-only">Status</span>
-                <ExclamationCircleIcon v-if="project.status === 'red'" class="h-6 w-6 text-red-600" aria-hidden="true" />
-                <ExclamationTriangleIcon v-if="project.status === 'amber'" class="h-6 w-6 text-yellow-600" aria-hidden="true" />
+                <span class="sr-only">Condition</span>
+                <ExclamationCircleIcon v-if="project.condition === 'red'" class="h-6 w-6 text-red-600" aria-hidden="true" />
+                <ExclamationTriangleIcon v-if="project.condition === 'amber'" class="h-6 w-6 text-yellow-600" aria-hidden="true" />
               </dt>
             </div>
           </dl>
@@ -54,8 +54,8 @@ import { ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/2
 const projectsStore = useProjectsStore()
 
 const active = projectsStore.getProjects().filter(project => project.stage === 'Awaiting Allocation' || project.stage === 'Allocated'),
-      red = active.filter(project => project.status === 'red')
-      // amber = active.filter(project => project.status === 'amber')
+      red = active.filter(project => project.condition === 'red')
+      // amber = active.filter(project => project.condition === 'amber')
 
 const projects = ref([...red])
 

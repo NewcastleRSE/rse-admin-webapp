@@ -19,8 +19,8 @@
             <i class="fa-solid fa-code text-white"></i>
           </span>
           <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">{{assignment.project.name}}
-            <span v-if="assignment.project.status === 'Red'" class="bg-red-200 text-red-600 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Red</span>
-            <span v-else-if="assignment.project.status === 'Amber'" class="bg-amber-200 text-amber-600 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Red</span>
+            <span v-if="assignment.project.condition === 'Red'" class="bg-red-200 text-red-600 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Red</span>
+            <span v-else-if="assignment.project.condition === 'Amber'" class="bg-amber-200 text-amber-600 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Red</span>
           </h3>
           <time class="block mb-2 text-sm font-normal leading-none text-gray-500">{{formatDate(assignment.start)}} to {{formatDate(assignment.end)}}</time>
           <p v-if="assignment.project.contacts" class="mb-1 text-base font-normal text-gray-700">

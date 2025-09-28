@@ -80,8 +80,8 @@ const routes = [
             meta: { title: 'RSE Admin - Projects' }
           },
           {
-            path: '/projects/:status',
-            name: 'Status',
+            path: '/projects/:condition',
+            name: 'Condition',
             components: {
               default: Projects,
               header: ProjectsHeader
