@@ -4,7 +4,8 @@
 <style>
 
 .gstc__chart-timeline-items-row-item {
-  background: var(--color-cyan-600)
+  background: var(--color-cyan-600);
+  border-radius: 0.25rem;
 }
 
 </style>
