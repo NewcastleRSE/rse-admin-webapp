@@ -74,11 +74,11 @@ export const fetchObjects = async function (object, page, pageSize, populate, fi
 /**
  * 
  * @param {string} object the name of the object type
- * @param {number} id the unique id of the object
+ * @param {number} documentId the unique document ID of the object
  * @param {Array.<string>} populate an array of properties for Strapi to populate
  * @returns 
  */
-export const fetchObject = async function (object, id, populate, filters) {
+export const fetchObject = async function (object, documentId, populate, filters) {
 
   const store = useUserStore()
 
@@ -89,7 +89,7 @@ export const fetchObject = async function (object, id, populate, filters) {
 
   const query = qs.stringify(queryObject, { encodeValuesOnly: true });
 
-  let response = await axios.get(`${import.meta.env.VITE_API_URL}/${object}/${id}?${query}`, {
+  let response = await axios.get(`${import.meta.env.VITE_API_URL}/${object}/${documentId}?${query}`, {
     headers: {
       Authorization: `Bearer ${store.jwt}`,
     }
@@ -98,11 +98,18 @@ export const fetchObject = async function (object, id, populate, filters) {
   return response.data
 }
 
-export const updateObject = async function (object, id, payload) {
+/**
+ * 
+ * @param {string} object the name of the object type
+ * @param {number} documentId the unique document ID of the object
+ * @param {object} payload an object containing the properties to update
+ * @returns 
+ */
+export const updateObject = async function (object, documentId, payload) {
 
   const store = useUserStore()
 
-  let response = await axios.put(`${import.meta.env.VITE_API_URL}/${object}/${id}`, 
+  let response = await axios.put(`${import.meta.env.VITE_API_URL}/${object}/${documentId}`, 
     { data: payload },
     {
       headers: {

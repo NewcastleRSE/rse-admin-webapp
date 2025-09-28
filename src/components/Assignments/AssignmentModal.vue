@@ -24,7 +24,7 @@
                                 </ComboboxButton>
 
                                 <ComboboxOptions v-if="filteredProjects.length > 0" class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                  <ComboboxOption v-for="project in filteredProjects" :key="project.id" :value="project" as="template" v-slot="{ active, selected }">
+                                  <ComboboxOption v-for="project in filteredProjects" :key="project.documentId" :value="project" as="template" v-slot="{ active, selected }">
                                     <li :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-cyan-600 text-white' : 'text-gray-900']">
                                       <div class="flex items-center">
                                         <span :class="['ml-3 truncate', selected && 'font-semibold']">
@@ -51,7 +51,7 @@
                                 </ComboboxButton>
 
                                 <ComboboxOptions v-if="filteredRSEs.length > 0" class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                  <ComboboxOption v-for="rse in filteredRSEs" :key="rse.id" :value="rse" as="template" v-slot="{ active, selected }">
+                                  <ComboboxOption v-for="rse in filteredRSEs" :key="rse.documentId" :value="rse" as="template" v-slot="{ active, selected }">
                                     <li :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-cyan-600 text-white' : 'text-gray-900']">
                                       <div class="flex items-center">
                                         <img :src="getImageUrl(rse.photo)" alt="" class="h-6 w-6 flex-shrink-0 rounded-full" />
@@ -166,7 +166,7 @@ function createAssignment(assignment, rse, start, end) {
   if(assignment) {
     console.log(assignment)
     title = 'Edit Assignment'
-    assignmentId = assignment.id,
+    assignmentId = assignment.documentId,
     selectedProject.value = assignment.project
     selectedRSE.value = assignment.rse
     startDate = DateTime.fromISO(assignment.start).toISODate()
