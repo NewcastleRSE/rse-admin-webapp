@@ -119,8 +119,8 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       })
     }
 
-    async function updateAssignment (assignment) {
-      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.documentId}?${populateQuery}`, 
+    async function updateAssignment (assignmentId, assignment) {
+      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignmentId}?${populateQuery}`, 
         { 
           data: assignment
         },

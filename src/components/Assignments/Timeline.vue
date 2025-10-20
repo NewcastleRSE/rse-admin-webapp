@@ -212,8 +212,6 @@ export default {
               const assignmentID = assignment.id.split('-')[2],
                     rseID = assignment.rowId.split('-')[2]
 
-              console.log(assignmentID, rseID)
-
               if(assignment.time.start !== items.initial[index].time.start || assignment.time.end !== items.initial[index].time.end) {
                 emit('resize', assignmentID, rseID, assignment.time.start, assignment.time.end)
               }

@@ -189,8 +189,7 @@ async function submit(event) {
   let assignment = null
 
   if(assignmentId) {
-    assignment = await assignmentsStore.updateAssignment({
-      documentId: assignmentId,
+    assignment = await assignmentsStore.updateAssignment(assignmentId, {
       project: selectedProject.value.documentId,
       rse: selectedRSE.value.documentId,
       fte: fte,
