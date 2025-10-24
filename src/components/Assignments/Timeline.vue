@@ -1,14 +1,6 @@
 <template>
   <div class="gstc-wrapper" ref="gstcElement"></div>
 </template>
-<style>
-
-.gstc__chart-timeline-items-row-item {
-  background: var(--color-cyan-600);
-  border-radius: 0.25rem;
-}
-
-</style>
 <script>
 import GSTC from 'gantt-schedule-timeline-calendar/dist/gstc.wasm.esm.min.js'
 import { Plugin as TimelinePointer } from 'gantt-schedule-timeline-calendar/dist/plugins/timeline-pointer.esm.min.js'
@@ -94,7 +86,7 @@ function generateAvailability(RSEs, assignments) {
           end: DateTime.fromJSDate(maxDate).toMillis(),
         },
         progress: (capacity.days / assignmentsLength.days) * 100,
-        classNames: ['bg-cyan-600', 'rounded']
+        classNames: ['bg-cyan-600!', 'rounded!']
       }
   })
 
@@ -119,6 +111,31 @@ function generateAssignments(rses, assignments) {
       const assignmentStart = DateTime.fromISO(assignment.start),
             assignmentEnd = DateTime.fromISO(assignment.end)
 
+      let backgroundColor
+
+      console.log(assignment.project.costModel)
+      
+      switch(assignment.project.costModel) {
+        case 'Non Billable':
+          backgroundColor = 'bg-yellow-500!'
+          break
+        case 'Facility':
+          backgroundColor = 'bg-sky-500!'
+          break
+        case 'Directly Incurred':
+          backgroundColor = 'bg-indigo-500!'
+          break
+        case 'Voluntary':
+          backgroundColor = 'bg-fuchsia-500!'
+          break
+        case 'JobsOC':
+          backgroundColor = 'bg-green-500!'
+          break
+        default:
+          backgroundColor = 'bg-slate-500!'
+
+      }
+
       items[id] = {
         id,
         label: assignment.project.name,
@@ -128,7 +145,7 @@ function generateAssignments(rses, assignments) {
           end: assignmentEnd.toMillis(),
         },
         progress: 100,
-        classNames: ['bg-cyan-500', 'rounded']
+        classNames: [backgroundColor, 'rounded!']
       }
     })
   })
@@ -371,7 +388,7 @@ export default {
           end: DateTime.fromISO(assignment.end).endOf('day').valueOf(),
         },
         progress: 100,
-        classNames: ['bg-cyan-500', 'rounded']
+        classNames: ['bg-cyan-500!', 'rounded!']
       }
       gstc.api.plugins.Selection.selectItems([])
       state.update(`config.chart.items.${GSTC.api.GSTCID(`assignment-${assignment.documentId}`)}`, (item) => { item = newItem; return item } )

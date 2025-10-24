@@ -95,7 +95,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       
       const populateAssignments = {
         project: {
-          fields: ['id', 'name'],
+          fields: ['id', 'name', 'costModel'],
         },
         rse: {
           fields: ['id', 'displayName'],
