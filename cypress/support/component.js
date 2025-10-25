@@ -13,12 +13,28 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// Import commands.js using ES2015 syntax:
-import './commands'
-
 import { mount } from 'cypress/vue'
+import { createPinia, setActivePinia } from "pinia";
 
-Cypress.Commands.add('mount', mount)
+let pinia
 
-// Example use:
-// cy.mount(MyComponent)
+// Run this code before each *test*.
+beforeEach(() => {
+  // New Pinia
+  pinia = createPinia()
+
+  // Set current Pinia instance
+  setActivePinia(pinia)
+})
+
+function mountWithPinia(Comp, options = {}) {
+  return mount(Comp, {
+    ...options,
+    global: {
+      ...options?.global,
+      plugins: [...(options?.global?.plugins ?? []), pinia],
+    },
+  })
+}
+
+Cypress.Commands.add('mount', mountWithPinia)
