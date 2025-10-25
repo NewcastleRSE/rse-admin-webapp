@@ -103,6 +103,7 @@ function generateAssignments(rses, assignments) {
   let rseAssignments = Object.groupBy(assignments, (assignment) => assignment.rse.documentId)
 
   rses.forEach(rse => {
+
     rseAssignments[rse.documentId].forEach(assignment => {
 
       const id = GSTC.api.GSTCID(`assignment-${assignment.documentId}`),
@@ -112,8 +113,6 @@ function generateAssignments(rses, assignments) {
             assignmentEnd = DateTime.fromISO(assignment.end)
 
       let backgroundColor
-
-      console.log(assignment.project.costModel)
       
       switch(assignment.project.costModel) {
         case 'Non Billable':
@@ -133,7 +132,6 @@ function generateAssignments(rses, assignments) {
           break
         default:
           backgroundColor = 'bg-slate-500!'
-
       }
 
       items[id] = {

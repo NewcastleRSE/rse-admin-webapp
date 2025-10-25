@@ -1,0 +1,191 @@
+[
+    {
+        "id": 253,
+        "documentId": "a1s2d3f4g5h6j7k8l9z0x1c2",
+        "start": "2025-08-01",
+        "end": "2027-07-31",
+        "fte": 50,
+        "createdAt": "2024-09-20T10:00:00.000Z",
+        "updatedAt": "2024-09-20T10:00:00.000Z",
+        "publishedAt": "2024-10-01T08:00:00.000Z",
+        "project": {
+            "id": 160,
+            "documentId": "pro1a1b2c3d4e5f6g7h8i9j0",
+            "name": "E-Science Data Pipeline V2",
+            "costModel": "Billable"
+        },
+        "rse": {
+            "id": 35,
+            "documentId": "tes3o1a6y8r4q2j7v9p0uu21",
+            "displayName": "Alex Smith"
+        }
+    },
+    {
+        "id": 254,
+        "documentId": "q9w8e7r6t5y4u3i2o1p0a9s8",
+        "start": "2025-04-01",
+        "end": "2025-12-31",
+        "fte": 50,
+        "createdAt": "2024-11-01T11:00:00.000Z",
+        "updatedAt": "2025-01-15T15:30:00.000Z",
+        "publishedAt": "2025-03-01T09:00:00.000Z",
+        "project": {
+            "id": 161,
+            "documentId": "pro2z3x4c5v6b7n8m9q0w1e2",
+            "name": "Machine Learning Research Support",
+            "costModel": "Facility"
+        },
+        "rse": {
+            "id": 35,
+            "documentId": "tes3o1a6y8r4q2j7v9p0uu21",
+            "displayName": "Alex Smith"
+        }
+    },
+    {
+        "id": 257,
+        "documentId": "h7g6f5e4d3c2b1a0s9d8f7g6",
+        "start": "2026-01-01",
+        "end": "2026-05-31",
+        "fte": 40,
+        "createdAt": "2026-09-01T16:00:00.000Z",
+        "updatedAt": "2026-09-01T16:00:00.000Z",
+        "publishedAt": "2026-12-01T08:00:00.000Z",
+        "project": {
+            "id": 164,
+            "documentId": "pro5w6e7r8t9y0u1i2o3p4a5",
+            "name": "Community Outreach and Training",
+            "costModel": "Non Billable"
+        },
+        "rse": {
+            "id": 35,
+            "documentId": "tes3o1a6y8r4q2j7v9p0uu21",
+            "displayName": "Alex Smith"
+        }
+    },
+    {
+        "id": 260,
+        "documentId": "r4e3w2q1a0s9d8f7g6h5j4k3",
+        "start": "2026-01-01",
+        "end": "2026-05-31",
+        "fte": 10,
+        "createdAt": "2027-10-01T19:00:00.000Z",
+        "updatedAt": "2027-10-01T19:00:00.000Z",
+        "publishedAt": "2027-12-01T08:00:00.000Z",
+        "project": {
+            "id": 167,
+            "documentId": "pro8y9u0i1o2p3a4s5d6f7g8",
+            "name": "General Lab Support",
+            "costModel": "Non Billable"
+        },
+        "rse": {
+            "id": 35,
+            "documentId": "tes3o1a6y8r4q2j7v9p0uu21",
+            "displayName": "Alex Smith"
+        }
+    },
+    {
+        "id": 255,
+        "documentId": "z9x8c7v6b5n4m3l2k1j0h9g8",
+        "start": "2025-08-01",
+        "end": "2027-07-31",
+        "fte": 50,
+        "createdAt": "2025-08-01T12:00:00.000Z",
+        "updatedAt": "2025-08-01T12:00:00.000Z",
+        "publishedAt": "2025-12-01T10:00:00.000Z",
+        "project": {
+            "id": 162,
+            "documentId": "pro3r4t5y6u7i8o9p0a1s2d3",
+            "name": "HPC System Upgrade Planning",
+            "costModel": "Non Billable"
+        },
+        "rse": {
+            "id": 36,
+            "documentId": "tuv4b2s7w0x3m5c1z8k9yy32",
+            "displayName": "Benjamin Jones"
+        }
+    },
+    {
+        "id": 258,
+        "documentId": "m6n5b4v3c2x1z0l9k8j7h6g5",
+        "start": "2025-08-01",
+        "end": "2025-10-31",
+        "fte": 50,
+        "createdAt": "2026-03-01T17:00:00.000Z",
+        "updatedAt": "2026-03-01T17:00:00.000Z",
+        "publishedAt": "2026-06-01T10:00:00.000Z",
+        "project": {
+            "id": 165,
+            "documentId": "pro6s7d8f9g0h1j2k3l4z5x6",
+            "name": "Research Software Engineering Core",
+            "costModel": "Non Billable"
+        },
+        "rse": {
+            "id": 36,
+            "documentId": "tuv4b2s7w0x3m5c1z8k9yy32",
+            "displayName": "Benjamin Jones"
+        }
+    },
+    {
+        "id": 261,
+        "documentId": "j3k2l1z0x9c8v7b6n5m4l3k2",
+        "start": "2025-11-01",
+        "end": "2026-02-28",
+        "fte": 50,
+        "createdAt": "2027-04-01T20:00:00.000Z",
+        "updatedAt": "2027-04-01T20:00:00.000Z",
+        "publishedAt": "2027-06-01T10:00:00.000Z",
+        "project": {
+            "id": 168,
+            "documentId": "pro9h0j1k2l3z4x5c6v7b8n9",
+            "name": "Internal Tools Development",
+            "costModel": "Non Billable"
+        },
+        "rse": {
+            "id": 36,
+            "documentId": "tuv4b2s7w0x3m5c1z8k9yy32",
+            "displayName": "Benjamin Jones"
+        }
+    },
+    {
+        "id": 262,
+        "documentId": "b1n0m9l8k7j6h5g4f3d2s1a0",
+        "start": "2026-03-01",
+        "end": "2029-01-31",
+        "fte": 50,
+        "createdAt": "2027-11-01T21:00:00.000Z",
+        "updatedAt": "2027-11-01T21:00:00.000Z",
+        "publishedAt": "2027-12-01T11:00:00.000Z",
+        "project": {
+            "id": 169,
+            "documentId": "pro0m1n2b3v4c5x6z7l8k9j0",
+            "name": "Complex Systems Modelling",
+            "costModel": "Billable"
+        },
+        "rse": {
+            "id": 36,
+            "documentId": "tuv4b2s7w0x3m5c1z8k9yy32",
+            "displayName": "Benjamin Jones"
+        }
+    },
+    {
+        "id": 252,
+        "documentId": "b8qnnvabiazuzhctvqic31ff",
+        "start": "2024-09-01",
+        "end": "2029-07-31",
+        "fte": 100,
+        "createdAt": "2024-08-12T21:04:17.304Z",
+        "updatedAt": "2024-08-12T21:04:17.304Z",
+        "publishedAt": "2025-09-05T09:31:46.505Z",
+        "project": {
+            "id": 159,
+            "documentId": "ny2yk68u1ogjqwpj6fzc6rr3",
+            "name": "Example University HPC",
+            "costModel": "Non Billable"
+        },
+        "rse": {
+            "id": 37,
+            "documentId": "wxa5c3t8x1y4n6d2a9l0zz43",
+            "displayName": "Diana Prince"
+        }
+    }
+]
