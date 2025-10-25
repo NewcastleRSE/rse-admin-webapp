@@ -14,7 +14,9 @@
 // ***********************************************************
 
 import { mount } from 'cypress/vue'
-import { createPinia, setActivePinia } from "pinia";
+import { createPinia, setActivePinia } from "pinia"
+import '@fortawesome/fontawesome-free/css/all.min.css'
+import '@/assets/styles/index.css'
 
 let pinia
 
