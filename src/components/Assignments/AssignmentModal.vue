@@ -73,7 +73,7 @@
                           <div class="sm:col-span-2">
                             <label for="fte" class="block text-sm font-medium leading-6 text-gray-900">FTE</label>
                             <div class="mt-2">
-                              <input id="fte" name="fte" type="number" required v-model="fte" autocomplete="fte" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
+                              <input id="fte" name="fte" type="number" min="0" max="100" required v-model="fte" autocomplete="fte" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
                             </div>
                           </div>
 
@@ -164,7 +164,6 @@ function toggleModal() {
 
 function createAssignment(assignment, rse, start, end) {
   if(assignment) {
-    console.log(assignment)
     title = 'Edit Assignment'
     assignmentId = assignment.documentId,
     selectedProject.value = assignment.project
@@ -175,9 +174,12 @@ function createAssignment(assignment, rse, start, end) {
   }
   else {
     title = 'Create Assignment'
+    assignmentId = null
+    selectedProject.value = null
     selectedRSE.value = rse
     startDate = DateTime.fromJSDate(start).toISODate()
     endDate = DateTime.fromJSDate(end).toISODate()
+    fte = 50
   }
   
   isOpen.value = true
