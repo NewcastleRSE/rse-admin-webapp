@@ -112,8 +112,6 @@ function generateAssignments(rses, assignments) {
             assignmentEnd = DateTime.fromISO(assignment.end)
 
       let backgroundColor
-
-      console.log(assignment.project.costModel)
       
       switch(assignment.project.costModel) {
         case 'Non Billable':
@@ -133,7 +131,6 @@ function generateAssignments(rses, assignments) {
           break
         default:
           backgroundColor = 'bg-slate-500!'
-
       }
 
       items[id] = {
@@ -379,6 +376,29 @@ export default {
       }, 250)      
     }
     function addAssignment(assignment){
+
+      let backgroundColor
+      
+      switch(assignment.project.costModel) {
+        case 'Non Billable':
+          backgroundColor = 'bg-yellow-500!'
+          break
+        case 'Facility':
+          backgroundColor = 'bg-sky-500!'
+          break
+        case 'Directly Incurred':
+          backgroundColor = 'bg-indigo-500!'
+          break
+        case 'Voluntary':
+          backgroundColor = 'bg-fuchsia-500!'
+          break
+        case 'JobsOC':
+          backgroundColor = 'bg-green-500!'
+          break
+        default:
+          backgroundColor = 'bg-slate-500!'
+      }
+
       let newItem = {
         id: GSTC.api.GSTCID(`assignment-${assignment.documentId}`),
         rowId: GSTC.api.GSTCID(`rse-${assignment.rse.documentId}-assignments`),
@@ -388,18 +408,43 @@ export default {
           end: DateTime.fromISO(assignment.end).endOf('day').valueOf(),
         },
         progress: 100,
-        classNames: ['bg-cyan-500!', 'rounded!']
+        classNames: [backgroundColor, 'rounded!']
       }
       gstc.api.plugins.Selection.selectItems([])
       state.update(`config.chart.items.${GSTC.api.GSTCID(`assignment-${assignment.documentId}`)}`, (item) => { item = newItem; return item } )
     }
+
     function updateAssignment(assignment){
+
+      let backgroundColor
+      
+      switch(assignment.project.costModel) {
+        case 'Non Billable':
+          backgroundColor = 'bg-yellow-500!'
+          break
+        case 'Facility':
+          backgroundColor = 'bg-sky-500!'
+          break
+        case 'Directly Incurred':
+          backgroundColor = 'bg-indigo-500!'
+          break
+        case 'Voluntary':
+          backgroundColor = 'bg-fuchsia-500!'
+          break
+        case 'JobsOC':
+          backgroundColor = 'bg-green-500!'
+          break
+        default:
+          backgroundColor = 'bg-slate-500!'
+      }
+
       state.update(`config.chart.items.${GSTC.api.GSTCID(`assignment-${assignment.documentId}`)}`, item=>{
         item.label = assignment.project.name
         item.time = {
           start: DateTime.fromISO(assignment.start).startOf('day').valueOf(),
           end: DateTime.fromISO(assignment.end).endOf('day').valueOf(),
         }
+        item.classNames = [backgroundColor, 'rounded!']
         return item
       })
     }
