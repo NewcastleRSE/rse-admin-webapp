@@ -73,21 +73,21 @@
                           <div class="sm:col-span-2">
                             <label for="fte" class="block text-sm font-medium leading-6 text-gray-900">FTE</label>
                             <div class="mt-2">
-                              <input id="fte" name="fte" type="number" required v-model="fte" autocomplete="fte" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
+                              <input id="fte" name="fte" type="number" required v-model="fte" autocomplete="fte" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
                             </div>
                           </div>
 
                           <div class="sm:col-span-3">
                             <label for="start-date" class="block text-sm font-medium leading-6 text-gray-900">From</label>
                             <div class="mt-2">
-                              <input type="date" name="start-date" id="start-date" required v-model="startDate" autocomplete="start-date" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
+                              <input type="date" name="start-date" id="start-date" required v-model="startDate" autocomplete="start-date" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
                             </div>
                           </div>
 
                           <div class="sm:col-span-3">
                             <label for="end-date" class="block text-sm font-medium leading-6 text-gray-900">To</label>
                             <div class="mt-2">
-                              <input type="date" name="end-date" id="end-date" required v-model="endDate" autocomplete="end-date" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
+                              <input type="date" name="end-date" id="end-date" required v-model="endDate" autocomplete="end-date" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
                             </div>
                           </div>
 
