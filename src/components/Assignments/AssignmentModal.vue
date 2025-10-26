@@ -2,7 +2,7 @@
     <TransitionRoot as="template" :show="isOpen">
       <Dialog as="div" class="relative z-10">
         <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
-          <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div class="fixed inset-0 bg-gray-500 opacity-75 transition-opacity" />
         </TransitionChild>
   
         <div class="fixed inset-0 z-10 overflow-y-auto">
@@ -23,7 +23,7 @@
                                   <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                                 </ComboboxButton>
 
-                                <ComboboxOptions v-if="filteredProjects.length > 0" class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                <ComboboxOptions v-if="filteredProjects.length > 0" class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-gray-300 ring-opacity-5 focus:outline-none sm:text-sm">
                                   <ComboboxOption v-for="project in filteredProjects" :key="project.documentId" :value="project" as="template" v-slot="{ active, selected }">
                                     <li :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-cyan-600 text-white' : 'text-gray-900']">
                                       <div class="flex items-center">
@@ -50,7 +50,7 @@
                                   <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                                 </ComboboxButton>
 
-                                <ComboboxOptions v-if="filteredRSEs.length > 0" class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                <ComboboxOptions v-if="filteredRSEs.length > 0" class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-gray-300 ring-opacity-5 focus:outline-none sm:text-sm">
                                   <ComboboxOption v-for="rse in filteredRSEs" :key="rse.documentId" :value="rse" as="template" v-slot="{ active, selected }">
                                     <li :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-cyan-600 text-white' : 'text-gray-900']">
                                       <div class="flex items-center">
@@ -73,21 +73,21 @@
                           <div class="sm:col-span-2">
                             <label for="fte" class="block text-sm font-medium leading-6 text-gray-900">FTE</label>
                             <div class="mt-2">
-                              <input id="fte" name="fte" type="number" required v-model="fte" autocomplete="fte" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
+                              <input id="fte" name="fte" type="number" min="0" max="100" required v-model="fte" autocomplete="fte" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
                             </div>
                           </div>
 
                           <div class="sm:col-span-3">
                             <label for="start-date" class="block text-sm font-medium leading-6 text-gray-900">From</label>
                             <div class="mt-2">
-                              <input type="date" name="start-date" id="start-date" required v-model="startDate" autocomplete="start-date" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
+                              <input type="date" name="start-date" id="start-date" required v-model="startDate" autocomplete="start-date" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
                             </div>
                           </div>
 
                           <div class="sm:col-span-3">
                             <label for="end-date" class="block text-sm font-medium leading-6 text-gray-900">To</label>
                             <div class="mt-2">
-                              <input type="date" name="end-date" id="end-date" required v-model="endDate" autocomplete="end-date" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
+                              <input type="date" name="end-date" id="end-date" required v-model="endDate" autocomplete="end-date" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
                             </div>
                           </div>
 
@@ -164,7 +164,6 @@ function toggleModal() {
 
 function createAssignment(assignment, rse, start, end) {
   if(assignment) {
-    console.log(assignment)
     title = 'Edit Assignment'
     assignmentId = assignment.documentId,
     selectedProject.value = assignment.project
@@ -175,9 +174,12 @@ function createAssignment(assignment, rse, start, end) {
   }
   else {
     title = 'Create Assignment'
+    assignmentId = null
+    selectedProject.value = null
     selectedRSE.value = rse
     startDate = DateTime.fromJSDate(start).toISODate()
     endDate = DateTime.fromJSDate(end).toISODate()
+    fte = 50
   }
   
   isOpen.value = true
@@ -189,8 +191,7 @@ async function submit(event) {
   let assignment = null
 
   if(assignmentId) {
-    assignment = await assignmentsStore.updateAssignment({
-      documentId: assignmentId,
+    assignment = await assignmentsStore.updateAssignment(assignmentId, {
       project: selectedProject.value.documentId,
       rse: selectedRSE.value.documentId,
       fte: fte,

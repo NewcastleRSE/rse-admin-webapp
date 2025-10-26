@@ -71,7 +71,7 @@ async function resize(assignmentID, rseID, start, end) {
   assignment.start = DateTime.fromMillis(start).toISODate() !== assignment.start ? DateTime.fromMillis(start).toISODate() : assignment.start
   assignment.end = DateTime.fromMillis(end).toISODate() !== assignment.end ? DateTime.fromMillis(end).toISODate() : assignment.end
 
-  await assignmentsStore.updateAssignment(assignment)
+  await assignmentsStore.updateAssignment(assignmentID, assignment)
 }
 
 function exportCSV() {

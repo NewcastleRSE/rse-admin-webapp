@@ -10,7 +10,7 @@
             </div>
             <div class="hidden md:block">
               <div class="ml-6 flex items-baseline space-x-4">
-                <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-cyan-700 text-white' : 'text-white hover:bg-cyan-500 hover:bg-opacity-75', 'rounded-md px-3 py-2 text-sm font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</a>
+                <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-cyan-700 text-white' : 'text-white hover:bg-cyan-500 hover:opacity-75', 'rounded-md px-3 py-2 text-sm font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</a>
               </div>
             </div>
           </div>
@@ -29,7 +29,7 @@
                   </ListboxButton>
 
                   <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
-                    <ListboxOptions class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                    <ListboxOptions class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-gray-300 ring-opacity-5 focus:outline-none sm:text-sm">
                       <ListboxOption as="template" v-for="year in years" :key="year.id" :value="year" v-slot="{ active, selected }">
                         <li :class="[active ? 'bg-cyan-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-3 pr-9']">
                           <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{ year.name }}</span>
@@ -71,7 +71,7 @@
           </div>
           <div class="-mr-2 flex md:hidden">
             <!-- Mobile menu button -->
-            <DisclosureButton class="inline-flex items-center justify-center rounded-md bg-cyan-600 p-2 text-cyan-200 hover:bg-cyan-500 hover:bg-opacity-75 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-cyan-600">
+            <DisclosureButton class="inline-flex items-center justify-center rounded-md bg-cyan-600 p-2 text-cyan-200 hover:bg-cyan-500 hover:opacity-75 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-cyan-600">
               <span class="sr-only">Open main menu</span>
               <Bars3Icon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
               <XMarkIcon v-else class="block h-6 w-6" aria-hidden="true" />
@@ -82,7 +82,7 @@
 
       <DisclosurePanel class="md:hidden">
         <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
-          <DisclosureButton v-for="item in navigation" :key="item.name" as="a" :href="item.href" :class="[item.current ? 'bg-cyan-700 text-white' : 'text-white hover:bg-cyan-500 hover:bg-opacity-75', 'block rounded-md px-3 py-2 text-base font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</DisclosureButton>
+          <DisclosureButton v-for="item in navigation" :key="item.name" as="a" :href="item.href" :class="[item.current ? 'bg-cyan-700 text-white' : 'text-white hover:bg-cyan-500 hover:opacity-75', 'block rounded-md px-3 py-2 text-base font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</DisclosureButton>
         </div>
         <div class="border-t border-cyan-700 pb-3 pt-4">
           <div class="flex items-center px-5">
@@ -99,7 +99,7 @@
             </button>
           </div>
           <div class="mt-3 space-y-1 px-2">
-            <DisclosureButton v-for="item in userNavigation" :key="item.name" as="a" :href="item.href" class="block rounded-md px-3 py-2 text-base font-medium text-white hover:bg-cyan-500 hover:bg-opacity-75">{{ item.name }}</DisclosureButton>
+            <DisclosureButton v-for="item in userNavigation" :key="item.name" as="a" :href="item.href" class="block rounded-md px-3 py-2 text-base font-medium text-white hover:bg-cyan-500 hover:opacity-75">{{ item.name }}</DisclosureButton>
           </div>
         </div>
       </DisclosurePanel>

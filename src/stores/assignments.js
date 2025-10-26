@@ -6,8 +6,8 @@ import { DateTime, Interval } from 'luxon'
 import { fetchObjects } from '../utils/orm'
 
 export const useAssignmentsStore = defineStore('assignments', () => {
-    
-    const populateQuery = 'populate[rse][fields][0]=id&populate[rse][fields][1]=displayName&populate[project][fields][0]=id&populate[project][fields][1]=name'
+
+    const populateQuery = 'populate[rse][fields][0]=id&populate[rse][fields][1]=displayName&populate[project][fields][0]=id&populate[project][fields][1]=name&populate[project][fields][2]=costModel'
     const store = useUserStore()
     const assignments = ref([])
 
@@ -95,7 +95,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       
       const populateAssignments = {
         project: {
-          fields: ['id', 'name'],
+          fields: ['id', 'name', 'costModel'],
         },
         rse: {
           fields: ['id', 'displayName'],
@@ -119,8 +119,8 @@ export const useAssignmentsStore = defineStore('assignments', () => {
       })
     }
 
-    async function updateAssignment (assignment) {
-      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignment.documentId}?${populateQuery}`, 
+    async function updateAssignment (assignmentId, assignment) {
+      return axios.put(`${import.meta.env.VITE_API_URL}/assignments/${assignmentId}?${populateQuery}`, 
         { 
           data: assignment
         },
@@ -129,12 +129,9 @@ export const useAssignmentsStore = defineStore('assignments', () => {
             Authorization: `Bearer ${store.jwt}`
           }
       }).then(response => {
-        let updatedAssignment = response.data.data
-        updatedAssignment.rse = {documentId: response.data.data.rse.documentId, displayName: response.data.data.rse.displayName}
-        updatedAssignment.project = response.data.data.project
-
-        const position = assignments.value.map(e => e.documentId).indexOf(assignment.documentId)
-        assignments.value[position] = updatedAssignment
+        // find and update assignment in store
+        const position = assignments.value.map(e => e.documentId).indexOf(assignmentId)
+        assignments.value[position] = response.data.data
       })
     }
 
