@@ -165,11 +165,14 @@ export default {
             let cells = selected['chart-timeline-grid-row-cell']
 
             // Selection includes cells
-            if (cells.length) {
+            if (cells.length && cells[0].row && cells[0].row.id.includes('assignments')) {
               let rseID = cells[0].row.assignments.split('-')[2],
                   rse = props.rses.find(rse => rse.documentId == rseID)
 
               emit('create', rse, cells[0].time.leftGlobalDate.$d, cells[cells.length-1].time.rightGlobalDate.$d)
+              gstc.api.plugins.Selection.selectItems([])
+            }
+            else {
               gstc.api.plugins.Selection.selectItems([])
             }
 

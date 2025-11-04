@@ -8,48 +8,36 @@
         <div class="fixed inset-0 z-10 overflow-y-auto">
           <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-              <DialogPanel class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
-                <form @submit="submit">
+              <DialogPanel class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl">
+                <DialogTitle as="h3" class="mt-4 px-4 sm:px-6 text-base font-semibold leading-6 text-gray-900">{{ title }}</DialogTitle>
+                <div class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
+                  <button type="button" class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-cyan-600 dark:bg-gray-800 dark:hover:text-gray-300 dark:focus:outline-white cursor-pointer" @click="toggleModal()">
+                    <span class="sr-only">Close</span>
+                    <XMarkIcon class="size-6" aria-hidden="true" />
+                  </button>
+                </div>
+                <form @submit="submit" autocomplete="off">
+                  <div class="px-0 py-4">
+                    <nav aria-label="Progress">
+                      <ol role="list" class="grid grid-cols-4 gap-0">
+                        <!--<li v-for="(step, index) in steps" :key="step.name" @click="selectStep(index)" :class="step.active ? 'border-cyan-600!' : '', step.valid ? 'border-green-600!' : ''" class="group flex flex-col border-b-4 py-2 px-4 first:pl-4 first:sm:pl-6 last:pr-4 last:sm:pr-6 border-gray-300 cursor-pointer">-->
+                        <li v-for="(step, index) in steps" :key="step.name" :class="step.active ? 'border-cyan-600!' : '', step.valid ? 'border-green-600!' : ''" class="group flex flex-col border-b-4 py-2 px-4 first:pl-4 first:sm:pl-6 last:pr-4 last:sm:pr-6 border-gray-300">
+                          <span class="text-sm font-medium text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300">{{ step.title }}</span>
+                          <span class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ step.subTitle }}</span>
+                        </li>
+                      </ol>
+                    </nav>
+                  </div>
                   <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div class="mt-3 text-center sm:mt-0 sm:text-left">
-                      <DialogTitle as="h3" class="mb-6 text-base font-semibold leading-6 text-gray-900">{{ title }}</DialogTitle>
-                        <div class="grid grid-cols-6 gap-x-6 gap-y-8">
-                          <div class="sm:col-span-6">
-                            <Combobox as="div" v-model="selectedProject" nullable>
-                              <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">Project</ComboboxLabel>
-                              <div class="relative mt-2">
-                                <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" required @change="projectQuery = $event.target.value" :display-value="(project) => project?.name" />
-                                <ComboboxButton class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                                  <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                </ComboboxButton>
-
-                                <ComboboxOptions v-if="filteredProjects.length > 0" class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-gray-300 ring-opacity-5 focus:outline-none sm:text-sm">
-                                  <ComboboxOption v-for="project in filteredProjects" :key="project.documentId" :value="project" as="template" v-slot="{ active, selected }">
-                                    <li :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-cyan-600 text-white' : 'text-gray-900']">
-                                      <div class="flex items-center">
-                                        <span :class="['ml-3 truncate', selected && 'font-semibold']">
-                                          {{ project.name }}
-                                        </span>
-                                      </div>
-
-                                      <span v-if="selected" :class="['absolute inset-y-0 right-0 flex items-center pr-4', active ? 'text-white' : 'text-cyan-600']">
-                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                      </span>
-                                    </li>
-                                  </ComboboxOption>
-                                </ComboboxOptions>
-                              </div>
-                            </Combobox>
-                          </div>
-                          <div class="sm:col-span-4">
-                            <Combobox as="div" v-model="selectedRSE" nullable>
+                      <div v-if="steps[0].active" class="text-lg font-medium leading-6 text-gray-900">
+                        <Combobox as="div" v-model="selectedRSE" nullable>
                               <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">RSE</ComboboxLabel>
                               <div class="relative mt-2">
-                                <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" required @change="rseQuery = $event.target.value" :display-value="(rse) => `${rse?.displayName}`" />
+                                <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus-visible:ring-0 focus:ring-inset focus:ring-cyan-600 focus-visible:ring-cyan-600 sm:text-sm sm:leading-6" required @change="rseQuery = $event.target.value" :display-value="(rse) => `${rse?.displayName}`" />
                                 <ComboboxButton class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
                                   <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                                 </ComboboxButton>
-
                                 <ComboboxOptions v-if="filteredRSEs.length > 0" class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-gray-300 ring-opacity-5 focus:outline-none sm:text-sm">
                                   <ComboboxOption v-for="rse in filteredRSEs" :key="rse.documentId" :value="rse" as="template" v-slot="{ active, selected }">
                                     <li :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-cyan-600 text-white' : 'text-gray-900']">
@@ -59,7 +47,6 @@
                                           {{ rse.displayName }}
                                         </span>
                                       </div>
-
                                       <span v-if="selected" :class="['absolute inset-y-0 right-0 flex items-center pr-4', active ? 'text-white' : 'text-cyan-600']">
                                         <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                       </span>
@@ -69,29 +56,115 @@
                               </div>
                             </Combobox>
                           </div>
-
-                          <div class="sm:col-span-2">
-                            <label for="fte" class="block text-sm font-medium leading-6 text-gray-900">FTE</label>
-                            <div class="mt-2">
-                              <input id="fte" name="fte" type="number" min="0" max="100" required v-model="fte" autocomplete="fte" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
-                            </div>
+                      <div v-else-if="steps[1].active" class="text-lg font-medium leading-6 text-gray-900">
+                        <Combobox as="div" v-model="selectedProject" nullable>
+                          <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">Project</ComboboxLabel>
+                          <div class="relative mt-2">
+                            <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" required @change="projectQuery = $event.target.value" :display-value="(project) => project?.name" />
+                            <ComboboxButton class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                              <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                            </ComboboxButton>
+                            <ComboboxOptions v-if="filteredProjects.length > 0" class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-gray-300 ring-opacity-5 focus:outline-none sm:text-sm">
+                              <ComboboxOption v-for="project in filteredProjects" :key="project.documentId" :value="project" as="template" v-slot="{ active, selected }">
+                                <li :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-cyan-600 text-white' : 'text-gray-900']">
+                                  <div class="flex items-center">
+                                    <span :class="['ml-3 truncate', selected && 'font-semibold']">
+                                      {{ project.name }}
+                                    </span>
+                                  </div>
+                                  <span v-if="selected" :class="['absolute inset-y-0 right-0 flex items-center pr-4', active ? 'text-white' : 'text-cyan-600']">
+                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                  </span>
+                                </li>
+                              </ComboboxOption>
+                            </ComboboxOptions>
                           </div>
+                        </Combobox>
+                        <div v-if="selectedProject" class="mt-6 mx-3">
+                          <div class="px-4 sm:px-0">
+                            <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">{{ selectedProject.contacts[0].displayName }}<span v-if="selectedProject.contacts[0].jobTitle">, {{ selectedProject.contacts[0].jobTitle }}</span></h3>
+                            <p class="mt-1 max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400">{{ selectedProject.contacts[0].email }}</p>
+                          </div>
+                          <div class="mt-2">
+                            <dl class="grid grid-cols-1 sm:grid-cols-2">
+                              <div class="border-t border-gray-100 px-4 py-2 sm:col-span-1 sm:px-0 dark:border-white/10">
+                                <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Faculty</dt>
+                                <dd class="mt-1 text-sm/6 text-gray-700 sm:mt-2 dark:text-gray-400">{{ selectedProject.faculty }}</dd>
+                              </div>
+                              <div class="border-t border-gray-100 px-4 py-2 sm:col-span-1 sm:px-0 dark:border-white/10">
+                                <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">School</dt>
+                                <dd class="mt-1 text-sm/6 text-gray-700 sm:mt-2 dark:text-gray-400">{{ selectedProject.school }}</dd>
+                              </div>
+                              <div class="border-t border-gray-100 px-4 py-2 sm:col-span-1 sm:px-0 dark:border-white/10">
+                                <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Funder</dt>
+                                <dd class="mt-1 text-sm/6 text-gray-700 sm:mt-2 dark:text-gray-400">{{ selectedProject.funder }}</dd>
+                              </div>
+                              <div class="border-t border-gray-100 px-4 py-2 sm:col-span-1 sm:px-0 dark:border-white/10">
+                                <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Cost Model</dt>
+                                <dd class="mt-1 text-sm/6 text-gray-700 sm:mt-2 dark:text-gray-400">{{ selectedProject.costModel }}</dd>
+                              </div>
+                              <div class="border-t border-gray-100 px-4 py-2 sm:col-span-1 sm:px-0 dark:border-white/10">
+                                <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">NUP Number</dt>
+                                <dd class="mt-1 text-sm/6 text-gray-700 sm:mt-2 dark:text-gray-400">{{ selectedProject.nuProjects }}</dd>
+                              </div>
+                              <div class="border-t border-gray-100 px-4 py-2 sm:col-span-1 sm:px-0 dark:border-white/10">
+                                <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Burndown<div class="inline-flex items-baseline rounded-full bg-green-100 ml-2 px-2.5 py-0.5 text-sm font-medium text-green-800 md:mt-2 lg:mt-0 dark:bg-green-400/10 dark:text-green-400">{{ ((burndown.spent / burndown.estimate) * 100).toFixed(2) }}%</div></dt>
+                                <dd class="mt-1 text-sm/6 text-gray-700 sm:mt-2 dark:text-gray-400">   
+                                  {{ burndown.spent }} of {{ burndown.estimate }} days
+                                </dd>
+                              </div>
+                            </dl>
+                          </div>
+                        </div>
+                      </div>
+                      <div v-else-if="steps[2].active" class="text-lg font-medium leading-6 text-gray-900">
+                        <div class="flex">
 
-                          <div class="sm:col-span-3">
+                          <div class="basis-4/12 pr-2">
                             <label for="start-date" class="block text-sm font-medium leading-6 text-gray-900">From</label>
                             <div class="mt-2">
-                              <input type="date" name="start-date" id="start-date" required v-model="startDate" autocomplete="start-date" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
+                              <input type="date" name="start-date" id="start-date" required v-model="allocation.start" autocomplete="start-date" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
                             </div>
                           </div>
 
-                          <div class="sm:col-span-3">
+                          <div class="basis-4/12 px-2">
                             <label for="end-date" class="block text-sm font-medium leading-6 text-gray-900">To</label>
                             <div class="mt-2">
-                              <input type="date" name="end-date" id="end-date" required v-model="endDate" autocomplete="end-date" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
+                              <input type="date" name="end-date" id="end-date" required v-model="allocation.end" autocomplete="end-date" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
+                            </div>
+                          </div>
+
+                          <div class="basis-4/12 pl-2">
+                            <label for="fte" class="block text-sm font-medium leading-6 text-gray-900">FTE</label>
+                            <div class="mt-2">
+                              <input id="fte" name="fte" type="number" min="0" max="100" required v-model="allocation.fte" autocomplete="fte" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
                             </div>
                           </div>
 
                         </div>
+                      </div>
+                      <div v-else-if="steps[3].active" class="text-lg font-medium leading-6 text-gray-900">
+                        <div class="border-t border-gray-100 dark:border-white/10">
+                          <dl class="divide-y divide-gray-100 dark:divide-white/10">
+                            <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                              <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">RSE</dt>
+                              <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-400">{{selectedRSE.displayName}}</dd>
+                            </div>
+                            <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                              <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Project</dt>
+                              <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-400 truncate">{{ selectedProject.name }}</dd>
+                            </div>
+                            <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                              <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Dates</dt>
+                              <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-400">{{ allocation.start }} to {{ allocation.end }}</dd>
+                            </div>
+                            <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                              <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">FTE</dt>
+                              <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-400">{{ allocation.fte }}% ({{ steps[2].subTitle }})</dd>
+                            </div>
+                          </dl>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="bg-gray-50 px-4 py-3 sm:px-6 justify-between flex">
@@ -99,8 +172,9 @@
                       <button v-if="assignmentId" type="button" class="inline-flex w-full justify-center self-start rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:w-auto" @click="remove()">Delete</button>
                     </div>
                     <div class="sm:flex sm:flex-row-reverse">
-                      <button type="submit" class="inline-flex w-full justify-center rounded-md bg-cyan-600 disabled:opacity-25 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500 sm:ml-3 sm:w-auto">Submit</button>
-                      <button type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="toggleModal()" ref="cancelButtonRef">Cancel</button>
+                      <button v-if="steps[3].active" type="submit" class="inline-flex w-full justify-center rounded-md bg-cyan-600 disabled:opacity-25 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500 sm:ml-3 sm:w-auto cursor-pointer disabled:cursor-not-allowed">Submit</button>
+                      <button v-else type="button" :disabled="!steps.find(({ active }) => active === true).valid" class="mt-3 ml-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none cursor-pointer disabled:cursor-not-allowed" @click="selectStep(steps.findIndex(({ active }) => active === true) + 1)" ref="nextButtonRef">Next</button>
+                      <button type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto cursor-pointer disabled:cursor-not-allowed" @click="selectStep(steps.findIndex(({ active }) => active === true) - 1)" >Back</button>
                     </div>
                   </div>
                 </form>
@@ -113,11 +187,12 @@
   </template>
   
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxLabel, ComboboxOption, ComboboxOptions, Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
+import { CheckIcon, ChevronUpDownIcon, XMarkIcon } from '@heroicons/vue/20/solid'
 import { useAssignmentsStore, useRSEsStore, useProjectsStore } from '../../stores'
-import { DateTime } from 'luxon'
+import { DateTime, Duration } from 'luxon'
+import { workingDaysDiff } from '../../utils/dates'
 
 const assignmentsStore = useAssignmentsStore(),
       projectsStore = useProjectsStore(),
@@ -129,22 +204,32 @@ const isOpen = ref(false),
       projectQuery = ref(''),
       rseQuery = ref('')
 
+const steps = ref([
+  { title: 'RSE', subTitle: 'None', valid: false, active: true },
+  { title: 'Project', subTitle: 'None', valid: false, active: false },
+  { title: 'Allocation', subTitle: 'None', valid: false, active: false },
+  { title: 'Assignment', subTitle: 'Summary', valid: false, active: false },
+])
+
+function selectStep(index){
+  steps.value.forEach(step => step.active = false)
+  steps.value[index].active = true
+}
+
 const defaultState = {
   assignmentId: null,
-  project: null,
   rse: null,
-  fte: 50,
-  startDate: null,
-  endDate: null
+  project: null,
+  burndown: { estimate: 0, spent: 0 },
+  allocation: { fte: 50, start: null, end: null }
 }
 
 let title = '',
     assignmentId = null,
-    selectedProject = ref(null),
     selectedRSE = ref(null),
-    fte = 50,
-    startDate = null,
-    endDate = null
+    selectedProject = ref(null),
+    burndown = ref({ estimate: 0, spent: 0 }),
+    allocation = ref({ fte: 50, start: null, end: null })
 
 const filteredProjects = computed(() =>
   projectQuery.value === '' ? projects : projects.filter((project) => {
@@ -158,6 +243,49 @@ const filteredRSEs = computed(() =>
   })
 )
 
+watch(selectedRSE, (rse) => {
+  if(rse) {
+    steps.value[0].subTitle = rse.displayName
+    steps.value[0].valid = true
+  }
+  else {
+    steps.value[0].subTitle = 'Required'
+    steps.value[0].valid = false
+  }
+})
+
+watch(selectedProject, (project) => {
+  if(project) {
+    steps.value[1].subTitle = project.name
+    steps.value[1].valid = true
+
+    const estimateDuration = Duration.fromISO(project.estimate)
+    const spentDuration = Duration.fromISO(project.spent)
+
+    burndown.value.estimate = (estimateDuration.toFormat("hh") / 7.26).toFixed(0)
+    burndown.value.spent = (spentDuration.toFormat("hh") / 7.26).toFixed(0)
+  }
+  else {
+    steps.value[1].subTitle = 'Required'
+    steps.value[1].valid = false
+  }
+})
+
+watch(allocation, (alloc) => {
+
+  if(alloc.start && alloc.end && (alloc.fte > 0 && alloc.fte <= 100)) {
+
+    const workingDays = workingDaysDiff(DateTime.fromISO(alloc.start), DateTime.fromISO(alloc.end))
+
+    steps.value[2].subTitle = `${workingDays * (alloc.fte / 100)} Days`
+    steps.value[2].valid = true
+  }
+  else {
+    steps.value[2].subTitle = 'None'
+    steps.value[2].valid = false
+  }
+}, { deep: true })
+
 function toggleModal() {
   isOpen.value = !isOpen.value
 }
@@ -168,18 +296,28 @@ function createAssignment(assignment, rse, start, end) {
     assignmentId = assignment.documentId,
     selectedProject.value = assignment.project
     selectedRSE.value = assignment.rse
-    startDate = DateTime.fromISO(assignment.start).toISODate()
-    endDate = DateTime.fromISO(assignment.end).toISODate()
-    fte = assignment.fte
+    allocation.value = {
+      fte: assignment.fte,
+      start: DateTime.fromISO(start).toISODate(),
+      end: DateTime.fromISO(end).toISODate()
+    }
   }
   else {
     title = 'Create Assignment'
     assignmentId = null
     selectedProject.value = null
     selectedRSE.value = rse
-    startDate = DateTime.fromJSDate(start).toISODate()
-    endDate = DateTime.fromJSDate(end).toISODate()
-    fte = 50
+    allocation.value = defaultState.allocation
+
+    if(rse) {
+      // Pre-fill first step if RSE is provided
+      steps.value[0].subTitle = rse.displayName
+      steps.value[0].active = false
+      steps.value[0].valid = true
+
+      // Move to project selection
+      steps.value[1].active = true
+    }
   }
   
   isOpen.value = true
@@ -194,9 +332,9 @@ async function submit(event) {
     assignment = await assignmentsStore.updateAssignment(assignmentId, {
       project: selectedProject.value.documentId,
       rse: selectedRSE.value.documentId,
-      fte: fte,
-      start: startDate,
-      end: endDate
+      fte: allocation.value.fte,
+      start: allocation.value.start,
+      end: allocation.value.end
     })
 
     emits('editedAssignment', assignment)
@@ -205,9 +343,9 @@ async function submit(event) {
     assignment = await assignmentsStore.createAssignment({
       project: selectedProject.value.documentId,
       rse: selectedRSE.value.documentId,
-      fte: fte,
-      start: startDate,
-      end: endDate
+      fte: allocation.value.fte,
+      start: allocation.value.start,
+      end: allocation.value.end
     })
 
     emits('createdAssignment', assignment)
@@ -215,9 +353,7 @@ async function submit(event) {
 
   selectedProject.value = defaultState.project
   selectedRSE.value = defaultState.rse
-  fte = defaultState.fte
-  startDate = defaultState.startDate
-  endDate = defaultState.endDate
+  allocation.value = defaultState.allocation
 
   isOpen.value = false
 
@@ -226,11 +362,10 @@ async function submit(event) {
 async function remove() {
   await assignmentsStore.deleteAssignment(assignmentId)
 
-  selectedProject.value = defaultState.project
   selectedRSE.value = defaultState.rse
-  fte = defaultState.fte
-  startDate = defaultState.startDate
-  endDate = defaultState.endDate
+  selectedProject.value = defaultState.project
+  burndown.value = defaultState.burndown
+  allocation.value = defaultState.allocation
 
   emits('removedAssignment')
 
