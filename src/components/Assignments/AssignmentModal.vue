@@ -19,11 +19,38 @@
                 <form @submit="submit" autocomplete="off">
                   <div class="px-0 py-4">
                     <nav aria-label="Progress">
-                      <ol role="list" class="grid grid-cols-4 gap-0">
-                        <!--<li v-for="(step, index) in steps" :key="step.name" @click="selectStep(index)" :class="step.active ? 'border-cyan-600!' : '', step.valid ? 'border-green-600!' : ''" class="group flex flex-col border-b-4 py-2 px-4 first:pl-4 first:sm:pl-6 last:pr-4 last:sm:pr-6 border-gray-300 cursor-pointer">-->
-                        <li v-for="(step, index) in steps" :key="step.name" :class="step.active ? 'border-cyan-600!' : '', step.valid ? 'border-green-600!' : ''" class="group flex flex-col border-b-4 py-2 px-4 first:pl-4 first:sm:pl-6 last:pr-4 last:sm:pr-6 border-gray-300">
-                          <span class="text-sm font-medium text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300">{{ step.title }}</span>
-                          <span class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ step.subTitle }}</span>
+                      <ol role="list" class="divide-y divide-gray-300 border-y border-gray-300 md:flex md:divide-y-0 dark:divide-white/15 dark:border-white/15">
+                        <li v-for="(step, stepIdx) in steps" :key="step.name" class="relative md:flex md:flex-1">
+                          <div v-if="step.valid" class="group flex w-full items-center">
+                            <span class="flex items-center px-6 py-4 text-sm font-medium">
+                              <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-cyan-600 group-hover:bg-cyan-800 dark:bg-cyan-500 dark:group-hover:bg-cyan-400">
+                                <CheckIcon class="size-6 text-white" aria-hidden="true" />
+                              </span>
+                              <span class="ml-4 text-sm font-medium text-gray-900 dark:text-white line-clamp-2">{{ step.name }}</span>
+                            </span>
+                          </div>
+                          <div v-else-if="step.active" class="flex items-center px-6 py-4 text-sm font-medium" aria-current="step">
+                            <span class="flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-cyan-600 dark:border-cyan-400">
+                              <span class="text-cyan-600 dark:text-cyan-400">{{ step.id }}</span>
+                            </span>
+                            <span class="ml-4 text-sm font-medium text-cyan-600 dark:text-cyan-400 line-clamp-2">{{ step.name }}</span>
+                          </div>
+                          <div v-else class="group flex items-center">
+                            <span class="flex items-center px-6 py-4 text-sm font-medium">
+                              <span class="flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-gray-300 group-hover:border-gray-400 dark:border-white/15 dark:group-hover:border-white/25">
+                                <span class="text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white">{{ step.id }}</span>
+                              </span>
+                              <span class="ml-4 text-sm font-medium text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white line-clamp-2">{{ step.name }}</span>
+                            </span>
+                          </div>
+                          <template v-if="stepIdx !== steps.length - 1">
+                            <!-- Arrow separator for lg screens and up -->
+                            <div class="absolute top-0 right-0 hidden h-full w-5 md:block" aria-hidden="true">
+                              <svg class="size-full text-gray-300 dark:text-white/15" viewBox="0 0 22 80" fill="none" preserveAspectRatio="none">
+                                <path d="M0 -2L20 40L0 82" vector-effect="non-scaling-stroke" stroke="currentcolor" stroke-linejoin="round" />
+                              </svg>
+                            </div>
+                          </template>
                         </li>
                       </ol>
                     </nav>
@@ -160,7 +187,7 @@
                             </div>
                             <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                               <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">FTE</dt>
-                              <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-400">{{ allocation.fte }}% ({{ steps[2].subTitle }})</dd>
+                              <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-400">{{ allocation.fte }}% ({{ steps[2].name }})</dd>
                             </div>
                           </dl>
                         </div>
@@ -189,7 +216,8 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxLabel, ComboboxOption, ComboboxOptions, Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { CheckIcon, ChevronUpDownIcon, XMarkIcon } from '@heroicons/vue/20/solid'
+import { ChevronUpDownIcon, XMarkIcon } from '@heroicons/vue/20/solid'
+import { CheckIcon } from '@heroicons/vue/24/solid'
 import { useAssignmentsStore, useRSEsStore, useProjectsStore } from '../../stores'
 import { DateTime, Duration } from 'luxon'
 import { workingDaysDiff } from '../../utils/dates'
@@ -205,10 +233,10 @@ const isOpen = ref(false),
       rseQuery = ref('')
 
 const steps = ref([
-  { title: 'RSE', subTitle: 'None', valid: false, active: true },
-  { title: 'Project', subTitle: 'None', valid: false, active: false },
-  { title: 'Allocation', subTitle: 'None', valid: false, active: false },
-  { title: 'Assignment', subTitle: 'Summary', valid: false, active: false },
+  { id: '01', name: 'RSE', valid: false, active: true },
+  { id: '02', name: 'Project', valid: false, active: false },
+  { id: '03', name: 'Allocation', valid: false, active: false },
+  { id: '04', name: 'Assignment', valid: false, active: false },
 ])
 
 function selectStep(index){
@@ -245,18 +273,18 @@ const filteredRSEs = computed(() =>
 
 watch(selectedRSE, (rse) => {
   if(rse) {
-    steps.value[0].subTitle = rse.displayName
+    steps.value[0].name = rse.displayName
     steps.value[0].valid = true
   }
   else {
-    steps.value[0].subTitle = 'Required'
+    steps.value[0].name = 'RSE'
     steps.value[0].valid = false
   }
 })
 
 watch(selectedProject, (project) => {
   if(project) {
-    steps.value[1].subTitle = project.name
+    steps.value[1].name = project.name
     steps.value[1].valid = true
 
     const estimateDuration = Duration.fromISO(project.estimate)
@@ -266,7 +294,7 @@ watch(selectedProject, (project) => {
     burndown.value.spent = (spentDuration.toFormat("hh") / 7.26).toFixed(0)
   }
   else {
-    steps.value[1].subTitle = 'Required'
+    steps.value[1].name = 'Project'
     steps.value[1].valid = false
   }
 })
@@ -277,11 +305,11 @@ watch(allocation, (alloc) => {
 
     const workingDays = workingDaysDiff(DateTime.fromISO(alloc.start), DateTime.fromISO(alloc.end))
 
-    steps.value[2].subTitle = `${workingDays * (alloc.fte / 100)} Days`
+    steps.value[2].name = `${workingDays * (alloc.fte / 100)} Days`
     steps.value[2].valid = true
   }
   else {
-    steps.value[2].subTitle = 'None'
+    steps.value[2].name = 'Allocation'
     steps.value[2].valid = false
   }
 }, { deep: true })
@@ -311,7 +339,7 @@ function createAssignment(assignment, rse, start, end) {
 
     if(rse) {
       // Pre-fill first step if RSE is provided
-      steps.value[0].subTitle = rse.displayName
+      steps.value[0].name = rse.displayName
       steps.value[0].active = false
       steps.value[0].valid = true
 
