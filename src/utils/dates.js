@@ -11,8 +11,12 @@ DateTime.prototype.businessDiff = function(d2, relative) {
     return daysBetween;
   }
 
+  const closures = JSON.parse(localStorage.getItem('facilities')).closureDates
+
+  const closureDates = closures.map(closure => DateTime.fromISO(closure.date).toISODate())
+
   while (start.startOf('day') < end.startOf('day')) {
-    if (start.isBusinessDay()) {
+    if (start.isBusinessDay() && !closureDates.includes(start.toISODate())) {
       daysBetween += 1;
     }
     start = start.plus({ days: 1 })
@@ -35,7 +39,7 @@ export function workingDaysDiff(from, to) {
       // Convert to luxon-business-days DateTime objects
       const start = DateTime.fromISO(from.toISO())
       const end = DateTime.fromISO(to.toISO())
-      
+
       return end.plus({ days: 1 }).businessDiff(start, ['days'])
     }
 }
