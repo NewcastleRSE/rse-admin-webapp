@@ -319,15 +319,16 @@ function toggleModal() {
 }
 
 function createAssignment(assignment, rse, start, end) {
+
   if(assignment) {
     title = 'Edit Assignment'
     assignmentId = assignment.documentId,
-    selectedProject.value = assignment.project
+    selectedProject.value = projects.find(project => project.documentId === assignment.project.documentId)
     selectedRSE.value = assignment.rse
     allocation.value = {
       fte: assignment.fte,
-      start: DateTime.fromISO(start).toISODate(),
-      end: DateTime.fromISO(end).toISODate()
+      start: assignment.start,
+      end: assignment.end
     }
   }
   else {
@@ -335,7 +336,11 @@ function createAssignment(assignment, rse, start, end) {
     assignmentId = null
     selectedProject.value = null
     selectedRSE.value = rse
-    allocation.value = defaultState.allocation
+    allocation.value = {
+      fte: defaultState.allocation.fte,
+      start: DateTime.fromJSDate(start).toISODate(),
+      end: DateTime.fromJSDate(end).toISODate()
+    }
 
     if(rse) {
       // Pre-fill first step if RSE is provided
