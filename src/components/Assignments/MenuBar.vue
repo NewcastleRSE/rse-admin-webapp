@@ -30,6 +30,11 @@
                 </transition>
               </div>
             </Listbox>
+            <div class="ml-4 flex justify-center space-x-2">
+              <span class="inline-flex items-center rounded-md bg-sky-100 px-2 py-1 my-1 text-sm font-medium text-sky-600 dark:bg-sky-400/10 dark:text-sky-400">Day Rate</span>
+              <span class="inline-flex items-center rounded-md bg-indigo-100 px-2 py-1 my-1 text-sm font-medium text-indigo-700 dark:bg-indigo-400/10 dark:text-indigo-400">Directly Incurred</span>
+              <span class="inline-flex items-center rounded-md bg-yellow-100 px-2 py-1 my-1 text-sm font-medium text-yellow-800 dark:bg-yellow-400/10 dark:text-yellow-500">Non-Billable</span>
+            </div>
           </div>
         </div>
         <div class="flex lg:flex-grow items-center">
