@@ -165,11 +165,14 @@ export default {
             let cells = selected['chart-timeline-grid-row-cell']
 
             // Selection includes cells
-            if (cells.length) {
+            if (cells.length && cells[0].row && cells[0].row.id.includes('assignments')) {
               let rseID = cells[0].row.assignments.split('-')[2],
                   rse = props.rses.find(rse => rse.documentId == rseID)
 
               emit('create', rse, cells[0].time.leftGlobalDate.$d, cells[cells.length-1].time.rightGlobalDate.$d)
+              gstc.api.plugins.Selection.selectItems([])
+            }
+            else {
               gstc.api.plugins.Selection.selectItems([])
             }
 
@@ -330,7 +333,7 @@ export default {
         }
         // Deleted assignment
         else if(mutation.events.type === 'delete') {
-          deleteAssignments()
+          deleteAssignment(mutation.events.oldValue)
         }
         // Edited Assignment
         else {
@@ -448,22 +451,14 @@ export default {
         return item
       })
     }
-    function deleteAssignments(){
-      const selectedItems = gstc.api.plugins.Selection.getSelected()['chart-timeline-items-row-item']
-      state.update('config.plugin.Selection.lastSelecting.chart-timeline-items-row-item',[])
-      gstc.api.plugins.Selection.selectItems([])
-
-      const allItems = state.get('config.chart.items')
-
-      for(const item of selectedItems) {
-        delete allItems[item.id];
-      }
-
-      state.update('config.chart.items', allItems)
-
-      // Return the items that have been deleted
-      return selectedItems
+    
+    function deleteAssignment(assignment) {
+      state.update('config.chart.items', (items) => {
+        delete items[GSTC.api.GSTCID(`assignment-${assignment.documentId}`)]
+        return items
+      })
     }
+
     function getSelectedItems() {
       return state
         .get(`config.plugin.Selection.selected.chart-timeline-items-row-item`)
@@ -488,7 +483,7 @@ export default {
       changeFY,
       addAssignment,
       updateAssignment,
-      deleteAssignments,
+      deleteAssignment,
       getSelectedAssignments,
     }
   }
