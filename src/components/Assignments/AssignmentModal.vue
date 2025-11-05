@@ -201,7 +201,7 @@
                     <div class="sm:flex sm:flex-row-reverse">
                       <button v-if="steps[3].active" type="submit" class="inline-flex w-full justify-center rounded-md bg-cyan-600 disabled:opacity-25 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500 sm:ml-3 sm:w-auto cursor-pointer disabled:cursor-not-allowed">Submit</button>
                       <button v-else type="button" :disabled="!steps.find(({ active }) => active === true).valid" class="mt-3 ml-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none cursor-pointer disabled:cursor-not-allowed" @click="selectStep(steps.findIndex(({ active }) => active === true) + 1)" ref="nextButtonRef">Next</button>
-                      <button type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto cursor-pointer disabled:cursor-not-allowed" @click="selectStep(steps.findIndex(({ active }) => active === true) - 1)" >Back</button>
+                      <button v-if="steps.findIndex(step => step.active) > 0" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto cursor-pointer disabled:cursor-not-allowed" @click="selectStep(steps.findIndex(({ active }) => active === true) - 1)" >Back</button>
                     </div>
                   </div>
                 </form>
