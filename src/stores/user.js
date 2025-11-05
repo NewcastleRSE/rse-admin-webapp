@@ -25,6 +25,7 @@ export const useUserStore = defineStore('user', () => {
             projectsStore.fetchProjects(year),
             assignmentsStore.fetchAssignments(year),
             facilitiesStore.fetchFacilities(year),
+            facilitiesStore.fetchClosureDates(year),
             invoicesStore.fetchInvoices(year),
             rsesStore.fetchRSEs(year),
             transactionsStore.fetchTransactions(year)
