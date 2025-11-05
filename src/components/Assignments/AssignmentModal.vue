@@ -319,7 +319,6 @@ function toggleModal() {
 }
 
 function createAssignment(assignment, rse, start, end) {
-
   if(assignment) {
     title = 'Edit Assignment'
     assignmentId = assignment.documentId,
@@ -400,6 +399,8 @@ async function remove() {
   selectedProject.value = defaultState.project
   burndown.value = defaultState.burndown
   allocation.value = defaultState.allocation
+
+  selectStep(0)
 
   emits('removedAssignment')
 
