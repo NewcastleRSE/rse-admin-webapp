@@ -175,11 +175,11 @@
                           <dl class="divide-y divide-gray-100 dark:divide-white/10">
                             <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                               <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">RSE</dt>
-                              <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-400">{{selectedRSE.displayName}}</dd>
+                              <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-400">{{selectedRSE?.displayName}}</dd>
                             </div>
                             <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                               <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Project</dt>
-                              <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-400 truncate">{{ selectedProject.name }}</dd>
+                              <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-400 truncate">{{ selectedProject?.name }}</dd>
                             </div>
                             <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                               <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Dates</dt>
@@ -196,10 +196,10 @@
                   </div>
                   <div class="bg-gray-50 px-4 py-3 sm:px-6 justify-between flex">
                     <div>
-                      <button v-if="assignmentId" type="button" class="inline-flex w-full justify-center self-start rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:w-auto" @click="remove()">Delete</button>
+                      <button v-if="assignmentId && steps[3].active" type="button" class="inline-flex w-full justify-center self-start rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:w-auto cursor-pointer" @click="remove()">Delete</button>
                     </div>
                     <div class="sm:flex sm:flex-row-reverse">
-                      <button v-if="steps[3].active" type="submit" class="inline-flex w-full justify-center rounded-md bg-cyan-600 disabled:opacity-25 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500 sm:ml-3 sm:w-auto cursor-pointer disabled:cursor-not-allowed">Submit</button>
+                      <button v-if="steps[3].active" type="submit" class="inline-flex w-full justify-center rounded-md bg-cyan-600 disabled:opacity-25 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500 sm:ml-3 sm:w-auto cursor-pointer disabled:cursor-not-allowed">{{ assignmentId ? 'Update' : 'Create' }}</button>
                       <button v-else type="button" :disabled="!steps.find(({ active }) => active === true).valid" class="mt-3 ml-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none cursor-pointer disabled:cursor-not-allowed" @click="selectStep(steps.findIndex(({ active }) => active === true) + 1)" ref="nextButtonRef">Next</button>
                       <button v-if="steps.findIndex(step => step.active) > 0" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto cursor-pointer disabled:cursor-not-allowed" @click="selectStep(steps.findIndex(({ active }) => active === true) - 1)" >Back</button>
                     </div>
@@ -388,8 +388,9 @@ async function submit(event) {
   selectedRSE.value = defaultState.rse
   allocation.value = defaultState.allocation
 
-  isOpen.value = false
+  selectStep(0)
 
+  isOpen.value = false
 }
 
 async function remove() {
