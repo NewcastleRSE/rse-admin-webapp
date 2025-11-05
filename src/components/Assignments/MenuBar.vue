@@ -37,7 +37,7 @@
             </div>
           </div>
         </div>
-        <div class="flex lg:flex-grow items-center">
+        <div class="flex flex-1 lg:flex-grow items-center">
           <ul class="flex flex-col lg:flex-row list-none ml-auto">
             <li class="nav-item">
               <Listbox as="div" class="px-3" v-model="selectedYear" @update:model-value="changeFY(selectedYear)">
