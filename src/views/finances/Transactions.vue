@@ -1,8 +1,8 @@
 <template>
-  <div class="w-full mb-12 px-4">
-    <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
+  <div class="w-full mb-6 px-4 h-[calc(100vh-340px)]">
+    <div class="relative flex flex-col min-w-0 break-words w-full h-full mb-6 shadow-lg rounded bg-white">
       <v-grid
-          class="transaction-grid h-screen"
+          class="transaction-grid"
           theme="compact"
           filter={true}
           :source="transactions"
@@ -66,6 +66,11 @@ function convertRemToPixels(rem) {
 </script>
 <style lang="scss">
 revo-grid {
+
+  .attribution {
+    display: none;
+  }
+
   .rgHeaderCell .rv-filter {
     margin-left: 10px;
   }

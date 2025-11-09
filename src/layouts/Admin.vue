@@ -18,7 +18,7 @@
             <div class="ml-4 flex items-center md:ml-6">
               <Listbox as="div" class="px-3" v-model="selectedYear">
                 <div class="relative">
-                  <ListboxButton class="relative w-full cursor-default py-1.5 pl-3 pr-10 text-left text-white shadow-sm ring-inset focus:outline-none focus:ring-2 focus:ring-cyan-600 sm:text-sm sm:leading-6">
+                  <ListboxButton class="relative w-full cursor-default py-1.5 pl-3 pr-10 text-left text-white ring-inset focus:outline-none focus:ring-2 focus:ring-cyan-600 sm:text-sm sm:leading-6">
                     <div class="flex flex-col pr-3 text-white">
                       <span class="font-bold text-right">Financial Year</span>
                       <span>{{selectedYear.name}}</span>

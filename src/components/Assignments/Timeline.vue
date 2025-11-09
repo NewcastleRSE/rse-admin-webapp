@@ -121,13 +121,13 @@ function generateAssignments(rses, assignments) {
           backgroundColor = 'bg-sky-500!'
           break
         case 'Directly Incurred':
-          backgroundColor = 'bg-indigo-500!'
+          backgroundColor = 'bg-teal-500!'
           break
         case 'Voluntary':
-          backgroundColor = 'bg-fuchsia-500!'
+          backgroundColor = 'bg-orange-500!'
           break
         case 'JobsOC':
-          backgroundColor = 'bg-green-500!'
+          backgroundColor = 'bg-indigo-500!'
           break
         default:
           backgroundColor = 'bg-slate-500!'
@@ -390,13 +390,13 @@ export default {
           backgroundColor = 'bg-sky-500!'
           break
         case 'Directly Incurred':
-          backgroundColor = 'bg-indigo-500!'
+          backgroundColor = 'bg-teal-500!'
           break
         case 'Voluntary':
-          backgroundColor = 'bg-fuchsia-500!'
+          backgroundColor = 'bg-orange-500!'
           break
         case 'JobsOC':
-          backgroundColor = 'bg-green-500!'
+          backgroundColor = 'bg-indigo-500!'
           break
         default:
           backgroundColor = 'bg-slate-500!'
@@ -429,13 +429,13 @@ export default {
           backgroundColor = 'bg-sky-500!'
           break
         case 'Directly Incurred':
-          backgroundColor = 'bg-indigo-500!'
+          backgroundColor = 'bg-teal-500!'
           break
         case 'Voluntary':
-          backgroundColor = 'bg-fuchsia-500!'
+          backgroundColor = 'bg-orange-500!'
           break
         case 'JobsOC':
-          backgroundColor = 'bg-green-500!'
+          backgroundColor = 'bg-indigo-500!'
           break
         default:
           backgroundColor = 'bg-slate-500!'
@@ -451,7 +451,7 @@ export default {
         return item
       })
     }
-    
+
     function deleteAssignment(assignment) {
       state.update('config.chart.items', (items) => {
         delete items[GSTC.api.GSTCID(`assignment-${assignment.documentId}`)]
