@@ -1,7 +1,7 @@
 <template>
   <div class="w-full mb-6 px-4 h-[calc(100vh-340px)]">
     <div class="relative flex flex-col min-w-0 break-words w-full h-full mb-6 shadow-lg rounded bg-white">
-      <v-grid
+      <RevoGrid
           class="transaction-grid"
           theme="compact"
           filter={true}
@@ -12,12 +12,13 @@
           :resize="true"
           :stretch="true"
           :canFocus="false"
-      ></v-grid>
+      ></RevoGrid>
     </div>
   </div>
 </template>
 <script setup>
-import VGrid from '@revolist/vue3-datagrid'
+import { ref } from 'vue'
+import RevoGrid from '@revolist/vue3-datagrid'
 import NumberColumnType from '@revolist/revogrid-column-numeral'
 import { useTransactionsStore } from '@/stores'
 import { currentFY } from '../../utils/dates'
@@ -45,20 +46,21 @@ numeral.locale('gb')
 
 const columnWidth = (window.innerWidth - convertRemToPixels(7)) / 10
 
-const columns = [
+const columns = ref([
     { name: 'Posted Date', prop: "postedDate", sortable: true, order: 'asc', size: columnWidth, columnProperties: () => { return { class: { 'postedDate': true } } } },
     { name: 'Description', prop: "costElementDescription", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'costElementDescription': true } } } },
     { name: 'Document Header', prop: "documentHeader", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'documentHeader': true } } } },
     { name: 'Name', prop: "name", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'name': true } } } },
     { name: 'Category', prop: "ieCategory", sortable: true, size: columnWidth*2, columnProperties: () => { return { class: { 'ieCategory': true } } } },
     { name: 'Value', prop: "value", sortable: true, size: columnWidth, columnType: 'currency', columnProperties: () => { return { class: { 'value': true } } } }
-]
+])
 
 const columnTypes = { 
   currency: new NumberColumnType('($0,0.00)')
 }
 
-const transactions = transactionsStore.getByYear(dates.startDate.year)
+const transactions = ref([])
+transactions.value = transactionsStore.getByYear(dates.startDate.year)
 
 function convertRemToPixels(rem) {    
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)

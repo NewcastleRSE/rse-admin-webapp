@@ -31,37 +31,39 @@ export const useTransactionsStore = defineStore('transactions', () => {
                 lastUpdated: DateTime.now().startOf('month').minus({ days: 1 })
             }
 
-        // const ieCategories = [...new Set(transactions.map(transaction => transaction.ieCategory))]
+        const ieCategories = [...new Set(transactions.map(transaction => transaction.ieCategory ? transaction.ieCategory : 'Uncategorized'))]
 
-        // ieCategories.forEach(ieCategory => {
+        ieCategories.forEach(ieCategory => {
     
-        //     let bwCategories = [...new Set(transactions.filter(transaction => transaction.ieCategory === ieCategory).map(transaction => transaction.bwCategory))]
+            let bwCategories = [...new Set(transactions.filter(transaction => transaction.ieCategory === ieCategory).map(transaction => transaction.bwCategory))]
             
-        //     if(!Object.prototype.hasOwnProperty.call(summary, (camelCase(ieCategory)))) {
-        //     summary[camelCase(ieCategory)] = {}
-        //     }
+            if(!Object.prototype.hasOwnProperty.call(summary, (camelCase(ieCategory)))) {
+            summary[camelCase(ieCategory)] = {}
+            }
     
-        //     bwCategories.forEach(bwCategory => {
+            bwCategories.forEach(bwCategory => {
     
-        //     if(!Object.prototype.hasOwnProperty.call(summary[camelCase(ieCategory)], (camelCase(bwCategory)))) {
-        //         summary[camelCase(ieCategory)][camelCase(bwCategory)] = {}
-        //     }
+            if(!Object.prototype.hasOwnProperty.call(summary[camelCase(ieCategory)], (camelCase(bwCategory)))) {
+                summary[camelCase(ieCategory)][camelCase(bwCategory)] = {}
+            }
     
-        //     summary[camelCase(ieCategory)][camelCase(bwCategory)] = transactions
-        //         .filter(transaction => transaction.ieCategory === ieCategory && transaction.bwCategory === bwCategory)
-        //         .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
-        //     })
+            summary[camelCase(ieCategory)][camelCase(bwCategory)] = transactions
+                .filter(transaction => transaction.ieCategory === ieCategory && transaction.bwCategory === bwCategory)
+                .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+            })
     
-        //     summary[camelCase(ieCategory)].total = transactions
-        //     .filter(transaction => transaction.ieCategory === ieCategory && transaction.documentHeader !== 'Catalyst internal tenant')
-        //     .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
-        // })
+            summary[camelCase(ieCategory)].total = transactions
+            .filter(transaction => transaction.ieCategory === ieCategory && transaction.documentHeader !== 'Catalyst internal tenant')
+            .reduce((value,transaction) => value + transaction.value, 0).toFixed(2)
+        })
 
         const postedDates = [...new Set(transactions.reduce(function (dates, transaction) { return [...dates, DateTime.fromISO(transaction.postedDate)] }, []))]
 
         if(postedDates.length) {
             summary.lastUpdated = DateTime.max(...postedDates)
         }
+
+        console.log(summary)
 
         return summary
     }

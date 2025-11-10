@@ -402,7 +402,7 @@ async function remove() {
 
   selectStep(0)
 
-  emits('removedAssignment')
+  emits('removedAssignment', assignmentId)
 
   isOpen.value = false
 }
