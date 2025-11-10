@@ -4,7 +4,7 @@
       <menu-bar :edited="edited" :changeTeam="changeTeam" :changeFY="changeFY" :unallocated="unallocated" :unallocatedCount="unallocatedCount" :create="create" :export="exportCSV"/>
       <Timeline ref="timeline" :rses="rses" :assignments="assignments" :projects="projects" @create="create" @edit="edit" @resize="resize" />
     </div>
-    <assignment-modal ref="assignmentModalRef" />
+    <assignment-modal ref="assignmentModalRef" @createdAssignment="createdAssignment" @editedAssignment="editedAssignment" @removedAssignment="removedAssignment" />
     <unallocated-modal ref="unallocatedModalRef" @createAssignment="create" />
   </div>
 </template>
@@ -74,6 +74,18 @@ async function resize(assignmentID, rseID, start, end) {
   await assignmentsStore.updateAssignment(assignmentID, assignment)
 }
 
+async function createdAssignment(assignment) {
+  timeline.value.addAssignment(assignment)
+}
+
+async function editedAssignment(assignment) {
+  timeline.value.updateAssignment(assignment)
+}
+
+async function removedAssignment(assignment) {
+  timeline.value.deleteAssignment(assignment)
+}
+
 function exportCSV() {
   const header = 'id,start,end,name,name' + '\r\n'
   let body = ''
@@ -85,7 +97,6 @@ function exportCSV() {
     for (let key in el) {
       if (line != '') {line += ','} // add commas for csv
       if (key === 'start' || key === 'end') {
-        console.log(key)
         let date = new Date(el[key])
         line += date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear()
       }
