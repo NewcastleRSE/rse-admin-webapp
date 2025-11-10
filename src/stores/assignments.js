@@ -115,7 +115,10 @@ export const useAssignmentsStore = defineStore('assignments', () => {
             Authorization: `Bearer ${store.jwt}`
           }
       }).then(response => {
-        assignments.value.push(response.data.data)
+        const newAssignment = response.data.data
+        assignments.value.push(newAssignment)
+
+        return newAssignment
       })
     }
 
@@ -129,9 +132,12 @@ export const useAssignmentsStore = defineStore('assignments', () => {
             Authorization: `Bearer ${store.jwt}`
           }
       }).then(response => {
+        const updatedAssignment = response.data.data
         // find and update assignment in store
         const position = assignments.value.map(e => e.documentId).indexOf(assignmentId)
-        assignments.value[position] = response.data.data
+        assignments.value[position] = updatedAssignment
+
+        return updatedAssignment
       })
     }
 
