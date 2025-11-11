@@ -67,7 +67,7 @@ export const useProjectsStore = defineStore('projects', () => {
             },
             {
                stage: {
-                   $in: ['Awaiting Allocation']
+                   $in: ['Awaiting Allocation', 'Allocated']
                } 
             }]
         }
