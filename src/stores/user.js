@@ -10,6 +10,7 @@ export const useUserStore = defineStore('user', () => {
 
     const assignmentsStore = Stores.useAssignmentsStore(),
           facilitiesStore = Stores.useFacilitiesStore(),
+          financesStore = Stores.useFinancesStore(),
           invoicesStore = Stores.useInvoicesStore(),
           projectsStore = Stores.useProjectsStore(),
           rsesStore = Stores.useRSEsStore(),
@@ -26,6 +27,7 @@ export const useUserStore = defineStore('user', () => {
             assignmentsStore.fetchAssignments(year),
             facilitiesStore.fetchFacilities(year),
             facilitiesStore.fetchClosureDates(year),
+            financesStore.fetchFinances(year),
             invoicesStore.fetchInvoices(year),
             rsesStore.fetchRSEs(year),
             transactionsStore.fetchTransactions(year)

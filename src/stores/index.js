@@ -1,6 +1,7 @@
 export { useAssignmentsStore } from './assignments'
 export { useUserStore } from './user'
 export { useFacilitiesStore } from './facilities'
+export { useFinancesStore } from './finances'
 export { useInvoicesStore } from './invoices'
 export { useProjectsStore } from './projects'
 export { useRSEsStore } from './rses'
