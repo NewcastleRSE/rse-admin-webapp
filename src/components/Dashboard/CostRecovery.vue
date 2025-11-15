@@ -37,48 +37,65 @@
         <div v-for="stat in stats" :key="stat.name" class="flex flex-wrap items-baseline gap-x-4 gap-y-2 bg-white">
           <dt class="text-sm font-medium leading-6 text-gray-500">{{ stat.name }}</dt>
           <dd class="text-gray-700 text-xs font-medium">{{ stat.ratio }}</dd>
-          <dd class="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">{{ stat.value }}</dd>
+          <dd class="w-full flex-none font-medium leading-10 tracking-tight text-gray-900">
+            <span class="text-3xl ">{{ stat.actual }}</span>
+            <span class="text-sm "> of {{ stat.budget }}</span>
+          </dd>
         </div>
       </dl>
     </div>
   </div>
 </template>
 <script setup>
+import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useFacilitiesStore, useTransactionsStore, useUserStore } from '@/stores'
+import { useFacilitiesStore, useFinancesStore, useUserStore } from '@/stores'
 import { DateTime } from 'luxon'
 
 const facilitiesStore = useFacilitiesStore(),
-      transactionsStore = useTransactionsStore(),
+      financesStore = useFinancesStore(),
       userStore = useUserStore()
 
 const { settings } = storeToRefs(userStore)
 
-let costRecoveryRate = 0,
-    budgetUsed = 0,
-    stats = [
+let costRecoveryRate = ref(0),
+    budgetUsed = ref(0),
+    stats = ref([
       { name: 'Revenue', value: 0, ratio: '0%' },
       { name: 'Expenses', value: 0, ratio: '0%' },
-    ]
+    ])
 
 let startDate = DateTime.fromFormat(`${settings.value.financialYear}-08-01`, 'yyyy-MM-dd').startOf('day'),
     endDate = startDate.plus({ years: 1 }).minus({ days: 1 }).endOf('day')
 
 const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' })
 
-const transactionsSummary = transactionsStore.getSummary(settings.value.financialYear),
-      facility = facilitiesStore.getByYear(settings.value.financialYear)
+const finance = financesStore.getByYear(settings.value.financialYear)
 
 const monthsToDate = Math.floor(DateTime.now().diff(startDate, ['months']).months),
       progressThroughYear = ((monthsToDate / 12) * 100).toFixed(2)
 
-if(transactionsSummary.income && transactionsSummary.nonSalaryExpenditure) {
-  costRecoveryRate = ((transactionsSummary.income.total / facility.incomeTarget) * 100).toFixed(2)
-  budgetUsed = (((transactionsSummary.nonSalaryExpenditure.total * -1) / facility.nonSalaryCosts) * 100).toFixed(2)
+if(finance) {
 
-  stats = [
-    { name: 'Revenue', value: formatter.format(transactionsSummary.income.total), ratio: costRecoveryRate + '%' },
-    { name: 'Expenses', value: formatter.format(Math.abs(transactionsSummary.nonSalaryExpenditure.total)), ratio: budgetUsed + '%' },
+  const actualRecovery = finance.totalActualIncome || 0,
+        budgetedRecovery = finance.totalBudgetedIncome || 0
+
+        costRecoveryRate.value = ((actualRecovery / budgetedRecovery) * 100).toFixed(2),
+        budgetUsed.value = ((finance.totalActualNonSalary / finance.totalBudgetedNonSalary) * 100).toFixed(2)
+
+  stats.value = [
+    { 
+      name: 'Revenue',
+      actual: formatter.format(finance.totalActualIncome * -1),
+      budget: formatter.format(finance.totalBudgetedIncome * -1),
+      ratio: costRecoveryRate.value + '%'
+    },
+    { 
+      name: 'Expenses',
+      actual: formatter.format(Math.abs(finance.totalActualNonSalary)),
+      budget: formatter.format(Math.abs(finance.totalBudgetedNonSalary)),
+      ratio: budgetUsed.value + '%'
+    },
   ]
 }
 

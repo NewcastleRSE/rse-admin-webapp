@@ -14,7 +14,7 @@ export const useFinancesStore = defineStore('finances', () => {
     }
 
     function getByYear(year) {
-        return finances.value.filter(financalYear => financalYear.year == year)
+        return finances.value.find(financalYear => financalYear.year == year)
     }
 
     async function fetchFinances (year) {
