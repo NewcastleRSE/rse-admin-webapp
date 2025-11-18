@@ -40,15 +40,22 @@
                           <circle cx="1" cy="1" r="1" />
                         </svg>
                         <p class="truncate">{{ project.school }}</p>
-                        <p class="truncate">Account Code: {{ project.account || 'Not Set' }}</p>
+                        <p class="truncate">Month: {{ month.name || 'Not Set' }}</p>
 
                       </div>
                     </div>
                     <div class="flex flex-none items-center gap-x-4">
+                      <!-- If there is no invoice and there is an account code, show option to generate invoice -->
                       <button v-if="!getInvoice(project.documentId, month.year, month.name)" :disabled="creating !== null || !project.account" v-on:click="createInvoice(project.documentId, month.year, month.name)" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 sm:block disabled:text-gray-300 disabled:cursor-not-allowed">
                         <span v-if="creating == `${project.clockifyID}-${month.year}-${month.month}`">Generating...</span>
                         <span v-else>Generate Invoice</span>
                       </button>
+                      <!-- If there is an invoice, show option to regenerate -->
+                       <button v-else-if="getInvoice(project.documentId, month.year, month.name)" :disabled="creating !== null || !project.account" v-on:click="createInvoice(project.documentId, month.year, month.name)" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 sm:block disabled:text-gray-300 disabled:cursor-not-allowed">
+                        <span v-if="creating == `${project.clockifyID}-${month.year}-${month.month}`">Generating...</span>
+                        <span v-else>Regenerate Invoice</span>
+                      </button>
+
                       <div v-else-if="getInvoice(project.documentId, month.year, month.name).sent === null" class="inline-flex rounded-md shadow-sm">
                         <button v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.documentId, month.year, month.name), 'sent')" type="button" class="relative inline-flex items-center rounded-l-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">Mark As Sent</button>
                         <Menu as="div" class="relative -ml-px block">
@@ -60,16 +67,19 @@
                             <MenuItems class="absolute right-0 z-10 mt-0.5 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                               <div class="py-1">
                                 <MenuItem>
-                                  <button v-on:click="createInvoice(project.documentId, month.year, month.name)" class="text-gray-900 block px-4 py-2 text-sm whitespace-nowrap font-semibold shadow-s sm:block hover:bg-gray-50 cursor-pointer">Generate Invoice</button>
+                                   <!-- Generate invoice -->
+                                  <button v-on:click="createInvoice(project.documentId, month.year, month.name, project.name)" class="text-gray-900 block px-4 py-2 text-sm whitespace-nowrap font-semibold shadow-s sm:block hover:bg-gray-50 cursor-pointer">Generate Invoice</button>
                                 </MenuItem>
                               </div>
                             </MenuItems>
                           </transition>
                         </Menu>
                       </div>
+                      <!-- Generated, next step is to mark as processed -->
                       <button v-else-if="getInvoice(project.documentId, month.year, month.name).processed === null" v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.documentId, month.year, month.name), 'processed')" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
                         Mark As Processed
                       </button>
+                      <!-- Marked as processed, next step is to wait for payment -->
                       <div v-else-if="getInvoice(project.documentId, month.year, month.name).paid === null" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:block">
                         Payment Pending
                       </div>
@@ -140,6 +150,7 @@ function getInvoice(projectId, year, month) {
 }
 
 function createInvoice(projectId, year, month) {
+  console.log({ projectId, year, month }, 'Invoices.vue line 143')
   creating.value = `${projectId}-${year}-${month}`
   invoicesStore.createInvoice(projectId, year, month).then(() => creating.value = null)
 }

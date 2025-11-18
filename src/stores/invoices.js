@@ -48,9 +48,11 @@ export const useInvoicesStore = defineStore('invoices', () => {
 
     async function fetchInvoices (year) {
         invoices.value = await fetchObjects('invoices', 0, 100, ['project', 'transaction'], { year: { $eq: year }})
+       
     }
 
     async function createInvoice (projectId, year, month) {
+        console.log(month)
         try {
              const {data: response } = await axios({
             method: 'post',
@@ -66,48 +68,31 @@ export const useInvoicesStore = defineStore('invoices', () => {
                 }
             }
         })
-            console.log(response.data)
             const pdf = response.data.pdf
             delete response.data.pdf
 
             invoices.value.push(response.data)
 
+            const name = response.data.project.name
+
             const downloadLink = document.createElement('a')
             downloadLink.href = `data:application/pdf;base64,${pdf}`
-            downloadLink.download = 'file.pdf'
+            downloadLink.download = `${name}-${month}-${year}.pdf`
             downloadLink.click()
         } catch (error) {
             console.error('Error creating invoice:', error)
         }
-       
-        
-        // .post(`${import.meta.env.VITE_API_URL}/invoices`, {
-        //     headers: {
-        //       Authorization: `Bearer ${store.jwt}`
-        //     },
-        //     data: {
-        //         project: projectId,
-        //         year: year,
-        //         month: month.toLowerCase()
-        //     }
-        //   }).then(response => {
-        //     const pdf = response.data.pdf
-        //     delete response.data.pdf
-
-        //     invoices.value.push(response.data)
-
-        //     const downloadLink = document.createElement('a')
-        //     downloadLink.href = `data:application/pdf;base64,${pdf}`
-        //     downloadLink.download = 'file.pdf'
-        //     downloadLink.click()
-        //   })
     }
 
     async function updateInvoiceState(invoice, state) {
         switch(state){
-            case 'sent':
-                invoice.sent = DateTime.utc().toISODate()
-                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].sent = invoice.sent
+            case 'sent_for_signature':
+                invoice.sent_for_signature = DateTime.utc().toISODate()
+                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].sent_for_signature = invoice.sent_for_signature
+                break;
+            case 'sent_for_processing':
+                invoice.sent_for_processing = DateTime.utc().toISODate()
+                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].sent_for_processing = invoice.sent_for_processing
                 break;
             case 'processed':
                 invoice.processed = DateTime.utc().toISODate()
