@@ -51,7 +51,7 @@
                         <span v-else>Generate Invoice</span>
                       </button>
                       <!-- If there is an invoice, show option to regenerate -->
-                      <button v-else-if="getInvoice(project.documentId, month.year, month.name)" :disabled="creating !== null || !project.account" v-on:click="createInvoice(project.documentId, month.year, month.name)" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 sm:block disabled:text-gray-300 disabled:cursor-not-allowed">
+                      <button v-else-if="getInvoice(project.documentId, month.year, month.name)&&!getInvoice(project.documentId, month.year, month.name).sent_for_signature === null" :disabled="creating !== null || !project.account" v-on:click="createInvoice(project.documentId, month.year, month.name)" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 sm:block disabled:text-gray-300 disabled:cursor-not-allowed">
                         <span v-if="creating == `${project.clockifyID}-${month.year}-${month.month}`">Generating...</span>
                         <span v-else>Regenerate Invoice</span>
                       </button>
@@ -60,12 +60,22 @@
                           Sent for signature
                       </button>
                       <!-- If has been sent for signature but not sent for processing, show button to mark as sent for processing -->
-                       <button v-if="getInvoice(project.documentId, month.year, month.name)&&getInvoice(project.documentId, month.year, month.name).sent_for_signature &&getInvoice(project.documentId, month.year, month.name).sent_to_finance" v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.documentId, month.year, month.name), 'sent_to_finance')" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 sm:block disabled:text-gray-300 disabled:cursor-not-allowed">
-                          Sent for signature
+                       <button v-else-if="getInvoice(project.documentId, month.year, month.name) &&getInvoice(project.documentId, month.year, month.name).sent_to_finance === null" v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.documentId, month.year, month.name), 'sent_to_finance')" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 sm:block disabled:text-gray-300 disabled:cursor-not-allowed">
+                          Sent for processing
                       </button>
-                      <!-- If has been sent for processing, but not marked as processed show button to mark as paid -->
-                        <!-- If has been marked as paid, show inactive button that is marked as paid -->
-                      
+                      <!-- If has been sent for processing, show button to mark as processed -->
+                       <button v-else-if="getInvoice(project.documentId, month.year, month.name) &&getInvoice(project.documentId, month.year, month.name).processed === null" v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.documentId, month.year, month.name), 'processed')" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 sm:block disabled:text-gray-300 disabled:cursor-not-allowed">
+                          Mark as processed
+                      </button>
+                      <!-- If has not been marked as paid show button to mark as paid -->
+                       <button v-else-if="getInvoice(project.documentId, month.year, month.name) &&getInvoice(project.documentId, month.year, month.name).paid === null" v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.documentId, month.year, month.name), 'paid')" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 sm:block disabled:text-gray-300 disabled:cursor-not-allowed">
+                          Mark as paid
+                      </button>
+                      <!-- Paid, finally! -->
+                        <button v-else-if="getInvoice(project.documentId, month.year, month.name) &&getInvoice(project.documentId, month.year, month.name).paid !== null" class="hidden rounded-md bg-green-300 px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-green-60 sm:block">
+                          Paid
+                      </button>
+
                       <!-- <div v-else-if="getInvoice(project.documentId, month.year, month.name).sent === null" class="inline-flex rounded-md shadow-sm">
                         <button v-on:click="invoicesStore.updateInvoiceState(getInvoice(project.documentId, month.year, month.name), 'sent')" type="button" class="relative inline-flex items-center rounded-l-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">Mark As Sent</button>
                         <Menu as="div" class="relative -ml-px block">

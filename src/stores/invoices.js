@@ -98,6 +98,10 @@ export const useInvoicesStore = defineStore('invoices', () => {
                 invoice.processed = DateTime.utc().toISODate()
                 invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].processed = invoice.processed
                 break;
+            case 'paid':
+                invoice.paid = DateTime.utc().toISODate()
+                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].paid= invoice.paid
+                break;
             default:
                 break;
         }
@@ -114,7 +118,8 @@ export const useInvoicesStore = defineStore('invoices', () => {
                     data: {
                         sent_for_signature: invoice.sent_for_signature,
                         sent_to_finance: invoice.sent_to_finance,
-                        processed: invoice.processed
+                        processed: invoice.processed,
+                        paid: invoice.paid
                     }
 
                 }
