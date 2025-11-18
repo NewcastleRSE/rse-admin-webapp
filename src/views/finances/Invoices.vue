@@ -30,6 +30,7 @@
                         <p v-if="hasState(getInvoice(project.documentId, month.year, month.name), 'transaction')" :class="[statuses['paid'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Paid {{ getInvoice(project.documentId, month.year, month.name).transaction.postedDate }}</p>
                         <p v-else-if="hasState(getInvoice(project.documentId, month.year, month.name), 'processed')" :class="[statuses['processed'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Processed {{ getInvoice(project.documentId, month.year, month.name).processed }}</p>
                         <p v-else-if="hasState(getInvoice(project.documentId, month.year, month.name), 'sent')" :class="[statuses['sent'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">Sent {{ getInvoice(project.documentId, month.year, month.name).sent }}</p>
+                      <!-- todo sent to finance/ sent for signature -->
                       </div>
                       <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
                         <p v-if="project.contacts" class="whitespace-nowrap">
@@ -39,10 +40,12 @@
                           <circle cx="1" cy="1" r="1" />
                         </svg>
                         <p class="truncate">{{ project.school }}</p>
+                        <p class="truncate">Account Code: {{ project.account || 'Not Set' }}</p>
+
                       </div>
                     </div>
                     <div class="flex flex-none items-center gap-x-4">
-                      <button v-if="!getInvoice(project.documentId, month.year, month.name)" :disabled="creating !== null || !project.accountCode" v-on:click="createInvoice(project.clockifyID, month.year, month.name)" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 sm:block disabled:text-gray-300 disabled:cursor-not-allowed">
+                      <button v-if="!getInvoice(project.documentId, month.year, month.name)" :disabled="creating !== null || !project.account" v-on:click="createInvoice(project.documentId, month.year, month.name)" class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 sm:block disabled:text-gray-300 disabled:cursor-not-allowed">
                         <span v-if="creating == `${project.clockifyID}-${month.year}-${month.month}`">Generating...</span>
                         <span v-else>Generate Invoice</span>
                       </button>

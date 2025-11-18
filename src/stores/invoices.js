@@ -5,8 +5,10 @@ import { useUserStore } from '@/stores/user'
 import { fetchObjects } from '../utils/orm'
 import { DateTime, Interval } from 'luxon'
 
-const titleCase = str => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
-
+// const titleCase = str => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
+const titleCase = str => str && str.length 
+    ? `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}` 
+    : '';
 export const useInvoicesStore = defineStore('invoices', () => {
 
     const store = useUserStore()
@@ -49,16 +51,22 @@ export const useInvoicesStore = defineStore('invoices', () => {
     }
 
     async function createInvoice (projectId, year, month) {
-        return axios.post(`${import.meta.env.VITE_API_URL}/invoices`, {
+        try {
+             const {data: response } = await axios({
+            method: 'post',
+            url: `${import.meta.env.VITE_API_URL}/invoices`,
             headers: {
               Authorization: `Bearer ${store.jwt}`
             },
             data: {
-                project: projectId,
+                data: {
+                    project: projectId,
                 year: year,
                 month: month.toLowerCase()
+                }
             }
-          }).then(response => {
+        })
+            console.log(response.data)
             const pdf = response.data.pdf
             delete response.data.pdf
 
@@ -68,7 +76,31 @@ export const useInvoicesStore = defineStore('invoices', () => {
             downloadLink.href = `data:application/pdf;base64,${pdf}`
             downloadLink.download = 'file.pdf'
             downloadLink.click()
-          })
+        } catch (error) {
+            console.error('Error creating invoice:', error)
+        }
+       
+        
+        // .post(`${import.meta.env.VITE_API_URL}/invoices`, {
+        //     headers: {
+        //       Authorization: `Bearer ${store.jwt}`
+        //     },
+        //     data: {
+        //         project: projectId,
+        //         year: year,
+        //         month: month.toLowerCase()
+        //     }
+        //   }).then(response => {
+        //     const pdf = response.data.pdf
+        //     delete response.data.pdf
+
+        //     invoices.value.push(response.data)
+
+        //     const downloadLink = document.createElement('a')
+        //     downloadLink.href = `data:application/pdf;base64,${pdf}`
+        //     downloadLink.download = 'file.pdf'
+        //     downloadLink.click()
+        //   })
     }
 
     async function updateInvoiceState(invoice, state) {
