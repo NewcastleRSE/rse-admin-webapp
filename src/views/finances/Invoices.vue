@@ -11,7 +11,7 @@
                   <div>
                     <span class="text-base font-semibold leading-7">{{ month.name }} {{ month.year }}</span>
                     <span v-if="month.total && index > 0" class="inline-flex items-center rounded-md bg-red-100 ml-4 px-2 py-1 text-xs font-medium text-red-700">{{ month.total }} Due</span>
-                    <span v-if="month.sent && index > 0" class="inline-flex items-center rounded-md bg-yellow-100 ml-4 px-2 py-1 text-xs font-medium text-yellow-800">{{ month.sent }} Sent</span>
+                    <span v-if="month.sent && index > 0" class="inline-flex items-center rounded-md bg-yellow-100 ml-4 px-2 py-1 text-xs font-medium text-yellow-800">{{ month.sent_to_finance }} Sent for signature</span>
                     <span v-if="month.processed && index > 0" class="inline-flex items-center rounded-md bg-blue-100 ml-4 px-2 py-1 text-xs font-medium text-blue-700">{{ month.processed }} Processed</span>
                     <span v-if="month.paid && index > 0" class="inline-flex items-center rounded-md bg-green-100 ml-4 px-2 py-1 text-xs font-medium text-green-700">{{ month.paid }} Paid</span>
                   </div>
@@ -102,10 +102,10 @@ for (let i = 0; i <= monthsToDate; i++) {
   months.push({
     name: fyDates.startDate.monthLong,
     year: fyDates.startDate.year,
-    total: projects.length - monthlyInvoices.filter(invoice => invoice.sent).length,
-    sent: monthlyInvoices.filter(invoice => invoice.sent && !invoice.processed).length,
-    processed: monthlyInvoices.filter(invoice => invoice.processed && !invoice.transaction).length,
-    paid: monthlyInvoices.filter(invoice => invoice.transaction).length,
+    total: projects.length - monthlyInvoices.filter(invoice => invoice.sent_for_signature).length,
+    sent: monthlyInvoices.filter(invoice => invoice.sent_for_signature && !invoice.processed).length,
+    processed: monthlyInvoices.filter(invoice => invoice.processed && !invoice.paid).length,
+    paid: monthlyInvoices.filter(invoice => invoice.paid).length,
     projects: projects
   })
 
