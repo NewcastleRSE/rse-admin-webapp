@@ -167,7 +167,25 @@
                               <input id="fte" name="fte" type="number" min="0" max="100" required v-model="allocation.fte" autocomplete="fte" class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6" />
                             </div>
                           </div>
+   
 
+                        </div>
+                        <div class="mt-6">
+                            <label class="text-base font-semibold text-gray-900">Rate Type</label>
+                            <p class="text-sm text-gray-500">Select the rate at which this RSE is allocated.</p>
+                            <fieldset class="mt-4">
+                                <legend class="sr-only">Rate Type</legend>
+                                <div class="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
+                                    <div class="flex items-center">
+                                        <input id="rate-standard" name="rate-type" type="radio" value="standard" v-model="allocation.rate" class="h-4 w-4 border-gray-300 text-cyan-600 focus:ring-cyan-600" />
+                                        <label for="rate-standard" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Standard</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input id="rate-senior" name="rate-type" type="radio" value="senior" v-model="allocation.rate" class="h-4 w-4 border-gray-300 text-cyan-600 focus:ring-cyan-600" />
+                                        <label for="rate-senior" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Senior</label>
+                                    </div>
+                                </div>
+                            </fieldset>
                         </div>
                       </div>
                       <div v-else-if="steps[3].active" class="text-lg font-medium leading-6 text-gray-900">
@@ -189,6 +207,11 @@
                               <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">FTE</dt>
                               <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-400">{{ allocation.fte }}% ({{ steps[2].name }})</dd>
                             </div>
+                             <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                              <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Rate</dt>
+                              <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-400 capitalize">{{ allocation.rate }}</dd>
+                            </div>
+                        
                           </dl>
                         </div>
                       </div>
@@ -221,6 +244,7 @@ import { CheckIcon } from '@heroicons/vue/24/solid'
 import { useAssignmentsStore, useRSEsStore, useProjectsStore } from '../../stores'
 import { DateTime, Duration } from 'luxon'
 import { workingDaysDiff } from '../../utils/dates'
+import { all } from 'axios'
 
 const assignmentsStore = useAssignmentsStore(),
       projectsStore = useProjectsStore(),
@@ -249,7 +273,7 @@ const defaultState = {
   rse: null,
   project: null,
   burndown: { estimate: 0, spent: 0 },
-  allocation: { fte: 50, start: null, end: null }
+  allocation: { fte: 50, start: null, end: null, rate: 'standard' }
 }
 
 let title = '',
@@ -257,7 +281,7 @@ let title = '',
     selectedRSE = ref(null),
     selectedProject = ref(null),
     burndown = ref({ estimate: 0, spent: 0 }),
-    allocation = ref({ fte: 50, start: null, end: null })
+    allocation = ref({ fte: 50, start: null, end: null, rate: 'standard' })
 
 const filteredProjects = computed(() =>
   projectQuery.value === '' ? projects : projects.filter((project) => {
@@ -327,7 +351,8 @@ function createAssignment(assignment, rse, start, end) {
     allocation.value = {
       fte: assignment.fte,
       start: assignment.start,
-      end: assignment.end
+      end: assignment.end,
+      rate: assignment.rate || 'standard'
     }
   }
   else {
@@ -338,7 +363,8 @@ function createAssignment(assignment, rse, start, end) {
     allocation.value = {
       fte: defaultState.allocation.fte,
       start: DateTime.fromJSDate(start).toISODate(),
-      end: DateTime.fromJSDate(end).toISODate()
+      end: DateTime.fromJSDate(end).toISODate(),
+      rate: defaultState.allocation.rate
     }
 
     if(rse) {
@@ -366,7 +392,8 @@ async function submit(event) {
       rse: selectedRSE.value.documentId,
       fte: allocation.value.fte,
       start: allocation.value.start,
-      end: allocation.value.end
+      end: allocation.value.end,
+      rate: allocation.value.rate
     })
 
     emits('editedAssignment', assignment)
@@ -377,7 +404,8 @@ async function submit(event) {
       rse: selectedRSE.value.documentId,
       fte: allocation.value.fte,
       start: allocation.value.start,
-      end: allocation.value.end
+      end: allocation.value.end,
+      rate: allocation.value.rate
     })
 
     emits('createdAssignment', assignment)
