@@ -35,6 +35,15 @@
             <div class="my-2 relative w-full" aria-hidden="true">
               <div class="overflow-hidden rounded-full bg-gray-200">
                 <div class="h-4 rounded-full" :class="[project.burndown > 105 ? 'bg-red-700' : 'bg-cyan-600']" :style="{ width: project.burndown + '%' }"></div>
+                <div v-if="isFinite(project.anticipatedProgressBurndown)">
+                  <div class="group absolute -top-1 h-6 border-l-2 border-black" :style="{ left: project.anticipatedProgressBurndown + '%'}">
+                    <div class="hidden group-hover:block absolute bottom-full mb-2 -translate-x-1/2 left-0 whitespace-nowrap">
+    <span class="rounded bg-gray-900 px-2 py-1 text-xs text-white">
+      Anticipated Burndown
+    </span>
+  </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -131,9 +140,11 @@ projects.forEach((project, index) => {
     }
 
     const estimate = Duration.fromISO(project.estimate),
-          spent = Duration.fromISO(project.spent)
+          spent = Duration.fromISO(project.spent),
+          anticipatedProgress = Duration.fromISO(project.anticipatedProgress)
 
     projects[index].burndown = Number(spent.toFormat('h')) / Number(estimate.toFormat('h')) * 100
+    projects[index].anticipatedProgressBurndown = Number(anticipatedProgress.toFormat('h')) / Number(estimate.toFormat('h')) * 100
     
     projects[index].hubspotLink = 'https://app.hubspot.com/contacts/5251042/deal/' + project.hubspotId
     projects[index].clockifyLink = `https://app.clockify.me/reports/summary?start=${dates.startDate.toISO()}&end=${dates.currentDate.toISO()}&filterValuesData=%7B%22projects%22:%5B%22${project.clockifyID}%22%5D%7D&filterOptions=%7B%22projects%22:%7B%22status%22:%22ALL%22%7D%7D`

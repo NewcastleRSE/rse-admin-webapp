@@ -140,7 +140,7 @@ const invoice = currentInvoice.value;
             handler: () => createInvoice(),
             isGenerating: isCurrentlyGenerating,
             style: baseStyle,
-            disabled: creating.value !== null || !account,
+            disabled: creating.value !== null || !props.project.account,
         };
     }
 
