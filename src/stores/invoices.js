@@ -5,8 +5,10 @@ import { useUserStore } from '@/stores/user'
 import { fetchObjects } from '../utils/orm'
 import { DateTime, Interval } from 'luxon'
 
-const titleCase = str => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
-
+// const titleCase = str => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
+const titleCase = str => str && str.length
+    ? `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
+    : '';
 export const useInvoicesStore = defineStore('invoices', () => {
 
     const store = useUserStore()
@@ -23,7 +25,7 @@ export const useInvoicesStore = defineStore('invoices', () => {
 
     function getByFinancialYear(year) {
         const yearStart = DateTime.utc(year, 8),
-              yearEnd = yearStart.plus({years: 1}).minus({days: 1})
+            yearEnd = yearStart.plus({ years: 1 }).minus({ days: 1 })
 
         const financialYear = Interval.fromDateTimes(yearStart, yearEnd)
 
@@ -44,61 +46,103 @@ export const useInvoicesStore = defineStore('invoices', () => {
         return results ? results : []
     }
 
-    async function fetchInvoices (year) {
-        invoices.value = await fetchObjects('invoices', 0, 100, ['project', 'transaction'], { year: { $eq: year }})
+    async function fetchInvoices(year) {
+        invoices.value = await fetchObjects('invoices', 0, 100, ['project', 'transaction'], { year: { $eq: year } })
+
     }
 
-    async function createInvoice (projectId, year, month) {
-        return axios.post(`${import.meta.env.VITE_API_URL}/invoices`, {
-            headers: {
-              Authorization: `Bearer ${store.jwt}`
-            },
-            data: {
-                project: projectId,
-                year: year,
-                month: month.toLowerCase()
-            }
-          }).then(response => {
+    async function createInvoice(projectId, year, month) {
+        console.log(month)
+        try {
+            const { data: response } = await axios({
+                method: 'post',
+                url: `${import.meta.env.VITE_API_URL}/invoices`,
+                headers: {
+                    Authorization: `Bearer ${store.jwt}`
+                },
+                data: {
+                    data: {
+                        project: projectId,
+                        year: year,
+                        month: month.toLowerCase()
+                    }
+                }
+            })
             const pdf = response.data.pdf
             delete response.data.pdf
 
             invoices.value.push(response.data)
 
+            const name = response.data.project.name
+
             const downloadLink = document.createElement('a')
             downloadLink.href = `data:application/pdf;base64,${pdf}`
-            downloadLink.download = 'file.pdf'
+            downloadLink.download = `${name}-${month}-${year}.pdf`
             downloadLink.click()
-          })
+        } catch (error) {
+            console.error('Error creating invoice:', error)
+        }
     }
 
     async function updateInvoiceState(invoice, state) {
-        switch(state){
-            case 'sent':
-                invoice.sent = DateTime.utc().toISODate()
-                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].sent = invoice.sent
+        switch (state) {
+            case 'sent_for_signature':
+                invoice.sent_for_signature = DateTime.utc().toISODate()
+                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].sent_for_signature = invoice.sent_for_signature
+                break;
+            case 'sent_to_finance':
+                invoice.sent_to_finance = DateTime.utc().toISODate()
+                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].sent_to_finance = invoice.sent_to_finance
                 break;
             case 'processed':
                 invoice.processed = DateTime.utc().toISODate()
                 invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].processed = invoice.processed
                 break;
+            case 'paid':
+                invoice.paid = DateTime.utc().toISODate()
+                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].paid= invoice.paid
+                break;
             default:
                 break;
         }
+        console.log(invoice)
 
-        await axios.put(`${import.meta.env.VITE_API_URL}/invoices/${invoice.documentId}`, {
-            headers: {
-              Authorization: `Bearer ${store.jwt}`
-            },
-            data: invoice
-        })
+        try {
+            await axios({
+                method: 'put',
+                url: `${import.meta.env.VITE_API_URL}/invoices/${invoice.documentId}`,
+                headers: {
+                    Authorization: `Bearer ${store.jwt}`
+                },
+                data: {
+                    data: {
+                        sent_for_signature: invoice.sent_for_signature,
+                        sent_to_finance: invoice.sent_to_finance,
+                        processed: invoice.processed,
+                        paid: invoice.paid
+                    }
+
+                }
+            })
+
+        } catch (error) {
+            console.error('Error updating invoice status:', error)
+            //  todo if there is an error here, return invoices in memory to previous state to align with database
+        }
+        // await axios.put(`${import.meta.env.VITE_API_URL}/invoices/${invoice.documentId}`, {
+        //     headers: {
+        //       Authorization: `Bearer ${store.jwt}`
+        //     },
+        //     data: invoice
+        // })
     }
 
-    async function reset () {
+    async function reset() {
         invoices.value = []
     }
 
     return { invoices, getFacilities, getByID, getByFinancialYear, getByPeriod, getByProject, fetchInvoices, createInvoice, updateInvoiceState, reset }
 },
-{
-    persist: true
-})
+    {
+        persist: true
+    })
