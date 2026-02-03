@@ -109,7 +109,7 @@ const invoice = currentInvoice.value;
     // Not sent to finance but sent for signature
     if (invoice && invoice.sent_for_signature) {
         return {
-            text: 'Sent for processing',
+            text: 'Signed - Mark as sent to finance',
             handler: () => invoicesStore.updateInvoiceState(invoice, 'sent_to_finance'),
             style: baseStyle,
             disabled: false,
@@ -120,7 +120,7 @@ const invoice = currentInvoice.value;
     // Invoice has been generated, but not sent for signature
     if (invoice) {
         return {
-            text: 'Sent for signature',
+            text: 'Mark as sent for signature',
             handler: () => invoicesStore.updateInvoiceState(invoice, 'sent_for_signature'),
             style: baseStyle,
             disabled: false,

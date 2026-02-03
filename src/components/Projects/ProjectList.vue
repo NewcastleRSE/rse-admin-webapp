@@ -55,7 +55,7 @@
         </div>
 
 
-        <div class="mt-2 grid grid-cols-1 gap-1 text-[10px] sm:text-xs leading-5 text-gray-600">
+        <div v-if="project.daysBilled > 0" class="mt-2 grid grid-cols-1 gap-1 text-[10px] sm:text-xs leading-5 text-gray-600">
           <div class="flex items-center gap-x-1.5">
             <span class="font-semibold text-gray-900">Days invoiced:</span>
             <!-- <span>{{ project.daysBilled || 0 }} / {{ project.estimateDays || 0 }}</span> -->
