@@ -52,7 +52,6 @@ export const useInvoicesStore = defineStore('invoices', () => {
     }
 
     async function createInvoice(projectId, year, month) {
-        console.log(month)
         try {
             const { data: response } = await axios({
                 method: 'post',
@@ -84,6 +83,36 @@ export const useInvoicesStore = defineStore('invoices', () => {
         }
     }
 
+    async function addInvoice(form) {
+        try {
+            const { data: response } = await axios({
+                method: 'post',
+                url: `${import.meta.env.VITE_API_URL}/invoices/add`,
+                headers: {
+                    Authorization: `Bearer ${store.jwt}`
+                },
+                data: form
+            })
+
+            // does document number already exist in store as this is unique
+            if (invoices.value.some(inv => inv.documentNumber === response.documentNumber)) {
+                // update existing invoice
+                const index = invoices.value.findIndex(inv => inv.documentNumber === response.documentNumber)
+                invoices.value[index] = response
+                console.log("Invoice updated in store:", invoices.value[index])
+                return
+            } else {
+                invoices.value.push(response)
+                console.log("Invoice added to store:", response)
+                return
+            }
+        } catch (error) {
+            console.error('Error creating invoice:', error)
+        }
+
+    }
+
+
     async function updateInvoiceState(invoice, state) {
         switch (state) {
             case 'sent_for_signature':
@@ -100,7 +129,7 @@ export const useInvoicesStore = defineStore('invoices', () => {
                 break;
             case 'paid':
                 invoice.paid = DateTime.utc().toISODate()
-                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].paid= invoice.paid
+                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].paid = invoice.paid
                 break;
             default:
                 break;
@@ -141,7 +170,7 @@ export const useInvoicesStore = defineStore('invoices', () => {
         invoices.value = []
     }
 
-    return { invoices, getFacilities, getByID, getByFinancialYear, getByPeriod, getByProject, fetchInvoices, createInvoice, updateInvoiceState, reset }
+    return { invoices, getFacilities, getByID, getByFinancialYear, getByPeriod, getByProject, fetchInvoices, createInvoice, updateInvoiceState, reset, addInvoice }
 },
     {
         persist: true
