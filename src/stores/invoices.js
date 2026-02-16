@@ -4,6 +4,8 @@ import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { fetchObjects } from '../utils/orm'
 import { DateTime, Interval } from 'luxon'
+import { useAlertStore } from '@/stores'
+
 
 // const titleCase = str => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
 const titleCase = str => str && str.length
@@ -83,6 +85,8 @@ export const useInvoicesStore = defineStore('invoices', () => {
             downloadLink.download = `${name}-${month}-${year}.pdf`
             downloadLink.click()
         } catch (error) {
+            const alert = useAlertStore()
+            alert.showAlert('Error creating invoice. Please check the console for more details.', 'error')
             console.error('Error creating invoice:', error)
         }
     }
@@ -111,7 +115,9 @@ export const useInvoicesStore = defineStore('invoices', () => {
                 return
             }
         } catch (error) {
-            console.error('Error creating invoice:', error)
+            const alert = useAlertStore()
+            alert.showAlert('Error adding invoice. Please add manually through Strapi or check the console for errors.', 'error')
+            console.error('Error adding invoice:', error)
         }
 
     }
