@@ -124,7 +124,30 @@ export const useInvoicesStore = defineStore('invoices', () => {
 
 
     async function updateInvoiceState(invoice, state) {
-        switch (state) {
+        
+      
+
+        try {
+            const response = await axios({
+                method: 'put',
+                url: `${import.meta.env.VITE_API_URL}/invoices/${invoice.documentId}`,
+                headers: {
+                    Authorization: `Bearer ${store.jwt}`
+                },
+                data: {
+                    data: {
+                        sent_for_signature: invoice.sent_for_signature,
+                        sent_to_finance: invoice.sent_to_finance,
+                        processed: invoice.processed,
+                        paid: invoice.paid
+                    }
+
+                }
+            })
+
+            // only update invoice in store if API call is successful to keep store in sync with database
+            if (response.status === 200) {
+                switch (state) {
             case 'sent_for_signature':
                 invoice.sent_for_signature = DateTime.utc().toISODate()
                 invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].sent_for_signature = invoice.sent_for_signature
@@ -144,36 +167,15 @@ export const useInvoicesStore = defineStore('invoices', () => {
             default:
                 break;
         }
-        console.log(invoice)
 
-        try {
-            await axios({
-                method: 'put',
-                url: `${import.meta.env.VITE_API_URL}/invoices/${invoice.documentId}`,
-                headers: {
-                    Authorization: `Bearer ${store.jwt}`
-                },
-                data: {
-                    data: {
-                        sent_for_signature: invoice.sent_for_signature,
-                        sent_to_finance: invoice.sent_to_finance,
-                        processed: invoice.processed,
-                        paid: invoice.paid
-                    }
-
-                }
-            })
+            }
 
         } catch (error) {
             console.error('Error updating invoice status:', error)
-            //  todo if there is an error here, return invoices in memory to previous state to align with database
+                const alert = useAlertStore()   
+                alert.showAlert('Error updating invoice status.', 'error')
         }
-        // await axios.put(`${import.meta.env.VITE_API_URL}/invoices/${invoice.documentId}`, {
-        //     headers: {
-        //       Authorization: `Bearer ${store.jwt}`
-        //     },
-        //     data: invoice
-        // })
+      
     }
 
     async function reset() {
