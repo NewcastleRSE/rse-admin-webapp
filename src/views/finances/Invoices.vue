@@ -61,13 +61,14 @@
                     </div>
                     <div class="flex flex-none items-center gap-x-4">
                       <!-- generate invoice or update status -->
-                      <InvoiceActionButton :project="project" :year="month.year" :month="month.name" />
+                      <InvoiceProgressBar :project="project" :year="month.year" :month="month.name" />
+                      <InvoiceInteractionButtons :project="project" :year="month.year" :month="month.name" />
                       <!-- upload invoice PDF -->
-                      <UploadInvoicePDF
+                      <!-- <UploadInvoicePDF
                         :clockifyID="project.clockifyID"
                         :year="month.year"
                         :month="month.name"
-                      />
+                      /> -->
                     </div>
                   </li>
                 </ul>
@@ -85,8 +86,9 @@ import { currentFY } from '../../utils/dates'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 import { useAssignmentsStore, useInvoicesStore, useProjectsStore } from '@/stores'
-import InvoiceActionButton from '@/components/Finance/InvoiceActionButton.vue'
 import UploadInvoicePDF from '@/components/Finance/UploadInvoicePDF.vue'
+import InvoiceProgressBar from '../../components/Finance/InvoiceProgressBar.vue'
+import InvoiceInteractionButtons from '../../components/Finance/InvoiceInteractionButtons.vue'
 
 
 const assignmentsStore = useAssignmentsStore(),
