@@ -1,68 +1,68 @@
 <template>
-  
-    <transition
-      enter-active-class="transition ease-out duration-100"
-      enter-from-class="transform opacity-0 scale-95"
-      enter-to-class="transform opacity-100 scale-100"
-      leave-active-class="transition ease-in duration-75"
-      leave-from-class="transform opacity-100 scale-100"
-      leave-to-class="transform opacity-0 scale-95"
+  <transition
+    enter-active-class="transition ease-out duration-100"
+    enter-from-class="transform opacity-0 scale-95"
+    enter-to-class="transform opacity-100 scale-100"
+    leave-active-class="transition ease-in duration-75"
+    leave-from-class="transform opacity-100 scale-100"
+    leave-to-class="transform opacity-0 scale-95"
+  >
+    <div 
+      v-if="isOpen && !creating" 
+      class="mb-3 w-25 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 py-1 text-gray-700"
     >
-      <div 
-        v-if="isOpen && !creating" 
-        class="mb-3 w-36 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 py-1 text-gray-700"
+      <button
+        @click="createInvoice(true)"
+        class="flex w-full items-center px-3 py-1.5 text-xs hover:bg-blue-50 hover:text-blue-600 transition-colors"
       >
-        <button
-          @click="createInvoice(true)"
-          class="flex w-full items-center px-3 py-1.5 text-xs hover:bg-blue-50 hover:text-blue-600 transition-colors"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-2 size-3.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-          </svg>
-          Editable
-        </button>
-        <button
-          @click="createInvoice(false)"
-          class="flex w-full items-center px-3 py-1.5 text-xs hover:bg-blue-50 hover:text-blue-600 transition-colors"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-2 size-3.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.43 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-          </svg>
-          Readonly
-        </button>
-      </div>
-    </transition>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-2 size-3.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+        </svg>
+        Editable
+      </button>
+      <button
+        @click="createInvoice(false)"
+        class="flex w-full items-center px-3 py-1.5 text-xs hover:bg-blue-50 hover:text-blue-600 transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-2 size-3.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.43 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+        Readonly
+      </button>
+    </div>
+  </transition>
 
-    <button
-      @click="isOpen = !isOpen"
-      :disabled="creating"
-      class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-all hover:bg-blue-700 hover:scale-105 active:scale-95 focus:outline-none disabled:opacity-80 disabled:cursor-not-allowed"
+  <button
+    @click="isOpen = !isOpen"
+    :disabled="creating"
+    class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-all hover:bg-blue-700 hover:scale-105 active:scale-95 focus:outline-none disabled:opacity-80 disabled:cursor-not-allowed"
+  >
+    <svg 
+      v-if="creating" 
+      class="size-2.5 animate-spin" 
+      xmlns="http://www.w3.org/2000/svg" 
+      fill="none" 
+      viewBox="0 0 24 24"
     >
-      <svg 
-        v-if="creating" 
-        class="size-5 animate-spin" 
-        xmlns="http://www.w3.org/2000/svg" 
-        fill="none" 
-        viewBox="0 0 24 24"
-      >
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    
+    <svg 
+      v-else
+      xmlns="http://www.w3.org/2000/svg" 
+      fill="none" 
+      viewBox="0 0 24 24" 
+      stroke-width="2" 
+      stroke="currentColor" 
+      class="size-4 transition-all duration-300"
+    >
+      <path v-if="isOpen" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
       
-      <svg 
-        v-else
-        xmlns="http://www.w3.org/2000/svg" 
-        fill="none" 
-        viewBox="0 0 24 24" 
-        stroke-width="2.5" 
-        stroke="currentColor" 
-        :class="['size-5 transition-transform duration-300', isOpen ? 'rotate-45' : '']"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-      </svg>
-    </button>
- 
+      <path v-else stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+    </svg>
+  </button>
 </template>
 
 <script setup>
@@ -87,7 +87,10 @@ const setMode = (mode) => {
 function createInvoice(editable) {
     console.log(`Creating invoice for project ${props.project.documentId}, year ${props.year}, month ${props.month}, editable: ${editable}`)
   creating.value = true;
-  invoicesStore.createInvoice(props.project.documentId, props.year, props.month, editable).then(() => creating.value = false);
+  invoicesStore.createInvoice(props.project.documentId, props.year, props.month, editable).then(() => {
+    creating.value = false;
+    isOpen.value = false; 
+  });
 }
 </script>
 
