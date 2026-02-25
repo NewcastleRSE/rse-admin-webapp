@@ -12,13 +12,13 @@
                     <span class="text-base font-semibold leading-7">{{ month.name }} {{ month.year }}</span>
                     <span v-if="month.total && index > 0"
                       class="inline-flex items-center rounded-md bg-red-100 ml-4 px-2 py-1 text-xs font-medium text-red-700">{{
-                        month.total }} Due</span>
-                    <span v-if="month.sent && index > 0"
+                        month.total - month.paid }} Due</span>
+                    <!-- <span v-if="month.sent && index > 0"
                       class="inline-flex items-center rounded-md bg-yellow-100 ml-4 px-2 py-1 text-xs font-medium text-yellow-800">{{
                         month.sent_to_finance }} Sent for signature</span>
                     <span v-if="month.processed && index > 0"
                       class="inline-flex items-center rounded-md bg-blue-100 ml-4 px-2 py-1 text-xs font-medium text-blue-700">{{
-                        month.processed }} Processed</span>
+                        month.processed }} Processed</span> -->
                     <span v-if="month.paid && index > 0"
                       class="inline-flex items-center rounded-md bg-green-100 ml-4 px-2 py-1 text-xs font-medium text-green-700">{{
                         month.paid }} Paid</span>
@@ -36,7 +36,8 @@
                     <div class="min-w-0">
                       <div class="flex items-start gap-x-3">
                         <p class="text-sm font-semibold leading-6 text-gray-900">{{ project.name }}</p>
-                        <p v-if="hasState(getInvoice(project.documentId, month.year, month.name), 'paid')"
+                        <!-- status - remove for now to simplify view -->
+                        <!-- <p v-if="hasState(getInvoice(project.documentId, month.year, month.name), 'paid')"
                           :class="[statuses['paid'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">
                           Paid {{ getInvoice(project.documentId, month.year, month.name).paid }}</p>
                         <p v-else-if="hasState(getInvoice(project.documentId, month.year, month.name), 'processed')"
@@ -44,8 +45,8 @@
                           Processed {{ getInvoice(project.documentId, month.year, month.name).processed }}</p>
                         <p v-else-if="hasState(getInvoice(project.documentId, month.year, month.name), 'sent')"
                           :class="[statuses['sent'], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset']">
-                          Sent {{ getInvoice(project.documentId, month.year, month.name).sent }}</p>
-                        <!-- todo sent to finance/ sent for signature -->
+                          Sent {{ getInvoice(project.documentId, month.year, month.name).sent }}</p> -->
+
                       </div>
                       <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
                         <p v-if="project.contacts" class="whitespace-nowrap">
@@ -55,19 +56,20 @@
                           <circle cx="1" cy="1" r="1" />
                         </svg>
                         <p class="truncate">{{ project.school }}</p>
-                        <p class="truncate">Month: {{ month.name || 'Not Set' }}</p>
+                        <!-- Project errors -->
+                        <span v-if="!canGenerateInvoice(project)"
+                          class="inline-flex items-center rounded-md bg-red-100 ml-4 px-2 py-1 text-xs font-medium ">No
+                          account code</span>
 
                       </div>
                     </div>
-                    <div class="flex flex-none items-center gap-x-4">
+                    <div class="flex flex-none items-center gap-x-6">
                       <!-- generate invoice or update status -->
-                      <InvoiceActionButton :project="project" :year="month.year" :month="month.name" />
-                      <!-- upload invoice PDF -->
-                      <UploadInvoicePDF
-                        :clockifyID="project.clockifyID"
-                        :year="month.year"
-                        :month="month.name"
-                      />
+                      <InvoiceProgressBar :project="project" :year="month.year" :month="month.name" />
+                      <div class="inline-block  min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/10"></div>
+                      <InvoiceInteractionButtons :project="project" :year="month.year" :month="month.name"
+                        class="ml-4" />
+
                     </div>
                   </li>
                 </ul>
@@ -85,8 +87,9 @@ import { currentFY } from '../../utils/dates'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 import { useAssignmentsStore, useInvoicesStore, useProjectsStore } from '@/stores'
-import InvoiceActionButton from '@/components/Finance/InvoiceActionButton.vue'
 import UploadInvoicePDF from '@/components/Finance/UploadInvoicePDF.vue'
+import InvoiceProgressBar from '../../components/Finance/InvoiceProgressBar.vue'
+import InvoiceInteractionButtons from '../../components/Finance/InvoiceInteractionButtons.vue'
 
 
 const assignmentsStore = useAssignmentsStore(),
@@ -136,7 +139,9 @@ function getInvoice(projectId, year, month) {
   return invoices.find(invoice => invoice.project.documentId == projectId && invoice.year == year && invoice.month == month.toLowerCase())
 }
 
-
+function canGenerateInvoice(project) {
+  return project.account
+}
 
 function hasState(invoice, state) {
   return invoice && invoice[state]

@@ -1,11 +1,17 @@
 <template>
   <router-view></router-view>
+  <GlobalAlert />
 </template>
 
 <script>
+import GlobalAlert from '../src/components/GlobalAlert.vue'
 export default {
-  name: "App"
+  name: "App",
+  components: {
+    GlobalAlert
+  }
 };
+
 </script>
 
 <style>
@@ -17,3 +23,4 @@ export default {
   background: white;
 }
 </style>
+

@@ -170,7 +170,7 @@
    
 
                         </div>
-                        <div class="mt-6">
+                        <div v-if="selectedProject.costModel === 'Facility'" class="mt-6">
                             <label class="text-base font-semibold text-gray-900">Rate Type</label>
                             <p class="text-sm text-gray-500">Select the rate at which this RSE is allocated.</p>
                             <fieldset class="mt-4">
