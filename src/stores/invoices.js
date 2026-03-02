@@ -4,6 +4,8 @@ import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { fetchObjects } from '../utils/orm'
 import { DateTime, Interval } from 'luxon'
+import { useAlertStore } from '@/stores'
+
 
 // const titleCase = str => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
 const titleCase = str => str && str.length
@@ -47,11 +49,15 @@ export const useInvoicesStore = defineStore('invoices', () => {
     }
 
     async function fetchInvoices(year) {
-        invoices.value = await fetchObjects('invoices', 0, 100, ['project', 'transaction'], { year: { $eq: year } })
+        // to get whole financial year, we need to get invoices for current year and next year
+        invoices.value = await fetchObjects('invoices', 0, 100, ['project', 'transaction'], { $or: [{ year: { $eq: year } }, { year: { $eq: year + 1 } }] })
 
     }
 
-    async function createInvoice(projectId, year, month) {
+
+
+
+    async function createInvoice(projectId, year, month, editable=false) {
         try {
             const { data: response } = await axios({
                 method: 'post',
@@ -63,7 +69,8 @@ export const useInvoicesStore = defineStore('invoices', () => {
                     data: {
                         project: projectId,
                         year: year,
-                        month: month.toLowerCase()
+                        month: month.toLowerCase(),
+                        editable: editable
                     }
                 }
             })
@@ -79,6 +86,8 @@ export const useInvoicesStore = defineStore('invoices', () => {
             downloadLink.download = `${name}-${month}-${year}.pdf`
             downloadLink.click()
         } catch (error) {
+            const alert = useAlertStore()
+            alert.showAlert('Error creating invoice. Please check the console for more details.', 'error')
             console.error('Error creating invoice:', error)
         }
     }
@@ -107,37 +116,22 @@ export const useInvoicesStore = defineStore('invoices', () => {
                 return
             }
         } catch (error) {
-            console.error('Error creating invoice:', error)
+            const alert = useAlertStore()
+            alert.showAlert('Error adding invoice. Please add manually through Strapi or check the console for errors.', 'error')
+            console.error('Error adding invoice:', error)
         }
 
     }
 
 
-    async function updateInvoiceState(invoice, state) {
-        switch (state) {
-            case 'sent_for_signature':
-                invoice.sent_for_signature = DateTime.utc().toISODate()
-                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].sent_for_signature = invoice.sent_for_signature
-                break;
-            case 'sent_to_finance':
-                invoice.sent_to_finance = DateTime.utc().toISODate()
-                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].sent_to_finance = invoice.sent_to_finance
-                break;
-            case 'processed':
-                invoice.processed = DateTime.utc().toISODate()
-                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].processed = invoice.processed
-                break;
-            case 'paid':
-                invoice.paid = DateTime.utc().toISODate()
-                invoices.value[invoices.value.findIndex(inv => inv.documentId === invoice.documentId)].paid = invoice.paid
-                break;
-            default:
-                break;
-        }
-        console.log(invoice)
+    async function updateInvoiceState(invoice, state, completed=true) {
+
+        console.log(`Updating invoice ${invoice.documentId} state: ${state} to ${completed ? 'completed' : 'not completed'}`)
+
+        const value = completed ? DateTime.utc().toISODate() : null
 
         try {
-            await axios({
+            const response = await axios({
                 method: 'put',
                 url: `${import.meta.env.VITE_API_URL}/invoices/${invoice.documentId}`,
                 headers: {
@@ -145,25 +139,27 @@ export const useInvoicesStore = defineStore('invoices', () => {
                 },
                 data: {
                     data: {
-                        sent_for_signature: invoice.sent_for_signature,
-                        sent_to_finance: invoice.sent_to_finance,
-                        processed: invoice.processed,
-                        paid: invoice.paid
+                        [state]: value
                     }
 
                 }
             })
 
+            // only update invoice in store if API call is successful to keep store in sync with database
+            if (response.status === 200) {
+                const index = invoices.value.findIndex(inv => inv.documentId === invoice.documentId)
+                if (index !== -1) {
+                    invoices.value[index][state] = value
+                }
+                return response.data
+            }
+
         } catch (error) {
             console.error('Error updating invoice status:', error)
-            //  todo if there is an error here, return invoices in memory to previous state to align with database
+            const alert = useAlertStore()
+            alert.showAlert('Error updating invoice status.', 'error')
         }
-        // await axios.put(`${import.meta.env.VITE_API_URL}/invoices/${invoice.documentId}`, {
-        //     headers: {
-        //       Authorization: `Bearer ${store.jwt}`
-        //     },
-        //     data: invoice
-        // })
+
     }
 
     async function reset() {
