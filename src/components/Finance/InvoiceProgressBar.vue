@@ -10,11 +10,7 @@
               :disabled="isStepDisabled(step, index)"
               :class="[
                 'flex items-center justify-center p-1 rounded-full transition-all duration-200',
-                // Highlight logic: Blue if invoice exists (for step 0) or if stage is marked done
-                step.completed || step.active ? 'text-blue-600' : 'text-gray-300',
-                // Rollback styling (Red)
                 step.completed && !step.active && index !== 0 ? 'cursor-pointer hover:bg-red-50 hover:text-red-500' : '',
-                // Progression styling (Blue)
                 !step.completed && isNextLogicalStep(index) ? 'cursor-pointer hover:bg-blue-50 hover:text-blue-500' : '',
                 (step.active || isStepDisabled(step, index)) ? 'cursor-default' : ''
               ]"
@@ -68,7 +64,6 @@ const currentInvoice = computed(() => allInvoicesForFY.value.find(inv => inv.pro
 const steps = computed(() => {
   const inv = currentInvoice.value;
   return [
-    // Step 0 is now 'completed' if the invoice exists in the store [cite: 40, 166]
     { name: 'Creation', icon: IconCreation, completed: !!inv, active: inv && !inv.sent_for_signature, state: null },
     { name: 'Signature', icon: IconSignature, completed: !!inv?.sent_for_signature, active: inv?.sent_for_signature && !inv.sent_to_finance, state: 'sent_for_signature' },
     { name: 'Processing', icon: IconProcessing, completed: !!inv?.sent_to_finance, active: (inv?.sent_to_finance || inv?.processed) && !inv.paid, state: 'sent_to_finance' },
