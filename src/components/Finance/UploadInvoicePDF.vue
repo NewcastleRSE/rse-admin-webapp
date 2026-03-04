@@ -12,7 +12,7 @@
       @click="openFilePicker"
       :disabled="isUploading"
       :class="[
-        'rounded-full p-1 shadow-sm ring-1 ring-inset transition-colors text-gray-600 ring-gray-300 hover:bg-blue-50'
+        'cursor-pointer rounded-full p-1 shadow-sm ring-1 ring-inset transition-colors text-gray-600 ring-gray-300 hover:bg-blue-50'
       ]"
     >
   <svg v-if="!isUploading" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
