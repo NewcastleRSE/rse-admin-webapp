@@ -67,8 +67,11 @@
                       <!-- generate invoice or update status -->
                       <InvoiceProgressBar :project="project" :year="month.year" :month="month.name" />
                       <div class="inline-block  min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/10"></div>
-                      <InvoiceInteractionButtons :project="project" :year="month.year" :month="month.name"
-                        class="ml-4" />
+                      <!-- <InvoiceInteractionButtons :project="project" :year="month.year" :month="month.name"
+                        class="ml-4" /> -->
+                          <UploadInvoicePDF
+                        :project="project" :year="month.year" :month="month.name"
+                      />
 
                     </div>
                   </li>
