@@ -35,8 +35,8 @@ const invoicesStore = useInvoicesStore()
 
 // Define Props passed from Parent
 const props = defineProps({
-  clockifyID: {
-    type: String,
+  project: {
+    type: Object,
     required: true
   },
   year: {
@@ -72,7 +72,7 @@ const performUpload = async (file) => {
 
   const formData = new FormData();
   formData.append('files', file);
-  formData.append('clockifyID', props.clockifyID);
+  formData.append('clockifyID', props.project.clockifyID);
   formData.append('year', props.year);
   formData.append('month', props.month);
 
