@@ -116,7 +116,8 @@ for (let i = 0; i <= monthsToDate; i++) {
   const assignments = assignmentsStore.getByPeriod(fyDates.startDate.toISODate(), fyDates.startDate.endOf('month').minus({ days: 1 }))
   const projectIDs = assignments.reduce(function (IDs, assignment) { return [...IDs, assignment.project.documentId] }, [])
   const projects = projectsStore.filterByIDs([...new Set(projectIDs)]).filter(project => project.costModel === 'Facility')
-
+  projects.sort((a, b) => a.name.localeCompare(b.name))
+  
   for (let y = 0; y < projects.length; y++) {
     projects[y].invoice = invoices.find(invoice => invoice.project.documentId == projects[y].documentId && invoice.year == fyDates.startDate.year && invoice.month == fyDates.startDate.monthLong.toLowerCase())
   }
