@@ -67,8 +67,11 @@
                       <!-- generate invoice or update status -->
                       <InvoiceProgressBar :project="project" :year="month.year" :month="month.name" />
                       <div class="inline-block  min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/10"></div>
-                      <InvoiceInteractionButtons :project="project" :year="month.year" :month="month.name"
-                        class="ml-4" />
+                      <!-- <InvoiceInteractionButtons :project="project" :year="month.year" :month="month.name"
+                        class="ml-4" /> -->
+                          <UploadInvoicePDF
+                        :project="project" :year="month.year" :month="month.name"
+                      />
 
                     </div>
                   </li>
@@ -113,7 +116,8 @@ for (let i = 0; i <= monthsToDate; i++) {
   const assignments = assignmentsStore.getByPeriod(fyDates.startDate.toISODate(), fyDates.startDate.endOf('month').minus({ days: 1 }))
   const projectIDs = assignments.reduce(function (IDs, assignment) { return [...IDs, assignment.project.documentId] }, [])
   const projects = projectsStore.filterByIDs([...new Set(projectIDs)]).filter(project => project.costModel === 'Facility')
-
+  projects.sort((a, b) => a.name.localeCompare(b.name))
+  
   for (let y = 0; y < projects.length; y++) {
     projects[y].invoice = invoices.find(invoice => invoice.project.documentId == projects[y].documentId && invoice.year == fyDates.startDate.year && invoice.month == fyDates.startDate.monthLong.toLowerCase())
   }

@@ -12,11 +12,11 @@
       @click="openFilePicker"
       :disabled="isUploading"
       :class="[
-        'rounded-full p-1 shadow-sm ring-1 ring-inset transition-colors text-gray-600 ring-gray-300 hover:bg-blue-50'
+        'cursor-pointer rounded-full p-1 shadow-sm ring-1 ring-inset transition-colors text-gray-600 ring-gray-300 hover:bg-blue-50'
       ]"
     >
-      <svg v-if="!isUploading" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
-        <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+  <svg v-if="!isUploading" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
       </svg>
       
       <svg v-else class="animate-spin size-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -35,8 +35,8 @@ const invoicesStore = useInvoicesStore()
 
 // Define Props passed from Parent
 const props = defineProps({
-  clockifyID: {
-    type: String,
+  project: {
+    type: Object,
     required: true
   },
   year: {
@@ -72,7 +72,7 @@ const performUpload = async (file) => {
 
   const formData = new FormData();
   formData.append('files', file);
-  formData.append('clockifyID', props.clockifyID);
+  formData.append('clockifyID', props.project.clockifyID);
   formData.append('year', props.year);
   formData.append('month', props.month);
 
