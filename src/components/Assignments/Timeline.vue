@@ -103,6 +103,10 @@ function generateAssignments(rses, assignments) {
   let rseAssignments = Object.groupBy(assignments, (assignment) => assignment.rse.documentId)
 
   rses.forEach(rse => {
+    if(!rseAssignments[rse.documentId]) {
+      console.log('no assignments for rse ' + rse.documentId)
+      return
+    }
     rseAssignments[rse.documentId].forEach(assignment => {
 
       const id = GSTC.api.GSTCID(`assignment-${assignment.documentId}`),
