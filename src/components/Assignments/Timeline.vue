@@ -69,6 +69,7 @@ function generateAvailability(RSEs, assignments) {
   let rseAssignments = Object.groupBy(assignments, (assignment) => assignment.rse.documentId)
 
   RSEs.forEach(rse => {
+    if (!rseAssignments[rse.documentId]) return
       let assignmentEndDates = rseAssignments[rse.documentId].reduce(function (dates, assignment) { return [...dates, assignment.end] }, [])
       const maxDate = new Date(Math.max(...assignmentEndDates.map(date => { return new Date(date) })))
 
@@ -101,8 +102,10 @@ function generateAssignments(rses, assignments) {
   const items = {}
 
   let rseAssignments = Object.groupBy(assignments, (assignment) => assignment.rse.documentId)
-
+console.log(rseAssignments)
   rses.forEach(rse => {
+    
+if (!rseAssignments[rse.documentId]) return
     rseAssignments[rse.documentId].forEach(assignment => {
 
       const id = GSTC.api.GSTCID(`assignment-${assignment.documentId}`),
